@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %} PRODUCTOS {% endblock%}
+{% block content %}             
+    <ul class="list-group list-group-flush">
+        <a href="{% url 'nuevo' %}" class="btn btn-primary">Añadir producto</a>
+            <h1>PRODUCTOS</h1>
+                <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Código</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Clase</th>
+                                <th scope="col">Sub-Clase</th>
+                            </tr>
+                        </thead>
+                        <tbody>       
+                                {% for fila in Productos %}
+                                <tr>
+                        <th>{{fila.id}}</a></th>
+                        <th> {{fila.nombre}}</th>
+                        <th>{{fila.clase}}</th>
+                        <th>{{fila.subclase}}</th>
+
+                                {% endfor %}
+                        </tr>
+                        
+                          </tbody>
+                </table>
+        </ul>
+        
+        
+{% endblock%}

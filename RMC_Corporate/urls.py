@@ -19,6 +19,7 @@ from planificador import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index),
+    path('', views.index, name="home"),
     path('', include('users.urls')),
-]
+     path('', include('productos.urls')),
+     ]

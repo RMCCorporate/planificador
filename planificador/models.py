@@ -3,9 +3,9 @@ from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class Producto(models.Model):
-    id = models.CharField(primary_key=True, max_length=128,)
+    id = models.CharField(primary_key=True, max_length=128)
     nombre = models.CharField(max_length=128)
-    lista_precios = ArrayField(models.IntegerField(null=True))
+    lista_precios = ArrayField(models.IntegerField(null=True), null=True)
     fecha_actualizacion = models.DateField(null=True)
     clase = models.CharField(max_length=128)
     subclase = models.CharField(max_length=128)
