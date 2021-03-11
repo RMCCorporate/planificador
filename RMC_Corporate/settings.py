@@ -25,7 +25,10 @@ SECRET_KEY = 'y@4@9kk50$3+2glc8(pt*hy0o2cs*e+34)^3u7v)4_1j$9q9lm'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['django-env.eba-bycjifwt.us-west-2.elasticbeanstalk.com']
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
+ALLOWED_HOSTS = ['django-env.eba-bycjifwt.us-west-2.elasticbeanstalk.com','planificador-proyectos-dev.us-west-2.elasticbeanstalk.com', '127.0.0.1']
 
 
 # Application definition
@@ -37,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'planificador',
+    'users',
 ]
 
 MIDDLEWARE = [
