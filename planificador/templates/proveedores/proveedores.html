@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} PROVEEDOR {% endblock%}
+{% block content %}             
+    <ul class="list-group list-group-flush">
+        <a href="{% url 'nuevo' %}" class="btn btn-primary">Añadir proveedor</a>
+            <h1>PROVEEDORES</h1>
+                <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">RUT</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Clases</th>
+                                <th scope="col">Sub-Clases</th>
+                            </tr>
+                        </thead>
+                        <tbody>       
+                        {% for fila in Proveedores %}
+                        <tr>
+                        <th>{{fila.rut}}</a></th>
+                        <th> {{fila.nombre}}</th>
+                        <th>{{fila.clases}}</th>
+                        <th>{{fila.subclases}}</th>
+
+                                {% endfor %}
+                        </tr>
+                        
+                          </tbody>
+                </table>
+        </ul>
+
+{% endblock%}

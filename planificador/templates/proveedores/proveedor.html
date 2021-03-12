@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+    {% load static %}
+
+    <div class="card text-center">
+        <div class="card-header">
+            {{Proveedor.nombre}}
+            <a href="{% url 'mostrar_edicion_proveedor' Proveedor.rut %}" class="btn btn-primary">Editar</a>
+            <a href="{% url 'eliminar_proveedor' Proveedor.rut %}" class="btn btn-primary">Eliminar</a>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Información general</h5>
+          <p class="card-text">
+            Razón Social: {{Proveedor.razon_social}}
+              <br>
+              Clases: {{Proveedor.clases}}
+              <br>
+              Sub-Clases: {{Proveedor.subclases}}
+              <br>
+          </p>
+        </div>
+    </div>
+    <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Calificación general {{calificacion_promedio}}</h5>
+          <p class="card-text">
+            {% for fila in lista_calificaciones %}
+                {{fila.0}}: {{fila.1}}
+                <br>
+            {% endfor %}  
+            Razón Social: {{Proveedor.razon_social}}
+              <br>
+              Clases: {{Proveedor.clases}}
+              <br>
+              Sub-Clases: {{Proveedor.subclases}}
+              <br>
+          </p>
+        </div>
+    </div>
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+              <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                CONTACTO
+              </button>
+            </h2>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in lista_contactos %}
+                    <tr>
+                    <th>{{fila.0}}</th>
+                    <th> {{fila.1}}</th>
+                    <th>{{fila.2}}</th>
+                      {% endfor %}  
+            </tr>
+                    </tbody>
+            </table>
+                
+            </div>
+          </div>
+        </div>
+ 
+
+{% endblock %}

@@ -1,27 +1,41 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Producto
+from planificador.models import Proveedor, Contacto
 
-#Mostrar productos
-def productos(request):
-    productos = Producto.objects.all()
-    return render(request, "productos/productos.html", {"Productos":productos})
+#Mostrar proveedores
+def proveedores(request):
+    proveedores = Proveedor.objects.all()
+    return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+
 
 #Agregar producto
-def agregar_producto(request):
-    return render(request, "productos/crear_producto.html")
+def agregar_proveedor(request):
+    return render(request, "proveedores/crear_proveedor.html")
 
-def recibir_datos_producto(request):
-    id = request.GET["id"]
+def recibir_datos_proveedor(request):
+    rut = request.GET["rut"]
     nombre = request.GET["nombre"]
     clase = request.GET["clase"]
+    lista_clase = clase.split(",")
     sub_clase = request.GET["sub_clase"]
-    unidad = request.GET["unidad"]
-    nuevo_producto = Producto(id=id, nombre=nombre, clase=clase, subclase=sub_clase, unidad=unidad)
-    nuevo_producto.save()
-    productos = Producto.objects.all()
-    return render(request, "productos/productos.html", {"Productos":productos})
-   
+    lista_subclase = sub_clase.split(",")
+    #Contactos
+    nombre_contacto = request.GET["nombre_contacto"]
+    correo = request.GET["correo"]
+    telefono = request.GET["telefono"]
+    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, clases=lista_clase, subclases=lista_subclase)
+    nuevo_proveedor.save()
+    contacto = Contacto(correo_id=correo, nombre_contacto=nombre_contacto, telefono=telefono)
+    contacto.save()
+    contactos = Contacto.objects.all()
+    print(contactos)
+    for i in contactos:
+        i.delete()
+    print(contactos)
+    contacto.proveedor.add(nuevo_proveedor)
+    proveedores = Proveedor.objects.all()
+    return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+""""
 #Vista producto
 def producto(request, id):
     producto = Producto.objects.get(id=id)
@@ -68,3 +82,4 @@ def eliminar_producto(request, id):
     producto.delete()
     productos = Producto.objects.all()
     return render(request, "productos/productos.html", {"Productos":productos})
+"""""

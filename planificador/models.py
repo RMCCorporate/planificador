@@ -5,11 +5,15 @@ from django.contrib.postgres.fields import ArrayField
 class Producto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     nombre = models.CharField(max_length=128)
-    lista_precios = ArrayField(models.IntegerField(null=True), null=True)
+    lista_precios = ArrayField(models.IntegerField(null=True), default=list)
     fecha_actualizacion = models.DateField(null=True)
+    fechas_actualizaciones_historicas = ArrayField(models.CharField(max_length=128, null=True), default=list)
     clase = models.CharField(max_length=128)
     subclase = models.CharField(max_length=128)
     unidad = models.CharField(max_length=128, null=True)
+    ultimo_proveedor = models.CharField(max_length=128, null=True)
+    lista_proveedores = ArrayField(models.CharField(max_length=128, null=True), default=list)
+    lista_tipo_cambio = ArrayField(models.CharField(max_length=128, null=True), default=list)
 
     def __str__(self):
         return self.nombre
@@ -35,19 +39,20 @@ class Proveedor(models.Model):
     razon_social = models.CharField(max_length=128, null=True)
     clases = ArrayField(models.CharField(null=True, max_length=128))
     subclases = ArrayField(models.CharField(null=True, max_length=128))
-
+    lista_nombre_calificaciones = ArrayField(models.CharField(max_length=128, null=True), default=list)
+    lista_calificaciones = ArrayField(models.IntegerField(null=True), default=list)
+    
     def __str__(self):
         return self.nombre
 
 class Contacto(models.Model):
-    id = models.IntegerField(primary_key=True)
-    proveedor = models.ManyToManyField(Proveedor)
-    nombre = models.CharField(max_length=128, null=True)
-    correo = models.EmailField(max_length=254, null=True)
+    correo_id = models.CharField(primary_key=True, max_length=254, default="tcorrea@rmc.cl")
+    nombre_contacto = models.CharField(max_length=128, null=True)
     telefono = models.CharField(max_length=128, null=True)
+    proveedor = models.ManyToManyField(Proveedor)
 
     def __str__(self):
-        return self.nombre
+        return self.nombre_contacto
 
 class Producto_proyecto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

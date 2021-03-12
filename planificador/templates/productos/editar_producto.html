@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %} EDITAR PRODUCTO {% endblock%}
+{% block content %}
+<h1> {{Producto.nombre}}</h1>
+    <br>
+    <form action="{{Producto.id}}" method="POST">{% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-2">
+            <label for="id">Código producto</label>
+            <input type="text" class="form-control" name="id" id="id" value={{Producto.id}}>
+            </div>
+            <div class="form-group col-md-2">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value={{Producto.nombre}}>
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group col-md-2">
+            <label for="clase">Clase</label>
+            <input type="text" class="form-control" id="clase" name="clase" value={{Producto.clase}}>
+            </div>
+            <div class="form-group col-md-2">
+            <label for="subclase">Sub-Clase</label>
+            <input type="text" name="subclase" class="form-control" id="subclase" value={{Producto.subclase}}>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+            <label for="unidad">Unidad</label>
+            <input type="text" class="form-control" id="unidad" name="unidad" value={{Producto.unidad}}>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col-md-2">
+            <label for="precio">Último precio</label>
+            <input type="text" class="form-control" id="precio" name="precio">
+            </div>
+            <div class="form-group col-md-2">
+            <label for="proveedor">Nombre último proveedor</label>
+            <input type="text" class="form-control" id="proveedor" name="proveedor">
+            </div>
+            <div class="form-group col-md-2">
+                <label for="moneda">Última moneda</label>
+                <input type="text" class="form-control" id="moneda" name="moneda">
+                </div>
+        </div>
+        <div class="col-md-4">
+            <label for="fecha" class="col-sm-2 col-form-label">Fecha</label>
+            <div class="col-sm-10">
+              <input type="date" name="fecha" class="form-control" id="fecha">
+            </div>
+        </div>
+        <input class="btn btn-primary" type="Submit" value="Guardar">
+    </form>
+    
+{% endblock%}

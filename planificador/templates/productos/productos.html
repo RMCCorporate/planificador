@@ -16,7 +16,7 @@
                         <tbody>       
                                 {% for fila in Productos %}
                                 <tr>
-                        <th>{{fila.id}}</a></th>
+                        <th><a href="{% url 'producto' fila.id %}">{{fila.id}}</a></th>
                         <th> {{fila.nombre}}</th>
                         <th>{{fila.clase}}</th>
                         <th>{{fila.subclase}}</th>

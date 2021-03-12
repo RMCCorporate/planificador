@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+    {% load static %}
+
+    <div class="card text-center">
+        <div class="card-header">
+            {{Producto.nombre}}
+            <a href="{% url 'mostrar_edicion_producto' Producto.id %}" class="btn btn-primary">Editar</a>
+            <a href="{% url 'eliminar_producto' Producto.id %}" class="btn btn-primary">Eliminar</a>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Información general</h5>
+          <p class="card-text">
+                ID: {{Producto.id}}
+              <br>
+              Clase: {{Producto.clase}}
+              <br>
+              Sub-Clase: {{Producto.subclase}}
+              <br>
+              Unidad: {{Producto.unidad}}
+          </p>
+        </div>
+    </div>
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+              <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                PROVEEDORES
+              </button>
+            </h2>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Proveedor</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Moneda</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in Lista_precios %}
+                    <tr>
+              <th>{{fila.2}}</a></th>
+              <th> {{fila.1}}</th>
+              <th>{{fila.0}}</th>
+              <th>{{fila.3}}</th>
+
+                      {% endfor %}  
+            </tr>
+                    </tbody>
+            </table>
+                
+            </div>
+          </div>
+        </div>
+ 
+
+{% endblock %}
