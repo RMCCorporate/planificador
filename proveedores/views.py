@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Proveedor
-
+"""
 #Mostrar proveedores
 def proveedores(request):
     proveedores = Proveedor.objects.all()
@@ -129,3 +129,4 @@ def eliminar_proveedor(request, rut):
     proveedor.delete()
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"proveedores":proveedores})
+"""
