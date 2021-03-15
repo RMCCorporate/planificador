@@ -16,7 +16,7 @@
                         <tbody>       
                         {% for fila in Proveedores %}
                         <tr>
-                        <th>{{fila.rut}}</a></th>
+                        <th><a href="{% url 'proveedor' fila.rut %}">{{fila.rut}}</a></th>
                         <th> {{fila.nombre}}</th>
                         <th>{{fila.clases}}</th>
                         <th>{{fila.subclases}}</th>

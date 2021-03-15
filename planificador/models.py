@@ -40,19 +40,11 @@ class Proveedor(models.Model):
     clases = ArrayField(models.CharField(null=True, max_length=128))
     subclases = ArrayField(models.CharField(null=True, max_length=128))
     lista_nombre_calificaciones = ArrayField(models.CharField(max_length=128, null=True), default=list)
-    lista_calificaciones = ArrayField(models.IntegerField(null=True), default=list)
+    lista_calificaciones = ArrayField(models.FloatField(null=True), default=list)
+    lista_contactos = ArrayField(models.CharField(max_length=128, null=True), default=list)
     
     def __str__(self):
         return self.nombre
-
-class Contacto(models.Model):
-    correo_id = models.CharField(primary_key=True, max_length=254, default="tcorrea@rmc.cl")
-    nombre_contacto = models.CharField(max_length=128, null=True)
-    telefono = models.CharField(max_length=128, null=True)
-    proveedor = models.ManyToManyField(Proveedor)
-
-    def __str__(self):
-        return self.nombre_contacto
 
 class Producto_proyecto(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

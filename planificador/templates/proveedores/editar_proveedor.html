@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %} EDITAR Proveedor {% endblock%}
+{% block content %}
+<h1> {{Proveedor.nombre}}</h1>
+    <br>
+    <form action="{{Proveedor.rut}}" method="POST">{% csrf_token %}
+        <div class="form-row">
+            <div class="form-group col-md-2">
+            <label for="rut">RUT Proveedor</label>
+            <input type="text" class="form-control" name="rut" id="rut" value={{Proveedor.rut}}>
+            </div>
+            <div class="form-group col-md-2">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value={{Proveedor.nombre}}>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="nombre">Razón Social</label>
+                <input type="text" class="form-control" id="razon_social" name="razon_social" value={{Proveedor.razon_social}}>
+                </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+              <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  CLASES
+                </button>
+              </h2>
+            </div>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Nombre Clase</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in Proveedor.clases %}
+                    <tr>
+                    <th>{{fila}}</th>
+                      {% endfor %}  
+                    </tr>
+                    <th><input type="text" class="form-control" name="clases" id="clases"></th>
+                    </tbody>
+            </table>
+                
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="headingThree">
+              <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  SUB-CLASES
+                </button>
+              </h2>
+            </div>
+        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Nombre Subclase</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in Proveedor.subclases %}
+                    <tr>
+                    <th>{{fila}}</th>
+                      {% endfor %}  
+                    </tr>
+                    <th><input type="text" class="form-control" name="subclases" id="subclases"></th>
+                    </tbody>
+            </table>   
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="headingFour">
+              <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                  CALIFICACIONES
+                </button>
+              </h2>
+            </div>
+        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Calificación</th>
+                            <th scope="col">Nota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in Proveedor.lista_nombre_calificaciones %}
+                    <tr>
+                    <th>{{fila}}</th>
+                    <th><input type="text" class="form-control" name={{fila}} id={{fila}}></th>
+                      {% endfor %}  
+                    </tr>
+                    
+                    </tbody>
+                    
+            </table>   
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="headingFive">
+              <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                  CONTACTOS
+                </button>
+              </h2>
+            </div>
+        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Correo</th>
+                            <th scope="col">Teléfono</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in lista_contactos %}
+                    <tr>
+                    <th>{{fila.0}}</th>
+                    <th>{{fila.1}}</th>
+                    <th>{{fila.2}}</th>
+                      {% endfor %}  
+                    </tr>
+                    <tr>
+                    <th><input type="text" class="form-control" name="nombre1" id="nombre1"></th>
+                    <th><input type="text" class="form-control" name="correo1" id="correo1"></th>
+                    <th><input type="text" class="form-control" name="telefono1" id="telefono1"></th>
+                </tr>
+                <tr>
+                    <th><input type="text" class="form-control" name="nombre2" id="nombre2"></th>
+                    <th><input type="text" class="form-control" name="correo2" id="correo2"></th>
+                    <th><input type="text" class="form-control" name="telefono2" id="telefono2"></th>
+                </tr>
+                <tr>
+                    <th><input type="text" class="form-control" name="nombre3" id="nombre3"></th>
+                    <th><input type="text" class="form-control" name="correo3" id="correo3"></th>
+                    <th><input type="text" class="form-control" name="telefono3" id="telefono3"></th>
+                </tr>
+                    </tbody>
+                    
+            </table>   
+            </div>
+          </div>
+        <input class="btn btn-primary" type="Submit" value="Guardar">
+    </form>
+    
+{% endblock%}

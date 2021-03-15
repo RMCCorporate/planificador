@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Proveedor, Contacto
+from planificador.models import Proveedor
 
 #Mostrar proveedores
 def proveedores(request):
@@ -8,7 +8,7 @@ def proveedores(request):
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
 
-#Agregar producto
+#Agregar proveedor
 def agregar_proveedor(request):
     return render(request, "proveedores/crear_proveedor.html")
 
@@ -23,63 +23,109 @@ def recibir_datos_proveedor(request):
     nombre_contacto = request.GET["nombre_contacto"]
     correo = request.GET["correo"]
     telefono = request.GET["telefono"]
-    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, clases=lista_clase, subclases=lista_subclase)
+    nuevo_contacto = []
+    nuevo_contacto.append(nombre_contacto)
+    nuevo_contacto.append(correo)
+    nuevo_contacto.append(telefono)
+    #Lista calificaciones
+    nombre_calificaciones = ["Precio","Tiempo Entrega","Calrutad"]
+    calificaciones = [0,0,0]
+    #Agregar proveedor
+    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, clases=lista_clase, subclases=lista_subclase, lista_nombre_calificaciones=nombre_calificaciones, lista_calificaciones=calificaciones)
+    nuevo_proveedor.lista_contactos.append(nuevo_contacto)
     nuevo_proveedor.save()
-    contacto = Contacto(correo_id=correo, nombre_contacto=nombre_contacto, telefono=telefono)
-    contacto.save()
-    contactos = Contacto.objects.all()
-    print(contactos)
-    for i in contactos:
-        i.delete()
-    print(contactos)
-    contacto.proveedor.add(nuevo_proveedor)
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
-""""
-#Vista producto
-def producto(request, id):
-    producto = Producto.objects.get(id=id)
-    print(producto.lista_precios)
-    print(producto.fechas_actualizaciones_historicas)
-    print(producto.lista_proveedores)
-    print(producto.lista_tipo_cambio)
-    lista_informacion_precios = []
-    aux_informacion_precios = []
-    for i,n in enumerate(producto.lista_precios):
-        print(n)
-        aux_informacion_precios = [n, producto.fechas_actualizaciones_historicas[i], producto.lista_proveedores[i], producto.lista_tipo_cambio[i]]
-        lista_informacion_precios.append(aux_informacion_precios)
-        print(lista_informacion_precios)
-    return render(request, "productos/producto.html", {"Producto":producto, "Lista_precios":lista_informacion_precios})
 
-#Edición producto
-def mostrar_edicion_producto(request, id):
-    producto = Producto.objects.get(id=id)
-    if request.method == "POST":
-        producto.id = request.POST["id"]
-        producto.nombre = request.POST["nombre"]
-        producto.clase = request.POST["clase"]
-        producto.sub_clase = request.POST["subclase"]
-        producto.unidad = request.POST["unidad"]
-        nuevo_precio = request.POST["precio"]
-        fecha_actualizacion = request.POST["fecha"]
-        moneda = request.POST["moneda"]
-        producto.ultimo_proveedor = request.POST["proveedor"]
-        #Se añaden los datos a las listas
-        producto.lista_precios.append(nuevo_precio)
-        producto.fechas_actualizaciones_historicas.append(fecha_actualizacion)
-        producto.lista_proveedores.append(producto.ultimo_proveedor)
-        producto.lista_tipo_cambio.append(moneda)
-        producto.save()
-        productos = Producto.objects.all()
-        return render(request, "productos/productos.html", {"Productos":productos})
+#Vista proveedor
+def proveedor(request, rut):
+    proveedor = Proveedor.objects.get(rut=rut)
+    if not proveedor.razon_social:
+        razon_social = "No ingresado"
     else:
-        return render(request, "productos/editar_producto.html", {"Producto":producto})
+        razon_social = proveedor.razon_social
+    calificacion_promedio = 0
+    for calificacion in proveedor.lista_calificaciones:
+        calificacion_promedio += calificacion
+    calificacion_promedio = calificacion_promedio/len(proveedor.lista_calificaciones)
+    lista_contactos = []
+    for i in proveedor.lista_contactos:
+        lista_contactos_aux = []
+        contacto_split = i.split(",")
+        lista_contactos_aux.append(contacto_split[0][2:-1])
+        lista_contactos_aux.append(contacto_split[1][2:-1])
+        lista_contactos_aux.append(contacto_split[2][2:-2])
+        lista_contactos.append(lista_contactos_aux)
+    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "razon_social":razon_social, "promedio":calificacion_promedio, "lista_contactos":lista_contactos})
 
-#Eliminar producto
-def eliminar_producto(request, id):
-    producto = Producto.objects.get(id=id)
-    producto.delete()
-    productos = Producto.objects.all()
-    return render(request, "productos/productos.html", {"Productos":productos})
-"""""
+
+#Edición proveedor
+def mostrar_edicion_proveedor(request, rut):
+    proveedor = Proveedor.objects.get(rut=rut)
+    if request.method == "POST":
+        proveedor.rut = request.POST["rut"]
+        proveedor.nombre = request.POST["nombre"]
+        clases = request.POST["clases"]
+        sub_clase = request.POST["subclases"]
+        proveedor.razon_social = request.POST["razon_social"]
+        #Se añaden los datos a las listas
+        lista_aux_contactos = []
+        if clases:
+            print(clases)
+            lista_clase = clases.split(",")
+            for i in lista_clase:
+                print(i)
+                proveedor.clases.append(i)
+        if sub_clase:
+            print(sub_clase)
+            lista_subclase = sub_clase.split(",")
+            for i in lista_subclase:
+                print(i)
+                proveedor.subclases.append(i)
+        if request.POST["nombre1"]:
+            lista_aux_contactos = []
+            lista_aux_contactos.append(request.POST["nombre1"])
+            lista_aux_contactos.append(request.POST["correo1"])
+            lista_aux_contactos.append(request.POST["telefono1"])
+            proveedor.lista_contactos.append(lista_aux_contactos)
+        if request.POST["nombre2"]:
+            lista_aux_contactos = []
+            lista_aux_contactos.append(request.POST["nombre2"])
+            lista_aux_contactos.append(request.POST["correo2"])
+            lista_aux_contactos.append(request.POST["telefono2"])
+            proveedor.lista_contactos.append(lista_aux_contactos)
+        if request.POST["nombre3"]:
+            lista_aux_contactos = []
+            lista_aux_contactos.append(request.POST["nombre3"])
+            lista_aux_contactos.append(request.POST["correo3"])
+            lista_aux_contactos.append(request.POST["telefono3"])
+            proveedor.lista_contactos.append(lista_aux_contactos)
+        if request.POST["Precio"]:
+            print(proveedor.lista_calificaciones[0])
+            proveedor.lista_calificaciones[0] = (float(proveedor.lista_calificaciones[0])+float(request.POST["Precio"]))/2
+            print(proveedor.lista_calificaciones[0])
+        if request.POST["Tiempo"]:
+            proveedor.lista_calificaciones[1] = (float(proveedor.lista_calificaciones[1])+float(request.POST["Tiempo"]))/2
+        if request.POST["Calidad"]:
+            proveedor.lista_calificaciones[2] = (float(proveedor.lista_calificaciones[2])+float(request.POST["Calidad"]))/2
+        proveedor.save()
+        proveedores = Proveedor.objects.all()
+        return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+    else:
+        clases = str(proveedor.clases)
+        lista_contactos = []
+        for i in proveedor.lista_contactos:
+            lista_contactos_aux = []
+            contacto_split = i.split(",")
+            lista_contactos_aux.append(contacto_split[0][2:-1])
+            lista_contactos_aux.append(contacto_split[1][2:-1])
+            lista_contactos_aux.append(contacto_split[2][2:-2])
+            lista_contactos.append(lista_contactos_aux)
+        return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Clases":clases, "lista_contactos":lista_contactos})
+
+#Eliminar proveedor
+def eliminar_proveedor(request, rut):
+    proveedor = Proveedor.objects.get(rut=rut)
+    proveedor.delete()
+    proveedores = Proveedor.objects.all()
+    return render(request, "proveedores/proveedores.html", {"proveedores":proveedores})

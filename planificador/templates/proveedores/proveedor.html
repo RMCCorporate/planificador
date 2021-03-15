@@ -13,9 +13,14 @@
         <div class="card-body">
           <h5 class="card-title">Información general</h5>
           <p class="card-text">
-            Razón Social: {{Proveedor.razon_social}}
+            Razón Social: {{razon_social}}
               <br>
-              Clases: {{Proveedor.clases}}
+              Clases:
+              <br>
+              {% for fila in Proveedor.clases %}
+                {{fila}}
+                <br>
+              {% endfor %}
               <br>
               Sub-Clases: {{Proveedor.subclases}}
               <br>
@@ -24,18 +29,16 @@
     </div>
     <div class="card text-center">
         <div class="card-body">
-          <h5 class="card-title">Calificación general {{calificacion_promedio}}</h5>
+          <h5 class="card-title">Calificación general {{promedio}}</h5>
           <p class="card-text">
-            {% for fila in lista_calificaciones %}
-                {{fila.0}}: {{fila.1}}
+            {% for fila in Proveedor.lista_nombre_calificaciones %}
+                {{fila}}
                 <br>
-            {% endfor %}  
-            Razón Social: {{Proveedor.razon_social}}
-              <br>
-              Clases: {{Proveedor.clases}}
-              <br>
-              Sub-Clases: {{Proveedor.subclases}}
-              <br>
+            {% endfor %}
+            {% for fila in Proveedor.lista_calificaciones %}
+                {{fila}}
+                <br>
+            {% endfor %}   
           </p>
         </div>
     </div>
