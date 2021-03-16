@@ -2,18 +2,18 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 class Precio(models.Model):
-    fecha_actualizacion = models.DateField(primary_key=True)
+    fecha_creacion = models.DateTimeField(primary_key=True, auto_now_add=True)
     valor = models.FloatField()
     tipo_cambio = models.CharField(max_length=128, default="CLP")
+    nombre_proveedor = models.CharField(max_length=128, null=True)
+    comentarios = models.TextField(null=True)
 
 class Producto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     nombre = models.CharField(max_length=128)
     lista_precios = models.ManyToManyField(Precio)
-    fecha_actualizacion = models.DateField(null=True)
-    fechas_actualizaciones_historicas = ArrayField(models.CharField(max_length=128, null=True), default=list)
+    fecha_actualizacion = models.DateTimeField(auto_now_add=True, null=True)
     unidad = models.CharField(max_length=128, null=True)
-    ultimo_proveedor = models.CharField(max_length=128, null=True)
 
     def __str__(self):
         return self.nombre
@@ -32,7 +32,6 @@ class Clase(models.Model):
     def __str__(self):
         return self.nombre
 
-
 class Proyecto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(
@@ -42,12 +41,12 @@ class Proyecto(models.Model):
         )
     nombre = models.CharField(max_length=128)
     precio_final = models.FloatField(null=True)
-    centro_costos = models.CharField(max_length=128, null=True)
     fecha_creacion = models.DateField(auto_now_add=True)
     fecha_inicio = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_final = models.DateField(auto_now=False, auto_now_add=False, null=True)
-    administrador_contrato = models.CharField(max_length=128, null=True)
     creador = models.CharField(max_length=128)
+    tipo_cambio = models.CharField(max_length=128, null=True)
+    valor_cambio = models.FloatField(null=True)
 
     def __str__(self):
         return self.nombre
@@ -71,7 +70,7 @@ class Proveedor(models.Model):
     rut = models.CharField(primary_key=True, max_length=128)
     nombre = models.CharField(max_length=128)
     razon_social = models.CharField(max_length=128, null=True)
-    clases_asociadas = models.ManyToManyField(Clase)
+    clases_asociadas = models.ManyToManyField(SubClase)
     calificaciones = models.ManyToManyField(
         Calificacion,
         through='Calificacion_Proveedor',
@@ -107,4 +106,3 @@ class Producto_proyecto(models.Model):
     )
     fecha_uso = models.DateField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
-    tipo_cambio = models.CharField(max_length=128, null=True)

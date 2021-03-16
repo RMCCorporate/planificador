@@ -13,11 +13,11 @@
         <div class="card-body">
           <h5 class="card-title">Información general</h5>
           <p class="card-text">
-                ID: {{Producto.id}}
+              ID: {{Producto.id}}
               <br>
-              Clase: {{Producto.clase}}
+              Clase: {{Clase}}
               <br>
-              Sub-Clase: {{Producto.subclase}}
+              Sub-Clase: {{Subclase}}
               <br>
               Unidad: {{Producto.unidad}}
           </p>
@@ -27,7 +27,7 @@
           <div class="card-header" id="headingTwo">
             <h2 class="mb-0">
               <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                PROVEEDORES
+                Historial de precios
               </button>
             </h2>
           </div>
@@ -36,19 +36,21 @@
                 <table class="table">
                     <thead class="thead-light">
                         <tr>
-                            <th scope="col">Proveedor</th>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Precio</th>
+                            <th scope="col">Fecha creación</th>
+                            <th scope="col">Valor</th>
                             <th scope="col">Moneda</th>
+                            <th scope="col">Proveedor</th>
+                            <th scope="col">Comentarios</th>
                         </tr>
                     </thead>
                     <tbody>
-                      {% for fila in Lista_precios %}
+                      {% for fila in lista_precios %}
                     <tr>
-              <th>{{fila.2}}</a></th>
-              <th> {{fila.1}}</th>
-              <th>{{fila.0}}</th>
-              <th>{{fila.3}}</th>
+                  <th>{{fila.fecha_creacion}}</a></th>
+                  <th> {{fila.valor}}</th>
+                  <th>{{fila.tipo_cambio}}</th>
+                  <th>{{fila.nombre_proveedor}}</th>
+                  <th>{{fila.comentarios}}</th>
 
                       {% endfor %}  
             </tr>

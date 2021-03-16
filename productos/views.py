@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Producto
+from planificador.models import Producto, Clase, SubClase, Precio
+from datetime import date
 
 #Mostrar productos
 def productos(request):
@@ -9,58 +10,54 @@ def productos(request):
 
 #Agregar producto
 def agregar_producto(request):
-    return render(request, "productos/crear_producto.html")
+    clases = Clase.objects.all()
+    subclases = SubClase.objects.all()
+    return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases})
 
 def recibir_datos_producto(request):
     id = request.GET["id"]
     nombre = request.GET["nombre"]
-    clase = request.GET["clase"]
-    sub_clase = request.GET["sub_clase"]
+    sub_clase = request.GET["subclase"]
     unidad = request.GET["unidad"]
-    nuevo_producto = Producto(id=id, nombre=nombre, clase=clase, subclase=sub_clase, unidad=unidad)
+    nuevo_producto = Producto(id=id, nombre=nombre, unidad=unidad)
     nuevo_producto.save()
+    subclase = SubClase.objects.get(nombre=sub_clase)
+    subclase.productos.add(nuevo_producto)
     productos = Producto.objects.all()
     return render(request, "productos/productos.html", {"Productos":productos})
    
 #Vista producto
 def producto(request, id):
     producto = Producto.objects.get(id=id)
-    print(producto.lista_precios)
-    print(producto.fechas_actualizaciones_historicas)
-    print(producto.lista_proveedores)
-    print(producto.lista_tipo_cambio)
-    lista_informacion_precios = []
-    aux_informacion_precios = []
-    for i,n in enumerate(producto.lista_precios):
-        print(n)
-        aux_informacion_precios = [n, producto.fechas_actualizaciones_historicas[i], producto.lista_proveedores[i], producto.lista_tipo_cambio[i]]
-        lista_informacion_precios.append(aux_informacion_precios)
-        print(lista_informacion_precios)
-    return render(request, "productos/producto.html", {"Producto":producto, "Lista_precios":lista_informacion_precios})
+    lista_precios = producto.lista_precios.all()
+    sub_clase = producto.subclase_set.all()[0]
+    clase = sub_clase.clase_set.all()[0]
+    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":lista_precios, "Subclase":sub_clase, "Clase":clase})
 
 #Edición producto
 def mostrar_edicion_producto(request, id):
     producto = Producto.objects.get(id=id)
     if request.method == "POST":
+        Precios = Precio.objects.all()
+        for i in Precios:
+            i.delete()
         producto.id = request.POST["id"]
         producto.nombre = request.POST["nombre"]
-        producto.clase = request.POST["clase"]
-        producto.sub_clase = request.POST["subclase"]
         producto.unidad = request.POST["unidad"]
-        nuevo_precio = request.POST["precio"]
-        fecha_actualizacion = request.POST["fecha"]
+        #Precios
+        precio = request.POST["precio"]
         moneda = request.POST["moneda"]
-        producto.ultimo_proveedor = request.POST["proveedor"]
-        #Se añaden los datos a las listas
-        producto.lista_precios.append(nuevo_precio)
-        producto.fechas_actualizaciones_historicas.append(fecha_actualizacion)
-        producto.lista_proveedores.append(producto.ultimo_proveedor)
-        producto.lista_tipo_cambio.append(moneda)
+        proveedor = request.POST["proveedor"]
+        comentario = request.POST["comentario"]
+        nuevo_precio = Precio(valor=precio, tipo_cambio=moneda, nombre_proveedor=proveedor, comentarios=comentario)
+        nuevo_precio.save()
         producto.save()
+        producto.lista_precios.add(nuevo_precio)
         productos = Producto.objects.all()
         return render(request, "productos/productos.html", {"Productos":productos})
     else:
-        return render(request, "productos/editar_producto.html", {"Producto":producto})
+        subclases = SubClase.objects.all()
+        return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases})
 
 #Eliminar producto
 def eliminar_producto(request, id):

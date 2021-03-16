@@ -1,13 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Proveedor
-"""
+
 #Mostrar proveedores
 def proveedores(request):
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
-
+"""
 #Agregar proveedor
 def agregar_proveedor(request):
     return render(request, "proveedores/crear_proveedor.html")

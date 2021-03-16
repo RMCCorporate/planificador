@@ -9,19 +9,14 @@
                             <tr>
                                 <th scope="col">Código</th>
                                 <th scope="col">Nombre</th>
-                                <th scope="col">Clase</th>
-                                <th scope="col">Sub-Clase</th>
                             </tr>
                         </thead>
                         <tbody>       
-                                {% for fila in Productos %}
-                                <tr>
-                        <th><a href="{% url 'producto' fila.id %}">{{fila.id}}</a></th>
-                        <th> {{fila.nombre}}</th>
-                        <th>{{fila.clase}}</th>
-                        <th>{{fila.subclase}}</th>
-
-                                {% endfor %}
+                        {% for fila in Productos %}
+                        <tr>
+                            <th><a href="{% url 'producto' fila.id %}">{{fila.id}}</a></th>
+                            <th> {{fila.nombre}}</th>
+                        {% endfor %}
                         </tr>
                         
                           </tbody>
