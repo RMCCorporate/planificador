@@ -2,9 +2,10 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 class Precio(models.Model):
-    fecha_creacion = models.DateTimeField(primary_key=True, auto_now_add=True)
+    id = models.CharField(max_length=128, primary_key=True)
     valor = models.FloatField()
     tipo_cambio = models.CharField(max_length=128, default="CLP")
+    fecha = models.DateTimeField(auto_now_add=True, null=True)
     nombre_proveedor = models.CharField(max_length=128, null=True)
     comentarios = models.TextField(null=True)
 

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Producto, Proyecto, Proveedor, Producto_proyecto, Precio, SubClase, Clase, Contacto, Calificacion, Calificacion_Proveedor
+from .models import Producto, Proyecto, Proveedor, Producto_proyecto,  SubClase, Clase, Contacto, Calificacion, Calificacion_Proveedor, Precio
 
 admin.site.register(Precio)
 admin.site.register(Proyecto)

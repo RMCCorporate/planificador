@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Producto, Clase, SubClase, Precio
-from datetime import date
+from datetime import date, datetime
 
 #Mostrar productos
 def productos(request):
@@ -38,9 +38,6 @@ def producto(request, id):
 def mostrar_edicion_producto(request, id):
     producto = Producto.objects.get(id=id)
     if request.method == "POST":
-        Precios = Precio.objects.all()
-        for i in Precios:
-            i.delete()
         producto.id = request.POST["id"]
         producto.nombre = request.POST["nombre"]
         producto.unidad = request.POST["unidad"]
@@ -49,7 +46,7 @@ def mostrar_edicion_producto(request, id):
         moneda = request.POST["moneda"]
         proveedor = request.POST["proveedor"]
         comentario = request.POST["comentario"]
-        nuevo_precio = Precio(valor=precio, tipo_cambio=moneda, nombre_proveedor=proveedor, comentarios=comentario)
+        nuevo_precio = Precio(id=producto.id, valor=precio, tipo_cambio=moneda, nombre_proveedor=proveedor, comentarios=comentario)
         nuevo_precio.save()
         producto.save()
         producto.lista_precios.add(nuevo_precio)
