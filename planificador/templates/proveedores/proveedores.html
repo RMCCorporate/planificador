@@ -9,8 +9,7 @@
                             <tr>
                                 <th scope="col">RUT</th>
                                 <th scope="col">Nombre</th>
-                                <th scope="col">Clases</th>
-                                <th scope="col">Sub-Clases</th>
+                               
                             </tr>
                         </thead>
                         <tbody>       
@@ -18,9 +17,6 @@
                         <tr>
                         <th><a href="{% url 'proveedor' fila.rut %}">{{fila.rut}}</a></th>
                         <th> {{fila.nombre}}</th>
-                        <th>{{fila.clases}}</th>
-                        <th>{{fila.subclases}}</th>
-
                                 {% endfor %}
                         </tr>
                         

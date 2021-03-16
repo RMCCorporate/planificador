@@ -1,42 +1,36 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Proveedor
+from planificador.models import Proveedor, SubClase
 
 #Mostrar proveedores
 def proveedores(request):
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
-"""
+
 #Agregar proveedor
 def agregar_proveedor(request):
-    return render(request, "proveedores/crear_proveedor.html")
+    subclases = SubClase.objects.all()
+    return render(request, "proveedores/crear_proveedor.html", {"Subclases":subclases})
 
 def recibir_datos_proveedor(request):
     rut = request.GET["rut"]
     nombre = request.GET["nombre"]
-    clase = request.GET["clase"]
-    lista_clase = clase.split(",")
-    sub_clase = request.GET["sub_clase"]
-    lista_subclase = sub_clase.split(",")
+    subclase = request.GET["subclasesname1"]
+    print("aa")
+    print(subclase)
+    print("bbb")
     #Contactos
     nombre_contacto = request.GET["nombre_contacto"]
     correo = request.GET["correo"]
     telefono = request.GET["telefono"]
-    nuevo_contacto = []
-    nuevo_contacto.append(nombre_contacto)
-    nuevo_contacto.append(correo)
-    nuevo_contacto.append(telefono)
-    #Lista calificaciones
-    nombre_calificaciones = ["Precio","Tiempo Entrega","Calrutad"]
-    calificaciones = [0,0,0]
     #Agregar proveedor
-    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, clases=lista_clase, subclases=lista_subclase, lista_nombre_calificaciones=nombre_calificaciones, lista_calificaciones=calificaciones)
-    nuevo_proveedor.lista_contactos.append(nuevo_contacto)
-    nuevo_proveedor.save()
+    #nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, clases=lista_clase, subclases=lista_subclase, lista_nombre_calificaciones=nombre_calificaciones, lista_calificaciones=calificaciones)
+    #nuevo_proveedor.lista_contactos.append(nuevo_contacto)
+    #nuevo_proveedor.save()
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
-
+"""
 #Vista proveedor
 def proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)

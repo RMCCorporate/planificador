@@ -71,7 +71,7 @@ class Proveedor(models.Model):
     rut = models.CharField(primary_key=True, max_length=128)
     nombre = models.CharField(max_length=128)
     razon_social = models.CharField(max_length=128, null=True)
-    clases_asociadas = models.ManyToManyField(SubClase)
+    subclases_asociadas = models.ManyToManyField(SubClase)
     calificaciones = models.ManyToManyField(
         Calificacion,
         through='Calificacion_Proveedor',
