@@ -7,11 +7,15 @@
     <div class="card text-center">
         <div class="card-header">
             {{Proveedor.nombre}}
+            <br>
+            <a href="{% url 'mostrar_edicion_proveedor' Proveedor.rut %}" class="btn btn-primary">Editar</a>
+            <br>
+            <a href="{% url 'eliminar_proveedor' Proveedor.rut %}" class="btn btn-primary">Eliminar</a>
         </div>
         <div class="card-body">
           <h5 class="card-title">Información general</h5>
           <p class="card-text">
-            Razón Social: {{razon_social}}
+            Razón Social: {{Proveedor.razon_social}}
               <br>
               Sub-Clases:
               {% for fila in subclase %}

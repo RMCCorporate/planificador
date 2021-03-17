@@ -7,7 +7,9 @@
     <div class="card text-center">
         <div class="card-header">
             {{Producto.nombre}}
+            <br>
             <a href="{% url 'mostrar_edicion_producto' Producto.id %}" class="btn btn-primary">Editar</a>
+            <br>
             <a href="{% url 'eliminar_producto' Producto.id %}" class="btn btn-primary">Eliminar</a>
         </div>
         <div class="card-body">

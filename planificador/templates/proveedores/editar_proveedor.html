@@ -4,48 +4,7 @@
 <h1> {{Proveedor.nombre}}</h1>
     <br>
     <form action="{{Proveedor.rut}}" method="POST">{% csrf_token %}
-        <div class="form-row">
-            <div class="form-group col-md-2">
-            <label for="rut">RUT Proveedor</label>
-            <input type="text" class="form-control" name="rut" id="rut" value={{Proveedor.rut}}>
-            </div>
-            <div class="form-group col-md-2">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" value={{Proveedor.nombre}}>
-            </div>
-            <div class="form-group col-md-2">
-                <label for="nombre">Razón Social</label>
-                <input type="text" class="form-control" id="razon_social" name="razon_social" value={{Proveedor.razon_social}}>
-                </div>
-        </div>
-        <div class="card">
-            <div class="card-header" id="headingTwo">
-              <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                  CLASES
-                </button>
-              </h2>
-            </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-            <div class="card-body">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Nombre Clase</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for fila in Proveedor.clases %}
-                    <tr>
-                    <th>{{fila}}</th>
-                      {% endfor %}  
-                    </tr>
-                    <th><input type="text" class="form-control" name="clases" id="clases"></th>
-                    </tbody>
-            </table>
-                
-            </div>
-          </div>
+        
           <div class="card">
             <div class="card-header" id="headingThree">
               <h2 class="mb-0">
@@ -54,23 +13,54 @@
                 </button>
               </h2>
             </div>
-        <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
             <div class="card-body">
                 <table class="table">
                     <thead class="thead-light">
                         <tr>
-                            <th scope="col">Nombre Subclase</th>
+                          <th scope="col">Nombre Subclase</th>
                         </tr>
                     </thead>
                     <tbody>
-                      {% for fila in Proveedor.subclases %}
+                      {% for fila in Subclases %}
                     <tr>
-                    <th>{{fila}}</th>
+                    <th>{{fila.nombre}}</th>
                       {% endfor %}  
                     </tr>
-                    <th><input type="text" class="form-control" name="subclases" id="subclases"></th>
                     </tbody>
             </table>   
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+              {{nombre_1}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                {% for fila in clase1 %}
+                  <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
+                  <br> 
+                {% endfor %}
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+              {{nombre_2}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                {% for fila in clase2 %}
+                  <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
+                  <br> 
+                {% endfor %}
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+              {{nombre_3}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+                {% for fila in clase3 %}
+                  <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
+                  <br> 
+                {% endfor %}
             </div>
           </div>
           <div class="card">
@@ -81,7 +71,7 @@
                 </button>
               </h2>
             </div>
-        <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#accordionExample">
+       
             <div class="card-body">
                 <table class="table">
                     <thead class="thead-light">
@@ -91,15 +81,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                      {% for fila in Proveedor.lista_nombre_calificaciones %}
+                      {% for fila in Calificaciones %}
                     <tr>
-                    <th>{{fila}}</th>
-                    <th><input type="text" class="form-control" name={{fila}} id={{fila}}></th>
+                    <th>{{fila.calificacion}}</th>
+                    <th><input type="text" class="form-control" name={{fila.calificacion}} id={{fila.calificacion}} value={{fila.nota}}></th>
                       {% endfor %}  
                     </tr>
-                    
-                    </tbody>
-                    
+                    </tbody>  
             </table>   
             </div>
           </div>
@@ -111,7 +99,6 @@
                 </button>
               </h2>
             </div>
-        <div id="collapseFive" class="collapse" aria-labelledby="headingFive" data-parent="#accordionExample">
             <div class="card-body">
                 <table class="table">
                     <thead class="thead-light">
@@ -122,28 +109,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                      {% for fila in lista_contactos %}
+                      {% for fila in Contactos %}
                     <tr>
-                    <th>{{fila.0}}</th>
-                    <th>{{fila.1}}</th>
-                    <th>{{fila.2}}</th>
+                    <th>{{fila.nombre}}</th>
+                    <th>{{fila.correo}}</th>
+                    <th>{{fila.telefono}}</th>
                       {% endfor %}  
                     </tr>
                     <tr>
-                    <th><input type="text" class="form-control" name="nombre1" id="nombre1"></th>
-                    <th><input type="text" class="form-control" name="correo1" id="correo1"></th>
-                    <th><input type="text" class="form-control" name="telefono1" id="telefono1"></th>
+                    <th><input type="text" class="form-control" name="contacto" id="contacto"></th>
+                    <th><input type="text" class="form-control" name="correo" id="correo"></th>
+                    <th><input type="text" class="form-control" name="telefono" id="telefono"></th>
                 </tr>
-                <tr>
-                    <th><input type="text" class="form-control" name="nombre2" id="nombre2"></th>
-                    <th><input type="text" class="form-control" name="correo2" id="correo2"></th>
-                    <th><input type="text" class="form-control" name="telefono2" id="telefono2"></th>
-                </tr>
-                <tr>
-                    <th><input type="text" class="form-control" name="nombre3" id="nombre3"></th>
-                    <th><input type="text" class="form-control" name="correo3" id="correo3"></th>
-                    <th><input type="text" class="form-control" name="telefono3" id="telefono3"></th>
-                </tr>
+                
                     </tbody>
                     
             </table>   

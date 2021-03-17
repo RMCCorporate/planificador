@@ -2,14 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
 
-#Mostrar proveedores
-def proveedores(request):
-    proveedores = Proveedor.objects.all()
-    return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
-
-
-#Agregar proveedor
-def agregar_proveedor(request):
+#FUNCIONES
+def mostrar_clases():
     clases = Clase.objects.all()
     subclases = []
     nombres = []
@@ -22,11 +16,22 @@ def agregar_proveedor(request):
     #CAMBIAR CUANDO EXISTAN MÁS CLASES
     clase1 = subclases[0]
     clase2 = subclases[1]
-    #clase3 = subclases[2]
-    return render(request, "proveedores/crear_proveedor.html", {"clase1":clase1, "clase2":clase2, "nombre_1":nombres[0], "nombre_2":nombres[1]})#"clase3":clase3,  "nombre_3":nombres[2]})
+    clase3 = subclases[2]
+    return [nombres, clase1, clase2, clase3]
+
+#Mostrar proveedores
+def proveedores(request):
+    proveedores = Proveedor.objects.all()
+    return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+
+#Agregar proveedor
+def agregar_proveedor(request):
+    clases = Clase.objects.all()
+    lista_clases = mostrar_clases()
+    return render(request, "proveedores/crear_proveedor.html", {"clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3],  "nombre_3":lista_clases[0][2]})
 
 def recibir_datos_proveedor(request):
-    rut = request.GET["rut"]
+    rut = str(request.GET["rut"])
     nombre = request.GET["nombre"]
     razon_social = request.GET["razon_social"]
     subclase = request.GET.getlist("subclase")
@@ -43,11 +48,15 @@ def recibir_datos_proveedor(request):
     for i in subclase:
         subclase = SubClase.objects.get(nombre=i)
         nuevo_proveedor.subclases_asociadas.add(subclase)
-    precio_proveedor = Calificacion_Proveedor(rut, "Precio", 0)
+    print(rut)
+    precio = Calificacion.objects.get(nombre="Precio")
+    precio_proveedor = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=precio, nota=0)
     precio_proveedor.save()
-    tiempo_respuesta_proveedor = Calificacion_Proveedor(rut, "Tiempo entrega", 0)
+    tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
+    tiempo_respuesta_proveedor = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=tiempo_entrega, nota=0)
     tiempo_respuesta_proveedor.save()
-    calidad_proveedor = Calificacion_Proveedor(rut, "Calidad", 0)
+    calidad = Calificacion.objects.get(nombre="Calidad")
+    calidad_proveedor = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calidad, nota=0)
     calidad_proveedor.save()
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
@@ -55,10 +64,6 @@ def recibir_datos_proveedor(request):
 #Vista proveedor
 def proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
-    if not proveedor.razon_social:
-        razon_social = "No ingresado"
-    else:
-        razon_social = proveedor.razon_social
     subclase = proveedor.subclases_asociadas.all()
     contactos = proveedor.contactos_asociados.all()
     calificaciones = Calificacion_Proveedor.objects.filter(proveedor=rut)
@@ -69,70 +74,45 @@ def proveedor(request, rut):
     promedio = suma_total/len(calificaciones)
     return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":promedio})
 
-"""
+
 #Edición proveedor
 def mostrar_edicion_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     if request.method == "POST":
-        proveedor.rut = request.POST["rut"]
-        proveedor.nombre = request.POST["nombre"]
-        clases = request.POST["clases"]
-        sub_clase = request.POST["subclases"]
-        proveedor.razon_social = request.POST["razon_social"]
-        #Se añaden los datos a las listas
-        lista_aux_contactos = []
-        if clases:
-            print(clases)
-            lista_clase = clases.split(",")
-            for i in lista_clase:
-                print(i)
-                proveedor.clases.append(i)
-        if sub_clase:
-            print(sub_clase)
-            lista_subclase = sub_clase.split(",")
-            for i in lista_subclase:
-                print(i)
-                proveedor.subclases.append(i)
-        if request.POST["nombre1"]:
-            lista_aux_contactos = []
-            lista_aux_contactos.append(request.POST["nombre1"])
-            lista_aux_contactos.append(request.POST["correo1"])
-            lista_aux_contactos.append(request.POST["telefono1"])
-            proveedor.lista_contactos.append(lista_aux_contactos)
-        if request.POST["nombre2"]:
-            lista_aux_contactos = []
-            lista_aux_contactos.append(request.POST["nombre2"])
-            lista_aux_contactos.append(request.POST["correo2"])
-            lista_aux_contactos.append(request.POST["telefono2"])
-            proveedor.lista_contactos.append(lista_aux_contactos)
-        if request.POST["nombre3"]:
-            lista_aux_contactos = []
-            lista_aux_contactos.append(request.POST["nombre3"])
-            lista_aux_contactos.append(request.POST["correo3"])
-            lista_aux_contactos.append(request.POST["telefono3"])
-            proveedor.lista_contactos.append(lista_aux_contactos)
-        if request.POST["Precio"]:
-            print(proveedor.lista_calificaciones[0])
-            proveedor.lista_calificaciones[0] = (float(proveedor.lista_calificaciones[0])+float(request.POST["Precio"]))/2
-            print(proveedor.lista_calificaciones[0])
-        if request.POST["Tiempo"]:
-            proveedor.lista_calificaciones[1] = (float(proveedor.lista_calificaciones[1])+float(request.POST["Tiempo"]))/2
-        if request.POST["Calidad"]:
-            proveedor.lista_calificaciones[2] = (float(proveedor.lista_calificaciones[2])+float(request.POST["Calidad"]))/2
+        subclase = request.POST.getlist("subclase")
+        #CONTACTO
+        contacto = str(request.POST["contacto"])
+        correo = request.POST["correo"]
+        telefono = request.POST["telefono"]
+        if correo != "":
+            nuevo_contacto = Contacto(correo=correo, telefono=telefono, nombre=contacto)
+            nuevo_contacto.save()
+        #CALIFICACIONES
+        calificaciones_precio = Calificacion_Proveedor.objects.filter(proveedor=rut, calificacion="Precio")[0]
+        calificaciones_precio.nota = (calificaciones_precio.nota+float(request.POST["Precio"]))/2
+        calificaciones_precio.save()
+        calificaciones_tiempo_entrega = Calificacion_Proveedor.objects.filter(proveedor=rut, calificacion="Tiempo entrega")[0]
+        calificaciones_tiempo_entrega.nota = (calificaciones_tiempo_entrega.nota+float(request.POST["Tiempo"]))/2
+        calificaciones_tiempo_entrega.save()
+        calificaciones_calidad = Calificacion_Proveedor.objects.filter(proveedor=rut, calificacion="Calidad")[0]
+        calificaciones_calidad.nota = (calificaciones_calidad.nota+float(request.POST["Calidad"]))/2
+        calificaciones_calidad.save()
+        #GUARDAMOS NUEVO CONTACTO
         proveedor.save()
+        if subclase != []:
+            for i in subclase:
+                subclase_agregar = SubClase.objects.get(nombre=i)
+                proveedor.subclases_asociadas.add(subclase_agregar)
+        if correo != "":
+            proveedor.contactos_asociados.add(nuevo_contacto)
         proveedores = Proveedor.objects.all()
         return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
     else:
-        clases = str(proveedor.clases)
-        lista_contactos = []
-        for i in proveedor.lista_contactos:
-            lista_contactos_aux = []
-            contacto_split = i.split(",")
-            lista_contactos_aux.append(contacto_split[0][2:-1])
-            lista_contactos_aux.append(contacto_split[1][2:-1])
-            lista_contactos_aux.append(contacto_split[2][2:-2])
-            lista_contactos.append(lista_contactos_aux)
-        return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Clases":clases, "lista_contactos":lista_contactos})
+        subclase = proveedor.subclases_asociadas.all()
+        contactos = proveedor.contactos_asociados.all()
+        calificaciones = Calificacion_Proveedor.objects.filter(proveedor=rut)
+        lista_clases = mostrar_clases()
+        return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Subclases":subclase, "Contactos":contactos, "Calificaciones":calificaciones, "clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3], "nombre_3":lista_clases[0][2]})
 
 #Eliminar proveedor
 def eliminar_proveedor(request, rut):
@@ -140,4 +120,4 @@ def eliminar_proveedor(request, rut):
     proveedor.delete()
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"proveedores":proveedores})
-"""
+""
