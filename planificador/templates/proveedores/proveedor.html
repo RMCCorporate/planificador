@@ -17,27 +17,26 @@
               {% for fila in subclase %}
                 {{fila.nombre}}
                 <br>
-            {% endfor %}
+              {% endfor %}
              
               <br>
           </p>
         </div>
     </div>
+    
+
     <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title">Calificación general {{promedio}}</h5>
           <p class="card-text">
-            {% for fila in Proveedor.lista_nombre_calificaciones %}
-                {{fila}}
+            {% for fila in calificaciones %}
+                {{fila.calificacion}}: {{fila.nota}}
                 <br>
             {% endfor %}
-            {% for fila in Proveedor.lista_calificaciones %}
-                {{fila}}
-                <br>
-            {% endfor %}   
           </p>
         </div>
     </div>
+  
         <div class="card">
           <div class="card-header" id="headingTwo">
             <h2 class="mb-0">
@@ -46,7 +45,6 @@
               </button>
             </h2>
           </div>
-          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
             <div class="card-body">
                 <table class="table">
                     <thead class="thead-light">
@@ -57,11 +55,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                      {% for fila in lista_contactos %}
+                      {% for fila in contactos %}
                     <tr>
-                    <th>{{fila.0}}</th>
-                    <th> {{fila.1}}</th>
-                    <th>{{fila.2}}</th>
+                    <th>{{fila.nombre}}</th>
+                    <th> {{fila.correo}}</th>
+                    <th>{{fila.telefono}}</th>
                       {% endfor %}  
             </tr>
                     </tbody>

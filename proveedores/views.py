@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Proveedor, Clase, SubClase, Contacto
+from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
 
 #Mostrar proveedores
 def proveedores(request):
@@ -43,6 +43,12 @@ def recibir_datos_proveedor(request):
     for i in subclase:
         subclase = SubClase.objects.get(nombre=i)
         nuevo_proveedor.subclases_asociadas.add(subclase)
+    precio_proveedor = Calificacion_Proveedor(rut, "Precio", 0)
+    precio_proveedor.save()
+    tiempo_respuesta_proveedor = Calificacion_Proveedor(rut, "Tiempo entrega", 0)
+    tiempo_respuesta_proveedor.save()
+    calidad_proveedor = Calificacion_Proveedor(rut, "Calidad", 0)
+    calidad_proveedor.save()
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
@@ -55,9 +61,12 @@ def proveedor(request, rut):
         razon_social = proveedor.razon_social
     subclase = proveedor.subclases_asociadas.all()
     contactos = proveedor.contactos_asociados.all()
-    calificaciones = proveedor.calificaciones.all()
+    calificaciones = Calificacion_Proveedor.objects.filter(proveedor=rut)
     promedio = 0
-    
+    suma_total = 0
+    for i in calificaciones:
+        suma_total += i.nota
+    promedio = suma_total/len(calificaciones)
     return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":promedio})
 
 """
