@@ -6,6 +6,7 @@ from .models import Producto, Proyecto, Proveedor, Producto_proyecto,  SubClase,
 admin.site.register(Precio)
 admin.site.register(Proyecto)
 admin.site.register(Producto)
+admin.site.register(Proveedor)
 admin.site.register(SubClase)
 admin.site.register(Producto_proyecto)
 admin.site.register(Clase)

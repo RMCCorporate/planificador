@@ -19,25 +19,39 @@
         </div>
     </div>
       </div>
-
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          Sub-clases
+          {{nombre_1}}
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            {% for fila in Subclases %}
-                <input type="checkbox" value="{{fila.nombre}}" class="chkvalues"> {{fila.nombre}}<br>
+            {% for fila in clase1 %}
+              <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
+              <br> 
             {% endfor %}
         </div>
       </div>
-      <select class="selectpicker" data-live-search="true">
-        <option data-tokens="ketchup mustard">Hot Dog, Fries and a Soda</option>
-        <option data-tokens="mustard">Burger, Shake and a Smile</option>
-        <option data-tokens="frosting">Sugar, Spice and all things nice</option>
-      </select>
-      
-      
-      
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+          {{nombre_2}}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+            {% for fila in clase2 %}
+              <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
+              <br> 
+            {% endfor %}
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
+          {{nombre_3}}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
+            {% for fila in clase3 %}
+              <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
+              <br> 
+            {% endfor %}
+        </div>
+      </div>
     <h3>CONTACTOS</h3>
     <div class="form-row">
         <div class="form-group col-md-2">

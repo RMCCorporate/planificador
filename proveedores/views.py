@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Proveedor, SubClase
+from planificador.models import Proveedor, Clase, SubClase, Contacto
 
 #Mostrar proveedores
 def proveedores(request):
@@ -10,27 +10,42 @@ def proveedores(request):
 
 #Agregar proveedor
 def agregar_proveedor(request):
-    subclases = SubClase.objects.all()
-    return render(request, "proveedores/crear_proveedor.html", {"Subclases":subclases})
+    clases = Clase.objects.all()
+    subclases = []
+    nombres = []
+    for clase in clases:
+        subclases_aux = []
+        nombres.append(clase.nombre)
+        for subclase in clase.subclases.all():
+            subclases_aux.append(subclase)
+        subclases.append(subclases_aux)
+    #CAMBIAR CUANDO EXISTAN MÁS CLASES
+    clase1 = subclases[0]
+    clase2 = subclases[1]
+    #clase3 = subclases[2]
+    return render(request, "proveedores/crear_proveedor.html", {"clase1":clase1, "clase2":clase2, "nombre_1":nombres[0], "nombre_2":nombres[1]})#"clase3":clase3,  "nombre_3":nombres[2]})
 
 def recibir_datos_proveedor(request):
     rut = request.GET["rut"]
     nombre = request.GET["nombre"]
-    subclase = request.GET["subclasesname1"]
-    print("aa")
-    print(subclase)
-    print("bbb")
+    razon_social = request.GET["razon_social"]
+    subclase = request.GET.getlist("subclase")
     #Contactos
     nombre_contacto = request.GET["nombre_contacto"]
     correo = request.GET["correo"]
     telefono = request.GET["telefono"]
+    nuevo_contacto = Contacto(correo=correo, telefono=telefono, nombre=nombre_contacto)
+    nuevo_contacto.save()
     #Agregar proveedor
-    #nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, clases=lista_clase, subclases=lista_subclase, lista_nombre_calificaciones=nombre_calificaciones, lista_calificaciones=calificaciones)
-    #nuevo_proveedor.lista_contactos.append(nuevo_contacto)
-    #nuevo_proveedor.save()
+    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, razon_social=razon_social)
+    nuevo_proveedor.save()
+    nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
+    for i in subclase:
+        subclase = SubClase.objects.get(nombre=i)
+        nuevo_proveedor.subclases_asociadas.add(subclase)
     proveedores = Proveedor.objects.all()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
-"""
+
 #Vista proveedor
 def proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
@@ -38,21 +53,14 @@ def proveedor(request, rut):
         razon_social = "No ingresado"
     else:
         razon_social = proveedor.razon_social
-    calificacion_promedio = 0
-    for calificacion in proveedor.lista_calificaciones:
-        calificacion_promedio += calificacion
-    calificacion_promedio = calificacion_promedio/len(proveedor.lista_calificaciones)
-    lista_contactos = []
-    for i in proveedor.lista_contactos:
-        lista_contactos_aux = []
-        contacto_split = i.split(",")
-        lista_contactos_aux.append(contacto_split[0][2:-1])
-        lista_contactos_aux.append(contacto_split[1][2:-1])
-        lista_contactos_aux.append(contacto_split[2][2:-2])
-        lista_contactos.append(lista_contactos_aux)
-    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "razon_social":razon_social, "promedio":calificacion_promedio, "lista_contactos":lista_contactos})
+    subclase = proveedor.subclases_asociadas.all()
+    contactos = proveedor.contactos_asociados.all()
+    calificaciones = proveedor.calificaciones.all()
+    promedio = 0
+    
+    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":promedio})
 
-
+"""
 #Edición proveedor
 def mostrar_edicion_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
