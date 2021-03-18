@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %} PROVEEDOR {% endblock%}
+{% block content %}
+
+
+<form action="lista_proveedores" method="GET">
+    <h1>ELECCIÓN CANTIDADES DE PRODUCTOS</h1>
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Nombre producto</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Unidad</th>
+                <th scope="col">Cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in Productos %}
+            <tr>
+              <th>{{fila.0.nombre}}
+                <input type="hidden" name="id_producto" value="{{fila.0.nombre}}">
+              </th>
+              <th>    
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Elegir proveedor
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        {% for i in fila.1 %}
+                          <input type="checkbox" name="proveedor{{forloop.parentloop.counter0}}" value="{{i}}">{{i}}
+                          {% if forloop.last %}
+
+                        <input type="hidden" name="numero_proveedores{{forloop.parentloop.counter0}}" value="{{forloop.counter0}}">
+                            {% endif %}
+                          <br> 
+                        {% endfor %}
+                    </div>
+                  </div>
+              </th>
+              <th>{{fila.0.unidad}}</th>
+              <th><input type="text" class="form-control" id="cantidad" name="cantidad"></th>
+              {% if forloop.last %}
+              <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
+                {% endif %}
+                  {% endfor %}  
+            </tr>
+        </tbody>
+</table>
+    <button class="btn btn-secondary btn-lg btn-block" type="submit">Elegir cantidades producto</button>
+    </form>
+
+{% endblock%}

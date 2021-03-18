@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %} PROVEEDOR {% endblock%}
 {% block content %}             
-<form action="agregar_nuevo" method="GET">
-    <h1>PLANIFICDOR PROYECTO</h1>
+<form action="lista_productos" method="GET">
+    <h1>PLANIFICADOR PROYECTO</h1>
     <br>
     <div class="form-row">
         <div class="form-group col-md-2">
@@ -65,7 +65,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             {% for i in fila.1 %}
-                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.nombre}}
+                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.id}}
                 <br>
                 {% endfor %}
             </div>
@@ -82,7 +82,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             {% for i in fila.1 %}
-                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.nombre}}
+                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.id}}
                 <br>
                 {% endfor %}
             </div>
@@ -99,7 +99,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             {% for i in fila.1 %}
-                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.nombre}}
+                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.id}}
                 <br>
                 {% endfor %}
             </div>
@@ -113,7 +113,7 @@
 
    
       </div>
-    <button class="btn btn-secondary btn-lg btn-block" type="submit">Crear</button>
+    <button class="btn btn-secondary btn-lg btn-block" type="submit">Elegir cantidades producto</button>
     </form>
 
 {% endblock%}

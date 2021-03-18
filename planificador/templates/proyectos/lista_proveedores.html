@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %} PROVEEDOR {% endblock%}
+{% block content %}
+
+
+<form action="lista_correos" method="GET">
+    <h1>PROVEEDORES Y CORREOS</h1>
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Productos</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in Productos %}
+            <tr>
+              <th>{{fila.0}}
+                <input type="hidden" name="id_producto" value="{{fila.0.nombre}}">
+              </th>
+                {% for producto in fila.1 %}
+                    <th>{{producto.0}}: {{producto.1}}</th>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+    <button class="btn btn-secondary btn-lg btn-block" type="submit">Enviar correos</button>
+    </form>
+
+{% endblock%}
