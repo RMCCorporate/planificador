@@ -46,8 +46,8 @@ class Proyecto(models.Model):
     fecha_inicio = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_final = models.DateField(auto_now=False, auto_now_add=False, null=True)
     creador = models.CharField(max_length=128)
-    tipo_cambio = models.CharField(max_length=128, null=True)
-    valor_cambio = models.FloatField(null=True)
+    tipo_cambio = models.CharField(max_length=128, null=True, default="CLP")
+    valor_cambio = models.FloatField(null=True, default=1)
 
     def __str__(self):
         return self.nombre

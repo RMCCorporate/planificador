@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %} PROVEEDOR {% endblock%}
+{% block content %}             
+<form action="agregar_nuevo" method="GET">
+    <h1>PLANIFICDOR PROYECTO</h1>
+    <br>
+    <div class="form-row">
+        <div class="form-group col-md-2">
+        <label for="rut">Centro de costos</label>
+        <input type="text" class="form-control" id="id" name="id" aria-describedby="ayuda_centro_costos" required>
+        <small id="ayuda_centro_costos" class="text-muted">
+            Código centro de costos proyecto.
+        </small>       
+        </div>
+        <div class="form-group col-md-2">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" class="form-control" id="nombre" aria-describedby="ayuda_nombre" required>
+        <small id="ayuda_nombre" class="text-muted">
+            Nombre referencial proyecto.
+        </small>    
+        </div>
+    </div>
+    <br>
+    <br>
+    <h5>TIPO DE CAMBIO (Opcional)</h5>
+    <div class="form-row">
+        <div class="form-group col-md-2">
+        <label for="rut">Divisa</label>
+        <input type="text" class="form-control" id="tipo_cambio" name="tipo_cambio" aria-describedby="ayuda_tipo_cambio" value="CLP">
+        <small id="ayuda_tipo_cambio" class="text-muted">
+            Abreviatura del nombre del tipo de cambio. Ej: USD, EUR, CLP, etc.
+        </small>       
+        </div>
+        <div class="form-group col-md-2">
+        <label for="nombre">Valor cambio</label>
+        <input type="text" name="valor_cambio" class="form-control" id="valor_cambio" aria-describedby="ayuda_valor_cambio" value="1">
+        <small id="ayuda_valor_cambio" class="text-muted">
+            Valor del cambio.
+        </small>    
+        </div>
+    </div>
+    <br>
+    <br>
+    <h5>FECHAS PROYECTO (Opcional)</h5>
+    <div class="col-md-4">
+        <label for="fecha_inicio" class="col-sm-2 col-form-label">Fecha inicio proyecto</label>
+        <div class="col-sm-10">
+          <input type="date" name="fecha_inicio" class="form-control" id="fecha_inicio">
+         
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label for="fecha_termino" class="col-sm-2 col-form-label">Fecha término proyecto</label>
+        <div class="col-sm-10">
+          <input type="date" name="fecha_termino" class="form-control" id="fecha_termino">
+        </div>
+    </div>
+    <br>
+    <br>
+    <h6>{{Nombre1}}</h6>
+    {% for fila in Subclases1 %}
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                {{fila.0.0}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            {% for i in fila.1 %}
+                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.nombre}}
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    <br>
+
+    <h6>{{Nombre2}}</h6>
+    {% for fila in Subclases2 %}
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                {{fila.0.0}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            {% for i in fila.1 %}
+                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.nombre}}
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    <br>
+
+    <h6>{{Nombre3}}</h6>
+    {% for fila in Subclases3 %}
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                {{fila.0.0}}
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            {% for i in fila.1 %}
+                    <input type="checkbox" name="subclase" value="{{i.id}}">{{i.nombre}}
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+    <br>
+
+    <br>
+    <br>
+
+   
+      </div>
+    <button class="btn btn-secondary btn-lg btn-block" type="submit">Crear</button>
+    </form>
+
+{% endblock%}
