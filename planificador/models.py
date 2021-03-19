@@ -4,7 +4,9 @@ from django.contrib.postgres.fields import ArrayField
 class Precio(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     valor = models.FloatField()
+    valor_importación = models.FloatField(null=True)
     tipo_cambio = models.CharField(max_length=128, default="CLP")
+    valor_cambio = models.FloatField(null=True)
     fecha = models.DateTimeField(auto_now_add=True, null=True)
     nombre_proveedor = models.CharField(max_length=128, null=True)
     comentarios = models.TextField(null=True)
@@ -15,6 +17,7 @@ class Producto(models.Model):
     lista_precios = models.ManyToManyField(Precio)
     fecha_actualizacion = models.DateTimeField(auto_now_add=True, null=True)
     unidad = models.CharField(max_length=128, null=True)
+    kilos =  models.FloatField(null=True)
 
     def __str__(self):
         return self.nombre
@@ -106,4 +109,11 @@ class Producto_proyecto(models.Model):
         default=FUTURO,
     )
     fecha_uso = models.DateField(null=True)
+    cantidades = models.FloatField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
+
+class Producto_proveedor(models.Model):
+    producto = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    nombre_RMC = models.CharField(max_length=128)
+    nombre_proveedor = models.CharField(max_length=128)

@@ -73,6 +73,7 @@ def recibir_cantidades_planificador(request):
     for proveedor in proveedores:
         lista_final = []
         lista_final.append(proveedor)
+        nuevo_proveedor = Proveedor.objects.get(nombre=proveedor)
         lista_aux2 = []
         for counter, i in enumerate(lista_separada):
             lista_aux = []
@@ -82,11 +83,26 @@ def recibir_cantidades_planificador(request):
                     lista_aux.append(cantidad[counter])
                     lista_aux2.append(lista_aux)
         lista_final.append(lista_aux2)
+        lista_final.append(nuevo_proveedor.contactos_asociados.all())
         lista_general_proveedores.append(lista_final)
-
-    print(lista_general_proveedores)
-    mensaje = "CACA"
+    lista_correos = []
+    for i in proveedores:
+        nuevo_proveedor = Proveedor.objects.get(nombre=i)
     return render(request, "proyectos/lista_proveedores.html", {"Productos":lista_general_proveedores})
 
 def enviar_correos(request):
+    contactos = request.GET.getlist("contacto")
+    numero_productos = request.GET.getlist("numero_productos")
+    numero_proveedores = request.GET.getlist("numero_proveedores")
+    numero_contactos = request.GET.getlist("numero_contactos")
+    productos = request.GET.getlist("productos")
+    proveedores = request.GET.getlist("nombre")
+    cantidades = request.GET.getlist("cantidades")
+    print(numero_productos)
+    print(numero_contactos)
+    print(numero_proveedores)
+    print(contactos)
+    print(productos)
+    print(proveedores)
+    print(cantidades)
     return HttpResponse("NO SE HA HECHO ESTA PARTE")

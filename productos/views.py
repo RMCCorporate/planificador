@@ -30,9 +30,10 @@ def recibir_datos_producto(request):
 def producto(request, id):
     producto = Producto.objects.get(id=id)
     lista_precios = producto.lista_precios.all()
+    a = lista_precios.order_by('-fecha')
     sub_clase = producto.subclase_set.all()[0]
     clase = sub_clase.clase_set.all()[0]
-    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":lista_precios, "Subclase":sub_clase, "Clase":clase})
+    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase})
 
 #Edición producto
 def mostrar_edicion_producto(request, id):

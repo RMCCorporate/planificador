@@ -9,18 +9,51 @@
         <thead class="thead-light">
             <tr>
                 <th scope="col">Proveedor</th>
-                <th scope="col">Productos</th>
+                <th scope="col">Contactos</th>
+                <th scope="col">Productos I</th>
+                <th scope="col">Productos II</th>
+                <th scope="col">Productos III</th>
+                <th scope="col">Productos IV</th>
+                <th scope="col">Productos V</th>
+                <th scope="col">Productos VI</th>
+                <th scope="col">Productos VII</th>
             </tr>
         </thead>
         <tbody>
             {% for fila in Productos %}
             <tr>
               <th>{{fila.0}}
-                <input type="hidden" name="id_producto" value="{{fila.0.nombre}}">
-              </th>
+                <input type="hidden" value="{{fila.0}}" name="nombre">
+            </th>
+                
+        
+              <th>
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Elegir contacto
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        {% for i in fila.2 %}
+                          <input type="checkbox" name="contacto" value="{{i.nombre}}">{{i.nombre}}
+                          <br>
+                          {% if forloop.last %}
+                    <input type="hidden" name="numero_contactos" value="{{forloop.counter}}">
+                  {% endif %}
+                        {% endfor %}
+                    </div>
+                  </div>
+                  
                 {% for producto in fila.1 %}
                     <th>{{producto.0}}: {{producto.1}}</th>
+                    <input type="hidden" value="{{producto.0}}" name="productos">
+                    <input type="hidden"  value="{{producto.1}}" name="cantidades">
+                    {% if forloop.last %}
+                    <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
+                  {% endif %}
                 {% endfor %}
+                {% if forloop.last %}
+                <input type="hidden" name="numero_proveedores" value="{{forloop.counter}}">
+                  {% endif %}
             </tr>
             {% endfor %}
         </tbody>
