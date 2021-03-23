@@ -5,6 +5,7 @@
 
 <form action="lista_correos" method="GET">
     <h1>PROVEEDORES Y CORREOS</h1>
+    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos"> 
     <table class="table">
         <thead class="thead-light">
             <tr>
@@ -24,6 +25,7 @@
             <tr>
               <th>{{fila.0}}
                 <input type="hidden" value="{{fila.0}}" name="nombre">
+                
             </th>
                 
         

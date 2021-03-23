@@ -51,7 +51,18 @@ class Proyecto(models.Model):
     creador = models.CharField(max_length=128)
     tipo_cambio = models.CharField(max_length=128, null=True, default="CLP")
     valor_cambio = models.FloatField(null=True, default=1)
-
+    COMPLETO = 'Completo'
+    INCOMPLETO = 'Incompleto'
+    ESTADO_CHOICES = [
+        (COMPLETO, 'Completo'),
+        (INCOMPLETO, 'Incompleto'),
+    ]
+    estado = models.CharField(
+        max_length=128,
+        choices = ESTADO_CHOICES,
+        default = INCOMPLETO,
+        null = True
+    )
     def __str__(self):
         return self.nombre
 
@@ -104,6 +115,7 @@ class Calificacion_Proveedor(models.Model):
 class Producto_proyecto(models.Model):
     producto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    proveedores = models.ManyToManyField(Proveedor)
     URGENTE = 'UR'
     TRANSPORTE = 'TR'
     BODEGA = 'BO'

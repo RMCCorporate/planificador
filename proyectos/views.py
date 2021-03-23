@@ -5,6 +5,7 @@ from django.http import HttpResponse
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from datetime import date, datetime
 
 lista_producto_general = []
 #Funciones:
@@ -56,6 +57,15 @@ def crear_correo(lista_contacto):
     session.sendmail(correo_enviador, correo_prueba, text)
     session.quit()
 
+# Vista proyectos
+def proyectos(request):
+    proyectos = Proyecto.objects.all()
+    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+
+def proyecto(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto})
+
 # Vista planificador I
 def planificador(request):
     clases = Clase.objects.all()
@@ -70,7 +80,6 @@ def planificador(request):
     clase1 = clases_lista_productos(subclases[0])
     clase2 = clases_lista_productos(subclases[1])
     clase3 = clases_lista_productos(subclases[2])
-    productos = Producto.objects.all()
     return render(request, "proyectos/planificador.html", {"Nombre1":nombres[0], "Subclases1":clase1, "Nombre2":nombres[1], "Subclases2":clase2, "Nombre3":nombres[2], "Subclases3":clase3})
 
 def mostrar_filtro(request):
@@ -84,17 +93,18 @@ def mostrar_filtro(request):
     precio_final = 0
     #CAMBIAR CREADOR CUANDO SE CREEN USUARIOS
     creador = "Tomás"
+    fecha_actual = datetime.now()
     if fecha_inicio and fecha_termino:
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
         nuevo_proyecto.save()
     elif not fecha_termino and (fecha_inicio and fecha_inicio != "None"):
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
         nuevo_proyecto.save()
     elif (fecha_termino and fecha_termino != "None") and not fecha_inicio:
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
         nuevo_proyecto.save()
     else:
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
         nuevo_proyecto.save()
     #PRODUCTOS:
     productos = Producto.objects.all()
@@ -128,6 +138,7 @@ def guardar_datos_filtro(request):
 
 #Recibir vista planificador I
 def recibir_datos_planificador(request):
+    proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     productos_repetidos = request.GET.getlist("lista_productos")
     productos = list(dict.fromkeys(productos_repetidos))
     lista_subclases_productos = []
@@ -143,10 +154,11 @@ def recibir_datos_planificador(request):
         lista_aux_producto.append(lista_aux_proveedores)
         subclases_proveedores = []
         lista_subclases_productos.append(lista_aux_producto)
-    return render(request, "proyectos/lista_productos.html", {"Productos":lista_subclases_productos})
+    return render(request, "proyectos/lista_productos.html", {"Proyecto":proyecto, "Productos":lista_subclases_productos})
 
 def recibir_cantidades_planificador(request):
     numero_productos = int(request.GET["numero_productos"])
+    proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     lista_separada = []
     #Lista separada = Proveedores
     for i in range(numero_productos):
@@ -168,27 +180,31 @@ def recibir_cantidades_planificador(request):
             lista_aux = []
             for k in i:
                 if k == proveedor:
+                    producto = Producto.objects.get(nombre=productos[int(counter)])
+                    producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
+                    #AGREGAMOS CANTIDAD Y PROVEEDORES.
+                    producto_proyecto.cantidades = float(cantidad[counter])
+                    producto_proyecto.proveedores.add(nuevo_proveedor)
+                    producto_proyecto.save()
                     lista_aux.append(productos[int(counter)])
                     lista_aux.append(cantidad[counter])
                     lista_aux2.append(lista_aux)
         lista_final.append(lista_aux2)
+        print(lista_final)
         lista_final.append(nuevo_proveedor.contactos_asociados.all())
         lista_general_proveedores.append(lista_final)
-    lista_correos = []
-    for i in proveedores:
-        nuevo_proveedor = Proveedor.objects.get(nombre=i)
+
     return render(request, "proyectos/lista_proveedores.html", {"Productos":lista_general_proveedores})
 
 def enviar_correos(request):
     contactos = request.GET.getlist("contacto")
     numero_productos = request.GET.getlist("numero_productos")
-    numero_proveedores = request.GET.getlist("numero_proveedores")
+    #numero_proveedores = request.GET.getlist("numero_proveedores")
     numero_contactos = request.GET.getlist("numero_contactos")
     productos = request.GET.getlist("productos")
     proveedores = request.GET.getlist("nombre")
     cantidades = request.GET.getlist("cantidades")
-    
-     #Lista de productos dependiendo de proveedores
+    #Lista de productos dependiendo de proveedores
     lista_productos = []
     contador_productos = 0
     for n, i in enumerate(numero_productos):

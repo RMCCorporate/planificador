@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+    {% load static %}
+
+    <div class="card text-center">
+        <div class="card-header">
+            {{Proyecto.nombre}}
+            <br>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Información general</h5>
+          <p class="card-text">
+            Fecha Creacion: {{Proyecto.fecha_creacion}}
+          </p>
+        </div>
+    </div>
+    
+
+    
+ 
+
+{% endblock %}

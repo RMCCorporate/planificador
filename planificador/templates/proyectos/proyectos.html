@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %} PROVEEDOR {% endblock%}
+{% block content %}             
+    <ul class="list-group list-group-flush">
+            <h1>PROYECTOS</h1>
+                <table class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Centro Costos</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Creador</th>
+                            </tr>
+                        </thead>
+                        <tbody>       
+                        {% for fila in Proyectos %}
+                        <tr>
+                            <th><a href="{% url 'proyecto' fila.id %}">{{fila.id}}</a></th>
+                            <th> {{fila.nombre}}</th>
+                            <th> {{fila.estado}}</th>
+                            <th> {{fila.creador}}</th>
+                        {% endfor %}
+                        </tr>
+                        
+                          </tbody>
+                </table>
+        </ul>
+
+{% endblock%}

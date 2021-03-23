@@ -58,61 +58,8 @@
     <br>
     <br>
   
-    <h6>{{Nombre1}}</h6>
-    {% for fila in Subclases1 %}
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                {{fila.0.0}}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            {% for i in fila.1 %}
-                    <input type="checkbox" name="subclase" value="{{i.nombre}}">{{i.nombre}}
-                <br>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-    <br>
-
-    <h6>{{Nombre2}}</h6>
-    {% for fila in Subclases2 %}
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                {{fila.0.0}}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            {% for i in fila.1 %}
-                    <input type="checkbox" name="subclase" value="{{i.nombre}}">{{i.nombre}}
-                <br>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-    <br>
-
-    <h6>{{Nombre3}}</h6>
-    {% for fila in Subclases3 %}
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                {{fila.0.0}}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            {% for i in fila.1 %}
-                    <input type="checkbox" name="subclase" value="{{i.nombre}}">{{i.nombre}}
-                <br>
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-    </div>
-    <br>
-
-    <br>
-    <br>
-
    
+
       </div>
     <button class="btn btn-secondary btn-lg btn-block" type="submit">Elegir cantidades producto</button>
     </form>
