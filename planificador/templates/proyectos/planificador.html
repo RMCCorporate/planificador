@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block title %} PROVEEDOR {% endblock%}
 {% block content %}             
-<form action="lista_productos" method="GET">
+<form action="mostrar_filtro" method="GET">
     <h1>PLANIFICADOR PROYECTO</h1>
     <br>
     <div class="form-row">
         <div class="form-group col-md-2">
-        <label for="rut">Centro de costos</label>
-        <input type="text" class="form-control" id="id" name="id" aria-describedby="ayuda_centro_costos" required>
+        <label for="centro_costos">Centro de costos</label>
+        <input type="text" class="form-control" id="centro_costos" name="centro_costos" aria-describedby="ayuda_centro_costos" required>
         <small id="ayuda_centro_costos" class="text-muted">
             Código centro de costos proyecto.
         </small>       
@@ -57,6 +57,7 @@
     </div>
     <br>
     <br>
+  
     <h6>{{Nombre1}}</h6>
     {% for fila in Subclases1 %}
         <div class="dropdown">

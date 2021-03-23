@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %} PROVEEDOR {% endblock%}
+{% block content %}
+
+
+<form method="get">
+    {{myFilter.form}}
+    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
+    <input type="hidden" value="{{Proyecto.nombre}}" name="nombre">
+    <input type="hidden" value="{{Proyecto.tipo_cambio}}" name="tipo_cambio">
+    <input type="hidden" value="{{Proyecto.valor_cambio}}" name="valor_cambio">
+    <input type="hidden" value="{{Proyecto.fecha_inicio}}" name="fecha_inicio">
+    <input type="hidden" value="{{Proyecto.fecha_termino}}" name="fecha_termino">
+<button class="btn btn-primary" type="submit">Search</button>
+</form>
+<form action="guardar_filtro" method="GET">
+    ID: <input type="hidden" value="{{Proyecto.id}}" name="centro_costos"> 
+    <br>
+    Nombre: <input type="text" value="{{Proyecto.nombre}}" name="nombre" disabled> 
+    <br>
+    <br>
+    <br>
+    <h5>PRODUCTOS</h5>
+    {% for obj in myFilter.qs %}
+            <input type="checkbox" name="productos" value="{{obj.nombre}}">{{obj.nombre}}
+            <br>
+    {% endfor %}
+    <br>
+    <br>
+    <h5>PRODUCTOS SELECCIONADOS</h5>
+    {% for i in productos_proyecto %}
+        {{i}}
+    <br>
+    {% endfor %}
+<button class="btn btn-primary" type="submit">Guardar productos</button>
+</form>
+<form action="lista_productos" method="GET">
+    {% for i in productos_proyecto %}
+     <input type="hidden" name="lista_productos" value="{{i.nombre}}">
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Elegir cantidades productos</button>
+</form>
+
+
+{% endblock%}

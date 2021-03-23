@@ -1,10 +1,12 @@
 from django.shortcuts import render
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto
+from planificador.filters import ProductoFilter
 from django.http import HttpResponse
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+lista_producto_general = []
 #Funciones:
 def clases_lista_productos(clase):
     sub_clase_general = []
@@ -68,17 +70,66 @@ def planificador(request):
     clase1 = clases_lista_productos(subclases[0])
     clase2 = clases_lista_productos(subclases[1])
     clase3 = clases_lista_productos(subclases[2])
+    productos = Producto.objects.all()
     return render(request, "proyectos/planificador.html", {"Nombre1":nombres[0], "Subclases1":clase1, "Nombre2":nombres[1], "Subclases2":clase2, "Nombre3":nombres[2], "Subclases3":clase3})
 
-#Recibir vista planificador I
-def recibir_datos_planificador(request):
-    id = request.GET["id"]
+def mostrar_filtro(request):
+    centro_costos = request.GET["centro_costos"]
+    print(centro_costos)
     nombre = request.GET["nombre"]
     tipo_cambio = request.GET["tipo_cambio"]
     valor_cambio = request.GET["valor_cambio"]
     fecha_inicio = request.GET["fecha_inicio"]
     fecha_termino = request.GET["fecha_termino"]
-    productos = request.GET.getlist("subclase")
+    precio_final = 0
+    #CAMBIAR CREADOR CUANDO SE CREEN USUARIOS
+    creador = "Tomás"
+    if fecha_inicio and fecha_termino:
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto.save()
+    elif not fecha_termino and (fecha_inicio and fecha_inicio != "None"):
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto.save()
+    elif (fecha_termino and fecha_termino != "None") and not fecha_inicio:
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto.save()
+    else:
+        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+        nuevo_proyecto.save()
+    #PRODUCTOS:
+    productos = Producto.objects.all()
+    myFilter = ProductoFilter(request.GET, queryset=productos)
+    producto = myFilter.qs
+    lista_producto = list(producto)
+    productos_proyecto = nuevo_proyecto.productos.all()
+    return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+
+def guardar_datos_filtro(request):
+    todos_productos = Producto.objects.all()
+    id = request.GET["centro_costos"]
+    proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
+    productos_proyecto_anterior = proyecto.productos.all()
+    productos_filtro = request.GET.getlist("productos")
+    booleano_repeticion = False
+    for i in productos_filtro:
+        for n in productos_proyecto_anterior:
+            if n.nombre == i:
+                booleano_repeticion = True
+    for i in productos_filtro:
+        if not booleano_repeticion: 
+            producto = Producto.objects.get(nombre=i)
+            nuevo_producto_proyecto=Producto_proyecto(producto=proyecto, proyecto=producto)
+            nuevo_producto_proyecto.save()
+            proyecto.save()
+    productos_proyecto = proyecto.productos.all()
+    myFilter = ProductoFilter(request.GET, queryset=todos_productos)
+    producto = myFilter.qs
+    return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+
+#Recibir vista planificador I
+def recibir_datos_planificador(request):
+    productos_repetidos = request.GET.getlist("lista_productos")
+    productos = list(dict.fromkeys(productos_repetidos))
     lista_subclases_productos = []
     for producto in productos:
         lista_aux_producto = []
@@ -108,7 +159,6 @@ def recibir_cantidades_planificador(request):
     cantidad = request.GET.getlist("cantidad")
     productos = request.GET.getlist("id_producto")
     lista_general_proveedores = []
-    lista_final_final = []
     for proveedor in proveedores:
         lista_final = []
         lista_final.append(proveedor)

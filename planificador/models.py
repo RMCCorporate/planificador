@@ -45,7 +45,7 @@ class Proyecto(models.Model):
         )
     nombre = models.CharField(max_length=128)
     precio_final = models.FloatField(null=True)
-    fecha_creacion = models.DateField(auto_now_add=True)
+    fecha_creacion = models.DateField(auto_now_add=True, null=True)
     fecha_inicio = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_final = models.DateField(auto_now=False, auto_now_add=False, null=True)
     creador = models.CharField(max_length=128)
