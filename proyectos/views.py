@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto
 from django.http import HttpResponse
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 #Funciones:
 def clases_lista_productos(clase):
@@ -35,6 +38,21 @@ def crear_correo(lista_contacto):
         texto_correo = texto_español
     else:
         texto_correo = texto_ingles
+    correo_enviador = 'tcorrea@rmc.cl'
+    clave_enviador = 'Tom12345'
+    #CAMBIAR DESPUÉS A "CORREO":
+    correo_prueba = 'tacorrea@uc.cl'
+    mensaje = MIMEMultipart()
+    mensaje['From'] = correo_enviador
+    mensaje['To'] = correo_prueba
+    mensaje['Subject'] = 'Correo de prueba planificador'
+    mensaje.attach(MIMEText(texto_correo, 'plain'))
+    session = smtplib.SMTP('smtp.gmail.com', 587)
+    session.starttls()
+    session.login(correo_enviador, clave_enviador)
+    text = mensaje.as_string()
+    session.sendmail(correo_enviador, correo_prueba, text)
+    session.quit()
 
 # Vista planificador I
 def planificador(request):
@@ -155,7 +173,7 @@ def enviar_correos(request):
         idioma = Proveedor.objects.get(nombre=lista_proveedores[n][0]).idioma
         lista_contactos.append(idioma)
         lista_contactos.append(lista_proveedores[n][1])
-        contenido_correo = crear_correo(lista_contactos)
-        #FALTA ENVIAR CORREO
-    
+    #FALTA ENVIAR CORREO A PERSONAS REALES. ES COSA DE METER CONTENIDO_CORREO UN TAB ARRIBA.
+    contenido_correo = crear_correo(lista_contactos)
+        
     return HttpResponse("NO SE HA HECHO ESTA PARTE")
