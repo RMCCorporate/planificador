@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from planificador.models import Clase, SubClase, Producto, Proveedor
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto
 from django.http import HttpResponse
 
 #Funciones:
@@ -14,6 +14,27 @@ def clases_lista_productos(clase):
         subclase_aux.append(productos_aux)
         sub_clase_general.append(subclase_aux)
     return sub_clase_general
+
+def crear_correo(lista_contacto):
+    correo = lista_contacto[1]
+    empresa = lista_contacto[2]
+    idioma = lista_contacto[3]
+    texto_lista_productos = ""
+    for producto in lista_contacto[4]:
+        texto_lista_productos += "\n- {}: {} {}\n".format(producto[0], producto[1], [producto[2]])
+    texto_correo = ""
+    texto_español = "Estimado {}, \nSe solicita cotización de: \n {} \nSaludos.".format(
+        lista_contacto[0],
+        texto_lista_productos
+    )
+    texto_ingles = "Dear {}, \nA quote is requested for: \n {} \nRegards.".format(
+        lista_contacto[0],
+        texto_lista_productos
+    )
+    if idioma == "ESP":
+        texto_correo = texto_español
+    else:
+        texto_correo = texto_ingles
 
 # Vista planificador I
 def planificador(request):
@@ -98,11 +119,43 @@ def enviar_correos(request):
     productos = request.GET.getlist("productos")
     proveedores = request.GET.getlist("nombre")
     cantidades = request.GET.getlist("cantidades")
-    print(numero_productos)
-    print(numero_contactos)
-    print(numero_proveedores)
-    print(contactos)
-    print(productos)
-    print(proveedores)
-    print(cantidades)
+    
+     #Lista de productos dependiendo de proveedores
+    lista_productos = []
+    contador_productos = 0
+    for n, i in enumerate(numero_productos):
+        lista_auxiliar_productos = []
+        for n in range(int(i)):
+            lista_aux = []
+            lista_aux.append(productos[contador_productos])
+            lista_aux.append(cantidades[contador_productos])
+            unidad = Producto.objects.get(nombre=productos[contador_productos]).unidad
+            lista_aux.append(unidad)
+            lista_auxiliar_productos.append(lista_aux)
+            contador_productos += 1
+        lista_productos.append(lista_auxiliar_productos)
+
+    #Lista de proveedores dependiendo de contacto.
+    lista_proveedores = []
+    contador_proveedores = 0
+    for i in numero_contactos:
+        for n in range(int(i)):
+            lista_aux = []
+            lista_aux.append(proveedores[contador_proveedores])
+            lista_aux.append(lista_productos[contador_proveedores])
+            lista_proveedores.append(lista_aux)
+        contador_proveedores += 1
+    
+    for n, contacto in enumerate(contactos):
+        lista_contactos = []
+        lista_contactos.append(contacto)
+        correo = Contacto.objects.get(nombre=contacto).correo
+        lista_contactos.append(correo)
+        lista_contactos.append(lista_proveedores[n][0])
+        idioma = Proveedor.objects.get(nombre=lista_proveedores[n][0]).idioma
+        lista_contactos.append(idioma)
+        lista_contactos.append(lista_proveedores[n][1])
+        contenido_correo = crear_correo(lista_contactos)
+        #FALTA ENVIAR CORREO
+    
     return HttpResponse("NO SE HA HECHO ESTA PARTE")

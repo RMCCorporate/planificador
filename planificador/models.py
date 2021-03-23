@@ -81,7 +81,18 @@ class Proveedor(models.Model):
         through_fields=('proveedor', 'calificacion'),
     )
     contactos_asociados = models.ManyToManyField(Contacto)
-    
+    ESPANOL = 'ESP'
+    INGLES = 'EN'
+    IDIOMA_CHOICES = [
+        (ESPANOL, 'Español'),
+        (INGLES, 'Inglés'),
+    ]
+    idioma = models.CharField(
+        max_length=128,
+        choices = IDIOMA_CHOICES,
+        default = ESPANOL,
+        null = True
+    )
     def __str__(self):
         return self.nombre
 
