@@ -3,19 +3,107 @@
 {% endblock%}
 {% block content %}
     {% load static %}
-
     <div class="card text-center">
         <div class="card-header">
-            {{Proyecto.nombre}}
+            {{Proyecto.nombre}} - {{Proyecto.estado}}
             <br>
         </div>
         <div class="card-body">
           <h5 class="card-title">Información general</h5>
           <p class="card-text">
-            Fecha Creacion: {{Proyecto.fecha_creacion}}
+            Centro Costos: {{Proyecto.id}}
+            <br>
+            Precio Final: {{precio_final}} PONER PRECIO
+            <br>
+            Creador: {{Proyecto.creador}}
           </p>
         </div>
     </div>
+    <div class="card text-center">
+      
+      <div class="card-body">
+        <h5 class="card-title">Fechas general</h5>
+        <p class="card-text">
+          Fecha creación: {{Proyecto.fecha_creacion}}
+          <br>
+          Fecha inicio: {{Proyecto.fecha_inicio}}
+          <br>
+          Fecha término: {{Proyecto.fecha_final}}
+        </p>
+      </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header" id="headingTwo">
+    <h2 class="mb-0">
+      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Productos
+      </button>
+    </h2>
+  </div>
+
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Sub-clase</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Proveedores</th>
+                    <th scope="col">Fecha uso</th>
+                    <th scope="col">Usuario modificación</th>
+                    <th scope="col">Editar</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila in info_productos %}
+            <tr>
+                <th>{{fila.0.proyecto.nombre}}</a></th>
+                <th>{{fila.2.0.nombre}}</th>
+                <th>{{fila.0.cantidades}}</th>
+                <th>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{fila.4.valor}} {{fila.4.tipo_cambio}}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                      <li><a class="dropdown-item"></a> - Valor: {{fila.4.valor}}</a></li>
+                      <li><a class="dropdown-item"></a> - Moneda: {{fila.4.tipo_cambio}}</a></li>
+                      <li><a class="dropdown-item"></a> - Valor importación: {{fila.4.valor_importación}}</a></li>
+                      <li><a class="dropdown-item"></a> - Tipo cambio: {{fila.4.valor_cambio}}</a></li>
+                      <li><a class="dropdown-item"></a> - Fecha: {{fila.4.fecha}}</a></li>
+                      <li><a class="dropdown-item"></a> - Proveedor: {{fila.4.nombre_proveedor}}</a></li>
+                      <li><a class="dropdown-item"></a> - Comentarios: {{fila.4.comentarios}}</a></li>
+                    </ul>
+                  </div>
+                </th>
+                <th>{{fila.0.status}}</th>
+                <th>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Proveedores
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      {% for i in fila.3 %}
+                      <li><a class="dropdown-item" href="#">{{i.nombre}}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+           
+                </th>
+                <th>{{fila.0.fecha_uso}}</th>
+                <th>{{fila.0.usuario_modificacion}}</th>
+                <th>BOTÓN EDITAR</th>
+              {% endfor %}  
+    </tr>
+            </tbody>
+    </table>
+        
+
+  </div>
+</div>
     
 
     

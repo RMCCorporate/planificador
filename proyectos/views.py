@@ -64,7 +64,22 @@ def proyectos(request):
 
 def proyecto(request, id):
     proyecto = Proyecto.objects.get(id=id)
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto})
+    productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+    productos = []
+    for n, producto in enumerate(productos_proyecto):
+        aux = []
+        auxiliar_proveedores = []
+        producto_asociado = Producto.objects.get(id=producto.proyecto.id)
+        sub_clase = producto_asociado.subclase_set.all()
+        aux.append(productos_proyecto[n])
+        for i in productos_proyecto[n].proveedores.all():
+            auxiliar_proveedores.append(i)
+        aux.append(producto_asociado)
+        aux.append(sub_clase)
+        aux.append(auxiliar_proveedores)
+        aux.append(list(producto_asociado.lista_precios.all()).pop())
+        productos.append(aux)
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "info_productos":productos})
 
 # Vista planificador I
 def planificador(request):
