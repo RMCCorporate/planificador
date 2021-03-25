@@ -116,10 +116,10 @@ class Producto_proyecto(models.Model):
     producto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     proveedores = models.ManyToManyField(Proveedor)
-    URGENTE = 'UR'
-    TRANSPORTE = 'TR'
-    BODEGA = 'BO'
-    FUTURO = 'FU'
+    URGENTE = 'Urgente'
+    TRANSPORTE = 'Transporte'
+    BODEGA = 'Bodega'
+    FUTURO = 'Futuro'
     ESTADO_COMPRAS_CHOICES = [
         (URGENTE,'Urgente'),
         (TRANSPORTE, 'Transporte'),
@@ -127,7 +127,7 @@ class Producto_proyecto(models.Model):
         (FUTURO, 'Futuro'),
     ]
     status = models.CharField(
-        max_length=2,
+        max_length=128,
         choices = ESTADO_COMPRAS_CHOICES,
         default=FUTURO,
     )

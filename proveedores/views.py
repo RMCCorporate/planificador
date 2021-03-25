@@ -48,7 +48,6 @@ def recibir_datos_proveedor(request):
     for i in subclase:
         subclase = SubClase.objects.get(nombre=i)
         nuevo_proveedor.subclases_asociadas.add(subclase)
-    print(rut)
     precio = Calificacion.objects.get(nombre="Precio")
     precio_proveedor = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=precio, nota=0)
     precio_proveedor.save()

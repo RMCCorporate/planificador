@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
+<h1>Editar precios</h1>
+
+<form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
+  <div class="card">
+      <div class="card-body">
+          <table class="table">
+              <thead class="thead-light">
+                  <tr>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Valor</th>
+                      <th scope="col">Valor importación</th>
+                      <th scope="col">Moneda</th>
+                      <th scope="col">Valor cambio</th>
+                      <th scope="col">Nombre Proveedor</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Fecha uso</th>
+                      <th scope="col">Cantidades</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% for fila in info_productos %}
+              <tr>
+                
+                  <th>{{fila.0.proyecto.nombre}}</th>
+                  <th><input type="text" value="{{fila.1.valor}}" name="valor"></th>
+                  <th><input type="text" value="{{fila.1.valor_importación}}" name="valor_importacion"></th>
+                  <th><input type="text" value="{{fila.1.tipo_cambio}}" name="tipo_cambio"></th>
+                  <th><input type="text" value="{{fila.1.valor_cambio}}" name="valor_cambio"></th>
+                  <th>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{fila.1.nombre_proveedor}}
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        {% for i in fila.2 %}
+                        <li><input type="radio" value="{{i.nombre}}" name="proveedor">{{i.nombre}}</li>
+                        
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="dropdown">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{fila.0.status}}
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                        
+                        <li><input type="radio" value="Urgente" name="status">Urgente</li>
+                        <li><input type="radio" value="Transporte" name="status">Transporte</li>
+                        <li><input type="radio" value="Bodega" name="status">Bodega</li>
+                        <li><input type="radio" value="Futuro" name="status">Futuro</li>
+                      
+                      </ul>
+                    </div>
+                    </th>
+                  <th><input type="date" value="{{fila.0.fecha_uso}}" name="fecha_uso"></th>
+                  <th><input type="text" value="{{fila.0.cantidades}}" name="cantidades"></th>
+                  
+                {% endfor %}  
+      </tr>
+              </tbody>
+      </table>
+          
+      <button class="btn btn-primary" type="submit">Guardar</button>
+    </div>
+  </div>
+{% endblock%}

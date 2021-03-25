@@ -11,5 +11,8 @@ urlpatterns = [
     path('lista_correos', views.enviar_correos, name='lista_correos'),
     path('proyectos', views.proyectos, name='proyectos'),
     path('proyectos/proyecto/<str:id>', views.proyecto, name='proyecto'),
+    path('proyectos/editar_precios/<str:id>', views.editar_precios, name='editar_precios'),
+    path('proyectos/recibir_edicion', views.recibir_edicion, name='recibir_edicion'),
+    
 
 ]
