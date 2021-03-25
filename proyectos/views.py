@@ -105,14 +105,20 @@ def editar_precios(request, id):
         proveedor = []
         status = []
         for i in nombre:
-            proveedor.append(request.POST[i])
+            if request.POST[str(i)] != "no_hay":
+                proveedor.append(request.POST[i])
+            else:
+                proveedor.append(" ")
         for i in id:
-            status.append(request.POST[str(i)])
+            if request.POST[str(i)] != "no_hay":
+                status.append(request.POST[str(i)])
+            else:
+                status.append(" ")
         for n, producto in enumerate(id):
             producto = Producto.objects.get(id=producto)
-            if valor[n] != "None":
-                if valor_importacion[n] != "None":
-                    if valor_cambio[n] == "None":
+            if valor[n] != "None" and valor[n] != "":
+                if valor_importacion[n] != "None" and valor_importacion[n] != "":
+                    if valor_cambio[n] == "None" and valor_cambio[n] != "":
                         valor_cambio = 1
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=proveedor[n])
@@ -141,9 +147,6 @@ def editar_precios(request, id):
         return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
     else:
         proyecto = Proyecto.objects.get(id=id)
-        a = Precio.objects.all()
-        for i in a:
-            i.delete()
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
         lista_info_productos = []
         for i in productos_proyecto:

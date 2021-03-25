@@ -36,11 +36,12 @@
                         {{fila.1.nombre_proveedor}}
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.nombre}}"></li>
                         {% for i in fila.2 %}
                             {% if i.nombre == fila.1.nombre_proveedor %}
                                 <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}" checked>{{i.nombre}}</li>
                             {% else %}
-                            <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
+                              <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
                             {% endif %}
                         {% endfor %}
                       </ul>
@@ -52,7 +53,7 @@
                         {{fila.0.status}}
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        
+                        <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}"></li>
                         <li><input type="radio" value="Urgente" name="{{fila.0.proyecto.id}}">Urgente</li>
                         <li><input type="radio" value="Transporte" name="{{fila.0.proyecto.id}}">Transporte</li>
                         <li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}">Bodega</li>
