@@ -1,11 +1,12 @@
 from django.shortcuts import render
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio
 from planificador.filters import ProductoFilter
 from django.http import HttpResponse
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import date, datetime
+import uuid
 
 lista_producto_general = []
 #Funciones:
@@ -73,11 +74,13 @@ def proyecto(request, id):
         producto_asociado = Producto.objects.get(id=producto.proyecto.id)
         sub_clase = producto_asociado.subclase_set.all()
         aux.append(productos_proyecto[n])
-        precio = list(producto_asociado.lista_precios.all()).pop()
-        for i in productos_proyecto[n].proveedores.all():
-            auxiliar_proveedores.append(i)
-            if i.nombre == precio.nombre_proveedor:
-                booleano_precio = True
+        precio = list(producto_asociado.lista_precios.all())
+        if len(precio) != 0:
+            precio = precio.pop()
+            for i in productos_proyecto[n].proveedores.all():
+                auxiliar_proveedores.append(i)
+                if i.nombre == precio.nombre_proveedor:
+                    booleano_precio = True
         aux.append(producto_asociado)
         aux.append(sub_clase)
         aux.append(auxiliar_proveedores)
@@ -89,29 +92,79 @@ def proyecto(request, id):
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "info_productos":productos})
 
 def editar_precios(request, id):
-    proyecto = Proyecto.objects.get(id=id)
-    productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-    lista_info_productos = []
-    for i in productos_proyecto:
-        lista_aux = []
-        producto = Producto.objects.get(nombre=i.proyecto)
-        ultimo_precio = list(producto.lista_precios.all()).pop()
-        sub_clase = producto.subclase_set.all()[0]
-        proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
-        print(proveedores)
-        lista_aux.append(i)
-        lista_aux.append(ultimo_precio)
-        lista_aux.append(proveedores)
-        lista_info_productos.append(lista_aux)
-    print(lista_info_productos)
-    #RENDERIZADO
-    proyectos = Proyecto.objects.all() 
-    return render(request, "proyectos/editar_precio.html", {"Proyectos":proyectos, "info_productos":lista_info_productos})
+    if request.method == "POST":
+        proyecto = Proyecto.objects.get(id=id)
+        id = request.POST.getlist("id")
+        nombre = request.POST.getlist("nombre")
+        valor = request.POST.getlist("valor")
+        valor_importacion = request.POST.getlist("valor_importacion")
+        tipo_cambio = request.POST.getlist("tipo_cambio")
+        valor_cambio = request.POST.getlist("valor_cambio")
+        fecha_uso = request.POST.getlist("fecha_uso")
+        cantidades = request.POST.getlist("cantidades")
+        proveedor = []
+        status = []
+        for i in nombre:
+            proveedor.append(request.POST[i])
+        for i in id:
+            status.append(request.POST[str(i)])
+        for n, producto in enumerate(id):
+            producto = Producto.objects.get(id=producto)
+            if valor[n] != "None":
+                if valor_importacion[n] != "None":
+                    if valor_cambio[n] == "None":
+                        valor_cambio = 1
+                    fecha_actual = datetime.now()
+                    precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=proveedor[n])
+                    precio.save()
+                else:
+                    fecha_actual = datetime.now()
+                    precio = Precio(valor=valor[n], fecha=fecha_actual, nombre_proveedor=proveedor[n])
+                    precio.save()
+                producto.lista_precios.add(precio)
+                producto.save()
+                producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
+                producto_proyecto.cantidades = float(cantidades[n])
+                producto_proyecto.status = status[n]
+                producto_proyecto.fecha_uso = fecha_uso[n]
+                booleano_proveedor = True
+                for i in producto_proyecto.proveedores.all():
+                    if i.nombre == proveedor[n]:
+                        booleano_proveedor = False
+                if booleano_proveedor:
+                    proveedor_producto = Proveedor.objects.get(nombre=proveedor[n])
+                    producto_proyecto.proveedores.add(proveedor_producto)
+                producto_proyecto.save()
+        
+        #Renderizar
+        proyectos = Proyecto.objects.all()
+        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    else:
+        proyecto = Proyecto.objects.get(id=id)
+        a = Precio.objects.all()
+        for i in a:
+            i.delete()
+        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+        lista_info_productos = []
+        for i in productos_proyecto:
+            lista_aux = []
+            producto = Producto.objects.get(nombre=i.proyecto)
+            ultimo_precio = list(producto.lista_precios.all())
+            if len(ultimo_precio) != 0:
+                ultimo_precio = ultimo_precio.pop()
+            sub_clase = producto.subclase_set.all()[0]
+            proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+            lista_aux.append(i)
+            lista_aux.append(ultimo_precio)
+            lista_aux.append(proveedores)
+            lista_info_productos.append(lista_aux)
+        #RENDERIZADO
+        return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
 
 def recibir_edicion(request):
     proyectos = Proyecto.objects.all() 
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
-    
+
 # Vista planificador I
 def planificador(request):
     clases = Clase.objects.all()
@@ -130,7 +183,6 @@ def planificador(request):
 
 def mostrar_filtro(request):
     centro_costos = request.GET["centro_costos"]
-    print(centro_costos)
     nombre = request.GET["nombre"]
     tipo_cambio = request.GET["tipo_cambio"]
     valor_cambio = request.GET["valor_cambio"]
@@ -236,7 +288,6 @@ def recibir_cantidades_planificador(request):
                     lista_aux.append(cantidad[counter])
                     lista_aux2.append(lista_aux)
         lista_final.append(lista_aux2)
-        print(lista_final)
         lista_final.append(nuevo_proveedor.contactos_asociados.all())
         lista_general_proveedores.append(lista_final)
 

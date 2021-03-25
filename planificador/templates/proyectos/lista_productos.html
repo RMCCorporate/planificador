@@ -13,7 +13,7 @@
                 <th scope="col">Proveedor</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Cantidad</th>
-                <th scope="col">Eliminar producto</th>
+               
             </tr>
         </thead>
         <tbody>
@@ -44,7 +44,7 @@
               {% if forloop.last %}
               <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
                 {% endif %}
-              <th><input type="checkbox" name="eliminar" value="{{fila.0.id}}"></th>
+              
                   {% endfor %}
             </tr>
         </tbody>
