@@ -165,14 +165,16 @@ def editar_precios(request, id):
         return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
 
 def agregar_producto(request, id):
-    print(id)
     if request.method =="POST":
+       
         proyectos = Proyecto.objects.all()
         producto = request.POST["producto"]
         id = request.POST["id"]
-        print(producto)
-        print(id)
-        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+        instancia_producto = Producto.objects.get(nombre=producto)
+        instancia_proyecto = Proyecto.objects.get(id=id)
+        sub_clase = instancia_producto.subclase_set.all()[0]
+        proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+        return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":instancia_producto, "Proveedores":proveedores})
     else:
         proyectos = Proyecto.objects.all()
         clases = Clase.objects.all()
@@ -203,13 +205,47 @@ def agregar_producto(request, id):
             aux.append(clase)
             aux.append(sub_clase)
             lista_productos.append(aux)
-        print("pasa x aca")
         return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
 
 def crear_nuevo_producto(request):
+    print(request.POST["id_proyecto"])
+    proyecto = Proyecto.objects.get(id=request.POST["id_proyecto"])
+    producto = Producto.objects.get(id=request.POST["id_producto"])
+    valor = request.POST["valor"]
+    valor_importacion = request.POST["valor_importacion"]
+    tipo_cambio = request.POST["tipo_cambio"]
+    valor_cambio = request.POST["valor_cambio"]
+    proveedor = request.POST["proveedor"]
+    status = request.POST["status"]
+    fecha_uso = request.POST["fecha_uso"]
+    cantidades = request.POST["cantidades"]
+    fecha_actual = datetime.now()
+    if valor == "":
+        valor = 0
+    if valor_importacion == "":
+        valor_importacion = 0
+    if tipo_cambio == "":
+        tipo_cambio = "CLP"
+    if valor_cambio == "":
+        valor_cambio = 1
+    
+    if status == "no_hay":
+        status = "Futuro"
+    if cantidades == "":
+        cantidades = 0
+    nuevo_precio = Precio(id=uuid.uuid1(), valor=valor, valor_importación=valor_importacion, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, fecha=fecha_actual, nombre_proveedor=proveedor)
+    nuevo_precio.save()
+    producto.lista_precios.add(nuevo_precio)
+    if fecha_uso != "":
+        nuevo_producto_proyecto = Producto_proyecto(producto=proyecto, proyecto=producto, status=status, fecha_uso=fecha_uso, cantidades=cantidades)
+        nuevo_producto_proyecto.save()
+    else:
+        nuevo_producto_proyecto = Producto_proyecto(producto=proyecto, proyecto=producto, status=status, cantidades=cantidades)
+        nuevo_producto_proyecto.save()
+    if proveedor != "no_hay":
+        instancia_proveedor = Proveedor.objects.get(nombre=proveedor)
+        nuevo_producto_proyecto.proveedores.add(instancia_proveedor)
     proyectos = Proyecto.objects.all()
-    producto = request.GET["producto"]
-    print(producto)
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
     
 # Vista planificador I
