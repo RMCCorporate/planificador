@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<h1>Búsqueda filtros</h1>
+<form method="get">
+  {{myFilter.form}}
+<button class="btn btn-primary" type="submit">Search</button>
+</form>
+<form action="crear_nuevo_producto" method="POST"> {% csrf_token %}
+  <table class="table">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">Nombre <input type="hidden" value="{{id}}" name="id"></th>
+            <th scope="col">Clase</th>
+            <th scope="col">Sub-clase</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in producto %}
+    <tr>
+      <th><input type=radio name="producto" value="{{fila.0.nombre}}"> {{fila.0.nombre}}</th>
+        <th>{{fila.1.nombre}}</th>
+        <th>{{fila.2.nombre}}</th>
+      {% endfor %}
+    </tr>
+    </tbody>
+  </table>
+  <br>
+  <br>
+  
+  <h1>Búsqueda manual</h1>
+  {% for clase in Clases %}
+  <div class="card">
+      <div class="card-header" id="headingTwo">
+        <h2 class="mb-0">
+            {{clase.0}}
+        </h2>
+      </div>
+        <div class="card-body">
+           {% for subclase in clase.1 %}
+           
+              <h5>{{subclase.0.0}}</h5>
+              
+              {% for fila in subclase.1 %}
+                  <input type=radio name="producto" value="{{fila}}"> {{fila}} <br>
+              {% endfor %}
+              <br>
+           {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+  <button class="btn btn-primary" type="submit">Elegir información producto</button>
+</form>
+
+{% endblock %}

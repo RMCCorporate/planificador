@@ -39,6 +39,7 @@
       <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
         Productos
       </button>
+      <a href="{% url 'agregar_producto' Proyecto.id %}" class="btn btn-primary">Agregar producto</a>
     </h2>
   </div>
   <th><a href="{% url 'editar_precios' Proyecto.id %}" class="btn btn-primary">Editar</a></th>

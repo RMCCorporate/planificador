@@ -164,10 +164,54 @@ def editar_precios(request, id):
         #RENDERIZADO
         return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
 
-def recibir_edicion(request):
-    proyectos = Proyecto.objects.all() 
-    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+def agregar_producto(request, id):
+    print(id)
+    if request.method =="POST":
+        proyectos = Proyecto.objects.all()
+        producto = request.POST["producto"]
+        id = request.POST["id"]
+        print(producto)
+        print(id)
+        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    else:
+        proyectos = Proyecto.objects.all()
+        clases = Clase.objects.all()
+        subclases = []
+        nombres = []
+        for clase in clases:
+            subclases_aux = []
+            nombres.append(clase.nombre)
+            for subclase in clase.subclases.all():
+                subclases_aux.append(subclase)
+            subclases.append(subclases_aux)
+        lista_clases = []
+        for n, i in enumerate(clases):
+            lista_aux = []
+            lista_aux.append(i)
+            lista_aux.append(clases_lista_productos(subclases[n]))
+            lista_clases.append(lista_aux)
+        productos = Producto.objects.all()
+        myFilter = ProductoFilter(request.GET, queryset=productos)
+        producto = myFilter.qs
+        #RECIBIR SUBCLASE
+        lista_productos = []
+        for i in producto:
+            aux = []
+            sub_clase = i.subclase_set.all()[0]
+            clase = sub_clase.clase_set.all()[0]
+            aux.append(i)
+            aux.append(clase)
+            aux.append(sub_clase)
+            lista_productos.append(aux)
+        print("pasa x aca")
+        return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
 
+def crear_nuevo_producto(request):
+    proyectos = Proyecto.objects.all()
+    producto = request.GET["producto"]
+    print(producto)
+    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    
 # Vista planificador I
 def planificador(request):
     clases = Clase.objects.all()
