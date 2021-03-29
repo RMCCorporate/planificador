@@ -2,10 +2,33 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Producto, Clase, SubClase, Precio
 from datetime import date, datetime
+from django import forms
+import openpyxl
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
 
 #Mostrar productos
 def productos(request):
     productos = Producto.objects.all()
+    if request.method == "POST":
+        excel_file = request.FILES["excel_file"]
+        wb = openpyxl.load_workbook(excel_file)
+        worksheet = wb["Sheet1"]
+        excel_data = list()
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+               
+                row_data.append(str(cell.value))
+            #excel_data.append(row_data)
+            if row_data[0] != "id":
+                fecha_actualizacion = datetime.now()
+                nuevo_producto = Producto(id=row_data[0], nombre=row_data[1], fecha_actualizacion=fecha_actualizacion, unidad=row_data[2], kilos=row_data[3])
+                nuevo_producto.save()
+                sub_clase = SubClase.objects.get(nombre=row_data[4])
+                sub_clase.productos.add(nuevo_producto)
+                sub_clase.save()
     return render(request, "productos/productos.html", {"Productos":productos})
 
 #Agregar producto
@@ -13,6 +36,9 @@ def agregar_producto(request):
     clases = Clase.objects.all()
     subclases = SubClase.objects.all()
     return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases})
+
+
+
 
 def recibir_datos_producto(request):
     id = request.GET["id"]
