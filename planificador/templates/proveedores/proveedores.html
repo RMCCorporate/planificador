@@ -23,5 +23,21 @@
                           </tbody>
                 </table>
         </ul>
-
+        <br>
+        <br>
+        <form action="proveedores" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <h3>Agregar proveedores mediante plantilla</h3>
+            <br>
+            <input type="file"
+                   title="Upload excel file"
+                   name="excel_file"
+                   >
+       
+            <input type="submit"
+                   value="Upload"
+                   >
+            <br>
+            <br>
+        </form>
 {% endblock%}

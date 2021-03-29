@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
+import openpyxl
 
 #FUNCIONES
 def mostrar_clases():
@@ -22,6 +23,34 @@ def mostrar_clases():
 #Mostrar proveedores
 def proveedores(request):
     proveedores = Proveedor.objects.all()
+    if request.method == "POST":
+        excel_file = request.FILES["excel_file"]
+        wb = openpyxl.load_workbook(excel_file)
+        worksheet = wb["proveedor"]
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            if row_data[0] != "rut":
+                nuevo_proveedor = Proveedor(rut=row_data[0], nombre=row_data[1], razon_social=row_data[2], idioma=row_data[4])
+                nuevo_proveedor.save()
+                subclases = row_data[3]
+                subclases_repartidas = subclases.split(',')
+                for i in subclases_repartidas:
+                    subclase = SubClase.objects.get(nombre=i)
+                    nuevo_proveedor.subclases_asociadas.add(subclase)
+                nuevo_contacto = Contacto(correo=row_data[5], telefono=row_data[7], nombre=row_data[6])
+                nuevo_contacto.save()
+                nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
+                calificacion_tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
+                calificacion_precio = Calificacion.objects.get(nombre="Precio")
+                calificacion_calidad = Calificacion.objects.get(nombre="Calidad")
+                calificacion_provedor_tiempo_entrega = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_tiempo_entrega, nota=0)
+                calificacion_provedor_tiempo_entrega.save()
+                calificacion_provedor_precio = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_precio, nota=0)
+                calificacion_provedor_precio.save()
+                calificacion_provedor_calidad = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_calidad, nota=0)
+                calificacion_provedor_calidad.save()
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
 #Agregar proveedor
