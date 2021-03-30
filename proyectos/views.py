@@ -77,43 +77,36 @@ def proyecto(request, id):
         precio = list(producto_asociado.lista_precios.all())
         if len(precio) != 0:
             precio = precio.pop()
-            for i in productos_proyecto[n].proveedores.all():
-                auxiliar_proveedores.append(i)
+            for i in producto.proveedores.all():
+                auxiliar_proveedores.append(i)    
                 if i.nombre == precio.nombre_proveedor:
                     booleano_precio = True
         aux.append(producto_asociado)
         aux.append(sub_clase)
         aux.append(auxiliar_proveedores)
-        if booleano_precio:
-            aux.append(precio)
-        else:
-            aux.append(" ")
+        aux.append(precio)
         productos.append(aux)
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "info_productos":productos})
 
 def editar_precios(request, id):
     if request.method == "POST":
         proyecto = Proyecto.objects.get(id=id)
+        productos_proyecto = Producto_proyecto.objects.get(producto=proyecto)
         id = request.POST.getlist("id")
         nombre = request.POST.getlist("nombre")
         valor = request.POST.getlist("valor")
         valor_importacion = request.POST.getlist("valor_importacion")
         tipo_cambio = request.POST.getlist("tipo_cambio")
         valor_cambio = request.POST.getlist("valor_cambio")
-        fecha_uso = request.POST.getlist("fecha_uso")
-        cantidades = request.POST.getlist("cantidades")
         proveedor = []
-        status = []
         for i in nombre:
             if request.POST[str(i)] != "no_hay":
                 proveedor.append(request.POST[i])
+                nuevo_proveedor = Proveedor.objects.get(nombre=request.POST[i])
+                productos_proyecto.proveedores.add(nuevo_proveedor)
+                productos_proyecto.save()
             else:
                 proveedor.append(" ")
-        for i in id:
-            if request.POST[str(i)] != "no_hay":
-                status.append(request.POST[str(i)])
-            else:
-                status.append(" ")
         for n, producto in enumerate(id):
             producto = Producto.objects.get(id=producto)
             if valor[n] != "None" and valor[n] != "":
@@ -125,23 +118,11 @@ def editar_precios(request, id):
                     precio.save()
                 else:
                     fecha_actual = datetime.now()
-                    precio = Precio(valor=valor[n], fecha=fecha_actual, nombre_proveedor=proveedor[n])
+                    precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=proveedor[n])
                     precio.save()
                 producto.lista_precios.add(precio)
                 producto.save()
-                producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
-                producto_proyecto.cantidades = float(cantidades[n])
-                producto_proyecto.status = status[n]
-                producto_proyecto.fecha_uso = fecha_uso[n]
-                booleano_proveedor = True
-                for i in producto_proyecto.proveedores.all():
-                    if i.nombre == proveedor[n]:
-                        booleano_proveedor = False
-                if booleano_proveedor:
-                    proveedor_producto = Proveedor.objects.get(nombre=proveedor[n])
-                    producto_proyecto.proveedores.add(proveedor_producto)
-                producto_proyecto.save()
-        
+            
         #Renderizar
         proyectos = Proyecto.objects.all()
         return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
@@ -161,8 +142,63 @@ def editar_precios(request, id):
             lista_aux.append(ultimo_precio)
             lista_aux.append(proveedores)
             lista_info_productos.append(lista_aux)
+       
         #RENDERIZADO
         return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
+
+def editar_datos_producto_proyecto(request, id):
+    if request.method == "POST":
+        proyecto = Proyecto.objects.get(id=id)
+        nombre = request.POST.getlist("nombre")
+        id = request.POST.getlist("id")
+        cantidades = request.POST.getlist("cantidades")
+        fecha_uso = request.POST.getlist("fecha_uso")
+        status = []
+        for i in id:
+            if request.POST[str(i)] != "no_hay":
+                status.append(request.POST[str(i)])
+            else:
+                status.append(" ")
+        proveedor = []
+        for i in nombre:
+            if request.POST[str(i)] != "no_hay":
+                proveedor.append(request.POST[i])
+            else:
+                proveedor.append(" ")
+        for n, i in enumerate(nombre):
+            producto = Producto.objects.get(nombre=i)
+            producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
+            producto_proyecto.cantidades = float(cantidades[n])
+            producto_proyecto.status = status[n]
+            producto_proyecto.fecha_uso = fecha_uso[n]
+            booleano_proveedor = True
+            for i in producto_proyecto.proveedores.all():
+                if i.nombre == proveedor[n]:
+                    booleano_proveedor = False
+            if booleano_proveedor:
+                proveedor_producto = Proveedor.objects.get(nombre=proveedor[n])
+                producto_proyecto.proveedores.add(proveedor_producto)
+            producto_proyecto.save()
+        proyectos = Proyecto.objects.all()
+        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    else:
+        proyecto = Proyecto.objects.get(id=id)
+        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+        lista_info_productos = []
+        for i in productos_proyecto:
+            lista_aux = []
+            producto = Producto.objects.get(nombre=i.proyecto)
+            ultimo_precio = list(producto.lista_precios.all())
+            if len(ultimo_precio) != 0:
+                ultimo_precio = ultimo_precio.pop()
+            sub_clase = producto.subclase_set.all()[0]
+            proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+            lista_aux.append(i)
+            lista_aux.append(ultimo_precio)
+            lista_aux.append(proveedores)
+            lista_info_productos.append(lista_aux)
+        return render(request, "proyectos/editar_producto_proyecto.html", {"info_productos":lista_info_productos})
+
 
 def agregar_producto(request, id):
     if request.method =="POST":
@@ -208,7 +244,6 @@ def agregar_producto(request, id):
         return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
 
 def crear_nuevo_producto(request):
-    print(request.POST["id_proyecto"])
     proyecto = Proyecto.objects.get(id=request.POST["id_proyecto"])
     producto = Producto.objects.get(id=request.POST["id_producto"])
     valor = request.POST["valor"]
