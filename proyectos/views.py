@@ -78,7 +78,7 @@ def proyecto(request, id):
         if len(precio) != 0:
             precio = precio.pop()
             for i in producto.proveedores.all():
-                auxiliar_proveedores.append(i)    
+                auxiliar_proveedores.append(i)  
                 if i.nombre == precio.nombre_proveedor:
                     booleano_precio = True
         aux.append(producto_asociado)
@@ -91,7 +91,7 @@ def proyecto(request, id):
 def editar_precios(request, id):
     if request.method == "POST":
         proyecto = Proyecto.objects.get(id=id)
-        productos_proyecto = Producto_proyecto.objects.get(producto=proyecto)
+        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
         id = request.POST.getlist("id")
         nombre = request.POST.getlist("nombre")
         valor = request.POST.getlist("valor")
@@ -99,14 +99,15 @@ def editar_precios(request, id):
         tipo_cambio = request.POST.getlist("tipo_cambio")
         valor_cambio = request.POST.getlist("valor_cambio")
         proveedor = []
-        for i in nombre:
+        for n,i in enumerate(nombre):
             if request.POST[str(i)] != "no_hay":
                 proveedor.append(request.POST[i])
                 nuevo_proveedor = Proveedor.objects.get(nombre=request.POST[i])
-                productos_proyecto.proveedores.add(nuevo_proveedor)
-                productos_proyecto.save()
+                productos_proyecto[n].proveedores.add(nuevo_proveedor)
+                productos_proyecto[n].save()
             else:
                 proveedor.append(" ")
+     
         for n, producto in enumerate(id):
             producto = Producto.objects.get(id=producto)
             if valor[n] != "None" and valor[n] != "":
@@ -199,7 +200,6 @@ def editar_datos_producto_proyecto(request, id):
             lista_info_productos.append(lista_aux)
         return render(request, "proyectos/editar_producto_proyecto.html", {"info_productos":lista_info_productos})
 
-
 def agregar_producto(request, id):
     if request.method =="POST":
        
@@ -263,7 +263,6 @@ def crear_nuevo_producto(request):
         tipo_cambio = "CLP"
     if valor_cambio == "":
         valor_cambio = 1
-    
     if status == "no_hay":
         status = "Futuro"
     if cantidades == "":
@@ -408,9 +407,10 @@ def recibir_cantidades_planificador(request):
         lista_final.append(lista_aux2)
         lista_final.append(nuevo_proveedor.contactos_asociados.all())
         lista_general_proveedores.append(lista_final)
+    proyectos = Proyecto.objects.all()
+    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
-    return render(request, "proyectos/lista_proveedores.html", {"Productos":lista_general_proveedores})
-
+"""
 def enviar_correos(request):
     contactos = request.GET.getlist("contacto")
     numero_productos = request.GET.getlist("numero_productos")
@@ -433,7 +433,6 @@ def enviar_correos(request):
             lista_auxiliar_productos.append(lista_aux)
             contador_productos += 1
         lista_productos.append(lista_auxiliar_productos)
-
     #Lista de proveedores dependiendo de contacto.
     lista_proveedores = []
     contador_proveedores = 0
@@ -444,7 +443,6 @@ def enviar_correos(request):
             lista_aux.append(lista_productos[contador_proveedores])
             lista_proveedores.append(lista_aux)
         contador_proveedores += 1
-    
     for n, contacto in enumerate(contactos):
         lista_contactos = []
         lista_contactos.append(contacto)
@@ -458,3 +456,4 @@ def enviar_correos(request):
     contenido_correo = crear_correo(lista_contactos)
         
     return HttpResponse("NO SE HA HECHO ESTA PARTE")
+"""
