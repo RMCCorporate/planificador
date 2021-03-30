@@ -18,7 +18,7 @@ class Producto(models.Model):
     fecha_actualizacion = models.DateTimeField(auto_now_add=True, null=True)
     unidad = models.CharField(max_length=128, null=True)
     kilos =  models.FloatField(null=True)
-
+    imagen = models.ImageField(upload_to='images', null=True)
     def __str__(self):
         return self.nombre
 
@@ -104,6 +104,7 @@ class Proveedor(models.Model):
         default = ESPANOL,
         null = True
     )
+    direccion = models.CharField(max_length=256, null=True)
     def __str__(self):
         return self.nombre
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from planificador.models import Producto, SubClase, Proveedor
+from planificador.models import Producto, SubClase, Proveedor, Clase
 import openpyxl
 
 # Create your views here.
@@ -26,4 +26,9 @@ def index(request):
                     proveedor = Proveedor.objects.get(nombre=i)
                     proveedor.subclases_asociadas.add(nueva_subclase)
                     proveedor.save()
+                clase = row_data[3]
+                clase = Clase.objects.get(nombre=clase)
+                clase.subclases.add(nueva_subclase)
+                clase.save()
+
     return render(request, 'planificador/index.html')

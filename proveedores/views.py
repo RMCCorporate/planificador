@@ -68,10 +68,11 @@ def recibir_datos_proveedor(request):
     nombre_contacto = request.GET["nombre_contacto"]
     correo = request.GET["correo"]
     telefono = request.GET["telefono"]
+    direccion = request.GET["direccion"]
     nuevo_contacto = Contacto(correo=correo, telefono=telefono, nombre=nombre_contacto)
     nuevo_contacto.save()
     #Agregar proveedor
-    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, razon_social=razon_social)
+    nuevo_proveedor = Proveedor(rut=rut, nombre=nombre, razon_social=razon_social, direccion=direccion)
     nuevo_proveedor.save()
     nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
     for i in subclase:

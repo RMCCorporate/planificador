@@ -2,11 +2,19 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Producto, Clase, SubClase, Precio
 from datetime import date, datetime
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 from django import forms
 import openpyxl
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
+
+class ImageForm(forms.ModelForm):
+    """Form for the image model"""
+    class Meta:
+        model = Producto
+        fields = ('id', 'nombre', 'unidad', 'kilos', 'imagen')
 
 #Mostrar productos
 def productos(request):
@@ -59,23 +67,30 @@ def producto(request, id):
 def mostrar_edicion_producto(request, id):
     producto = Producto.objects.get(id=id)
     if request.method == "POST":
-        producto.id = request.POST["id"]
-        producto.nombre = request.POST["nombre"]
-        producto.unidad = request.POST["unidad"]
-        #Precios
-        precio = request.POST["precio"]
+        form = ImageForm(request.POST, request.FILES, instance=producto)
+        if form.is_valid():
+            form.save()
+            # Get the current instance object to display in the template
+            img_obj = form.instance
+            productos = Producto.objects.all()
+            return render(request, 'productos/productos.html', {'Productos': productos})
+    else:
+        subclases = SubClase.objects.all()
+        form = ImageForm(instance=producto)
+        return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases, "form":form})
+
+def editar_precio_producto(request, id):
+    producto = Producto.objects.get(id=id)
+    precio = request.POST["precio"]
+    if precio != "":
+        precio = 0
         moneda = request.POST["moneda"]
         proveedor = request.POST["proveedor"]
         comentario = request.POST["comentario"]
         nuevo_precio = Precio(id=producto.id, valor=precio, tipo_cambio=moneda, nombre_proveedor=proveedor, comentarios=comentario)
         nuevo_precio.save()
-        producto.save()
         producto.lista_precios.add(nuevo_precio)
-        productos = Producto.objects.all()
-        return render(request, "productos/productos.html", {"Productos":productos})
-    else:
-        subclases = SubClase.objects.all()
-        return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases})
+        producto.save()
 
 #Eliminar producto
 def eliminar_producto(request, id):
