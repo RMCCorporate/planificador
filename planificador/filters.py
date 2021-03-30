@@ -6,7 +6,6 @@ class ProductoFilter(django_filters.FilterSet):
         model = Producto
         fields = {"id":['contains'],
                  "nombre":['contains'],
-                "unidad":['contains'],
                }
                
 
