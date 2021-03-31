@@ -202,7 +202,6 @@ def editar_datos_producto_proyecto(request, id):
 
 def agregar_producto(request, id):
     if request.method =="POST":
-       
         proyectos = Proyecto.objects.all()
         producto = request.POST["producto"]
         id = request.POST["id"]
@@ -233,7 +232,6 @@ def agregar_producto(request, id):
         producto = myFilter.qs
         #RECIBIR SUBCLASE
         lista_productos = []
-
         return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
 
 def crear_nuevo_producto(request):
@@ -264,10 +262,10 @@ def crear_nuevo_producto(request):
     nuevo_precio.save()
     producto.lista_precios.add(nuevo_precio)
     if fecha_uso != "":
-        nuevo_producto_proyecto = Producto_proyecto(producto=proyecto, proyecto=producto, status=status, fecha_uso=fecha_uso, cantidades=cantidades)
+        nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, fecha_uso=fecha_uso, cantidades=cantidades)
         nuevo_producto_proyecto.save()
     else:
-        nuevo_producto_proyecto = Producto_proyecto(producto=proyecto, proyecto=producto, status=status, cantidades=cantidades)
+        nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, cantidades=cantidades)
         nuevo_producto_proyecto.save()
     if proveedor != "no_hay":
         instancia_proveedor = Proveedor.objects.get(nombre=proveedor)
@@ -336,7 +334,7 @@ def guardar_datos_filtro(request):
     for i in productos_filtro:
         if not booleano_repeticion: 
             producto = Producto.objects.get(nombre=i)
-            nuevo_producto_proyecto=Producto_proyecto(producto=proyecto, proyecto=producto)
+            nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto)
             nuevo_producto_proyecto.save()
             proyecto.save()
     productos_proyecto = proyecto.productos.all()
@@ -404,6 +402,36 @@ def recibir_cantidades_planificador(request):
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
+def agregar_cotizacion(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    productos = proyecto.productos.all()
+    lista_proveedores = []
+    for i in productos:
+        producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=i)
+        for n in producto_proyecto[0].proveedores.all():
+            lista_proveedores.append(n.nombre)
+    #print(lista_proveedores)
+    proveedores_no_repetidos =  list(dict.fromkeys(lista_proveedores))
+    #print(proveedores_no_repetidos)
+    lista_proveedores_productos = []
+    for i in proveedores_no_repetidos:
+        aux = []
+        aux.append(i)
+        aux2 = []
+        for n in productos:
+            booleano_proveedor = False
+            producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=n)
+            for x in producto_proyecto[0].proveedores.all():
+                if x.nombre == i:
+                    booleano_proveedor = True
+            if booleano_proveedor:
+                aux2.append(producto_proyecto[0].proyecto.nombre)
+                aux2.append(producto_proyecto[0].cantidades)
+                aux.append(aux2)
+        lista_proveedores_productos.append(aux)
+    for i in lista_proveedores_productos:
+        print(i)
+    return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_proveedores_productos})
 """
 def enviar_correos(request):
     contactos = request.GET.getlist("contacto")

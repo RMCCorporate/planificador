@@ -114,6 +114,7 @@ class Calificacion_Proveedor(models.Model):
     nota = models.FloatField()
 
 class Producto_proyecto(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
     producto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     proveedores = models.ManyToManyField(Proveedor)
@@ -146,3 +147,15 @@ class Filtro_producto(models.Model):
     nombre_producto = models.CharField(max_length=128, primary_key=True)
     nombre_clase = models.CharField(max_length=128)
     nombre_subclase = models.CharField(max_length=128)
+
+class Cotizacion(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    nombre = models.CharField(max_length=128, null=True)
+    proyecto_asociado = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='proyecto_asociado')
+    productos_asociados = models.ManyToManyField(Producto, related_name='productos_asociados')
+    proveedor_asociado = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='proveedor_asociado', null=True)
+    contacto_asociado = models.ForeignKey(Contacto, on_delete=models.CASCADE, related_name='contacto_asociado', null=True)
+    fecha_salida = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    fecha_respuesta = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    fecha_actualizacion_precio = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    usuario_modificacion = models.CharField(max_length=128, null=True)
