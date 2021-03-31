@@ -16,11 +16,11 @@
         </tr>
     </thead>
     <tbody>
-      {% for fila in producto %}
+      {% for fila in myFilter.qs %}
     <tr>
-      <th><input type=radio name="producto" value="{{fila.0.nombre}}"> {{fila.0.nombre}}</th>
-        <th>{{fila.1.nombre}}</th>
-        <th>{{fila.2.nombre}}</th>
+      <th><input type=radio name="producto" value="{{fila.nombre_producto}}"> {{fila.nombre_producto}}</th>
+        <th>{{fila.nombre_clase}}</th>
+        <th>{{fila.nombre_subclase}}</th>
       {% endfor %}
     </tr>
     </tbody>
@@ -28,27 +28,6 @@
   <br>
   <br>
   
-  <h1>Búsqueda manual</h1>
-  {% for clase in Clases %}
-  <div class="card">
-      <div class="card-header" id="headingTwo">
-        <h2 class="mb-0">
-            {{clase.0}}
-        </h2>
-      </div>
-        <div class="card-body">
-           {% for subclase in clase.1 %}
-           
-              <h5>{{subclase.0.0}}</h5>
-              
-              {% for fila in subclase.1 %}
-                  <input type=radio name="producto" value="{{fila}}"> {{fila}} <br>
-              {% endfor %}
-              <br>
-           {% endfor %}
-      </div>
-    </div>
-  {% endfor %}
   <button class="btn btn-primary" type="submit">Elegir información producto</button>
 </form>
 

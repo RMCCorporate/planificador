@@ -19,10 +19,24 @@
     <input type="hidden" value="{{Proyecto.nombre}}" name="nombre"> 
 
     <h5>PRODUCTOS</h5>
-    {% for obj in myFilter.qs %}
-            <input type="checkbox" name="productos" value="{{obj.nombre}}">{{obj.nombre}}
-            <br>
-    {% endfor %}
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Clase</th>
+                <th scope="col">Sub-clase</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for obj in myFilter.qs %}
+        <tr>
+            <th><input type="checkbox" name="productos" value="{{obj.nombre_producto}}">{{obj.nombre_producto}}</th>
+            <th>{{obj.nombre_clase}}</th>
+            <th>{{obj.nombre_subclase}}</th>
+          {% endfor %}
+        </tr>
+        </tbody>
+      </table>
     <br>
     <br>
     <h5>PRODUCTOS SELECCIONADOS</h5>

@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio
-from planificador.filters import ProductoFilter
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto
+from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from django.http import HttpResponse
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -228,19 +228,12 @@ def agregar_producto(request, id):
             lista_aux.append(i)
             lista_aux.append(clases_lista_productos(subclases[n]))
             lista_clases.append(lista_aux)
-        productos = Producto.objects.all()
-        myFilter = ProductoFilter(request.GET, queryset=productos)
+        productos = Filtro_producto.objects.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         producto = myFilter.qs
         #RECIBIR SUBCLASE
         lista_productos = []
-        for i in producto:
-            aux = []
-            sub_clase = i.subclase_set.all()[0]
-            clase = sub_clase.clase_set.all()[0]
-            aux.append(i)
-            aux.append(clase)
-            aux.append(sub_clase)
-            lista_productos.append(aux)
+
         return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
 
 def crear_nuevo_producto(request):
@@ -322,8 +315,8 @@ def mostrar_filtro(request):
         nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
         nuevo_proyecto.save()
     #PRODUCTOS:
-    productos = Producto.objects.all()
-    myFilter = ProductoFilter(request.GET, queryset=productos)
+    productos = Filtro_producto.objects.all()
+    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
     producto = myFilter.qs
     lista_producto = list(producto)
     productos_proyecto = nuevo_proyecto.productos.all()
@@ -347,7 +340,8 @@ def guardar_datos_filtro(request):
             nuevo_producto_proyecto.save()
             proyecto.save()
     productos_proyecto = proyecto.productos.all()
-    myFilter = ProductoFilter(request.GET, queryset=todos_productos)
+    productos = Filtro_producto.objects.all()
+    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
     producto = myFilter.qs
     return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 

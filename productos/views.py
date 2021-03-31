@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Producto, Clase, SubClase, Precio
+from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto
 from datetime import date, datetime
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
@@ -33,6 +33,9 @@ def productos(request):
                 nuevo_producto.save()
                 sub_clase = SubClase.objects.get(nombre=row_data[4])
                 sub_clase.productos.add(nuevo_producto)
+                clase = subclase.clase_set.all()
+                nuevo_filtro_producto = Filtro_producto(nombre_producto=row_data[1], nombre_clase=clase[0].nombre, nombre_subclase=row_data[4])
+                nuevo_filtro_producto.save()
                 sub_clase.save()
     return render(request, "productos/productos.html", {"Productos":productos})
 
@@ -51,6 +54,9 @@ def recibir_datos_producto(request):
     nuevo_producto.save()
     subclase = SubClase.objects.get(nombre=sub_clase)
     subclase.productos.add(nuevo_producto)
+    clase = subclase.clase_set.all()
+    nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, nombre_subclase=subclase.nombre)
+    nuevo_filtro_producto.save()
     productos = Producto.objects.all()
     return render(request, "productos/productos.html", {"Productos":productos})
    

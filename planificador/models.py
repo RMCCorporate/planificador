@@ -141,3 +141,8 @@ class Producto_proveedor(models.Model):
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     nombre_RMC = models.CharField(max_length=128)
     nombre_proveedor = models.CharField(max_length=128)
+
+class Filtro_producto(models.Model):
+    nombre_producto = models.CharField(max_length=128, primary_key=True)
+    nombre_clase = models.CharField(max_length=128)
+    nombre_subclase = models.CharField(max_length=128)
