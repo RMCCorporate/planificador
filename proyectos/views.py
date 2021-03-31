@@ -406,32 +406,45 @@ def agregar_cotizacion(request, id):
     proyecto = Proyecto.objects.get(id=id)
     productos = proyecto.productos.all()
     lista_proveedores = []
+    lista_producto_proyecto = []
     for i in productos:
         producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=i)
+        lista_producto_proyecto.append(producto_proyecto)
         for n in producto_proyecto[0].proveedores.all():
             lista_proveedores.append(n.nombre)
-    #print(lista_proveedores)
     proveedores_no_repetidos =  list(dict.fromkeys(lista_proveedores))
-    #print(proveedores_no_repetidos)
     lista_proveedores_productos = []
-    for i in proveedores_no_repetidos:
+    for i in lista_producto_proyecto:
+        lista_aux = []
+        for x in i[0].proveedores.all():
+            lista_aux.append(x.nombre)
+        lista_proveedores_productos.append(lista_aux)
+    lista_final = []
+    for proveedor in proveedores_no_repetidos:
         aux = []
-        aux.append(i)
+        aux.append(proveedor)
         aux2 = []
-        for n in productos:
-            booleano_proveedor = False
-            producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=n)
-            for x in producto_proyecto[0].proveedores.all():
-                if x.nombre == i:
-                    booleano_proveedor = True
-            if booleano_proveedor:
-                aux2.append(producto_proyecto[0].proyecto.nombre)
-                aux2.append(producto_proyecto[0].cantidades)
+        for counter, i in enumerate(lista_proveedores_productos):
+            booleano = False
+            lista_aux = []
+            for x in i:
+                if x == proveedor:
+                    booleano = True
+            if booleano:
+                lista_aux.append(lista_producto_proyecto[counter][0].proyecto.nombre)
+                lista_aux.append(lista_producto_proyecto[counter][0].cantidades)
+                aux2.append(lista_aux)
                 aux.append(aux2)
-        lista_proveedores_productos.append(aux)
-    for i in lista_proveedores_productos:
+        lista_final.append(aux)
+    lista_final_final = []
+    for i in lista_final:
+        lista_aux = []
+        lista_aux.append(i[0])
+        lista_aux.append(i[1])
+        lista_final_final.append(lista_aux)
+    for i in lista_final_final:
         print(i)
-    return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_proveedores_productos})
+    return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
 """
 def enviar_correos(request):
     contactos = request.GET.getlist("contacto")
