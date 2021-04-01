@@ -44,7 +44,6 @@
   </div>
   <th><a href="{% url 'editar_precios' Proyecto.id %}" class="btn btn-primary">Editar precios</a></th>
   <th><a href="{% url 'editar_producto_proyecto' Proyecto.id %}" class="btn btn-primary">Editar datos productos</a></th>
-  <th><a href="{% url 'agregar_cotizacion' Proyecto.id %}" class="btn btn-primary">Agregar cotizacion</a></th>
     <div class="card-body">
         <table class="table">
             <thead class="thead-light">
@@ -108,7 +107,59 @@
 
   </div>
 </div>
-    
+<div class="card">
+  <div class="card-header" id="headingTwo">
+    <h2 class="mb-0">
+      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Cotizaciones
+      </button>
+    </h2>
+  </div>
+ 
+  <th><a href="{% url 'agregar_cotizacion' Proyecto.id %}" class="btn btn-primary">Agregar cotizacion</a></th>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nombre referencial</th>
+                    <th scope="col">Proveedor</th>
+                    <th scope="col">Productos cotizados</th>
+                    <th scope="col">Fecha salida</th>
+                    <th scope="col">Fecha respuesta</th>
+                    <th scope="col">Fecha actualizacion precio</th>
+                    <th scope="col">Usuario modificación</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila in cotizaciones %}
+            <tr>
+                <th>{{fila.0.nombre}}</a></th>
+                <th>{{fila.0.proveedor_asociado.nombre}}</th>
+                <th>
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      Productos
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                      {% for i in fila.1 %}
+                      <a class="dropdown-item"></a> {{i.0.nombre}}: {{i.1.cantidades}} {{i.0.unidad}}</a>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </th>
+                <th>{{fila.0.fecha_salida}}</th>
+                <th>{{fila.0.fecha_respuesta}}</th>
+                <th>{{fila.0.fecha_actualizacion_precio}}</th>
+                <th>{{fila.0.usuario_modificacion}}</th>
+                
+              {% endfor %}  
+    </tr>
+            </tbody>
+    </table>
+        
+
+  </div>
+</div>
 
     
  

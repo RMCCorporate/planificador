@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+{% load static %}
+<h1>NUEVA COTIZACIÓN</h1>
+<br>
+<form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
+    Nombre referencial cotización: <input type="text" name="nombre">
+    {% for i in Proveedores %}
+    <div class="card text-center">
+        <div class="card-header">
+            <input type="radio" value="{{i.0.nombre}}" name="proveedor">{{i.0.nombre}}
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Escoger contacto</h5>
+          <p class="card-text">
+            {% for contacto in i.0.contactos_asociados.all %}
+                 <input type="radio" value="{{contacto.nombre}}" name="contacto"> {{contacto.nombre}}
+                 <br>
+            {% endfor %}
+          </p>
+        </div>
+    </div>
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Productos asociados</h5>
+        
+        <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Unidad</th>
+                <th scope="col">Fecha uso</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in i.1 %}
+        <tr>
+            <th><input type="checkbox" name="productos" value="{{producto.0}}">{{producto.0}}</a></th>
+            <th>{{producto.1}}</th>
+            <th>{{producto.2}}</th>
+            <th>{{producto.3}}</th>
+        </tr>
+        {% endfor %}
+        </tbody>
+</table>
+
+      </div>
+  </div>
+  {% endfor %}
+  <button class="btn btn-primary" type="submit">Guardar</button>  
+
+</div>    
+</form>
+{% endblock %}
+

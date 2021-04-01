@@ -151,7 +151,7 @@ class Filtro_producto(models.Model):
 class Cotizacion(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     nombre = models.CharField(max_length=128, null=True)
-    proyecto_asociado = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='proyecto_asociado')
+    proyecto_asociado = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado')
     productos_asociados = models.ManyToManyField(Producto, related_name='productos_asociados')
     proveedor_asociado = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='proveedor_asociado', null=True)
     contacto_asociado = models.ForeignKey(Contacto, on_delete=models.CASCADE, related_name='contacto_asociado', null=True)

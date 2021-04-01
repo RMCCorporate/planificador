@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from django.http import HttpResponse
 import smtplib
@@ -86,7 +86,21 @@ def proyecto(request, id):
         aux.append(auxiliar_proveedores)
         aux.append(precio)
         productos.append(aux)
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "info_productos":productos})
+    cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
+    lista_cotizaciones = []
+    for i in cotizaciones:
+        aux = []
+        aux.append(i)
+        aux3 = []
+        for producto in i.productos_asociados.all():
+            aux2 = []
+            producto_proyecto = Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)
+            aux2.append(producto)
+            aux2.append(producto_proyecto)
+            aux3.append(aux2)
+        aux.append(aux3)
+        lista_cotizaciones.append(aux)
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "info_productos":productos, "cotizaciones":lista_cotizaciones})
 
 def editar_precios(request, id):
     if request.method == "POST":
@@ -403,48 +417,70 @@ def recibir_cantidades_planificador(request):
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
 def agregar_cotizacion(request, id):
-    proyecto = Proyecto.objects.get(id=id)
-    productos = proyecto.productos.all()
-    lista_proveedores = []
-    lista_producto_proyecto = []
-    for i in productos:
-        producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=i)
-        lista_producto_proyecto.append(producto_proyecto)
-        for n in producto_proyecto[0].proveedores.all():
-            lista_proveedores.append(n.nombre)
-    proveedores_no_repetidos =  list(dict.fromkeys(lista_proveedores))
-    lista_proveedores_productos = []
-    for i in lista_producto_proyecto:
-        lista_aux = []
-        for x in i[0].proveedores.all():
-            lista_aux.append(x.nombre)
-        lista_proveedores_productos.append(lista_aux)
-    lista_final = []
-    for proveedor in proveedores_no_repetidos:
-        aux = []
-        aux.append(proveedor)
-        aux2 = []
-        for counter, i in enumerate(lista_proveedores_productos):
-            booleano = False
+    if request.method == "POST":
+        proyecto_asociado = Proyecto.objects.get(id=id)
+        nombre = request.POST["nombre"]
+        proveedor = request.POST["proveedor"]
+        contacto = request.POST["contacto"]
+        productos = request.POST.getlist("productos")
+        contacto_asociado = Contacto.objects.get(nombre=contacto)
+        proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto_asociado, proveedor_asociado = proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now())
+        nueva_cotizacion.save()
+        for i in productos:
+            nuevo_producto = Producto.objects.get(nombre=i)
+            nueva_cotizacion.productos_asociados.add(nuevo_producto)
+            nueva_cotizacion.save()
+        proyectos = Proyecto.objects.all()
+        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    else:
+        proyecto = Proyecto.objects.get(id=id)
+        productos = proyecto.productos.all()
+        lista_proveedores = []
+        lista_producto_proyecto = []
+        for i in productos:
+            producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=i)
+            lista_producto_proyecto.append(producto_proyecto)
+            for n in producto_proyecto[0].proveedores.all():
+                lista_proveedores.append(n.nombre)
+        proveedores_no_repetidos =  list(dict.fromkeys(lista_proveedores))
+        lista_proveedores_productos = []
+        for i in lista_producto_proyecto:
             lista_aux = []
-            for x in i:
-                if x == proveedor:
-                    booleano = True
-            if booleano:
-                lista_aux.append(lista_producto_proyecto[counter][0].proyecto.nombre)
-                lista_aux.append(lista_producto_proyecto[counter][0].cantidades)
-                aux2.append(lista_aux)
-                aux.append(aux2)
-        lista_final.append(aux)
-    lista_final_final = []
-    for i in lista_final:
-        lista_aux = []
-        lista_aux.append(i[0])
-        lista_aux.append(i[1])
-        lista_final_final.append(lista_aux)
-    for i in lista_final_final:
-        print(i)
-    return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
+            for x in i[0].proveedores.all():
+                lista_aux.append(x.nombre)
+            lista_proveedores_productos.append(lista_aux)
+        lista_final = []
+        for proveedor in proveedores_no_repetidos:
+            aux = []
+            nuevo_proveedor = Proveedor.objects.get(nombre=proveedor)
+            aux.append(nuevo_proveedor)
+            aux2 = []
+            for counter, i in enumerate(lista_proveedores_productos):
+                booleano = False
+                lista_aux = []
+                for x in i:
+                    if x == proveedor:
+                        booleano = True
+                if booleano:
+                    lista_aux.append(lista_producto_proyecto[counter][0].proyecto.nombre)
+                    lista_aux.append(lista_producto_proyecto[counter][0].cantidades)
+                    lista_aux.append(lista_producto_proyecto[counter][0].proyecto.unidad)
+                    lista_aux.append(lista_producto_proyecto[counter][0].fecha_uso)
+                    aux2.append(lista_aux)
+                    aux.append(aux2)
+            lista_final.append(aux)
+        lista_final_final = []
+        for i in lista_final:
+            lista_aux = []
+            lista_aux.append(i[0])
+            lista_aux.append(i[1])
+            lista_final_final.append(lista_aux)
+        for i in lista_final_final:
+            print(i)
+        return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
+
+
 """
 def enviar_correos(request):
     contactos = request.GET.getlist("contacto")
