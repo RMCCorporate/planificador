@@ -381,38 +381,13 @@ def recibir_cantidades_planificador(request):
     numero_productos = int(request.GET["numero_productos"])
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     lista_separada = []
-    #Lista separada = Proveedores
-    for i in range(numero_productos):
-        a = request.GET.getlist("proveedor{}".format(str(i)))
-        lista_separada.append(a)
-    join = []
-    for i in lista_separada:
-        join += i
-    proveedores = list(dict.fromkeys(join))
     cantidad = request.GET.getlist("cantidad")
     productos = request.GET.getlist("id_producto")
-    lista_general_proveedores = []
-    for proveedor in proveedores:
-        lista_final = []
-        lista_final.append(proveedor)
-        nuevo_proveedor = Proveedor.objects.get(nombre=proveedor)
-        lista_aux2 = []
-        for counter, i in enumerate(lista_separada):
-            lista_aux = []
-            for k in i:
-                if k == proveedor:
-                    producto = Producto.objects.get(nombre=productos[int(counter)])
-                    producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
-                    #AGREGAMOS CANTIDAD Y PROVEEDORES.
-                    producto_proyecto.cantidades = float(cantidad[counter])
-                    producto_proyecto.proveedores.add(nuevo_proveedor)
-                    producto_proyecto.save()
-                    lista_aux.append(productos[int(counter)])
-                    lista_aux.append(cantidad[counter])
-                    lista_aux2.append(lista_aux)
-        lista_final.append(lista_aux2)
-        lista_final.append(nuevo_proveedor.contactos_asociados.all())
-        lista_general_proveedores.append(lista_final)
+    for counter, i in enmuerate(productos):
+        nuevo_producto = Producto.objects.get(nombre=i)
+        producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
+        producto_proyecto.cantidades = float(cantidad[counter])
+        producto_proyecto.save()
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
