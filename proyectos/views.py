@@ -480,6 +480,28 @@ def agregar_cotizacion(request, id):
             print(i)
         return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
 
+def mostrar_cotizacion(request, id):
+    cotizacion = Cotizacion.objects.get(id=id)
+    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion})
+
+def editar_cotizacion(request, id):
+    cotizacion = Cotizacion.objects.get(id=id)
+    if request.method == "POST":
+        cotizacion.nombre = request.POST["nombre"]
+        cotizacion.fecha_respuesta = request.POST["fecha_respuesta"]
+        cotizacion.save()
+        proyectos = Proyecto.objects.all()
+        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    else:
+        return render(request, "proyectos/editar_cotizacion.html", {"Cotizacion":cotizacion})
+        
+def eliminar_cotizacion(request, id):
+    cotizacion = Cotizacion.objects.get(id=id)
+    cotizacion.delete()
+    proyectos = Proyecto.objects.all()
+    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+
+
 
 """
 def enviar_correos(request):

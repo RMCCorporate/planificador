@@ -133,7 +133,7 @@
             <tbody>
               {% for fila in cotizaciones %}
             <tr>
-                <th>{{fila.0.nombre}}</a></th>
+                <th><a href="{% url 'mostrar_cotizacion' fila.0.id %}" class="btn btn-primary"> {{fila.0.nombre}}</a></th>
                 <th>{{fila.0.proveedor_asociado.nombre}}</th>
                 <th>
                   <div class="dropdown">

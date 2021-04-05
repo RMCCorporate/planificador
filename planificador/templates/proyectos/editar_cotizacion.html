@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
+<h1>Editar precios</h1>
+
+<form action="{{Cotizacion.id}}" method="POST">{% csrf_token %}
+  <div class="card">
+      <div class="card-body">
+        <div class="form-group col-md-2">
+            <label for="nombre">Centro de costos</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" aria-describedby="ayuda_nombre" value="{{Cotizacion.nombre}}">
+            <small id="ayuda_nombre" class="text-muted">
+                Nuevo nombre del proyecto
+            </small>       
+        </div>
+        <div class="card-body">
+            <div class="form-group col-md-2">
+                <label for="fecha_respuesta">Fecha respuesta</label>
+                <input type="text" class="form-control" id="fecha_respuesta" name="fecha_respuesta" aria-describedby="ayuda_nombre" value="{{Cotizacion.fecha_respuesta}}" required>
+                <small id="ayuda_fecha_respuesta" class="text-muted">
+                    Fecha en que respondió el proveedor. Formato: YYYY-MM-DD
+                </small>       
+            </div>
+
+      <button class="btn btn-primary" type="submit">Guardar</button>
+    </div>
+  </div>
+{% endblock%}

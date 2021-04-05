@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+    {% load static %}
+    <div class="card text-center">
+        <div class="card-header">
+            {{Cotizacion.nombre}}
+            <br>
+            <a href="{% url 'editar_cotizacion' Cotizacion.id %}" class="btn btn-primary">Editar cotización</a>
+             <br>
+            <a href="{% url 'eliminar_cotizacion' Cotizacion.id %}" class="btn btn-primary">Eliminar cotización</a>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Información general</h5>
+          <p class="card-text">
+            Centro costos: {{Cotizacion.proyecto_asociado.id}}
+            <br>
+            Nombre proyecto: {{Cotizacion.proyecto_asociado.nombre}}
+            <br>
+            Proveedor: {{Cotizacion.proveedor_asociado.nombre}}
+            <br>
+            Contacto: {{Cotizacion.contacto_asociado.nombre}} -  {{Cotizacion.contacto_asociado.correo}} 
+          </p>
+        </div>
+    </div>
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title">Fechas general</h5>
+        <p class="card-text">
+          Fecha salida: {{Proyecto.fecha_creacion}}
+          <br>
+          Fecha respuesta: {{Proyecto.fecha_inicio}}
+          <br>
+          Fecha actualización precio: {{Proyecto.fecha_final}}
+        </p>
+      </div>
+  </div>
+</div>
+
+
+    
+ 
+
+{% endblock %}
