@@ -476,8 +476,6 @@ def agregar_cotizacion(request, id):
             lista_aux.append(i[0])
             lista_aux.append(i[1])
             lista_final_final.append(lista_aux)
-        for i in lista_final_final:
-            print(i)
         return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
 
 def mostrar_cotizacion(request, id):

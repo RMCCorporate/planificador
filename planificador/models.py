@@ -9,6 +9,7 @@ class Precio(models.Model):
     valor_cambio = models.FloatField(null=True)
     fecha = models.DateTimeField(auto_now_add=True, null=True)
     nombre_proveedor = models.CharField(max_length=128, null=True)
+    nombre_cotizacion = models.CharField(max_length=128, null=True)
     comentarios = models.TextField(null=True)
 
 class Producto(models.Model):
