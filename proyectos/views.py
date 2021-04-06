@@ -121,7 +121,6 @@ def editar_precios(request, id):
                 productos_proyecto[n].save()
             else:
                 proveedor.append(" ")
-     
         for n, producto in enumerate(id):
             producto = Producto.objects.get(id=producto)
             if valor[n] != "None" and valor[n] != "":
@@ -137,7 +136,6 @@ def editar_precios(request, id):
                     precio.save()
                 producto.lista_precios.add(precio)
                 producto.save()
-            
         #Renderizar
         proyectos = Proyecto.objects.all()
         return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
@@ -151,13 +149,16 @@ def editar_precios(request, id):
             ultimo_precio = list(producto.lista_precios.all())
             if len(ultimo_precio) != 0:
                 ultimo_precio = ultimo_precio.pop()
-            sub_clase = producto.subclase_set.all()[0]
-            proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+            aux_productos = []
+            cotizacion = Cotizacion.objects.filter(proyecto_asociado=proyecto)
+            for x in cotizacion:
+                for n in x.productos_asociados.all():
+                    if n.nombre == i.proyecto.nombre:
+                        aux_productos.append(x)
             lista_aux.append(i)
             lista_aux.append(ultimo_precio)
-            lista_aux.append(proveedores)
+            lista_aux.append(aux_productos)
             lista_info_productos.append(lista_aux)
-       
         #RENDERIZADO
         return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
 
@@ -186,14 +187,6 @@ def editar_datos_producto_proyecto(request, id):
             producto_proyecto.cantidades = float(cantidades[n])
             producto_proyecto.status = status[n]
             producto_proyecto.fecha_uso = fecha_uso[n]
-            booleano_proveedor = True
-            for i in producto_proyecto.proveedores.all():
-                if i.nombre == proveedor[n]:
-                    booleano_proveedor = False
-            if booleano_proveedor:
-                proveedor_producto = Proveedor.objects.get(nombre=proveedor[n])
-                producto_proyecto.proveedores.add(proveedor_producto)
-            producto_proyecto.save()
         proyectos = Proyecto.objects.all()
         return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
     else:
@@ -206,11 +199,8 @@ def editar_datos_producto_proyecto(request, id):
             ultimo_precio = list(producto.lista_precios.all())
             if len(ultimo_precio) != 0:
                 ultimo_precio = ultimo_precio.pop()
-            sub_clase = producto.subclase_set.all()[0]
-            proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
             lista_aux.append(i)
             lista_aux.append(ultimo_precio)
-            lista_aux.append(proveedores)
             lista_info_productos.append(lista_aux)
         return render(request, "proyectos/editar_producto_proyecto.html", {"info_productos":lista_info_productos})
 

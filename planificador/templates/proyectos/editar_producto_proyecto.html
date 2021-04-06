@@ -11,7 +11,7 @@
                   <tr>
             
                       <th scope="col">Nombre</th>
-                      <th scope="col">Proveedor</th>
+                 
                       <th scope="col">Status</th>
                       <th scope="col">Fecha uso</th>
                       <th scope="col">Cantidades</th>
@@ -23,23 +23,7 @@
 
                   <th><input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre">
                     <input type="hidden" value="{{fila.0.proyecto.id}}" name="id">{{fila.0.proyecto.nombre}}</th>
-                    <div class="dropdown">
-                        <th>
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{fila.1.nombre_proveedor}}
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.nombre}}"></li>
-                        {% for i in fila.2 %}
-                            {% if i.nombre == fila.1.nombre_proveedor %}
-                                <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}" checked>{{i.nombre}}</li>
-                            {% else %}
-                              <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
-                            {% endif %}
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  </th>
+                    
                   <th>
                     <div class="dropdown">
                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
