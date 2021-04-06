@@ -66,41 +66,39 @@ def proyectos(request):
 def proyecto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-    productos = []
-    for n, producto in enumerate(productos_proyecto):
-        aux = []
-        booleano_precio = False
-        auxiliar_proveedores = []
-        producto_asociado = Producto.objects.get(id=producto.proyecto.id)
-        sub_clase = producto_asociado.subclase_set.all()
-        aux.append(productos_proyecto[n])
-        precio = list(producto_asociado.lista_precios.all())
-        if len(precio) != 0:
-            precio = precio.pop()
-            for i in producto.proveedores.all():
-                auxiliar_proveedores.append(i)  
-                if i.nombre == precio.nombre_proveedor:
-                    booleano_precio = True
-        aux.append(producto_asociado)
-        aux.append(sub_clase)
-        aux.append(auxiliar_proveedores)
-        aux.append(precio)
-        productos.append(aux)
+    aux_productos_final = []
     cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
     lista_cotizaciones = []
     for i in cotizaciones:
+        aux_productos = []
         aux = []
         aux.append(i)
         aux3 = []
         for producto in i.productos_asociados.all():
             aux2 = []
+            aux2_productos = []
+            precio = ""
             producto_proyecto = Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)
+            producto_asociado = producto_proyecto.proyecto
+            subclase = producto_asociado.subclase_set.all()
+            precio = list(producto_asociado.lista_precios.all())
+            for n in precio:
+                if n.nombre_cotizacion == i.nombre:
+                    precio = n
+            if precio != []:
+                aux2_productos.append(producto_asociado)
+                aux2_productos.append(subclase)
+                aux2_productos.append(producto_proyecto)
+                aux2_productos.append(precio)
+                aux2_productos.append(i)
+                aux_productos.append(aux2_productos)
             aux2.append(producto)
             aux2.append(producto_proyecto)
             aux3.append(aux2)
+        aux_productos_final.append(aux_productos)
         aux.append(aux3)
         lista_cotizaciones.append(aux)
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "info_productos":productos, "cotizaciones":lista_cotizaciones})
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final})
 
 def editar_precios(request, id):
     if request.method == "POST":
@@ -112,27 +110,28 @@ def editar_precios(request, id):
         valor_importacion = request.POST.getlist("valor_importacion")
         tipo_cambio = request.POST.getlist("tipo_cambio")
         valor_cambio = request.POST.getlist("valor_cambio")
-        proveedor = []
+        cotizacion = []
+        lista_cotizacion = request.POST.getlist("cotizacion")
         for n,i in enumerate(nombre):
             if request.POST[str(i)] != "no_hay":
-                proveedor.append(request.POST[i])
-                nuevo_proveedor = Proveedor.objects.get(nombre=request.POST[i])
-                productos_proyecto[n].proveedores.add(nuevo_proveedor)
+                cotizacion_nueva = Cotizacion.objects.get(nombre=lista_cotizacion[n])
+                cotizacion.append(cotizacion_nueva)
+                productos_proyecto[n].proveedores.add(cotizacion_nueva.proveedor_asociado)
                 productos_proyecto[n].save()
             else:
-                proveedor.append(" ")
+                cotizacion.append(" ")
         for n, producto in enumerate(id):
             producto = Producto.objects.get(id=producto)
-            if valor[n] != "None" and valor[n] != "":
+            if valor[n] != "None" and valor[n] != "" and cotizacion[n] != ' ':
                 if valor_importacion[n] != "None" and valor_importacion[n] != "":
                     if valor_cambio[n] == "None" and valor_cambio[n] != "":
                         valor_cambio = 1
                     fecha_actual = datetime.now()
-                    precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=proveedor[n])
+                    precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre)
                     precio.save()
                 else:
                     fecha_actual = datetime.now()
-                    precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=proveedor[n])
+                    precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre)
                     precio.save()
                 producto.lista_precios.add(precio)
                 producto.save()
@@ -390,7 +389,7 @@ def agregar_cotizacion(request, id):
         productos = request.POST.getlist("productos")
         contacto_asociado = Contacto.objects.get(nombre=contacto)
         proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto_asociado, proveedor_asociado = proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now())
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now())
         nueva_cotizacion.save()
         for i in productos:
             nuevo_producto = Producto.objects.get(nombre=i)

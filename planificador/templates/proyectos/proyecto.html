@@ -42,62 +42,26 @@
       <a href="{% url 'agregar_producto' Proyecto.id %}" class="btn btn-primary">Agregar producto</a>
     </h2>
   </div>
-  <th><a href="{% url 'editar_precios' Proyecto.id %}" class="btn btn-primary">Editar precios</a></th>
   <th><a href="{% url 'editar_producto_proyecto' Proyecto.id %}" class="btn btn-primary">Editar datos productos</a></th>
     <div class="card-body">
         <table class="table">
             <thead class="thead-light">
                 <tr>
                     <th scope="col">Nombre</th>
-                    <th scope="col">Sub-clase</th>
                     <th scope="col">Cantidad</th>
-                    <th scope="col">Precio unitario</th>
                     <th scope="col">Status</th>
-                    <th scope="col">Proveedores</th>
                     <th scope="col">Fecha uso</th>
                     <th scope="col">Usuario modificación</th>
                 </tr>
             </thead>
             <tbody>
-              {% for fila in info_productos %}
+              {% for fila in Productos %}
             <tr>
-                <th>{{fila.0.proyecto.nombre}}</a></th>
-                <th>{{fila.2.0.nombre}}</th>
-                <th>{{fila.0.cantidades}}</th>
-                <th>
-                  {% if fila.4 != " " %}
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                      {{fila.4.valor}} {{fila.4.tipo_cambio}}
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                      <li><a class="dropdown-item"></a> - Valor: {{fila.4.valor}}</a></li>
-                      <li><a class="dropdown-item"></a> - Moneda: {{fila.4.tipo_cambio}}</a></li>
-                      <li><a class="dropdown-item"></a> - Valor importación: {{fila.4.valor_importación}}</a></li>
-                      <li><a class="dropdown-item"></a> - Tipo cambio: {{fila.4.valor_cambio}}</a></li>
-                      <li><a class="dropdown-item"></a> - Fecha: {{fila.4.fecha}}</a></li>
-                      <li><a class="dropdown-item"></a> - Proveedor: {{fila.4.nombre_proveedor}}</a></li>
-                      <li><a class="dropdown-item"></a> - Comentarios: {{fila.4.comentarios}}</a></li>
-                    </ul>
-                  </div>
-                  {% endif %}
-                </th>
-                <th>{{fila.0.status}}</th>
-                <th>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                      Proveedores
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      {% for i in fila.3 %}
-                      <li><a class="dropdown-item" href="#">{{i.nombre}}</a></li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-           
-                </th>
-                <th>{{fila.0.fecha_uso}}</th>
-                <th>{{fila.0.usuario_modificacion}}</th>
+                <th>{{fila.proyecto.nombre}}</a></th>
+                <th>{{fila.cantidades}}</th>
+                <th>{{fila.status}}</th>
+                <th>{{fila.fecha_uso}}</th>
+                <th>{{fila.usuario_modificacion}}</th>
                 
               {% endfor %}  
     </tr>
@@ -161,7 +125,63 @@
   </div>
 </div>
 
-    
+<div class="card">
+  <div class="card-header" id="headingTwo">
+    <h2 class="mb-0">
+      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Productos cotizados
+      </button>
+    </h2>
+  </div>
+  <th><a href="{% url 'editar_precios' Proyecto.id %}" class="btn btn-primary">Editar precios</a></th>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Sub-clase</th>
+                    <th scope="col">Precio unitario</th>
+                    <th scope="col">Proveedor</th>
+                    <th scope="col">Cotización</th>
+                    <th scope="col">Usuario modificación</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila1 in info_productos %}
+              {% for fila in fila1 %}
+            <tr>
+                <th>{{fila.0.nombre}}</a></th>
+                <th>{{fila.1.0.nombre}}</th>
+                <th>
+                  {% if fila.3 != " " %}
+                  <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                      {{fila.3.valor}} {{fila.3.tipo_cambio}}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+                      <li><a class="dropdown-item"></a> - Valor: {{fila.3.valor}}</a></li>
+                      <li><a class="dropdown-item"></a> - Moneda: {{fila.3.tipo_cambio}}</a></li>
+                      <li><a class="dropdown-item"></a> - Valor importación: {{fila.3.valor_importación}}</a></li>
+                      <li><a class="dropdown-item"></a> - Tipo cambio: {{fila.3.valor_cambio}}</a></li>
+                      <li><a class="dropdown-item"></a> - Fecha: {{fila.3.fecha}}</a></li>
+                      <li><a class="dropdown-item"></a> - Proveedor: {{fila.3.nombre_proveedor}}</a></li>
+                      <li><a class="dropdown-item"></a> - Comentarios: {{fila.3.comentarios}}</a></li>
+                    </ul>
+                  </div>
+                  {% endif %}
+                </th>
+                <th>{{fila.4.proveedor_asociado.nombre}}</th>
+                <th>{{fila.4.nombre}}</th>
+                <th>{{fila.4.usuario_modificacion}}</th>
+                {% endfor %} 
+              {% endfor %}  
+    </tr>
+            </tbody>
+    </table>
+        
+
+  </div>
+</div>
  
 
 {% endblock %}
