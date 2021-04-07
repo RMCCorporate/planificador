@@ -42,7 +42,7 @@
       <a href="{% url 'agregar_producto' Proyecto.id %}" class="btn btn-primary">Agregar producto</a>
     </h2>
   </div>
-  <th><a href="{% url 'editar_producto_proyecto' Proyecto.id %}" class="btn btn-primary">Editar datos productos</a></th>
+  <th><a href="{% url 'editar_producto_proyecto' Proyecto.id %}" class="btn btn-primary">Editar/Elimnar productos</a></th>
     <div class="card-body">
         <table class="table">
             <thead class="thead-light">
@@ -91,6 +91,8 @@
                     <th scope="col">Fecha salida</th>
                     <th scope="col">Fecha respuesta</th>
                     <th scope="col">Fecha actualizacion precio</th>
+                    <th scope="col">Demora respuesta</th>
+                    <th scope="col">Demora ingreso precio</th>
                     <th scope="col">Usuario modificación</th>
                 </tr>
             </thead>
@@ -114,6 +116,8 @@
                 <th>{{fila.0.fecha_salida}}</th>
                 <th>{{fila.0.fecha_respuesta}}</th>
                 <th>{{fila.0.fecha_actualizacion_precio}}</th>
+                <th>{{fila.2}}</th>
+                <th>{{fila.3}}</th>
                 <th>{{fila.0.usuario_modificacion}}</th>
                 
               {% endfor %}  

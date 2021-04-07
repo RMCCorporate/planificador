@@ -94,9 +94,21 @@ def proyecto(request, id):
                 aux_productos.append(aux2_productos)
             aux2.append(producto)
             aux2.append(producto_proyecto)
+            demora_respuesta = 0
+            aux2.append(demora_respuesta)
             aux3.append(aux2)
         aux_productos_final.append(aux_productos)
         aux.append(aux3)
+        if i.fecha_respuesta:
+            demora_respuesta = i.fecha_respuesta - i.fecha_salida
+        else:
+            demora_respuesta = date.today() - i.fecha_salida
+        if i.fecha_actualizacion_precio:
+            demora_precio = i.fecha_actualizacion_precio - i.fecha_respuesta
+        else:
+            demora_precio = " "
+        aux.append(demora_respuesta)
+        aux.append(demora_precio)
         lista_cotizaciones.append(aux)
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final})
 
@@ -164,6 +176,7 @@ def editar_precios(request, id):
 def editar_datos_producto_proyecto(request, id):
     if request.method == "POST":
         proyecto = Proyecto.objects.get(id=id)
+        cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
         nombre = request.POST.getlist("nombre")
         id = request.POST.getlist("id")
         cantidades = request.POST.getlist("cantidades")
@@ -174,18 +187,21 @@ def editar_datos_producto_proyecto(request, id):
                 status.append(request.POST[str(i)])
             else:
                 status.append(" ")
-        proveedor = []
-        for i in nombre:
-            if request.POST[str(i)] != "no_hay":
-                proveedor.append(request.POST[i])
-            else:
-                proveedor.append(" ")
         for n, i in enumerate(nombre):
             producto = Producto.objects.get(nombre=i)
             producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
             producto_proyecto.cantidades = float(cantidades[n])
             producto_proyecto.status = status[n]
             producto_proyecto.fecha_uso = fecha_uso[n]
+        eliminar = request.POST.getlist("eliminar")
+        if eliminar:
+            for i in eliminar:
+                producto_eliminar = Producto_proyecto.objects.get(id=i)
+                for i in cotizaciones:
+                    for n in i.productos_asociados.all():
+                        if n.nombre == producto_eliminar.proyecto.nombre:
+                            i.productos_asociados.remove(n)
+                producto_eliminar.delete()
         proyectos = Proyecto.objects.all()
         return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
     else:
@@ -367,9 +383,7 @@ def recibir_datos_planificador(request):
     return render(request, "proyectos/lista_productos.html", {"Proyecto":proyecto, "Productos":lista_subclases_productos})
 
 def recibir_cantidades_planificador(request):
-    numero_productos = int(request.GET["numero_productos"])
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
-    lista_separada = []
     cantidad = request.GET.getlist("cantidad")
     productos = request.GET.getlist("id_producto")
     for counter, i in enmuerate(productos):
