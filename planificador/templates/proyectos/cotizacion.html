@@ -37,7 +37,39 @@
       </div>
   </div>
 </div>
-
+<div class="card">
+  <div class="card-header" id="headingTwo">
+    <h2 class="mb-0">
+      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Productos
+      </button>
+    </h2>
+  </div>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Fecha uso</th>
+                    <th scope="col">Usuario modificación</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila in Productos %}
+            <tr>
+                <th>{{fila.proyecto.nombre}}</a></th>
+                <th>{{fila.cantidades}}</th>
+                <th>{{fila.status}}</th>
+                <th>{{fila.fecha_uso}}</th>
+                <th>{{fila.usuario_modificacion}}</th>
+                
+              {% endfor %}  
+    </tr>
+            </tbody>
+    </table>
+        
 
     
  

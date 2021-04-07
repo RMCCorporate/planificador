@@ -458,7 +458,11 @@ def agregar_cotizacion(request, id):
 
 def mostrar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
-    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion})
+    productos = []
+    for i in cotizacion.productos_asociados.all():
+        producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
+        productos.append(producto_proyecto)
+    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos})
 
 def editar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
