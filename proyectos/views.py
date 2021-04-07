@@ -68,6 +68,7 @@ def proyecto(request, id):
     productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
     aux_productos_final = []
     cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
+    lista_productos_precio = []
     lista_cotizaciones = []
     for i in cotizaciones:
         aux_productos = []
@@ -86,6 +87,7 @@ def proyecto(request, id):
                 if n.nombre_cotizacion == i.nombre:
                     precio = n
             if precio != []:
+                lista_productos_precio.append(producto.nombre)
                 aux2_productos.append(producto_asociado)
                 aux2_productos.append(subclase)
                 aux2_productos.append(producto_proyecto)
@@ -110,6 +112,14 @@ def proyecto(request, id):
         aux.append(demora_respuesta)
         aux.append(demora_precio)
         lista_cotizaciones.append(aux)
+    lista_precio = list(dict.fromkeys(lista_productos_precio))
+    if len(lista_precio) == len(productos_proyecto):
+        proyecto.estado = 'Completo'
+        proyecto.save()
+    else:
+        proyecto.estado = 'Incompleto'
+        proyecto.save()
+    
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final})
 
 def editar_precios(request, id):
@@ -125,7 +135,7 @@ def editar_precios(request, id):
         cotizacion = []
         lista_cotizacion = request.POST.getlist("cotizacion")
         for n,i in enumerate(nombre):
-            if request.POST[str(i)] != "no_hay":
+            if lista_cotizacion[n] != "no_hay":
                 cotizacion_nueva = Cotizacion.objects.get(nombre=lista_cotizacion[n])
                 cotizacion.append(cotizacion_nueva)
                 productos_proyecto[n].proveedores.add(cotizacion_nueva.proveedor_asociado)
@@ -170,6 +180,7 @@ def editar_precios(request, id):
             lista_aux.append(ultimo_precio)
             lista_aux.append(aux_productos)
             lista_info_productos.append(lista_aux)
+        print(lista_info_productos)
         #RENDERIZADO
         return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
 
