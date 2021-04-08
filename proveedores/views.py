@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
+from django.contrib.auth.decorators import login_required
 import openpyxl
 
 #FUNCIONES
+@login_required(login_url='/login')
 def mostrar_clases():
     clases = Clase.objects.all()
     subclases = []
@@ -21,6 +23,7 @@ def mostrar_clases():
     return [nombres, clase1, clase2, clase3]
 
 #Mostrar proveedores
+@login_required(login_url='/login')
 def proveedores(request):
     proveedores = Proveedor.objects.all()
     if request.method == "POST":
@@ -54,11 +57,13 @@ def proveedores(request):
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
 #Agregar proveedor
+@login_required(login_url='/login')
 def agregar_proveedor(request):
     clases = Clase.objects.all()
     lista_clases = mostrar_clases()
     return render(request, "proveedores/crear_proveedor.html", {"clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3],  "nombre_3":lista_clases[0][2]})
 
+@login_required(login_url='/login')
 def recibir_datos_proveedor(request):
     rut = str(request.GET["rut"])
     nombre = request.GET["nombre"]
@@ -91,6 +96,7 @@ def recibir_datos_proveedor(request):
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
 #Vista proveedor
+@login_required(login_url='/login')
 def proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     subclase = proveedor.subclases_asociadas.all()
@@ -105,6 +111,7 @@ def proveedor(request, rut):
 
 
 #Edición proveedor
+@login_required(login_url='/login')
 def mostrar_edicion_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     if request.method == "POST":
@@ -144,6 +151,7 @@ def mostrar_edicion_proveedor(request, rut):
         return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Subclases":subclase, "Contactos":contactos, "Calificaciones":calificaciones, "clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3], "nombre_3":lista_clases[0][2]})
 
 #Eliminar proveedor
+@login_required(login_url='/login')
 def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     proveedor.delete()

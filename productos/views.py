@@ -4,6 +4,7 @@ from planificador.models import Producto, Clase, SubClase, Precio, Filtro_produc
 from datetime import date, datetime
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
+from django.contrib.auth.decorators import login_required
 from django import forms
 import openpyxl
 
@@ -17,6 +18,7 @@ class ImageForm(forms.ModelForm):
         fields = ('id', 'nombre', 'unidad', 'kilos', 'imagen')
 
 #Mostrar productos
+@login_required(login_url='/login')
 def productos(request):
     productos = Producto.objects.all()
     if request.method == "POST":
@@ -40,10 +42,12 @@ def productos(request):
     return render(request, "productos/productos.html", {"Productos":productos})
 
 #Agregar producto
+@login_required(login_url='/login')
 def agregar_producto(request):
     clases = Clase.objects.all()
     subclases = SubClase.objects.all()
     return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases})
+
 
 def recibir_datos_producto(request):
     id = request.GET["id"]
@@ -61,6 +65,7 @@ def recibir_datos_producto(request):
     return render(request, "productos/productos.html", {"Productos":productos})
    
 #Vista producto
+@login_required(login_url='/login')
 def producto(request, id):
     producto = Producto.objects.get(id=id)
     lista_precios = producto.lista_precios.all()
@@ -70,6 +75,7 @@ def producto(request, id):
     return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase})
 
 #Edición producto
+@login_required(login_url='/login')
 def mostrar_edicion_producto(request, id):
     producto = Producto.objects.get(id=id)
     if request.method == "POST":
@@ -85,6 +91,7 @@ def mostrar_edicion_producto(request, id):
         form = ImageForm(instance=producto)
         return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases, "form":form})
 
+@login_required(login_url='/login')
 def editar_precio_producto(request, id):
     producto = Producto.objects.get(id=id)
     precio = request.POST["precio"]
@@ -99,6 +106,7 @@ def editar_precio_producto(request, id):
         producto.save()
 
 #Eliminar producto
+@login_required(login_url='/login')
 def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
     producto.delete()

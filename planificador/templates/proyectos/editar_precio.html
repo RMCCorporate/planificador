@@ -33,7 +33,6 @@
                         Elegir cotización
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        
                         {% for i in fila.2 %}
                               <li><input type="radio" value="{{i.nombre}}" name="cotizacion">{{i.nombre}}</li>
                         {% endfor %}

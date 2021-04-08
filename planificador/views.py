@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from planificador.models import Producto, SubClase, Proveedor, Clase
+from django.contrib.auth.decorators import login_required
 import openpyxl
 
 # Create your views here.
+@login_required(login_url='/login')
 def index(request):
     if request.method == "POST":
         excel_file = request.FILES["excel_file"]

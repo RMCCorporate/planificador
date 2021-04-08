@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import smtplib
 from email.mime.multipart import MIMEMultipart
@@ -59,10 +60,12 @@ def crear_correo(lista_contacto):
     session.quit()
 
 # Vista proyectos
+@login_required(login_url='/login')
 def proyectos(request):
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
+@login_required(login_url='/login')
 def proyecto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
@@ -119,9 +122,9 @@ def proyecto(request, id):
     else:
         proyecto.estado = 'Incompleto'
         proyecto.save()
-    
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final})
 
+@login_required(login_url='/login')
 def editar_precios(request, id):
     if request.method == "POST":
         proyecto = Proyecto.objects.get(id=id)
@@ -158,8 +161,7 @@ def editar_precios(request, id):
                 producto.lista_precios.add(precio)
                 producto.save()
         #Renderizar
-        proyectos = Proyecto.objects.all()
-        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+        return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     else:
         proyecto = Proyecto.objects.get(id=id)
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
@@ -184,6 +186,7 @@ def editar_precios(request, id):
         #RENDERIZADO
         return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
 
+@login_required(login_url='/login')
 def editar_datos_producto_proyecto(request, id):
     if request.method == "POST":
         proyecto = Proyecto.objects.get(id=id)
@@ -214,7 +217,7 @@ def editar_datos_producto_proyecto(request, id):
                             i.productos_asociados.remove(n)
                 producto_eliminar.delete()
         proyectos = Proyecto.objects.all()
-        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+        return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     else:
         proyecto = Proyecto.objects.get(id=id)
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
@@ -230,6 +233,7 @@ def editar_datos_producto_proyecto(request, id):
             lista_info_productos.append(lista_aux)
         return render(request, "proyectos/editar_producto_proyecto.html", {"info_productos":lista_info_productos})
 
+@login_required(login_url='/login')
 def agregar_producto(request, id):
     if request.method =="POST":
         proyectos = Proyecto.objects.all()
@@ -264,6 +268,7 @@ def agregar_producto(request, id):
         lista_productos = []
         return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
 
+@login_required(login_url='/login')
 def crear_nuevo_producto(request):
     proyecto = Proyecto.objects.get(id=request.POST["id_proyecto"])
     producto = Producto.objects.get(id=request.POST["id_producto"])
@@ -300,10 +305,10 @@ def crear_nuevo_producto(request):
     if proveedor != "no_hay":
         instancia_proveedor = Proveedor.objects.get(nombre=proveedor)
         nuevo_producto_proyecto.proveedores.add(instancia_proveedor)
-    proyectos = Proyecto.objects.all()
-    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     
 # Vista planificador I
+@login_required(login_url='/login')
 def planificador(request):
     clases = Clase.objects.all()
     subclases = []
@@ -319,6 +324,7 @@ def planificador(request):
     clase3 = clases_lista_productos(subclases[2])
     return render(request, "proyectos/planificador.html", {"Nombre1":nombres[0], "Subclases1":clase1, "Nombre2":nombres[1], "Subclases2":clase2, "Nombre3":nombres[2], "Subclases3":clase3})
 
+@login_required(login_url='/login')
 def mostrar_filtro(request):
     centro_costos = request.GET["centro_costos"]
     nombre = request.GET["nombre"]
@@ -350,6 +356,7 @@ def mostrar_filtro(request):
     productos_proyecto = nuevo_proyecto.productos.all()
     return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
+@login_required(login_url='/login')
 def guardar_datos_filtro(request):
     todos_productos = Producto.objects.all()
     id = request.GET["centro_costos"]
@@ -373,7 +380,9 @@ def guardar_datos_filtro(request):
     producto = myFilter.qs
     return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
+
 #Recibir vista planificador I
+@login_required(login_url='/login')
 def recibir_datos_planificador(request):
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     productos_repetidos = request.GET.getlist("lista_productos")
@@ -393,6 +402,7 @@ def recibir_datos_planificador(request):
         lista_subclases_productos.append(lista_aux_producto)
     return render(request, "proyectos/lista_productos.html", {"Proyecto":proyecto, "Productos":lista_subclases_productos})
 
+@login_required(login_url='/login')
 def recibir_cantidades_planificador(request):
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     cantidad = request.GET.getlist("cantidad")
@@ -405,6 +415,7 @@ def recibir_cantidades_planificador(request):
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
+@login_required(login_url='/login')
 def agregar_cotizacion(request, id):
     if request.method == "POST":
         proyecto_asociado = Proyecto.objects.get(id=id)
@@ -420,8 +431,7 @@ def agregar_cotizacion(request, id):
             nuevo_producto = Producto.objects.get(nombre=i)
             nueva_cotizacion.productos_asociados.add(nuevo_producto)
             nueva_cotizacion.save()
-        proyectos = Proyecto.objects.all()
-        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+        return redirect('/proyectos/proyecto/{}'.format(proyecto_asociado.id))
     else:
         proyecto = Proyecto.objects.get(id=id)
         productos = proyecto.productos.all()
@@ -467,6 +477,7 @@ def agregar_cotizacion(request, id):
             lista_final_final.append(lista_aux)
         return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
 
+@login_required(login_url='/login')
 def mostrar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     productos = []
@@ -475,22 +486,23 @@ def mostrar_cotizacion(request, id):
         productos.append(producto_proyecto)
     return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos})
 
+@login_required(login_url='/login')
 def editar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     if request.method == "POST":
         cotizacion.nombre = request.POST["nombre"]
         cotizacion.fecha_respuesta = request.POST["fecha_respuesta"]
         cotizacion.save()
-        proyectos = Proyecto.objects.all()
-        return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+        return redirect('/proyectos/mostrar_cotizacion/{}'.format(cotizacion.id))
     else:
         return render(request, "proyectos/editar_cotizacion.html", {"Cotizacion":cotizacion})
-        
+
+@login_required(login_url='/login')
 def eliminar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
+    proyecto = cotizacion.proyecto_asociado.id
     cotizacion.delete()
-    proyectos = Proyecto.objects.all()
-    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    return redirect('/proyectos/proyecto/{}'.format(proyecto))
 
 
 
