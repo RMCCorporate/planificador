@@ -31,6 +31,70 @@ def crear_correo(lista_contacto):
     texto_lista_productos = ""
     for producto in lista_contacto[4]:
         texto_lista_productos += "\n- {}: {} {}\n".format(producto[0], producto[1], [producto[2]])
+    texto_html = """\<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+<style>@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;1,300&display=swap');</style>
+<td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">--</td>
+<table style=" margin:0; padding:0 5px 0 0;">
+	<tr>
+    <!--Columna Logo-->
+		<td style=" margin:0; padding:0; vertical-align:top;">
+			<a href='http://www.rmc.cl' title="RMC Engineering Solutions" style="border:none; text-decoration:none;">
+        <img moz-do-not-send="true" src="http://rmc.cl/signature_img/rmc_engineering.png" alt="" style="border:none; width:59px; height:59px; display:block;">
+      </a>
+		</td>
+    <!--Columna Info + Representacion-->
+		<td style="margin:0; padding:0;">
+      <table cellspacing='0' cellpadding='0' border-spacing='0' style="padding:0; margin:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; font-size:12px; mso-line-height-rule:exactly; line-height:11px; color: rgb(33, 33, 33); border-collapse:collapse; -webkit-text-size-adjust:none;">
+				<!--Fila Nombre-->
+				<tr style="margin:0;padding:0;">
+          <td style="margin:0;padding:2px 0 0 0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
+            <strong>
+              <a href="mailto:rcasascordero@rmc.cl" style="border:none; text-decoration:none; color: rgb(33, 33, 33);"><span style="color: rgb(33, 33, 33);">{}</span></a>
+            </strong>
+          </td>
+        </tr>
+        <tr style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">
+          <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">&nbsp;</td>
+        </tr>
+				<!--Fila cargo-->
+        <tr style="margin:0; padding:0;">
+          <td style="margin:0; padding:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
+            <span style="color: rgb(33, 33, 33);"><i>Subgerente de Proyectos - RMC Engineering Solutions</i></span>
+          </td>
+        </tr>
+        <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
+          <td style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">&nbsp;</td>
+        </tr>
+				<!--Fila Direccion-->
+        <tr style="margin:0;padding:0;">
+          <td style="margin:0;padding:0;font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
+            <span style="color: rgb(33, 33, 33);"><i>Las Cinerarias #550 - Concón</i></span>
+          </td>
+        </tr>
+        <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
+          <td style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">&nbsp;</td>
+        </tr>
+				<!--Fila Telefono-->
+        <tr style="margin:0; padding:0;">
+          <td style="margin:0; padding:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
+            <span style="color: rgb(33, 33, 33);"><i>C.(+56) 996403302 - T.(+56) 32 2600305</i></span>
+          </td>
+        </tr>
+        <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
+          <td style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">&nbsp;</td>
+        </tr>
+				<!--Fila representantes-->
+        <tr style="margin:0; padding:0;">
+          <td style="margin:0; padding:0; vertical-align:middle;">
+              <img moz-do-not-send="true" src="http://rmc.cl/signature_img/empresas_rep.png" alt="" style="border:none; width:280px; display:block;">
+      		</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">&nbsp;</td>
+""".format("TOMÁS CORREA")
     texto_correo = ""
     texto_español = "Estimado {}, \nSe solicita cotización de: \n {} \nSaludos.".format(
         lista_contacto[0],
@@ -53,6 +117,7 @@ def crear_correo(lista_contacto):
     mensaje['To'] = correo_prueba
     mensaje['Subject'] = 'Correo de prueba planificador'
     mensaje.attach(MIMEText(texto_correo, 'plain'))
+    mensaje.attach(MIMEText(texto_html, 'html'))
     session = smtplib.SMTP('smtp.gmail.com', 587)
     session.starttls()
     session.login(correo_enviador, clave_enviador)
@@ -63,6 +128,7 @@ def crear_correo(lista_contacto):
 # Vista proyectos
 @login_required(login_url='/login')
 def proyectos(request):
+    crear_correo(["Tomás", "tcorrea@rmc.cl", "RMC", "ESP", [["Producto1", "Unidad 1", "Cantidad 1"]]])
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
