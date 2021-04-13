@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from planificador.models import Producto, SubClase, Proveedor, Clase
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 import openpyxl
 
@@ -34,3 +35,28 @@ def index(request):
                 clase.save()
 
     return render(request, 'planificador/index.html')
+
+@login_required(login_url='/login')
+def crear_usuario(request):
+    if request.method == "POST":
+        nickname = request.POST["nickname"]
+        nombre = request.POST["nombre"]
+        apellido = request.POST["apellido"]
+        correo = request.POST["correo"]
+        contraseña = request.POST["contraseña"]
+        nombre_grupo = request.POST["grupo"]
+        nuevo_usuario = User.objects.create_user(nickname, correo, contraseña)
+        nuevo_usuario.first_name = nombre
+        nuevo_usuario.last_name = apellido
+        nuevo_usuario.save()
+        grupo = Group.objects.get(name=nombre_grupo)
+        nuevo_usuario.groups.add(grupo)
+        nuevo_usuario.save()
+        return redirect('/')
+    else:
+        return render(request, 'planificador/crear_usuario.html')
+
+
+
+    
+    

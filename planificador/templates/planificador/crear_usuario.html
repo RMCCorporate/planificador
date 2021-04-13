@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
+<h1>Crear nuevo proveedor</h1>
+
+<form action="" method="POST"> {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-2">
+        <label for="nickname">Nickname</label>
+        <input type="text" class="form-control" id="nickname" name="nickname">
+        </div>
+        <div class="form-group col-md-2">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" class="form-control" id="nombre">
+        </div>
+        <div class="form-group col-md-2">
+            <label for="apellido">Apellido</label>
+            <input type="text" name="apellido" class="form-control" id="apellido">
+        </div>
+        <div class="form-group col-md-2">
+          <label for="correo">Correo</label>
+          <input type="text" name="correo" class="form-control" id="correo">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="contraseña">Contraseña</label>
+        <input type="text" name="contraseña" class="form-control" id="contraseña">
+    </div>
+    </div>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          Grupo
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            
+              <input type="checkbox" name="grupo" value="Admin">Admin
+              <br>
+              <input type="checkbox" name="grupo" value="Planificador">Planificador
+              <br> 
+              <input type="checkbox" name="grupo" value="Cotizador">Cotizador
+              <br> 
+           
+        </div>
+      </div>
+    
+    <button class="btn btn-secondary btn-lg btn-block" type="submit">Crear</button>
+    </form>
+{% endblock%}

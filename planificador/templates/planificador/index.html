@@ -8,7 +8,9 @@
     <section class="page-section cta">
         <h1>BIENVENIDO A LA PÁGINA PLANIFICADOR</h1>
         <br>
+        <a href="{% url 'crear_usuario' %}" class="btn btn-primary">Añadir usuario</a>
         <br>
+
         <h2>AGREGAR SUB-CLASES</h2>
         <form action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
