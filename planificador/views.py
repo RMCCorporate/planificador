@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect
 from planificador.models import Producto, SubClase, Proveedor, Clase
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
+from planificador.decorators import allowed_users
 import openpyxl
 
 # Create your views here.
 @login_required(login_url='/login')
 def index(request):
+    group = str(request.user.groups.all()[0])
     if request.method == "POST":
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
@@ -34,8 +36,9 @@ def index(request):
                 clase.subclases.add(nueva_subclase)
                 clase.save()
 
-    return render(request, 'planificador/index.html')
+    return render(request, 'planificador/index.html', {"group":group})
 
+@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_usuario(request):
     if request.method == "POST":
@@ -54,6 +57,7 @@ def crear_usuario(request):
         nuevo_usuario.save()
         return redirect('/')
     else:
+        
         return render(request, 'planificador/crear_usuario.html')
 
 

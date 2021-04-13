@@ -8,7 +8,10 @@
     <section class="page-section cta">
         <h1>BIENVENIDO A LA PÁGINA PLANIFICADOR</h1>
         <br>
+        {% if group == 'Admin'%}
         <a href="{% url 'crear_usuario' %}" class="btn btn-primary">Añadir usuario</a>
+     {% endif %}
+        
         <br>
 
         <h2>AGREGAR SUB-CLASES</h2>
