@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
 from django.contrib.auth.decorators import login_required
+from planificador.decorators import allowed_users
 import openpyxl
 
 #FUNCIONES
-@login_required(login_url='/login')
 def mostrar_clases():
     clases = Clase.objects.all()
     subclases = []
@@ -57,6 +57,7 @@ def proveedores(request):
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
 #Agregar proveedor
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def agregar_proveedor(request):
     clases = Clase.objects.all()
@@ -111,6 +112,7 @@ def proveedor(request, rut):
 
 
 #Edición proveedor
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def mostrar_edicion_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
@@ -151,6 +153,7 @@ def mostrar_edicion_proveedor(request, rut):
         return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Subclases":subclase, "Contactos":contactos, "Calificaciones":calificaciones, "clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3], "nombre_3":lista_clases[0][2]})
 
 #Eliminar proveedor
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)

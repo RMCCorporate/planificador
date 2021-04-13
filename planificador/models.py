@@ -11,6 +11,7 @@ class Precio(models.Model):
     nombre_proveedor = models.CharField(max_length=128, null=True)
     nombre_cotizacion = models.CharField(max_length=128, null=True)
     comentarios = models.TextField(null=True)
+    usuario_modificacion = models.CharField(max_length=128, null=True)
 
 class Producto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)

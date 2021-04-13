@@ -2,7 +2,9 @@
 {% block title %} PROVEEDOR {% endblock%}
 {% block content %}             
     <ul class="list-group list-group-flush">
+        
         <a href="{% url 'nuevo' %}" class="btn btn-primary">Añadir proveedor</a>
+   
             <h1>PROVEEDORES</h1>
                 <table class="table">
                         <thead class="thead-light">
@@ -15,7 +17,10 @@
                         <tbody>       
                         {% for fila in Proveedores %}
                         <tr>
-                        <th><a href="{% url 'proveedor' fila.rut %}">{{fila.rut}}</a></th>
+                        <th>
+                            
+                            <a href="{% url 'proveedor' fila.rut %}">{{fila.rut}}</a></th>
+                            
                         <th> {{fila.nombre}}</th>
                                 {% endfor %}
                         </tr>
