@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
+<h1>Crear nuevo proveedor</h1>
+
+<form action="" method="POST"> {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group col-md-2">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" class="form-control" id="nombre" value={{Usuario.nombre}}>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="apellido">Apellido</label>
+            <input type="text" name="apellido" class="form-control" id="apellido" value={{Usuario.apellido}}>
+        </div>
+        <div class="form-group col-md-2">
+          <label for="segundo_apellido">Segundo apellido</label>
+          <input type="text" name="segundo_apellido" class="form-control" id="segundo_apellido" value={{Usuario.segundo_apellido}}>
+      </div>
+  <div class="form-group col-md-2">
+    <label for="celular">Celular</label>
+    <input type="text" name="celular" class="form-control" id="celular" value={{Usuario.celular}}>
+</div>
+<div class="form-group col-md-2">
+  <label for="telefono">Telefono fijo</label>
+  <input type="text" name="telefono" class="form-control" id="telefono" value={{Usuario.telefono}}>
+</div>
+<div class="form-group col-md-2">
+  <label for="cargo">Cargo</label>
+  <input type="text" name="cargo" class="form-control" id="cargo" value={{Usuario.cargo}}>
+</div>
+    <button class="btn btn-secondary btn-lg btn-block" type="submit">Editar</button>
+    </form>
+{% endblock%}

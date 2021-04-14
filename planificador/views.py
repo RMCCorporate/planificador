@@ -89,8 +89,22 @@ def crear_grupo(request):
 
 @login_required(login_url='/login')
 def usuario(request):
-    usuario = Usuario.objects.get(correo=request.user.email)
+    print(request.user.email)
+    usuario = Usuario.objects.get(correo=str(request.user.email))
     return render(request, 'planificador/usuario.html', {'Usuario':usuario})
 
-    
-    
+@login_required(login_url='/login')
+def editar_usuario(request, correo):
+    if request.method == "POST":
+        usuario = Usuario.objects.get(correo=correo)
+        usuario.nombre = request.POST["nombre"]
+        usuario.apellido = request.POST["apellido"]
+        usuario.segundo_apellido = request.POST["segundo_apellido"]
+        usuario.cargo = request.POST["cargo"]
+        usuario.celular = request.POST["celular"]
+        usuario.telefono = request.POST["telefono"]
+        usuario.save()
+        return redirect('/planificador/usuario/')
+    else:
+        usuario = Usuario.objects.get(correo=str(request.user.email))
+        return render(request, 'planificador/editar_usuario.html', {'Usuario':usuario})
