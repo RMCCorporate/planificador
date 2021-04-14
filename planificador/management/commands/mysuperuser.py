@@ -8,10 +8,4 @@ class Command(BaseCommand):
             User.objects.create_superuser('tacorrea',
                                           'tacorrea@uc.cl',
                                           'tom12345')
-        if not Group.objects.filter(name='Admin').exists():
-            grupo = Group.objects.create('Admin')
-            Group.objects.create('Planificador')
-            Group.objects.create('Cotizador')
-            usuario = User.objects.get(username='tacorrea')
-            usuario.groups.add(grupo)
-            usuario.save()
+       

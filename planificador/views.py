@@ -56,8 +56,32 @@ def crear_usuario(request):
         nuevo_usuario.save()
         return redirect('/')
     else:
-        
         return render(request, 'planificador/crear_usuario.html')
+
+@allowed_users(allowed_roles=['Admin'])
+@login_required(login_url='/login')
+def crear_grupo(request):
+    if request.method == "POST":
+        nombre = request.POST["nombre"]
+        usuario = request.POST["usuario"]
+        if not Group.objects.filter(name=str(nombre)).exists():
+            nuevo_grupo = Group.objects.create(name=nombre)
+            nuevo_grupo.save()
+            usuario = User.objects.get(username=usuario)
+            print(usuario.first_name)
+            usuario.groups.add(nuevo_grupo)
+            usuario.save()
+        else:
+            grupo = Group.objects.get(name=nombre)
+            print(usuario)
+            usuario = User.objects.get(username=usuario)
+            usuario.groups.add(grupo)
+            usuario.save()
+        return redirect('/')
+    else:
+        usuarios = User.objects.all()
+        return render(request, 'planificador/crear_grupo.html', {'usuarios':usuarios})
+
 
 
 

@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="home"),
     path('planificador/crear_usuario/', views.crear_usuario, name="crear_usuario"),
+    path('planificador/crear_grupo/', views.crear_grupo, name="crear_grupo"),
     path('', include('users.urls')),
     path('', include('productos.urls')),
     path('', include('proveedores.urls')),
