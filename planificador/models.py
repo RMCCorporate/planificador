@@ -161,3 +161,18 @@ class Cotizacion(models.Model):
     fecha_respuesta = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_actualizacion_precio = models.DateField(auto_now=False, auto_now_add=False, null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
+
+class Usuario(models.Model):
+    correo = models.CharField(max_length=128, primary_key=True)
+    nombre = models.CharField(max_length=128, null=True)
+    apellido = models.CharField(max_length=128, null=True)
+    segundo_apellido = models.CharField(max_length=128, null=True)
+    celular = models.CharField(max_length=128, null=True)
+    cargo = models.CharField(max_length=128, null=True)
+    telefono = models.CharField(max_length=128, null=True)
+    precios = models.ManyToManyField(Precio)
+    productos_proyecto = models.ManyToManyField(Producto_proyecto)
+    proyectos = models.ManyToManyField(Proyecto)
+    cotizaciones = models.ManyToManyField(Cotizacion)
+
+

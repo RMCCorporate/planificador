@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -222,10 +222,16 @@ def editar_precios(request, id):
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
                     precio.save()
+                    usuario = Usuario.objects.get(correo=request.user.email)
+                    usuario.precios.add(precio)
+                    usuario.save()
                 else:
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
                     precio.save()
+                    usuario = Usuario.objects.get(correo=request.user.email)
+                    usuario.precios.add(precio)
+                    usuario.save()
                 producto.lista_precios.add(precio)
                 producto.save()
         #Renderizar
@@ -278,6 +284,9 @@ def editar_datos_producto_proyecto(request, id):
             producto_proyecto.fecha_uso = fecha_uso[n]
             producto_proyecto.usuario_modificacion = usuario_modificacion
             producto_proyecto.save()
+            usuario = Usuario.objects.get(correo=request.user.email)
+            usuario.productos_proyecto.add(producto_proyecto)
+            usuario.save()
         eliminar = request.POST.getlist("eliminar")
         if eliminar:
             for i in eliminar:
@@ -287,7 +296,8 @@ def editar_datos_producto_proyecto(request, id):
                         if n.nombre == producto_eliminar.proyecto.nombre:
                             i.productos_asociados.remove(n)
                 producto_eliminar.delete()
-        proyectos = Proyecto.objects.all()
+                usuario = Usuario.objects.get(correo=request.user.email)
+                usuario.productos_proyecto.remove(producto_eliminar)
         return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     else:
         proyecto = Proyecto.objects.get(id=id)
@@ -369,12 +379,21 @@ def crear_nuevo_producto(request):
     nuevo_precio = Precio(id=uuid.uuid1(), valor=valor, valor_importación=valor_importacion, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, fecha=fecha_actual, nombre_proveedor=proveedor, usuario_modificacion=usuario_modificacion)
     nuevo_precio.save()
     producto.lista_precios.add(nuevo_precio)
+    usuario = Usuario.objects.get(correo=request.user.email)
+    usuario.precios.add(nuevo_precio)
+    usuario.save()
     if fecha_uso != "":
         nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, fecha_uso=fecha_uso, cantidades=cantidades, usuario_modificacion=usuario_modificacion)
         nuevo_producto_proyecto.save()
+        usuario = Usuario.objects.get(correo=request.user.email)
+        usuario.productos_proyecto.add(nuevo_producto_proyecto)
+        usuario.save()
     else:
         nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, cantidades=cantidades, usuario_modificacion=usuario_modificacion)
         nuevo_producto_proyecto.save()
+        usuario = Usuario.objects.get(correo=request.user.email)
+        usuario.productos_proyecto.add(nuevo_producto_proyecto)
+        usuario.save()
     if proveedor != "no_hay":
         instancia_proveedor = Proveedor.objects.get(nombre=proveedor)
         nuevo_producto_proyecto.proveedores.add(instancia_proveedor)
@@ -451,6 +470,9 @@ def guardar_datos_filtro(request):
             nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, creador=usuario_modificacion)
             nuevo_producto_proyecto.save()
             proyecto.save()
+            usuario = Usuario.objects.get(correo=request.user.email)
+            usuario.proyectos.add(proyecto)
+            usuario.save()
     productos_proyecto = proyecto.productos.all()
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
@@ -491,6 +513,9 @@ def recibir_cantidades_planificador(request):
         producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
         producto_proyecto.cantidades = float(cantidad[counter])
         producto_proyecto.save()
+        usuario = Usuario.objects.get(correo=request.user.email)
+        usuario.productos_proyecto.add(producto_proyecto)
+        usuario.save()
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
@@ -507,6 +532,9 @@ def agregar_cotizacion(request, id):
         proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
         nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
         nueva_cotizacion.save()
+        usuario = Usuario.objects.get(correo=request.user.email)
+        usuario.cotizaciones.add(nueva_cotizacion)
+        usuario.save()
         for i in productos:
             nuevo_producto = Producto.objects.get(nombre=i)
             nueva_cotizacion.productos_asociados.add(nuevo_producto)
@@ -576,6 +604,9 @@ def editar_cotizacion(request, id):
         cotizacion.usuario_modificacion = usuario_modificacion
         cotizacion.fecha_respuesta = request.POST["fecha_respuesta"]
         cotizacion.save()
+        usuario = Usuario.objects.get(correo=request.user.email)
+        usuario.cotizaciones.add(nueva_cotizacion)
+        usuario.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(cotizacion.id))
     else:
         return render(request, "proyectos/editar_cotizacion.html", {"Cotizacion":cotizacion})

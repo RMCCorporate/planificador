@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+    {% load static %}
+
+    <div class="card text-center">
+        <div class="card-header">
+            <h1>{{Usuario.nombre}} {{Usuario.apellido}} {{Usuario.segundo_apellido}}</h1>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Información general</h5>
+          <p class="card-text">
+            Cargo: {{Usuario.cargo}}
+              <br>
+              Correo: {{Usuario.correo}}
+              <br>
+              Celular: {{Usuario.celular}}
+              <br>
+              Telefono fijo: {{Usuario.telefono}}
+          </p>
+        </div>
+    </div>
+        <div class="card">
+          
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Fecha creación</th>
+                            <th scope="col">Valor unitario</th>
+                            <th scope="col">Moneda</th>
+                            <th scope="col">Proveedor</th>
+                            <th scope="col">Comentarios</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in lista_precios %}
+                    <tr>
+                  <th>{{fila.fecha}}</a></th>
+                  <th> {{fila.valor}}</th>
+                  <th>{{fila.tipo_cambio}}</th>
+                  <th>{{fila.nombre_proveedor}}</th>
+                  <th>{{fila.comentarios}}</th>
+
+                      {% endfor %}  
+            </tr>
+                    </tbody>
+            </table>
+      
+          </div>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Fecha uso</th>
+                        <th scope="col">Usuario modificación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for fila in Productos %}
+                <tr>
+                    <th>{{fila.proyecto.nombre}}</a></th>
+                    <th>{{fila.cantidades}}</th>
+                    <th>{{fila.status}}</th>
+                    <th>{{fila.fecha_uso}}</th>
+                    <th>{{fila.usuario_modificacion}}</th>
+                    
+                  {% endfor %}  
+        </tr>
+                </tbody>
+        </table>
+        
+    
+      </div>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Fecha creación</th>
+                    <th scope="col">Fecha inicio</th>
+                    <th scope="col">Fecha final</th>
+                    <th scope="col">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila in Proyectos %}
+            <tr>
+                <th>{{fila.nombre}}</a></th>
+                <th>{{fila.fecha_creacion}}</th>
+                <th>{{fila.fecha_inicio}}</th>
+                <th>{{fila.fecha_final}}</th>
+                <th>{{fila.estado}}</th>
+                
+              {% endfor %}  
+    </tr>
+            </tbody>
+    </table>
+        
+
+  </div>
+</div>
+<div class="card-body">
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Nombre referencial</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Fecha salida</th>
+                <th scope="col">Fecha respuesta</th>
+                <th scope="col">Fecha actualizacion precio</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in cotizaciones %}
+        <tr>
+            <th>{{fila.nombre}}</th>
+            <th>{{fila.proveedor_asociado.nombre}}</th>
+            <th>{{fila.fecha_salida}}</th>
+            <th>{{fila.fecha_respuesta}}</th>
+            <th>{{fila.fecha_actualizacion_precio}}</th>
+          {% endfor %}  
+</tr>
+        </tbody>
+</table>
+    
+
+</div>
+</div>
+        
+{% endblock %}

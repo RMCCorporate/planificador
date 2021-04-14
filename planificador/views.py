@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Producto, SubClase, Proveedor, Clase
+from planificador.models import Producto, SubClase, Proveedor, Clase, Usuario
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from planificador.decorators import allowed_users
@@ -37,13 +37,17 @@ def index(request):
                 clase.save()
     return render(request, 'planificador/index.html')
 
-@allowed_users(allowed_roles=['Admin'])
+#@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_usuario(request):
     if request.method == "POST":
         nickname = request.POST["nickname"]
         nombre = request.POST["nombre"]
         apellido = request.POST["apellido"]
+        segundo_apellido = request.POST["segundo_apellido"]
+        cargo = request.POST["cargo"]
+        celular = request.POST["celular"]
+        telefono = request.POST["telefono"]
         correo = request.POST["correo"]
         contraseña = request.POST["contraseña"]
         nombre_grupo = request.POST["grupo"]
@@ -54,11 +58,13 @@ def crear_usuario(request):
         grupo = Group.objects.get(name=nombre_grupo)
         nuevo_usuario.groups.add(grupo)
         nuevo_usuario.save()
+        usuario_info = Usuario(correo=correo, nombre=nombre, apellido=apellido, segundo_apellido=segundo_apellido, celular=celular, cargo=cargo, telefono=telefono)
+        usuario_info.save()
         return redirect('/')
     else:
         return render(request, 'planificador/crear_usuario.html')
 
-@allowed_users(allowed_roles=['Admin'])
+#@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_grupo(request):
     if request.method == "POST":
@@ -68,12 +74,10 @@ def crear_grupo(request):
             nuevo_grupo = Group.objects.create(name=nombre)
             nuevo_grupo.save()
             usuario = User.objects.get(username=usuario)
-            print(usuario.first_name)
             usuario.groups.add(nuevo_grupo)
             usuario.save()
         else:
             grupo = Group.objects.get(name=nombre)
-            print(usuario)
             usuario = User.objects.get(username=usuario)
             usuario.groups.add(grupo)
             usuario.save()
@@ -83,7 +87,10 @@ def crear_grupo(request):
         return render(request, 'planificador/crear_grupo.html', {'usuarios':usuarios})
 
 
-
+@login_required(login_url='/login')
+def usuario(request):
+    usuario = Usuario.objects.get(correo=request.user.email)
+    return render(request, 'planificador/usuario.html', {'Usuario':usuario})
 
     
     
