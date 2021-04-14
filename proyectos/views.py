@@ -128,7 +128,6 @@ def crear_correo(lista_contacto):
 # Vista proyectos
 @login_required(login_url='/login')
 def proyectos(request):
-    crear_correo(["Tomás", "tcorrea@rmc.cl", "RMC", "ESP", [["Producto1", "Unidad 1", "Cantidad 1"]]])
     proyectos = Proyecto.objects.all()
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 

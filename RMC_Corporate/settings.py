@@ -32,7 +32,7 @@ DEBUG = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
-ALLOWED_HOSTS = ['django-env.eba-bycjifwt.us-west-2.elasticbeanstalk.com','planificador-proyectos-dev.us-west-2.elasticbeanstalk.com', '127.0.0.1']
+ALLOWED_HOSTS = ['django-env.eba-bycjifwt.us-west-2.elasticbeanstalk.com','planificador-proyectos-dev.us-west-2.elasticbeanstalk.com', '127.0.0.1', 'planificador-proyectos-dev.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'users',
     'productos',
     'proveedores',
-    'django_filters',
     'proyectos',
 ]
 
