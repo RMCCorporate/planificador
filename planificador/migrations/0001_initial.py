@@ -60,7 +60,6 @@ class Migration(migrations.Migration):
                 ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
                 ('nombre', models.CharField(max_length=128)),
                 ('precio_final', models.FloatField(null=True)),
-                ('centro_costos', models.CharField(max_length=128, null=True)),
                 ('fecha_creacion', models.DateField(auto_now_add=True)),
                 ('fecha_inicio', models.DateField(null=True)),
                 ('fecha_final', models.DateField(null=True)),
