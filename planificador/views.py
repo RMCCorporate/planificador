@@ -8,7 +8,7 @@ import openpyxl
 # Create your views here.
 @login_required(login_url='/login')
 def index(request):
-    group = str(request.user.groups.all()[0])
+    #group = str(request.user.groups.all()[0])
     if request.method == "POST":
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
@@ -35,8 +35,7 @@ def index(request):
                 clase = Clase.objects.get(nombre=clase)
                 clase.subclases.add(nueva_subclase)
                 clase.save()
-
-    return render(request, 'planificador/index.html', {"group":group})
+    return render(request, 'planificador/index.html')
 
 @allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
