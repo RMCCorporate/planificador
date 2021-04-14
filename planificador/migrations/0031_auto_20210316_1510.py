@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        
+        ('planificador', '0030_remove_proyecto_centro_costos'),
     ]
 
     operations = [
