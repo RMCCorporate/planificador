@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -24,9 +24,9 @@ def clases_lista_productos(clase):
         sub_clase_general.append(subclase_aux)
     return sub_clase_general
 
-def crear_correo(usuario, cotizacion, texto_extra):
+def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
     
-    texto_html = """\<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
+    texto_html = """<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 <style>@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;1,300&display=swap');</style>
 <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">--</td>
 <table style=" margin:0; padding:0 5px 0 0;">
@@ -95,7 +95,10 @@ def crear_correo(usuario, cotizacion, texto_extra):
     for i in cotizacion.productos_asociados.all():
         #ACA AGREGAR LO DE LOS NOMBRE DE PRODUCTOS
         producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
-        texto_lista_productos += "\n- {}: {} {}\n".format(i.nombre, i.unidad, producto_proyecto.cantidades)
+        nombre = i.nombre
+        if Producto_proveedor.objects.filter(proyecto=i, producto=cotizacion.proveedor_asociado).exists():
+            nombre = Producto_proveedor.objects.get(proyecto=i, producto=cotizacion.proveedor_asociado).nombre_proveedor
+        texto_lista_productos += "\n- {}: {} {}\n".format(nombre, producto_proyecto.cantidades, i.unidad)
     texto_español = "Estimado {}, \nSe solicita cotización de: \n{} {}\nSaludos.".format(
         cotizacion.contacto_asociado.nombre,
         texto_lista_productos,
@@ -110,22 +113,22 @@ def crear_correo(usuario, cotizacion, texto_extra):
         texto_correo = texto_español
     else:
         texto_correo = texto_ingles
-    #QUEDE ACA
     correo_enviador = usuario.correo
-    clave_enviador = 'Tom12345'
+    #LLEGUE ACA
+    clave_enviador = clave
     #CAMBIAR DESPUÉS A "CORREO":
     correo_prueba = 'tacorrea@uc.cl'
     mensaje = MIMEMultipart()
     mensaje['From'] = correo_enviador
     mensaje['To'] = correo_prueba
-    mensaje['Subject'] = 'Correo de prueba planificador'
+    mensaje['Subject'] = subject
     mensaje.attach(MIMEText(texto_correo, 'plain'))
     mensaje.attach(MIMEText(texto_html, 'html'))
     session = smtplib.SMTP('smtp.gmail.com', 587)
     session.starttls()
-    #session.login(correo_enviador, clave_enviador)
-    #text = mensaje.as_string()
-    #session.sendmail(correo_enviador, correo_prueba, text)
+    session.login(correo_enviador, clave_enviador)
+    text = mensaje.as_string()
+    session.sendmail(correo_enviador, correo_prueba, text)
     session.quit()
 
 # Vista proyectos
@@ -637,57 +640,14 @@ def enviar_correo(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     proyecto = cotizacion.proyecto_asociado.id
     if request.method == "POST":
+        subject = request.POST["subject"]
         texto_extra = request.POST["texto"]
+        clave = request.POST["clave"]
         usuario = Usuario.objects.get(correo=request.user.email)
-        crear_correo(usuario, cotizacion, texto_extra)
+        crear_correo(usuario, cotizacion, texto_extra, clave, subject)
+        cotizacion.fecha_salida = datetime.now()
+        cotizacion.save()
         return redirect('/proyectos/proyecto/{}'.format(proyecto))
     else:
         return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion})
         
-"""
-def enviar_correos(request):
-    contactos = request.GET.getlist("contacto")
-    numero_productos = request.GET.getlist("numero_productos")
-    #numero_proveedores = request.GET.getlist("numero_proveedores")
-    numero_contactos = request.GET.getlist("numero_contactos")
-    productos = request.GET.getlist("productos")
-    proveedores = request.GET.getlist("nombre")
-    cantidades = request.GET.getlist("cantidades")
-    #Lista de productos dependiendo de proveedores
-    lista_productos = []
-    contador_productos = 0
-    for n, i in enumerate(numero_productos):
-        lista_auxiliar_productos = []
-        for n in range(int(i)):
-            lista_aux = []
-            lista_aux.append(productos[contador_productos])
-            lista_aux.append(cantidades[contador_productos])
-            unidad = Producto.objects.get(nombre=productos[contador_productos]).unidad
-            lista_aux.append(unidad)
-            lista_auxiliar_productos.append(lista_aux)
-            contador_productos += 1
-        lista_productos.append(lista_auxiliar_productos)
-    #Lista de proveedores dependiendo de contacto.
-    lista_proveedores = []
-    contador_proveedores = 0
-    for i in numero_contactos:
-        for n in range(int(i)):
-            lista_aux = []
-            lista_aux.append(proveedores[contador_proveedores])
-            lista_aux.append(lista_productos[contador_proveedores])
-            lista_proveedores.append(lista_aux)
-        contador_proveedores += 1
-    for n, contacto in enumerate(contactos):
-        lista_contactos = []
-        lista_contactos.append(contacto)
-        correo = Contacto.objects.get(nombre=contacto).correo
-        lista_contactos.append(correo)
-        lista_contactos.append(lista_proveedores[n][0])
-        idioma = Proveedor.objects.get(nombre=lista_proveedores[n][0]).idioma
-        lista_contactos.append(idioma)
-        lista_contactos.append(lista_proveedores[n][1])
-    #FALTA ENVIAR CORREO A PERSONAS REALES. ES COSA DE METER CONTENIDO_CORREO UN TAB ARRIBA.
-    contenido_correo = crear_correo(lista_contactos)
-        
-    return HttpResponse("NO SE HA HECHO ESTA PARTE")
-"""
