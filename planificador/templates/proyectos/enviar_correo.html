@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+{% load static %}
+<h1>NUEVO Correo</h1>
+<br>
+<form action="{{Cotizacion.id}}" method="POST">{% csrf_token %}
+    Nombre referencial cotización: {{Cotizacion.nombre}}
+    <br>
+    Contacto: {{Cotizacion.contacto_asociado.nombre}} - {{Cotizacion.contacto_asociado.correo}}
+    <br>
+    <br>
+    Texto extra: <input type="text" name="texto">
+    <br>
+  <button class="btn btn-primary" type="submit">Enviar</button>  
+
+</div>    
+</form>
+{% endblock %}

@@ -6,6 +6,7 @@
     <div class="card text-center">
         <div class="card-header">
             {{Cotizacion.nombre}}
+            <a href="{% url 'enviar_correo' Cotizacion.id %}" class="btn btn-primary">Enviar correo</a>
             <br>
             <a href="{% url 'editar_cotizacion' Cotizacion.id %}" class="btn btn-primary">Editar cotización</a>
              <br>

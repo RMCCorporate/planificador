@@ -19,4 +19,5 @@ urlpatterns = [
     path('proyectos/mostrar_cotizacion/<str:id>', views.mostrar_cotizacion, name='mostrar_cotizacion'),
     path('proyectos/editar_cotizacion/<str:id>', views.editar_cotizacion, name='editar_cotizacion'),
     path('proyectos/eliminar_cotizacion/<str:id>', views.eliminar_cotizacion, name='eliminar_cotizacion'),
+    path('proyectos/enviar_correo/<str:id>', views.enviar_correo, name='enviar_correo'),
 ]

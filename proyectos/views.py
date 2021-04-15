@@ -24,13 +24,8 @@ def clases_lista_productos(clase):
         sub_clase_general.append(subclase_aux)
     return sub_clase_general
 
-def crear_correo(lista_contacto):
-    correo = lista_contacto[1]
-    empresa = lista_contacto[2]
-    idioma = lista_contacto[3]
-    texto_lista_productos = ""
-    for producto in lista_contacto[4]:
-        texto_lista_productos += "\n- {}: {} {}\n".format(producto[0], producto[1], [producto[2]])
+def crear_correo(usuario, cotizacion, texto_extra):
+    
     texto_html = """\<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 <style>@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;1,300&display=swap');</style>
 <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">--</td>
@@ -49,7 +44,7 @@ def crear_correo(lista_contacto):
 				<tr style="margin:0;padding:0;">
           <td style="margin:0;padding:2px 0 0 0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
             <strong>
-              <a href="mailto:rcasascordero@rmc.cl" style="border:none; text-decoration:none; color: rgb(33, 33, 33);"><span style="color: rgb(33, 33, 33);">{}</span></a>
+              <a href="mailto:{}" style="border:none; text-decoration:none; color: rgb(33, 33, 33);"><span style="color: rgb(33, 33, 33);">{}</span></a>
             </strong>
           </td>
         </tr>
@@ -59,7 +54,7 @@ def crear_correo(lista_contacto):
 				<!--Fila cargo-->
         <tr style="margin:0; padding:0;">
           <td style="margin:0; padding:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
-            <span style="color: rgb(33, 33, 33);"><i>Subgerente de Proyectos - RMC Engineering Solutions</i></span>
+            <span style="color: rgb(33, 33, 33);"><i>{} - RMC Corporate</i></span>
           </td>
         </tr>
         <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
@@ -77,7 +72,7 @@ def crear_correo(lista_contacto):
 				<!--Fila Telefono-->
         <tr style="margin:0; padding:0;">
           <td style="margin:0; padding:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
-            <span style="color: rgb(33, 33, 33);"><i>C.(+56) 996403302 - T.(+56) 32 2600305</i></span>
+            <span style="color: rgb(33, 33, 33);"><i>C. {} - T.{}</i></span>
           </td>
         </tr>
         <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
@@ -94,21 +89,29 @@ def crear_correo(lista_contacto):
   </tr>
 </table>
 <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">&nbsp;</td>
-""".format("TOMÁS CORREA")
+""".format(usuario.correo, usuario.nombre + " " + usuario.apellido + " " + usuario.segundo_apellido[0].upper(), usuario.cargo,  usuario.celular, usuario.telefono)
     texto_correo = ""
-    texto_español = "Estimado {}, \nSe solicita cotización de: \n {} \nSaludos.".format(
-        lista_contacto[0],
-        texto_lista_productos
+    texto_lista_productos = ""
+    for i in cotizacion.productos_asociados.all():
+        #ACA AGREGAR LO DE LOS NOMBRE DE PRODUCTOS
+        producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
+        texto_lista_productos += "\n- {}: {} {}\n".format(i.nombre, i.unidad, producto_proyecto.cantidades)
+    texto_español = "Estimado {}, \nSe solicita cotización de: \n{} {}\nSaludos.".format(
+        cotizacion.contacto_asociado.nombre,
+        texto_lista_productos,
+        texto_extra
     )
     texto_ingles = "Dear {}, \nA quote is requested for: \n {} \nRegards.".format(
-        lista_contacto[0],
-        texto_lista_productos
+        cotizacion.contacto_asociado.nombre,
+        texto_lista_productos,
+        texto_extra
     )
-    if idioma == "ESP":
+    if cotizacion.proveedor_asociado.idioma == "ESP":
         texto_correo = texto_español
     else:
         texto_correo = texto_ingles
-    correo_enviador = 'tcorrea@rmc.cl'
+    #QUEDE ACA
+    correo_enviador = usuario.correo
     clave_enviador = 'Tom12345'
     #CAMBIAR DESPUÉS A "CORREO":
     correo_prueba = 'tacorrea@uc.cl'
@@ -120,9 +123,9 @@ def crear_correo(lista_contacto):
     mensaje.attach(MIMEText(texto_html, 'html'))
     session = smtplib.SMTP('smtp.gmail.com', 587)
     session.starttls()
-    session.login(correo_enviador, clave_enviador)
-    text = mensaje.as_string()
-    session.sendmail(correo_enviador, correo_prueba, text)
+    #session.login(correo_enviador, clave_enviador)
+    #text = mensaje.as_string()
+    #session.sendmail(correo_enviador, correo_prueba, text)
     session.quit()
 
 # Vista proyectos
@@ -205,7 +208,6 @@ def editar_precios(request, id):
         valor_cambio = request.POST.getlist("valor_cambio")
         cotizacion = []
         lista_cotizacion = request.POST.getlist("cotizacion")
-        print(nombre)
         for n,i in enumerate(nombre):
             if lista_cotizacion[n] != "no_hay":
                 cotizacion_nueva = Cotizacion.objects.get(nombre=lista_cotizacion[n])
@@ -223,6 +225,8 @@ def editar_precios(request, id):
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
                     precio.save()
+                    cotizacion[n].fecha_actualizacion_precio = datetime.now()
+                    cotizacion[n].save()
                     usuario = Usuario.objects.get(correo=request.user.email)
                     usuario.precios.add(precio)
                     usuario.save()
@@ -230,6 +234,8 @@ def editar_precios(request, id):
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
                     precio.save()
+                    cotizacion[n].fecha_actualizacion_precio = datetime.now()
+                    cotizacion[n].save()
                     usuario = Usuario.objects.get(correo=request.user.email)
                     usuario.precios.add(precio)
                     usuario.save()
@@ -626,8 +632,18 @@ def eliminar_cotizacion(request, id):
     cotizacion.delete()
     return redirect('/proyectos/proyecto/{}'.format(proyecto))
 
-
-
+@login_required(login_url='/login')
+def enviar_correo(request, id):
+    cotizacion = Cotizacion.objects.get(id=id)
+    proyecto = cotizacion.proyecto_asociado.id
+    if request.method == "POST":
+        texto_extra = request.POST["texto"]
+        usuario = Usuario.objects.get(correo=request.user.email)
+        crear_correo(usuario, cotizacion, texto_extra)
+        return redirect('/proyectos/proyecto/{}'.format(proyecto))
+    else:
+        return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion})
+        
 """
 def enviar_correos(request):
     contactos = request.GET.getlist("contacto")

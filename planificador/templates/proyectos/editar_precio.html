@@ -36,15 +36,13 @@
                         {% for i in fila.2 %}
                               {% if i != "no_hay" %}
                                 <li><input type="checkbox" value="{{i.nombre}}" name="cotizacion">{{i.nombre}}</li>
-                                {% else %}
+                              {% else %}
                                 <li><input type="hidden" value="no_hay" name="cotizacion">No hay</li>
-                                {% endif %}
+                              {% endif %}
                         {% endfor %}
                       </ul>
                     </div>
                   </th>
-                  
-                  
                 {% endfor %}  
       </tr>
               </tbody>
