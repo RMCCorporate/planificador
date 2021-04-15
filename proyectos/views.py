@@ -205,6 +205,7 @@ def editar_precios(request, id):
         valor_cambio = request.POST.getlist("valor_cambio")
         cotizacion = []
         lista_cotizacion = request.POST.getlist("cotizacion")
+        print(nombre)
         for n,i in enumerate(nombre):
             if lista_cotizacion[n] != "no_hay":
                 cotizacion_nueva = Cotizacion.objects.get(nombre=lista_cotizacion[n])
@@ -254,6 +255,8 @@ def editar_precios(request, id):
                         aux_productos.append(x)
             lista_aux.append(i)
             lista_aux.append(ultimo_precio)
+            if aux_productos == []:
+                aux_productos = ["no_hay"]
             lista_aux.append(aux_productos)
             lista_info_productos.append(lista_aux)
         #RENDERIZADO
@@ -467,7 +470,7 @@ def guardar_datos_filtro(request):
     for i in productos_filtro:
         if not booleano_repeticion: 
             producto = Producto.objects.get(nombre=i)
-            nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, creador=usuario_modificacion)
+            nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, usuario_modificacion=usuario_modificacion)
             nuevo_producto_proyecto.save()
             proyecto.save()
             usuario = Usuario.objects.get(correo=request.user.email)
@@ -508,9 +511,9 @@ def recibir_cantidades_planificador(request):
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     cantidad = request.GET.getlist("cantidad")
     productos = request.GET.getlist("id_producto")
-    for counter, i in enmuerate(productos):
+    for counter, i in enumerate(productos):
         nuevo_producto = Producto.objects.get(nombre=i)
-        producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
+        producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=nuevo_producto)
         producto_proyecto.cantidades = float(cantidad[counter])
         producto_proyecto.save()
         usuario = Usuario.objects.get(correo=request.user.email)
@@ -524,6 +527,7 @@ def recibir_cantidades_planificador(request):
 def agregar_cotizacion(request, id):
     if request.method == "POST":
         proyecto_asociado = Proyecto.objects.get(id=id)
+        usuario_modificacion = request.user.first_name + " " + request.user.last_name
         nombre = request.POST["nombre"]
         proveedor = request.POST["proveedor"]
         contacto = request.POST["contacto"]
@@ -532,7 +536,8 @@ def agregar_cotizacion(request, id):
         proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
         nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
         nueva_cotizacion.save()
-        usuario = Usuario.objects.get(correo=request.user.email)
+        print(request.user.email)
+        usuario = Usuario.objects.get(correo=str(request.user.email))
         usuario.cotizaciones.add(nueva_cotizacion)
         usuario.save()
         for i in productos:
@@ -548,13 +553,15 @@ def agregar_cotizacion(request, id):
         for i in productos:
             producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=i)
             lista_producto_proyecto.append(producto_proyecto)
-            for n in producto_proyecto[0].proveedores.all():
+            proveedores = Proveedor.objects.filter(subclases_asociadas=producto_proyecto[0].proyecto.subclase_set.all()[0])
+            for n in proveedores:           
                 lista_proveedores.append(n.nombre)
         proveedores_no_repetidos =  list(dict.fromkeys(lista_proveedores))
         lista_proveedores_productos = []
         for i in lista_producto_proyecto:
             lista_aux = []
-            for x in i[0].proveedores.all():
+            proveedores_para_producto = Proveedor.objects.filter(subclases_asociadas=i[0].proyecto.subclase_set.all()[0])
+            for x in proveedores_para_producto:
                 lista_aux.append(x.nombre)
             lista_proveedores_productos.append(lista_aux)
         lista_final = []
@@ -605,7 +612,7 @@ def editar_cotizacion(request, id):
         cotizacion.fecha_respuesta = request.POST["fecha_respuesta"]
         cotizacion.save()
         usuario = Usuario.objects.get(correo=request.user.email)
-        usuario.cotizaciones.add(nueva_cotizacion)
+        usuario.cotizaciones.add(cotizacion)
         usuario.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(cotizacion.id))
     else:

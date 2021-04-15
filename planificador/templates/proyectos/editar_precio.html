@@ -34,7 +34,11 @@
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         {% for i in fila.2 %}
-                              <li><input type="radio" value="{{i.nombre}}" name="cotizacion">{{i.nombre}}</li>
+                              {% if i != "no_hay" %}
+                                <li><input type="checkbox" value="{{i.nombre}}" name="cotizacion">{{i.nombre}}</li>
+                                {% else %}
+                                <li><input type="hidden" value="no_hay" name="cotizacion">No hay</li>
+                                {% endif %}
                         {% endfor %}
                       </ul>
                     </div>
