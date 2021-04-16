@@ -44,7 +44,7 @@ def proveedores(request):
             contacto_nombre = row_data[6].upper()
             contacto_telefono = row_data[7].upper()
             direccion = row_data[8].upper()
-            if rut == "None" or nombre == "None" or contacto_correo == "None" or row_data[3] == "None":
+            if rut == "NONE" or nombre == "NONE" or contacto_correo == "NONE" or row_data[3] == "None":
                 aux = []
                 aux.append(rut)
                 aux.append(nombre)
@@ -66,7 +66,7 @@ def proveedores(request):
                         nuevo_proveedor = Proveedor(rut=rut, nombre=nombre)
                         if row_data[2] != "None":
                             nuevo_proveedor.razon_social = razon_social
-                        if idioma != "None":
+                        if idioma != "NONE":
                             if idioma == "ES" or idioma == "ESPAÑOL" or idioma == "EN" or idioma == "INGLES" or idioma == "INGLÉS":
                                 nuevo_proveedor.idioma = idioma
                             else:
@@ -77,7 +77,7 @@ def proveedores(request):
                                 aux.append(contacto_correo)
                                 aux.append("El idioma tiene que ser 'ES', 'ESPAÑOL', 'EN', 'INGLÉS")
                                 datos_fallados.append(aux)
-                        if direccion != "None":
+                        if direccion != "NONE":
                             nuevo_proveedor.direccion = direccion
                         nuevo_proveedor.save()
                         subclases = row_data[3]
@@ -96,9 +96,9 @@ def proveedores(request):
                                 aux.append("No existe la subclase {}".format(i))
                                 datos_fallados.append(aux)
                             nuevo_contacto = Contacto(correo=contacto_correo)
-                        if contacto_nombre != "None":
+                        if contacto_nombre != "NONE":
                             nuevo_contacto.nombre = contacto_nombre
-                        if contacto_telefono != "None":
+                        if contacto_telefono != "NONE":
                             nuevo_contacto.telefono = contacto_telefono
                         nuevo_contacto.save()
                         nuevo_proveedor.contactos_asociados.add(nuevo_contacto)

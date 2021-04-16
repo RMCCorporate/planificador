@@ -17,11 +17,20 @@ class ImageForm(forms.ModelForm):
         model = Producto
         fields = ('id', 'nombre', 'unidad', 'kilos', 'imagen')
 
+def isfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 #Mostrar productos
 @login_required(login_url='/login')
 def productos(request):
     productos = Producto.objects.all()
     if request.method == "POST":
+        datos_fallados = []
+        booleano_fallados = False
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
         worksheet = wb["producto"]
@@ -29,16 +38,57 @@ def productos(request):
             row_data = list()
             for cell in row:
                 row_data.append(str(cell.value))
-            if row_data[0] != "id":
-                fecha_actualizacion = datetime.now()
-                nuevo_producto = Producto(id=row_data[0], nombre=row_data[1], fecha_actualizacion=fecha_actualizacion, unidad=row_data[2], kilos=row_data[3])
-                nuevo_producto.save()
-                sub_clase = SubClase.objects.get(nombre=row_data[4])
-                sub_clase.productos.add(nuevo_producto)
-                clase = subclase.clase_set.all()
-                nuevo_filtro_producto = Filtro_producto(nombre_producto=row_data[1], nombre_clase=clase[0].nombre, nombre_subclase=row_data[4])
-                nuevo_filtro_producto.save()
-                sub_clase.save()
+            id = row_data[0].upper()
+            nombre = row_data[1].upper()
+            unidad = row_data[2].upper()
+            kilos = row_data[3].upper()
+            subclase = row_data[4].upper()
+            if id != "ID":
+                if id == "NONE" or nombre == "NONE":
+                    aux = []
+                    aux.append(row_data[0])
+                    aux.append(row_data[1])
+                    aux.append("No se ingresó ID o Nombre")
+                    datos_fallados.append(aux)
+                else:
+                    fecha_actualizacion = datetime.now()
+                    if Producto.objects.filter(id=id).exists():
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append("Producto con id:{} ya existe".format(id))
+                        datos_fallados.append(aux)
+                    else:
+                        if not SubClase.objects.filter(nombre=subclase).exists():
+                            aux = []
+                            aux.append(row_data[0])
+                            aux.append(row_data[1])
+                            aux.append("La SubClase {} no existe".format(subclase))
+                            datos_fallados.append(aux)
+                        else:
+                            nuevo_producto = Producto(id=id, nombre=nombre, fecha_actualizacion=fecha_actualizacion)
+                            if unidad != "None":
+                                nuevo_producto.unidad = unidad
+                            if kilos != "None":
+                                es_float = isfloat(kilos)
+                                if es_float:
+                                    nuevo_producto.kilos = kilos
+                                else:
+                                    aux = []
+                                    aux.append(row_data[0])
+                                    aux.append(row_data[1])
+                                    aux.append("Producto creado sin kilos. No es un número")
+                                    datos_fallados.append(aux)
+                            nuevo_producto.save()
+                            sub_clase = SubClase.objects.get(nombre=subclase)
+                            sub_clase.productos.add(nuevo_producto)
+                            clase = sub_clase.clase_set.all()
+                            nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, nombre_subclase=subclase)
+                            nuevo_filtro_producto.save()
+                            sub_clase.save()
+        if len(datos_fallados)!=0:
+            booleano_fallados = True
+        return render(request, 'productos/resultado_planilla_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     return render(request, "productos/productos.html", {"Productos":productos})
 
 #Agregar producto
