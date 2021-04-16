@@ -25,7 +25,6 @@ def clases_lista_productos(clase):
     return sub_clase_general
 
 def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
-    
     texto_html = """<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
 <style>@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;1,300&display=swap');</style>
 <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">--</td>

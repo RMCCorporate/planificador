@@ -10,6 +10,8 @@ import openpyxl
 def index(request):
     #group = str(request.user.groups.all()[0])
     if request.method == "POST":
+        datos_fallados = []
+        booleano_fallados = False
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
         worksheet = wb["subclase"]
@@ -17,24 +19,41 @@ def index(request):
             row_data = list()
             for cell in row:
                 row_data.append(str(cell.value))
-            if row_data[0] != "nombre":
-                nueva_subclase = SubClase(nombre=row_data[0])
-                nueva_subclase.save()
-                productos = row_data[1]
-                productos_repartidos = productos.split(',')
-                for i in productos_repartidos:
-                    producto = Producto.objects.get(id=i)
-                    nueva_subclase.productos.add(producto)
-                proveedores = row_data[2]
-                proveedores_repartidos = proveedores.split(',')
-                for i in proveedores_repartidos:
-                    proveedor = Proveedor.objects.get(nombre=i)
-                    proveedor.subclases_asociadas.add(nueva_subclase)
-                    proveedor.save()
-                clase = row_data[3]
-                clase = Clase.objects.get(nombre=clase)
-                clase.subclases.add(nueva_subclase)
-                clase.save()
+            if row_data[0] == "None" or row_data[1] == "None":
+                aux = []
+                aux.append(row_data[0])
+                aux.append(row_data[1])
+                aux.append("No se ingresó Subclase o Clase")
+                datos_fallados.append(aux)
+            else:
+                dato_subclase_sin_cap = row_data[0].lower()
+                dato_clase_sin_cap = row_data[1].lower()
+                dato_subclase = dato_subclase_sin_cap.capitalize()
+                dato_clase = dato_clase_sin_cap.capitalize()
+                if dato_subclase != "Nombre":
+                    if Clase.objects.filter(nombre=dato_clase).exists():
+                        if SubClase.objects.filter(nombre=dato_subclase).exists():
+                            aux = []
+                            aux.append(row_data[0])
+                            aux.append(row_data[1])
+                            aux.append("Subclase ya existe")
+                            datos_fallados.append(aux)
+                        else:
+                            nueva_subclase = SubClase(nombre=dato_subclase)
+                            nueva_subclase.save()
+                            clase = Clase.objects.get(nombre=dato_clase)
+                            clase.subclases.add(nueva_subclase)
+                            clase.save()
+                    else:
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append("Clase no encontrada")
+                        datos_fallados.append(aux)
+        if len(datos_fallados)!=0:
+            booleano_fallados = True
+        return render(request, 'planificador/resultado_planilla.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
+                
     return render(request, 'planificador/index.html')
 
 #@allowed_users(allowed_roles=['Admin'])

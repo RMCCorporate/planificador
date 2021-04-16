@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+{% load static %}
+
+<div class="card">
+    <div class="card-header" id="headingTwo">
+    
+    {% if Booleano %}
+    <h2 class="mb-0">
+        Error en subir planilla.
+    </h2>
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Clase</th>
+                <th scope="col">Razón error</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in Fallo %}
+        <tr>
+        <th>{{fila.0}}</th>
+        <th> {{fila.1}}</th>
+        <th>{{fila.2}}</th>
+            {% endfor %}  
+</tr>
+        </tbody>
+</table>
+{% else %}
+<h2 class="mb-0">
+    Planilla subida correctamente
+</h2>
+    {% endif %}
+  
+    </div>
+    <div class="card-body">
+        
+        
+    </div>
+    </div>
+</div>
+
+
+{% endblock %}
