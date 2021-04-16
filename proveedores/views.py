@@ -27,6 +27,8 @@ def mostrar_clases():
 def proveedores(request):
     proveedores = Proveedor.objects.all()
     if request.method == "POST":
+        datos_fallados = []
+        booleano_fallados = False
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
         worksheet = wb["proveedor"]
@@ -34,26 +36,85 @@ def proveedores(request):
             row_data = list()
             for cell in row:
                 row_data.append(str(cell.value))
-            if row_data[0] != "rut":
-                nuevo_proveedor = Proveedor(rut=row_data[0], nombre=row_data[1], razon_social=row_data[2], idioma=row_data[4])
-                nuevo_proveedor.save()
-                subclases = row_data[3]
-                subclases_repartidas = subclases.split(',')
-                for i in subclases_repartidas:
-                    subclase = SubClase.objects.get(nombre=i)
-                    nuevo_proveedor.subclases_asociadas.add(subclase)
-                nuevo_contacto = Contacto(correo=row_data[5], telefono=row_data[7], nombre=row_data[6])
-                nuevo_contacto.save()
-                nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
-                calificacion_tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
-                calificacion_precio = Calificacion.objects.get(nombre="Precio")
-                calificacion_calidad = Calificacion.objects.get(nombre="Calidad")
-                calificacion_provedor_tiempo_entrega = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_tiempo_entrega, nota=0)
-                calificacion_provedor_tiempo_entrega.save()
-                calificacion_provedor_precio = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_precio, nota=0)
-                calificacion_provedor_precio.save()
-                calificacion_provedor_calidad = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_calidad, nota=0)
-                calificacion_provedor_calidad.save()
+            rut = row_data[0].upper()
+            nombre = row_data[1].upper()
+            razon_social = row_data[2].upper()
+            idioma = row_data[4].upper()
+            contacto_correo = row_data[5].lower()
+            contacto_nombre = row_data[6].upper()
+            contacto_telefono = row_data[7].upper()
+            direccion = row_data[8].upper()
+            if rut == "None" or nombre == "None" or contacto_correo == "None" or row_data[3] == "None":
+                aux = []
+                aux.append(rut)
+                aux.append(nombre)
+                aux.append(row_data[3])
+                aux.append(contacto_correo)
+                aux.append("No se ingresó RUT, nombre proveedor o correo contacto")
+                datos_fallados.append(aux)
+            else:
+                if rut != "RUT":
+                    if Contacto.objects.filter(correo=contacto_correo).exists() or Proveedor.objects.filter(rut=rut).exists():
+                        aux = []
+                        aux.append(rut)
+                        aux.append(nombre)
+                        aux.append(i)
+                        aux.append(contacto_correo)
+                        aux.append("El proveedor o correo del contacto ya existe")
+                        datos_fallados.append(aux)
+                    else:
+                        nuevo_proveedor = Proveedor(rut=rut, nombre=nombre)
+                        if row_data[2] != "None":
+                            nuevo_proveedor.razon_social = razon_social
+                        if idioma != "None":
+                            if idioma == "ES" or idioma == "ESPAÑOL" or idioma == "EN" or idioma == "INGLES" or idioma == "INGLÉS":
+                                nuevo_proveedor.idioma = idioma
+                            else:
+                                aux = []
+                                aux.append(rut)
+                                aux.append(nombre)
+                                aux.append(row_data[3])
+                                aux.append(contacto_correo)
+                                aux.append("El idioma tiene que ser 'ES', 'ESPAÑOL', 'EN', 'INGLÉS")
+                                datos_fallados.append(aux)
+                        if direccion != "None":
+                            nuevo_proveedor.direccion = direccion
+                        nuevo_proveedor.save()
+                        subclases = row_data[3]
+                        subclases_repartidas = subclases.split(',')
+                        for i in subclases_repartidas:
+                            subclase = i.upper()
+                            if SubClase.objects.filter(nombre=subclase).exists():
+                                dato_subclase = SubClase.objects.get(nombre=subclase)
+                                nuevo_proveedor.subclases_asociadas.add(dato_subclase)
+                            else:
+                                aux = []
+                                aux.append(rut)
+                                aux.append(nombre)
+                                aux.append(i)
+                                aux.append(contacto_correo)
+                                aux.append("No existe la subclase {}".format(i))
+                                datos_fallados.append(aux)
+                            nuevo_contacto = Contacto(correo=contacto_correo)
+                        if contacto_nombre != "None":
+                            nuevo_contacto.nombre = contacto_nombre
+                        if contacto_telefono != "None":
+                            nuevo_contacto.telefono = contacto_telefono
+                        nuevo_contacto.save()
+                        nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
+                        calificacion_tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
+                        calificacion_precio = Calificacion.objects.get(nombre="Precio")
+                        calificacion_calidad = Calificacion.objects.get(nombre="Calidad")
+                        calificacion_provedor_tiempo_entrega = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_tiempo_entrega, nota=0)
+                        calificacion_provedor_tiempo_entrega.save()
+                        calificacion_provedor_precio = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_precio, nota=0)
+                        calificacion_provedor_precio.save()
+                        calificacion_provedor_calidad = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_calidad, nota=0)
+                        calificacion_provedor_calidad.save()
+                        nuevo_proveedor.save()
+        if len(datos_fallados)!=0:
+            booleano_fallados = True
+        return render(request, 'proveedores/resultado_planilla_proveedores.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
 
 #Agregar proveedor

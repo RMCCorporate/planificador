@@ -94,7 +94,7 @@ class Proveedor(models.Model):
         through_fields=('proveedor', 'calificacion'),
     )
     contactos_asociados = models.ManyToManyField(Contacto)
-    ESPANOL = 'ESP'
+    ESPANOL = 'ES'
     INGLES = 'EN'
     IDIOMA_CHOICES = [
         (ESPANOL, 'Español'),

@@ -26,11 +26,9 @@ def index(request):
                 aux.append("No se ingresó Subclase o Clase")
                 datos_fallados.append(aux)
             else:
-                dato_subclase_sin_cap = row_data[0].lower()
-                dato_clase_sin_cap = row_data[1].lower()
-                dato_subclase = dato_subclase_sin_cap.capitalize()
-                dato_clase = dato_clase_sin_cap.capitalize()
-                if dato_subclase != "Nombre":
+                dato_subclase = row_data[0].upper()
+                dato_clase = row_data[1].upper()
+                if dato_subclase != "NOMBRE":
                     if Clase.objects.filter(nombre=dato_clase).exists():
                         if SubClase.objects.filter(nombre=dato_subclase).exists():
                             aux = []
