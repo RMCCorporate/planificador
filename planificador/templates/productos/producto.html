@@ -16,9 +16,8 @@
         <div class="card-body">
           <h5 class="card-title">Información general</h5>
           <p class="card-text">
-            {% if img_obj %}
-          <h3>Succesfully uploaded</h3>
-          <img src="{{ img_obj.imagen.url}}" alt="connect" style="max-height:300px">
+            {% if Producto.imagen %}
+          <img src="{{ Producto.imagen.url}}" alt="connect" style="max-height:200px">
         {% endif %}
         <br>
               ID: {{Producto.id}}
@@ -34,9 +33,9 @@
         <div class="card">
           <div class="card-header" id="headingTwo">
             <h2 class="mb-0">
-              <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+             
                 Historial de precios
-              </button>
+
             </h2>
           </div>
        
@@ -64,11 +63,55 @@
             </tr>
                     </tbody>
             </table>
-            <img src="{{ Producto.imagen.url }}" alt="connect" style="max-height:300px">
+ 
       
           </div>
         </div>
+        {% if nombre_proveedor != "" %}
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h2 class="mb-0">
+             
+                Nombre proveedores
+       
+            </h2>
+          </div>
+       
+            <div class="card-body">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Proveedor</th>
+                            <th scope="col">Nombre</th>
+                 
+                        </tr>
+                    </thead>
+                    <tbody>
+                      {% for fila in nombre_proveedor %}
+                    <tr>
+                  <th>{{fila.producto.nombre}}</a></th>
+                  <th> {{fila.nombre_proveedor}}</th>
         
+
+                      {% endfor %}  
+            </tr>
+                    </tbody>
+            </table>
+ 
+      
+          </div>
+        </div>
+        {% endif %}
         
-        
+        <form action="producto" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="file"
+                 title="Upload excel file"
+                 name="excel_file"
+                 >
+          <p>
+          <input type="submit"
+                 value="Upload"
+                 >
+      </form>
 {% endblock %}

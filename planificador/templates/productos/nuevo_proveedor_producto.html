@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %} PRODUCTOS {% endblock%}
+{% block content %}             
+    
+        <form action="nuevo_proveedor_producto" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file"
+                   title="Upload excel file"
+                   name="excel_file"
+                   >
+            <p>
+            <input type="submit"
+                   value="Upload"
+                   >
+        </form>
+    
+        
+        
+{% endblock%}

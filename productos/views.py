@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto
+from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor
 from datetime import date, datetime
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
@@ -104,7 +104,8 @@ def recibir_datos_producto(request):
     nombre = request.GET["nombre"]
     sub_clase = request.GET["subclase"]
     unidad = request.GET["unidad"]
-    nuevo_producto = Producto(id=id, nombre=nombre, unidad=unidad)
+    kilos = request.GET["peso"]
+    nuevo_producto = Producto(id=id, nombre=nombre, unidad=unidad, kilos=kilos)
     nuevo_producto.save()
     subclase = SubClase.objects.get(nombre=sub_clase)
     subclase.productos.add(nuevo_producto)
@@ -122,7 +123,77 @@ def producto(request, id):
     a = lista_precios.order_by('-fecha')
     sub_clase = producto.subclase_set.all()[0]
     clase = sub_clase.clase_set.all()[0]
-    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase})
+    if Producto_proveedor.objects.filter(proyecto=producto).exists():
+        nombre_proveedor = Producto_proveedor.objects.filter(proyecto=producto)
+    else:
+        nombre_proveedor = ""
+    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase, "nombre_proveedor":nombre_proveedor})
+
+@login_required(login_url='/login')
+def nuevo_proveedor_producto(request):
+    if request.method == "POST":
+        datos_fallados = []
+        booleano_fallados = False
+        excel_file = request.FILES["excel_file"]
+        wb = openpyxl.load_workbook(excel_file)
+        worksheet = wb["producto_proveedor"]
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            nombre_producto = row_data[0].upper()
+            proveedor = row_data[1].upper()
+            nombre_producto_proveedor = row_data[2].upper()
+            if nombre_producto != "NOMBRE_PRODUCTO_RMC":
+                if nombre_producto == "NONE" or proveedor == "NONE" or nombre_producto_proveedor == "NONE":
+                    aux = []
+                    aux.append(row_data[0])
+                    aux.append(row_data[1])
+                    aux.append(row_data[2])
+                    aux.append("No se ingresó o nombre producto RMC o nombre del proveedor o nombre del producto para proveedor")
+                    datos_fallados.append(aux)
+                else:
+                    if not Producto_proveedor.objects.filter(nombre_RMC=nombre_producto, nombre_proveedor=nombre_producto_proveedor).exists():
+                        if not Producto.objects.filter(nombre=nombre_producto).exists():
+                            aux = []
+                            aux.append(row_data[0])
+                            aux.append(row_data[1])
+                            aux.append(row_data[2])
+                            aux.append("Producto con nombre:{} no existe".format(nombre_producto))
+                            datos_fallados.append(aux)
+                        elif not Proveedor.objects.filter(nombre=proveedor).exists():
+                            aux = []
+                            aux.append(row_data[0])
+                            aux.append(row_data[1])
+                            aux.append(row_data[2])
+                            aux.append("Proveedor con nombre:{} no existe".format(proveedor))
+                            datos_fallados.append(aux)
+                        else:
+                            proveedor_ingreso = Proveedor.objects.get(nombre=proveedor)
+                            producto = Producto.objects.get(nombre=nombre_producto)
+                            if not Producto_proveedor.objects.filter(producto=proveedor_ingreso, proyecto=producto).exists():
+                                nuevo_producto_proveedor = Producto_proveedor(producto=proveedor_ingreso, proyecto=producto, nombre_RMC=nombre_producto, nombre_proveedor=nombre_producto_proveedor)
+                                nuevo_producto_proveedor.save()
+                            else:
+                                aux.append(row_data[0])
+                                aux.append(row_data[1])
+                                aux.append(row_data[2])
+                                aux.append("Ya existe relación")
+                                datos_fallados.append(aux)
+                    else:
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append(row_data[2])
+                        aux.append("Ya existe el mismo nombre en relación")
+                        datos_fallados.append(aux)
+        if len(datos_fallados)!=0:
+            booleano_fallados = True
+        return render(request, 'productos/resultado_planilla_proveedor_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
+    else:
+        return render(request, 'productos/nuevo_proveedor_producto.html')
+
+
 
 #Edición producto
 @login_required(login_url='/login')
@@ -135,7 +206,7 @@ def mostrar_edicion_producto(request, id):
             # Get the current instance object to display in the template
             img_obj = form.instance
             productos = Producto.objects.all()
-            return render(request, 'productos/productos.html', {'Productos': productos})
+            return render(request, 'productos/productos.html', {'Productos': productos, "img_obj":img_obj})
     else:
         subclases = SubClase.objects.all()
         form = ImageForm(instance=producto)

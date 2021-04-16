@@ -2,7 +2,8 @@
 {% block title %} PRODUCTOS {% endblock%}
 {% block content %}             
     <ul class="list-group list-group-flush">
-        <a href="{% url 'nuevo' %}" class="btn btn-primary">Añadir producto</a>
+        <a href="{% url 'nuevo_producto' %}" class="btn btn-primary">Añadir producto</a>
+        <a href="{% url 'nuevo_proveedor_producto' %}" class="btn btn-primary">Añadir nombre proveedor-productos</a>
             <h1>PRODUCTOS</h1>
                 <table class="table">
                         <thead class="thead-light">
