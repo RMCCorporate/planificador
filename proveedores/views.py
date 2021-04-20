@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
 from django.contrib.auth.decorators import login_required
@@ -58,7 +58,7 @@ def proveedores(request):
                         aux = []
                         aux.append(rut)
                         aux.append(nombre)
-                        aux.append(i)
+                        aux.append(row_data[3])
                         aux.append(contacto_correo)
                         aux.append("El proveedor o correo del contacto ya existe")
                         datos_fallados.append(aux)
@@ -154,8 +154,7 @@ def recibir_datos_proveedor(request):
     calidad = Calificacion.objects.get(nombre="Calidad")
     calidad_proveedor = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calidad, nota=0)
     calidad_proveedor.save()
-    proveedores = Proveedor.objects.all()
-    return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+    return redirect('/proveedores/proveedor/{}'.format(rut))
 
 #Vista proveedor
 @login_required(login_url='/login')
@@ -184,8 +183,14 @@ def mostrar_edicion_proveedor(request, rut):
         correo = request.POST["correo"]
         telefono = request.POST["telefono"]
         if correo != "":
-            nuevo_contacto = Contacto(correo=correo, telefono=telefono, nombre=contacto)
-            nuevo_contacto.save()
+            if Contacto.objects.filter(correo=correo).exists():
+                nuevo_contacto = Contacto.objects.get(correo=correo)
+                nuevo_contacto.nombre = contacto
+                nuevo_contacto.telefono = telefono
+                nuevo_contacto.save()
+            else:
+                nuevo_contacto = Contacto(correo=correo, telefono=telefono, nombre=contacto)
+                nuevo_contacto.save()
         #CALIFICACIONES
         calificaciones_precio = Calificacion_Proveedor.objects.filter(proveedor=rut, calificacion="Precio")[0]
         calificaciones_precio.nota = (calificaciones_precio.nota+float(request.POST["Precio"]))/2
@@ -204,8 +209,12 @@ def mostrar_edicion_proveedor(request, rut):
                 proveedor.subclases_asociadas.add(subclase_agregar)
         if correo != "":
             proveedor.contactos_asociados.add(nuevo_contacto)
-        proveedores = Proveedor.objects.all()
-        return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+        eliminar = request.POST.getlist("eliminar")
+        for i in eliminar:
+            if i != "No":
+                contacto_eliminar = Contacto.objects.get(correo=i)
+                contacto_eliminar.delete()
+        return redirect('/proveedores/proveedor/{}'.format(proveedor.rut))
     else:
         subclase = proveedor.subclases_asociadas.all()
         contactos = proveedor.contactos_asociados.all()
@@ -220,5 +229,4 @@ def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     proveedor.delete()
     proveedores = Proveedor.objects.all()
-    return render(request, "proveedores/proveedores.html", {"proveedores":proveedores})
-""
+    return redirect('/proveedores')

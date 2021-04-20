@@ -135,6 +135,7 @@ class Producto_proyecto(models.Model):
         choices = ESTADO_COMPRAS_CHOICES,
         default=FUTURO,
     )
+    estado_cotizacion = models.CharField(max_length=128, null=True)
     fecha_uso = models.DateField(null=True)
     cantidades = models.FloatField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)

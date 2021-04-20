@@ -10,11 +10,6 @@
               <thead class="thead-light">
                   <tr>
                       <th scope="col">Nombre</th>
-                      <th scope="col">Valor</th>
-                      <th scope="col">Valor importación</th>
-                      <th scope="col">Moneda</th>
-                      <th scope="col">Valor cambio</th>
-                      <th scope="col">Nombre Proveedor</th>
                       <th scope="col">Status</th>
                       <th scope="col">Fecha uso</th>
                       <th scope="col">Cantidades</th>
@@ -26,25 +21,8 @@
                     <input type="hidden" value="{{Proyecto.id}}" name="id_proyecto">
                     <input type="hidden" value="{{Producto.id}}" name="id_producto">
                   </th>
-                  
-                  <th><input type="text" name="valor"></th>
-                  <th><input type="text" name="valor_importacion"></th>
-                  <th><input type="text" name="tipo_cambio"></th>
-                  <th><input type="text" name="valor_cambio"></th>
-                  <th>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        Proveedor
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><input type="hidden" value="no_hay" name="proveedor"></li>
-                        {% for i in Proveedores %}
-                              <li><input type="radio" value="{{i.nombre}}" name="proveedor">{{i.nombre}}</li>
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  </th>
-                  <th>
+                
+                <th>
                     <div class="dropdown">
                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                         Estado

@@ -175,11 +175,9 @@ def nuevo_proveedor_producto(request):
                                 nuevo_producto_proveedor = Producto_proveedor(producto=proveedor_ingreso, proyecto=producto, nombre_RMC=nombre_producto, nombre_proveedor=nombre_producto_proveedor)
                                 nuevo_producto_proveedor.save()
                             else:
-                                aux.append(row_data[0])
-                                aux.append(row_data[1])
-                                aux.append(row_data[2])
-                                aux.append("Ya existe relación")
-                                datos_fallados.append(aux)
+                                producto_proveedor = Producto_proveedor.objects.get(producto=proveedor_ingreso, proyecto=producto)
+                                producto_proveedor.nombre_proveedor = nombre_producto_proveedor
+                                producto_proveedor.save()
                     else:
                         aux = []
                         aux.append(row_data[0])

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %} PRODUCTOS {% endblock%}
 {% block content %}             
-    
+    <h1>Agregar nombre Producto - Proveedor</h1>
         <form action="nuevo_proveedor_producto" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file"

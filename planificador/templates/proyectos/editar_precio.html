@@ -11,7 +11,7 @@
                   <tr>
             
                       <th scope="col">Nombre</th>
-                      <th scope="col">Valor</th>
+                      <th scope="col">Valor unitario</th>
                       <th scope="col">Valor importación</th>
                       <th scope="col">Moneda</th>
                       <th scope="col">Valor cambio</th>
@@ -33,11 +33,12 @@
                         Elegir cotización
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><input type="radio" value="no_hay" name="{{fila.0.proyecto.nombre}}" checked>Seleccionar cotizador</li>
                         {% for i in fila.2 %}
                               {% if i != "no_hay" %}
-                                <li><input type="checkbox" value="{{i.nombre}}" name="cotizacion">{{i.nombre}}</li>
+                                <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
                               {% else %}
-                                <li><input type="hidden" value="no_hay" name="cotizacion">No hay</li>
+                                <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.nombre}}">No hay</li>
                               {% endif %}
                         {% endfor %}
                       </ul>

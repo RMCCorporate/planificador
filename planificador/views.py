@@ -31,11 +31,10 @@ def index(request):
                 if dato_subclase != "NOMBRE":
                     if Clase.objects.filter(nombre=dato_clase).exists():
                         if SubClase.objects.filter(nombre=dato_subclase).exists():
-                            aux = []
-                            aux.append(row_data[0])
-                            aux.append(row_data[1])
-                            aux.append("Subclase ya existe")
-                            datos_fallados.append(aux)
+                            subclase_nueva = SubClase.objects.get(nombre=dato_subclase)
+                            clase = Clase.objects.get(nombre=dato_clase)
+                            clase.subclases.add(subclase_nueva)
+                            clase.save()
                         else:
                             nueva_subclase = SubClase(nombre=dato_subclase)
                             nueva_subclase.save()
@@ -108,7 +107,11 @@ def crear_grupo(request):
 def usuario(request):
     print(request.user.email)
     usuario = Usuario.objects.get(correo=str(request.user.email))
-    return render(request, 'planificador/usuario.html', {'Usuario':usuario})
+    lista_precios = usuario.precios.all()
+    Productos = usuario.productos_proyecto.all()
+    Proyectos = usuario.proyectos.all()
+    cotizaciones = usuario.cotizaciones.all()
+    return render(request, 'planificador/usuario.html', {'Usuario':usuario, "lista_precios":lista_precios, "Productos":Productos, "Proyectos":Proyectos, "cotizaciones":cotizaciones})
 
 @login_required(login_url='/login')
 def editar_usuario(request, correo):

@@ -43,16 +43,22 @@
     <br>
     <h5>FECHAS PROYECTO (Opcional)</h5>
     <div class="col-md-4">
-        <label for="fecha_inicio" class="col-sm-2 col-form-label">Fecha inicio proyecto</label>
+       
         <div class="col-sm-10">
-          <input type="date" name="fecha_inicio" class="form-control" id="fecha_inicio">
-         
+            <label for="fecha_inicio" class="col-sm-2 col-form-label">Fecha inicio proyecto</label>
+          <input type="date" name="fecha_inicio" class="form-control" id="fecha_inicio" aria-describedby="ayuda_fecha_inicio">
+          <small id="ayuda_fecha_inicio" class="text-muted">
+            Formato: YYYY-MM-DD
+        </small>  
         </div>
     </div>
     <div class="col-md-4">
         <label for="fecha_termino" class="col-sm-2 col-form-label">Fecha término proyecto</label>
         <div class="col-sm-10">
-          <input type="date" name="fecha_termino" class="form-control" id="fecha_termino">
+          <input type="date" name="fecha_termino" class="form-control" id="fecha_termino" aria-describedby="ayuda_fecha_termino">
+          <small id="ayuda_fecha_termino" class="text-muted">
+            Formato: YYYY-MM-DD
+        </small> 
         </div>
     </div>
     <br>
