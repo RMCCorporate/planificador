@@ -173,4 +173,6 @@ class Usuario(models.Model):
     proyectos = models.ManyToManyField(Proyecto)
     cotizaciones = models.ManyToManyField(Cotizacion)
 
-
+class Correlativo_cotizacion(models.Model):
+    año = models.IntegerField(primary_key=True)
+    numero = models.IntegerField()

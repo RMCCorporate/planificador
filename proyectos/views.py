@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -528,7 +528,16 @@ def agregar_cotizacion(request, id):
         productos = request.POST.getlist("productos")
         contacto_asociado = Contacto.objects.get(nombre=contacto)
         proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
+        año_hoy = datetime.now().year
+        if Correlativo_cotizacion.objects.filter(año=año_hoy).exists():
+            correlativo = Correlativo_cotizacion.objects.get(año=año_hoy)
+            correlativo.numero += 1
+            correlativo.save()
+        else:
+            correlativo = Correlativo_cotizacion(año=año_hoy, numero=0)
+            correlativo.save()
+        nombre_con_correlativo = str(correlativo.numero) + " - " + nombre
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
         nueva_cotizacion.save()
         usuario = Usuario.objects.get(correo=str(request.user.email))
         usuario.cotizaciones.add(nueva_cotizacion)
