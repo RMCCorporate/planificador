@@ -133,6 +133,7 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
     for i in cotizacion.productos_asociados.all():
         producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
         producto_proyecto.estado_cotizacion = "Enviada"
+
 # Vista proyectos
 @login_required(login_url='/login')
 def proyectos(request):
@@ -340,13 +341,19 @@ def editar_datos_producto_proyecto(request, id):
 def agregar_producto(request, id):
     if request.method =="POST":
         proyectos = Proyecto.objects.all()
-        producto = request.POST["producto"]
-        id = request.POST["id"]
-        instancia_producto = Producto.objects.get(nombre=producto)
-        instancia_proyecto = Proyecto.objects.get(id=id)
-        sub_clase = instancia_producto.subclase_set.all()[0]
+        producto = request.POST.getlist("producto")
+        id = request.POST.getlist("id")
+        lista_productos = []
+        for i in producto:
+            aux = []
+            instancia_producto = Producto.objects.get(nombre=i)
+            sub_clase = instancia_producto.subclase_set.all()[0]
+            aux.append(instancia_producto)
+            aux.append(sub_clase)
+            lista_productos.append(aux)
+        instancia_proyecto = Proyecto.objects.get(id=id[0])
         proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
-        return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":instancia_producto, "Proveedores":proveedores})
+        return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
     else:
         proyectos = Proyecto.objects.all()
         clases = Clase.objects.all()
@@ -375,28 +382,28 @@ def agregar_producto(request, id):
 def crear_nuevo_producto(request):
     usuario_modificacion = request.user.first_name + " " + request.user.last_name
     proyecto = Proyecto.objects.get(id=request.POST["id_proyecto"])
-    producto = Producto.objects.get(id=request.POST["id_producto"])
-    status = request.POST["status"]
-    fecha_uso = request.POST["fecha_uso"]
-    cantidades = request.POST["cantidades"]
-    if status == "no_hay":
-        status = "Futuro"
-    if cantidades == "":
-        cantidades = 0
-    if fecha_uso != "":
-        if not Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto).exists():
-            nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, fecha_uso=fecha_uso, cantidades=cantidades, usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
-            nuevo_producto_proyecto.save()
-            usuario = Usuario.objects.get(correo=request.user.email)
-            usuario.productos_proyecto.add(nuevo_producto_proyecto)
-            usuario.save()
-    else:
-        if not Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto).exists():
-            nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, cantidades=cantidades, usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
-            nuevo_producto_proyecto.save()
-            usuario = Usuario.objects.get(correo=request.user.email)
-            usuario.productos_proyecto.add(nuevo_producto_proyecto)
-            usuario.save()
+    productos = request.POST.getlist("id_producto")
+    fechas_uso = request.POST.getlist("fecha_uso")
+    cantidades = request.POST.getlist("cantidades")
+    for n, i in enumerate(productos):
+        status = request.POST[i]
+        producto = Producto.objects.get(id=i)
+        if cantidades[n] == "":
+            cantidades[n] = 0
+        if fechas_uso[n] != "":
+            if not Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto).exists():
+                nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, fecha_uso=fechas_uso[n], cantidades=cantidades[n], usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
+                nuevo_producto_proyecto.save()
+                usuario = Usuario.objects.get(correo=request.user.email)
+                usuario.productos_proyecto.add(nuevo_producto_proyecto)
+                usuario.save()
+        else:
+            if not Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto).exists():
+                nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, status=status, cantidades=cantidades[n], usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
+                nuevo_producto_proyecto.save()
+                usuario = Usuario.objects.get(correo=request.user.email)
+                usuario.productos_proyecto.add(nuevo_producto_proyecto)
+                usuario.save()
     return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     
 # Vista planificador I

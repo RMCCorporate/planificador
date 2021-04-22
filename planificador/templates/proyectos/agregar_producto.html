@@ -18,7 +18,7 @@
     <tbody>
       {% for fila in myFilter.qs %}
     <tr>
-      <th><input type=radio name="producto" value="{{fila.nombre_producto}}"> {{fila.nombre_producto}}</th>
+      <th><input type=checkbox name="producto" value="{{fila.nombre_producto}}"> {{fila.nombre_producto}}</th>
         <th>{{fila.nombre_clase}}</th>
         <th>{{fila.nombre_subclase}}</th>
       {% endfor %}

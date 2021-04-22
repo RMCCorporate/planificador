@@ -10,34 +10,35 @@
               <thead class="thead-light">
                   <tr>
                       <th scope="col">Nombre</th>
+                      <th scope="col">Subclase</th>
                       <th scope="col">Status</th>
                       <th scope="col">Fecha uso</th>
                       <th scope="col">Cantidades</th>
                   </tr>
               </thead>
               <tbody>
+                {% for i in Producto %}
               <tr>
-                  <th>{{Producto.nombre}}
+                  <th>{{i.0.nombre}}
                     <input type="hidden" value="{{Proyecto.id}}" name="id_proyecto">
-                    <input type="hidden" value="{{Producto.id}}" name="id_producto">
+                    <input type="hidden" value="{{i.0.id}}" name="id_producto">
                   </th>
-                
+                  <th>{{i.1.nombre}}</th>
                 <th>
                     <div class="dropdown">
                       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
                         Estado
                       </button>
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li><input type="hidden" value="no_hay" name="status"></li>
-                        <li><input type="radio" value="Urgente" name="status">Urgente</li>
-                        <li><input type="radio" value="Futuro" name="status">Futuro</li>
-                      
+                        <li><input type="radio" value="Urgente" name="{{i.0.id}}">Urgente</li>
+                        <li><input type="radio" value="Futuro" name="{{i.0.id}}" checked>Futuro</li>
                       </ul>
                     </div>
                     </th>
                   <th><input type="date" name="fecha_uso"></th>
                   <th><input type="text" name="cantidades"></th>
       </tr>
+      {% endfor %}
               </tbody>
       </table>
           
