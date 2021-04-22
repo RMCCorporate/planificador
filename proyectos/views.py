@@ -98,37 +98,38 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
         if Producto_proveedor.objects.filter(proyecto=i, producto=cotizacion.proveedor_asociado).exists():
             nombre = Producto_proveedor.objects.get(proyecto=i, producto=cotizacion.proveedor_asociado).nombre_proveedor
         texto_lista_productos += "\n- {}: {} {}\n".format(nombre, producto_proyecto.cantidades, i.unidad)
-    texto_español = "Estimado {}, \nSe solicita cotización de: \n{} \n{}\nSaludos.".format(
-        cotizacion.contacto_asociado.nombre,
-        texto_lista_productos,
-        texto_extra
-    )
-    texto_ingles = "Dear {}, \nA quote is requested for: \n {} \nRegards.".format(
-        cotizacion.contacto_asociado.nombre,
-        texto_lista_productos,
-        texto_extra
-    )
-    if cotizacion.proveedor_asociado.idioma == "ESP":
-        texto_correo = texto_español
-    else:
-        texto_correo = texto_ingles
-    correo_enviador = usuario.correo
-    #LLEGUE ACA
-    clave_enviador = clave
-    #CAMBIAR DESPUÉS A "CORREO":
-    correo_prueba = 'tacorrea@uc.cl'
-    mensaje = MIMEMultipart()
-    mensaje['From'] = correo_enviador
-    mensaje['To'] = correo_prueba
-    mensaje['Subject'] = subject
-    mensaje.attach(MIMEText(texto_correo, 'plain'))
-    mensaje.attach(MIMEText(texto_html, 'html'))
-    session = smtplib.SMTP('smtp.gmail.com', 587)
-    session.starttls()
-    session.login(correo_enviador, clave_enviador)
-    text = mensaje.as_string()
-    session.sendmail(correo_enviador, correo_prueba, text)
-    session.quit()
+    for i in cotizacion.contacto_asociado.all():
+        texto_español = "Estimado {}, \nSe solicita cotización de: \n{} \n{}\nSaludos.".format(
+            i.nombre,
+            texto_lista_productos,
+            texto_extra
+        )
+        texto_ingles = "Dear {}, \nA quote is requested for: \n {} \nRegards.".format(
+            i.nombre,
+            texto_lista_productos,
+            texto_extra
+        )
+        if cotizacion.proveedor_asociado.idioma == "ESP":
+            texto_correo = texto_español
+        else:
+            texto_correo = texto_ingles
+        correo_enviador = usuario.correo
+        #LLEGUE ACA
+        clave_enviador = clave
+        #CAMBIAR DESPUÉS A "CORREO":
+        correo_prueba = i.correo
+        mensaje = MIMEMultipart()
+        mensaje['From'] = correo_enviador
+        mensaje['To'] = correo_prueba
+        mensaje['Subject'] = subject
+        mensaje.attach(MIMEText(texto_correo, 'plain'))
+        mensaje.attach(MIMEText(texto_html, 'html'))
+        session = smtplib.SMTP('smtp.gmail.com', 587)
+        session.starttls()
+        session.login(correo_enviador, clave_enviador)
+        text = mensaje.as_string()
+        session.sendmail(correo_enviador, correo_prueba, text)
+        session.quit()
     for i in cotizacion.productos_asociados.all():
         producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
         producto_proyecto.estado_cotizacion = "Enviada"
@@ -524,9 +525,8 @@ def agregar_cotizacion(request, id):
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
         nombre = request.POST["nombre"]
         proveedor = request.POST["proveedor"]
-        contacto = request.POST["contacto"]
+        contactos = request.POST.getlist("contacto")
         productos = request.POST.getlist("productos")
-        contacto_asociado = Contacto.objects.get(nombre=contacto)
         proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
         año_hoy = datetime.now().year
         if Correlativo_cotizacion.objects.filter(año=año_hoy).exists():
@@ -537,7 +537,7 @@ def agregar_cotizacion(request, id):
             correlativo = Correlativo_cotizacion(año=año_hoy, numero=0)
             correlativo.save()
         nombre_con_correlativo = str(correlativo.numero) + " - " + nombre
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, contacto_asociado=contacto_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
         nueva_cotizacion.save()
         usuario = Usuario.objects.get(correo=str(request.user.email))
         usuario.cotizaciones.add(nueva_cotizacion)
@@ -549,6 +549,10 @@ def agregar_cotizacion(request, id):
             nueva_cotizacion.save()
             nuevo_producto_proyecto.estado_cotizacion = "Creada"
             nuevo_producto_proyecto.save()
+        for contacto in contactos:
+            contacto_asociado = Contacto.objects.get(nombre=contacto)
+            nueva_cotizacion.contacto_asociado.add(contacto_asociado)
+            nueva_cotizacion.save()
         return redirect('/proyectos/proyecto/{}'.format(proyecto_asociado.id))
     else:
         proyecto = Proyecto.objects.get(id=id)

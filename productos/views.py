@@ -45,11 +45,12 @@ def productos(request):
             subclase = row_data[4].upper()
             if id != "ID":
                 if id == "NONE" or nombre == "NONE":
-                    aux = []
-                    aux.append(row_data[0])
-                    aux.append(row_data[1])
-                    aux.append("No se ingresó ID o Nombre")
-                    datos_fallados.append(aux)
+                    if not(id == "NONE" and nombre == "NONE" and unidad == "NONE" and kilos == "NONE" and subclase == "NONE"):
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append("No se ingresó ID o Nombre")
+                        datos_fallados.append(aux)
                 else:
                     fecha_actualizacion = datetime.now()
                     if Producto.objects.filter(id=id).exists():
@@ -146,12 +147,13 @@ def nuevo_proveedor_producto(request):
             nombre_producto_proveedor = row_data[2].upper()
             if nombre_producto != "NOMBRE_PRODUCTO_RMC":
                 if nombre_producto == "NONE" or proveedor == "NONE" or nombre_producto_proveedor == "NONE":
-                    aux = []
-                    aux.append(row_data[0])
-                    aux.append(row_data[1])
-                    aux.append(row_data[2])
-                    aux.append("No se ingresó o nombre producto RMC o nombre del proveedor o nombre del producto para proveedor")
-                    datos_fallados.append(aux)
+                    if not(nombre_producto == "NONE" and proveedor == "NONE" and nombre_producto_proveedor == "NONE"):
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append(row_data[2])
+                        aux.append("No se ingresó o nombre producto RMC o nombre del proveedor o nombre del producto para proveedor")
+                        datos_fallados.append(aux)
                 else:
                     if not Producto_proveedor.objects.filter(nombre_RMC=nombre_producto, nombre_proveedor=nombre_producto_proveedor).exists():
                         if not Producto.objects.filter(nombre=nombre_producto).exists():

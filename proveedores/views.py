@@ -45,13 +45,14 @@ def proveedores(request):
             contacto_telefono = row_data[7].upper()
             direccion = row_data[8].upper()
             if rut == "NONE" or nombre == "NONE" or contacto_correo == "NONE" or row_data[3] == "None":
-                aux = []
-                aux.append(rut)
-                aux.append(nombre)
-                aux.append(row_data[3])
-                aux.append(contacto_correo)
-                aux.append("No se ingresó RUT, nombre proveedor o correo contacto")
-                datos_fallados.append(aux)
+                if not(rut == "NONE" or nombre == "NONE" or contacto_correo == "NONE" or row_data[3] == "None" and contacto_nombre == "NONE" and contacto_telefono == "NONE" and direccion == "NONE"):
+                    aux = []
+                    aux.append(rut)
+                    aux.append(nombre)
+                    aux.append(row_data[3])
+                    aux.append(contacto_correo)
+                    aux.append("No se ingresó RUT, nombre proveedor o correo contacto")
+                    datos_fallados.append(aux)
             else:
                 if rut != "RUT":
                     if Contacto.objects.filter(correo=contacto_correo).exists() or Proveedor.objects.filter(rut=rut).exists():

@@ -20,11 +20,12 @@ def index(request):
             for cell in row:
                 row_data.append(str(cell.value))
             if row_data[0] == "None" or row_data[1] == "None":
-                aux = []
-                aux.append(row_data[0])
-                aux.append(row_data[1])
-                aux.append("No se ingresó Subclase o Clase")
-                datos_fallados.append(aux)
+                if not(row_data[0] == "None" and row_data[1] == "None"):
+                    aux = []
+                    aux.append(row_data[0])
+                    aux.append(row_data[1])
+                    aux.append("No se ingresó Subclase o Clase")
+                    datos_fallados.append(aux)
             else:
                 dato_subclase = row_data[0].upper()
                 dato_clase = row_data[1].upper()

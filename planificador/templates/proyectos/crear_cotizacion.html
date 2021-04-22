@@ -16,7 +16,7 @@
           <h5 class="card-title">Escoger contacto</h5>
           <p class="card-text">
             {% for contacto in i.0.contactos_asociados.all %}
-                 <input type="radio" value="{{contacto.nombre}}" name="contacto"> {{contacto.nombre}}
+                 <input type="checkbox" value="{{contacto.nombre}}" name="contacto"> {{contacto.nombre}}
                  <br>
             {% endfor %}
           </p>

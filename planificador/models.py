@@ -154,7 +154,7 @@ class Cotizacion(models.Model):
     proyecto_asociado = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado')
     productos_asociados = models.ManyToManyField(Producto, related_name='productos_asociados')
     proveedor_asociado = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='proveedor_asociado', null=True)
-    contacto_asociado = models.ForeignKey(Contacto, on_delete=models.CASCADE, related_name='contacto_asociado', null=True)
+    contacto_asociado = models.ManyToManyField(Contacto, related_name='contacto_asociado')
     fecha_salida = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_respuesta = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_actualizacion_precio = models.DateField(auto_now=False, auto_now_add=False, null=True)
