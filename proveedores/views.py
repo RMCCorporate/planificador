@@ -95,13 +95,15 @@ def proveedores(request):
                                 aux.append(contacto_correo)
                                 aux.append("No existe la subclase {}".format(i))
                                 datos_fallados.append(aux)
+                        if contacto_correo != "none":
+                            print(contacto_correo)
                             nuevo_contacto = Contacto(correo=contacto_correo)
-                        if contacto_nombre != "NONE":
-                            nuevo_contacto.nombre = contacto_nombre
-                        if contacto_telefono != "NONE":
-                            nuevo_contacto.telefono = contacto_telefono
-                        nuevo_contacto.save()
-                        nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
+                            if contacto_nombre != "NONE":
+                                nuevo_contacto.nombre = contacto_nombre
+                            if contacto_telefono != "NONE":
+                                nuevo_contacto.telefono = contacto_telefono
+                            nuevo_contacto.save()
+                            nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
                         calificacion_tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
                         calificacion_precio = Calificacion.objects.get(nombre="Precio")
                         calificacion_calidad = Calificacion.objects.get(nombre="Calidad")
@@ -227,6 +229,7 @@ def mostrar_edicion_proveedor(request, rut):
 @login_required(login_url='/login')
 def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
+    for i in proveedor.contactos_asociados.all():
+        i.delete()
     proveedor.delete()
-    proveedores = Proveedor.objects.all()
     return redirect('/proveedores')

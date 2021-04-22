@@ -228,6 +228,8 @@ def editar_precio_producto(request, id):
 @login_required(login_url='/login')
 def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
+    filtro = Filtro_producto.objects.get(nombre_producto=producto.nombre)
+    filtro.delete()
     producto.delete()
     productos = Producto.objects.all()
     return render(request, "productos/productos.html", {"Productos":productos})

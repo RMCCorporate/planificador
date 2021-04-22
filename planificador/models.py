@@ -47,6 +47,7 @@ class Proyecto(models.Model):
         )
     nombre = models.CharField(max_length=128)
     precio_final = models.FloatField(null=True)
+    centro_costos = models.CharField(max_length=128, null=True)
     fecha_creacion = models.DateField(auto_now_add=True, null=True)
     fecha_inicio = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_final = models.DateField(auto_now=False, auto_now_add=False, null=True)
@@ -121,13 +122,9 @@ class Producto_proyecto(models.Model):
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     proveedores = models.ManyToManyField(Proveedor)
     URGENTE = 'Urgente'
-    TRANSPORTE = 'Transporte'
-    BODEGA = 'Bodega'
     FUTURO = 'Futuro'
     ESTADO_COMPRAS_CHOICES = [
         (URGENTE,'Urgente'),
-        (TRANSPORTE, 'Transporte'),
-        (BODEGA, 'Bodega'),
         (FUTURO, 'Futuro'),
     ]
     status = models.CharField(
