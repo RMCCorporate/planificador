@@ -4,6 +4,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from planificador.decorators import allowed_users
 import openpyxl
+import uuid
 
 # Create your views here.
 @login_required(login_url='/login')

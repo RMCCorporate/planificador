@@ -1,12 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor
+from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario
 from datetime import date, datetime
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.auth.decorators import login_required
 from django import forms
 import openpyxl
+import uuid
 
 class UploadFileForm(forms.Form):
     file = forms.FileField()
@@ -15,7 +16,7 @@ class ImageForm(forms.ModelForm):
     """Form for the image model"""
     class Meta:
         model = Producto
-        fields = ('id', 'nombre', 'unidad', 'kilos', 'imagen')
+        fields = ('unidad', 'kilos', 'imagen')
 
 def isfloat(value):
     try:
@@ -23,6 +24,15 @@ def isfloat(value):
         return True
     except ValueError:
         return False
+
+
+def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_modificado, id_modelo, nombre):
+    hora_actual = datetime.now()
+    notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, fecha=hora_actual)
+    notificacion.save()
+    usuario = Usuario.objects.get(correo=correo_usuario)
+    notificacion.usuario_modificacion.add(usuario)
+    notificacion.save()
 
 #Mostrar productos
 @login_required(login_url='/login')
@@ -34,6 +44,8 @@ def productos(request):
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
         worksheet = wb["producto"]
+        contador_creado = 0
+        creado = False
         for row in worksheet.iter_rows():
             row_data = list()
             for cell in row:
@@ -81,12 +93,16 @@ def productos(request):
                                     aux.append("Producto creado sin kilos. No es un número")
                                     datos_fallados.append(aux)
                             nuevo_producto.save()
+                            contador_creado += 1
+                            creado = True
                             sub_clase = SubClase.objects.get(nombre=subclase)
                             sub_clase.productos.add(nuevo_producto)
                             clase = sub_clase.clase_set.all()
                             nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, nombre_subclase=subclase)
                             nuevo_filtro_producto.save()
                             sub_clase.save()
+        if creado:
+            crear_notificacion("agregar_producto", request.user.email, "creó producto(s) mediante planilla", "Productos", contador_creado, " ", " ")
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'productos/resultado_planilla_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
@@ -98,7 +114,6 @@ def agregar_producto(request):
     clases = Clase.objects.all()
     subclases = SubClase.objects.all()
     return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases})
-
 
 def recibir_datos_producto(request):
     id = request.GET["id"]
@@ -113,8 +128,8 @@ def recibir_datos_producto(request):
     clase = subclase.clase_set.all()
     nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, nombre_subclase=subclase.nombre)
     nuevo_filtro_producto.save()
-    productos = Producto.objects.all()
-    return render(request, "productos/productos.html", {"Productos":productos})
+    crear_notificacion("agregar_producto", request.user.email, "creó producto", "Productos", 1, nuevo_producto.id, nuevo_producto.nombre)
+    return redirect('/productos/producto/{}'.format(nuevo_producto.id))
    
 #Vista producto
 @login_required(login_url='/login')
@@ -138,6 +153,8 @@ def nuevo_proveedor_producto(request):
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
         worksheet = wb["producto_proveedor"]
+        contador_creado = 0
+        creado = False
         for row in worksheet.iter_rows():
             row_data = list()
             for cell in row:
@@ -176,10 +193,14 @@ def nuevo_proveedor_producto(request):
                             if not Producto_proveedor.objects.filter(producto=proveedor_ingreso, proyecto=producto).exists():
                                 nuevo_producto_proveedor = Producto_proveedor(producto=proveedor_ingreso, proyecto=producto, nombre_RMC=nombre_producto, nombre_proveedor=nombre_producto_proveedor)
                                 nuevo_producto_proveedor.save()
+                                creado = True
+                                contador_creado += 1
                             else:
                                 producto_proveedor = Producto_proveedor.objects.get(producto=proveedor_ingreso, proyecto=producto)
                                 producto_proveedor.nombre_proveedor = nombre_producto_proveedor
                                 producto_proveedor.save()
+                                creado = True
+                                contador_creado += 1
                     else:
                         aux = []
                         aux.append(row_data[0])
@@ -187,13 +208,13 @@ def nuevo_proveedor_producto(request):
                         aux.append(row_data[2])
                         aux.append("Ya existe el mismo nombre en relación")
                         datos_fallados.append(aux)
+        if creado:
+            crear_notificacion("agregar_proveedor_producto", request.user.email, "creó nombre proveedor de producto(s) mediante planilla", "Proveedor_producto", contador_creado, " ", " ")
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'productos/resultado_planilla_proveedor_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     else:
         return render(request, 'productos/nuevo_proveedor_producto.html')
-
-
 
 #Edición producto
 @login_required(login_url='/login')
@@ -205,26 +226,13 @@ def mostrar_edicion_producto(request, id):
             form.save()
             # Get the current instance object to display in the template
             img_obj = form.instance
-            productos = Producto.objects.all()
-            return render(request, 'productos/productos.html', {'Productos': productos, "img_obj":img_obj})
+            crear_notificacion("editar_producto", request.user.email, "editó información producto", "Producto", 1, producto.id, producto.nombre)
+            return redirect('/productos/producto/{}'.format(producto.id))
     else:
         subclases = SubClase.objects.all()
         form = ImageForm(instance=producto)
         return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases, "form":form})
 
-@login_required(login_url='/login')
-def editar_precio_producto(request, id):
-    producto = Producto.objects.get(id=id)
-    precio = request.POST["precio"]
-    if precio != "":
-        precio = 0
-        moneda = request.POST["moneda"]
-        proveedor = request.POST["proveedor"]
-        comentario = request.POST["comentario"]
-        nuevo_precio = Precio(id=producto.id, valor=precio, tipo_cambio=moneda, nombre_proveedor=proveedor, comentarios=comentario)
-        nuevo_precio.save()
-        producto.lista_precios.add(nuevo_precio)
-        producto.save()
 
 #Eliminar producto
 @login_required(login_url='/login')
@@ -232,6 +240,7 @@ def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
     filtro = Filtro_producto.objects.get(nombre_producto=producto.nombre)
     filtro.delete()
+    crear_notificacion("eliminar_producto", request.user.email, "elimnó producto", "Producto", 1, producto.id, producto.nombre)
     producto.delete()
     productos = Producto.objects.all()
-    return render(request, "productos/productos.html", {"Productos":productos})
+    return redirect('/productos')

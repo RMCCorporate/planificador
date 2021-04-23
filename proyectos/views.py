@@ -565,6 +565,7 @@ def agregar_cotizacion(request, id):
         usuario = Usuario.objects.get(correo=str(request.user.email))
         usuario.cotizaciones.add(nueva_cotizacion)
         usuario.save()
+        crear_notificacion("crear_cotizacion", request.user.email, "creó una cotización", "Cotización", 1, nueva_cotizacion.id, nueva_cotizacion.nombre, proyecto_asociado.id)
         for i in productos:
             nuevo_producto = Producto.objects.get(nombre=i)
             nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto_asociado, proyecto=nuevo_producto)
@@ -646,6 +647,7 @@ def editar_cotizacion(request, id):
         usuario = Usuario.objects.get(correo=request.user.email)
         usuario.cotizaciones.add(cotizacion)
         usuario.save()
+        crear_notificacion("editar_fecha_respuesta_cotización", request.user.email, "editó cotización", "Cotización", 1, cotizacion.id, cotizacion.nombre, cotizacion.proyecto_asociado.id)
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(cotizacion.id))
     else:
         return render(request, "proyectos/editar_cotizacion.html", {"Cotizacion":cotizacion})
@@ -655,6 +657,7 @@ def editar_cotizacion(request, id):
 def eliminar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     proyecto = cotizacion.proyecto_asociado.id
+    crear_notificacion("eliminar_cotización", request.user.email, "eliminó cotización", "Cotización", 1, cotizacion.id, cotizacion.nombre, cotizacion.proyecto_asociado.id)
     cotizacion.delete()
     return redirect('/proyectos/proyecto/{}'.format(proyecto))
 
@@ -670,6 +673,7 @@ def enviar_correo(request, id):
         crear_correo(usuario, cotizacion, texto_extra, clave, subject)
         cotizacion.fecha_salida = datetime.now()
         cotizacion.save()
+        crear_notificacion("enviar_correo", request.user.email, "envió correo con cotización", "Cotización", 1, cotizacion.id, cotizacion.nombre, cotizacion.proyecto_asociado.id)
         return redirect('/proyectos/proyecto/{}'.format(proyecto))
     else:
         return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion})

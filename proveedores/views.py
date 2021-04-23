@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor
+from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor, Usuario, Notificacion, Permisos_notificacion
 from django.contrib.auth.decorators import login_required
+from datetime import date, datetime
 from planificador.decorators import allowed_users
 import openpyxl
+import uuid
 
 #FUNCIONES
 def mostrar_clases():
@@ -22,16 +24,25 @@ def mostrar_clases():
     clase3 = subclases[2]
     return [nombres, clase1, clase2, clase3]
 
+def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_modificado, id_modelo, nombre):
+    hora_actual = datetime.now()
+    notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, fecha=hora_actual)
+    notificacion.save()
+    usuario = Usuario.objects.get(correo=correo_usuario)
+    notificacion.usuario_modificacion.add(usuario)
+    notificacion.save()
+
 #Mostrar proveedores
 @login_required(login_url='/login')
 def proveedores(request):
-    proveedores = Proveedor.objects.all()
     if request.method == "POST":
         datos_fallados = []
         booleano_fallados = False
         excel_file = request.FILES["excel_file"]
         wb = openpyxl.load_workbook(excel_file)
         worksheet = wb["proveedor"]
+        contador_creado = 0
+        creado = False
         for row in worksheet.iter_rows():
             row_data = list()
             for cell in row:
@@ -97,7 +108,6 @@ def proveedores(request):
                                 aux.append("No existe la subclase {}".format(i))
                                 datos_fallados.append(aux)
                         if contacto_correo != "none":
-                            print(contacto_correo)
                             nuevo_contacto = Contacto(correo=contacto_correo)
                             if contacto_nombre != "NONE":
                                 nuevo_contacto.nombre = contacto_nombre
@@ -115,10 +125,15 @@ def proveedores(request):
                         calificacion_provedor_calidad = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_calidad, nota=0)
                         calificacion_provedor_calidad.save()
                         nuevo_proveedor.save()
+                        contador_creado += 1
+                        creado = True
+        if creado:
+            crear_notificacion("agregar_proveedor", request.user.email, "creó proveedor(es) mediante planilla", "Proveedor", contador_creado, " ", " ")
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'proveedores/resultado_planilla_proveedores.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
-    return render(request, "proveedores/proveedores.html", {"Proveedores":proveedores})
+    proveedores = Proveedor.objects.all()
+    return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores})
 
 #Agregar proveedor
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -157,6 +172,7 @@ def recibir_datos_proveedor(request):
     calidad = Calificacion.objects.get(nombre="Calidad")
     calidad_proveedor = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calidad, nota=0)
     calidad_proveedor.save()
+    crear_notificacion("agregar_proveedor", request.user.email, "creó proveedor", "Proveedor", 1, nuevo_proveedor.rut, nuevo_proveedor.nombre)
     return redirect('/proveedores/proveedor/{}'.format(rut))
 
 #Vista proveedor
@@ -204,6 +220,7 @@ def mostrar_edicion_proveedor(request, rut):
         calificaciones_calidad = Calificacion_Proveedor.objects.filter(proveedor=rut, calificacion="Calidad")[0]
         calificaciones_calidad.nota = (calificaciones_calidad.nota+float(request.POST["Calidad"]))/2
         calificaciones_calidad.save()
+        crear_notificacion("editar_proveedor", request.user.email, "editó proveedor", "Proveedor", 1, proveedor.rut, proveedor.nombre)
         #GUARDAMOS NUEVO CONTACTO
         proveedor.save()
         if subclase != []:
@@ -216,7 +233,9 @@ def mostrar_edicion_proveedor(request, rut):
         for i in eliminar:
             if i != "No":
                 contacto_eliminar = Contacto.objects.get(correo=i)
+                crear_notificacion("eliminar_contacto", request.user.email, "eliminó contacto", "Proveedor", 1, contacto_eliminar.correo, contacto_eliminar.nombre)
                 contacto_eliminar.delete()
+                
         return redirect('/proveedores/proveedor/{}'.format(proveedor.rut))
     else:
         subclase = proveedor.subclases_asociadas.all()
@@ -232,5 +251,6 @@ def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     for i in proveedor.contactos_asociados.all():
         i.delete()
+    crear_notificacion("eliminar_proveedor", request.user.email, "eliminó proveedor", "Proveedor", 1, proveedor.rut, proveedor.nombre)
     proveedor.delete()
     return redirect('/proveedores')
