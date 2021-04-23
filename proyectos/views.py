@@ -134,6 +134,14 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
         producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
         producto_proyecto.estado_cotizacion = "Enviada"
 
+def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_modificado, id_modelo, nombre, id_proyecto):
+    hora_actual = datetime.now()
+    notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, id_proyecto=id_proyecto, fecha=hora_actual)
+    notificacion.save()
+    usuario = Usuario.objects.get(correo=correo_usuario)
+    notificacion.usuario_modificacion.add(usuario)
+    notificacion.save()
+
 # Vista proyectos
 @login_required(login_url='/login')
 def proyectos(request):
@@ -223,11 +231,11 @@ def editar_precios(request, id):
                 productos_proyecto[n].save()
             else:
                 cotizacion.append(" ")
+        notificacion = False
         for n, producto in enumerate(id):
             #contador = 0
             producto = Producto.objects.get(id=producto)
             producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
-            hora_actual = datetime.now()
             if valor[n] != "None" and valor[n] != "" and cotizacion[n] != " ":
                 if valor_importacion[n] != "None" and valor_importacion[n] != "":
                     if valor_cambio[n] == "None" and valor_cambio[n] != "":
@@ -240,11 +248,7 @@ def editar_precios(request, id):
                     usuario = Usuario.objects.get(correo=request.user.email)
                     usuario.precios.add(precio)
                     usuario.save()
-                    notificacion = Notificacion(id=uuid.uuid1(), tipo="editar_precio", accion="editó precio", modelo_base_datos="Precio y Cotización", numero_modificado=len(id), id_modelo=cotizacion[n].id, nombre=cotizacion[n].nombre, id_proyecto=proyecto.id, fecha=hora_actual)
-                    notificacion.save()
-                    notificacion.usuario_modificacion.add(usuario)
-                    notificacion.save()
-                    #ENVIARCORREO
+                    notificacion = True
                 else:
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
@@ -254,14 +258,13 @@ def editar_precios(request, id):
                     usuario = Usuario.objects.get(correo=request.user.email)
                     usuario.precios.add(precio)
                     usuario.save()
-                    notificacion = Notificacion(id=uuid.uuid1(), tipo="editar_precio", accion="editó precio", modelo_base_datos="Precio y Cotización", numero_modificado=len(id), id_modelo=cotizacion[n].id, nombre=cotizacion[n].nombre, id_proyecto=proyecto.id, fecha=hora_actual)
-                    notificacion.save()
-                    notificacion.usuario_modificacion.add(usuario)
-                    notificacion.save()
+                    notificacion = True
                 producto.lista_precios.add(precio)
                 producto.save()
                 producto_proyecto.estado_cotizacion = "Precio"
                 producto_proyecto.save()
+        if notificacion:
+            crear_notificacion("editar_precio", request.user.email, "editó precio", "Precio y Cotización", len(id), proyecto.id, proyecto.nombre, proyecto.id)
         #Renderizar
         return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     else:
@@ -319,6 +322,7 @@ def editar_datos_producto_proyecto(request, id):
             usuario = Usuario.objects.get(correo=request.user.email)
             usuario.productos_proyecto.add(producto_proyecto)
             usuario.save()
+        crear_notificacion("editar_producto_proyecto", request.user.email, "editó información de producto proyecto", "Producto_proyecto", len(nombre), proyecto.id, proyecto.nombre, proyecto.id)
         eliminar = request.POST.getlist("eliminar")
         if eliminar:
             for i in eliminar:
@@ -330,6 +334,7 @@ def editar_datos_producto_proyecto(request, id):
                 producto_eliminar.delete()
                 usuario = Usuario.objects.get(correo=request.user.email)
                 usuario.productos_proyecto.remove(producto_eliminar)
+            crear_notificacion("eliminar_producto_proyecto", request.user.email, "eliminó producto proyecto", "Producto_proyecto", len(eliminar), proyecto.id, proyecto.nombre, proyecto.id)
         return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     else:
         proyecto = Proyecto.objects.get(id=id)
@@ -414,6 +419,7 @@ def crear_nuevo_producto(request):
                 usuario = Usuario.objects.get(correo=request.user.email)
                 usuario.productos_proyecto.add(nuevo_producto_proyecto)
                 usuario.save()
+    crear_notificacion("agregar_producto_proyecto", request.user.email, "creó producto(s) en proyecto", "Producto_Proyecto", len(productos), proyecto.id, proyecto.nombre, proyecto.id)
     return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     
 # Vista planificador I
@@ -459,6 +465,7 @@ def mostrar_filtro(request):
     else:
         nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
         nuevo_proyecto.save()
+    crear_notificacion("crear_proyecto", request.user.email, "creó un proyecto", "Proyecto", 1, centro_costos, nombre, centro_costos)
     #PRODUCTOS:
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
@@ -500,7 +507,6 @@ def guardar_datos_filtro(request):
 def recibir_datos_planificador(request):
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     productos_repetidos = request.GET.getlist("lista_productos")
-    usuario_modificacion = request.user.first_name + " " + request.user.last_name
     productos = list(dict.fromkeys(productos_repetidos))
     lista_subclases_productos = []
     for producto in productos:

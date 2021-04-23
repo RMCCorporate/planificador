@@ -193,4 +193,7 @@ class Notificacion(models.Model):
     id_proyecto = models.CharField(max_length=128, null=True)
     fecha = models.DateTimeField(auto_now_add=False, null=True)
     
+    def __str__(self):
+        return self.tipo
+    
 
