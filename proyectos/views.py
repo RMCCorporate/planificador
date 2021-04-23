@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -224,10 +224,11 @@ def editar_precios(request, id):
             else:
                 cotizacion.append(" ")
         for n, producto in enumerate(id):
+            #contador = 0
             producto = Producto.objects.get(id=producto)
             producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
+            hora_actual = datetime.now()
             if valor[n] != "None" and valor[n] != "" and cotizacion[n] != " ":
-                print(producto)
                 if valor_importacion[n] != "None" and valor_importacion[n] != "":
                     if valor_cambio[n] == "None" and valor_cambio[n] != "":
                         valor_cambio = 1
@@ -239,6 +240,11 @@ def editar_precios(request, id):
                     usuario = Usuario.objects.get(correo=request.user.email)
                     usuario.precios.add(precio)
                     usuario.save()
+                    notificacion = Notificacion(id=uuid.uuid1(), tipo="editar_precio", accion="editó precio", modelo_base_datos="Precio y Cotización", numero_modificado=len(id), id_modelo=cotizacion[n].id, nombre=cotizacion[n].nombre, id_proyecto=proyecto.id, fecha=hora_actual)
+                    notificacion.save()
+                    notificacion.usuario_modificacion.add(usuario)
+                    notificacion.save()
+                    #ENVIARCORREO
                 else:
                     fecha_actual = datetime.now()
                     precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
@@ -248,6 +254,10 @@ def editar_precios(request, id):
                     usuario = Usuario.objects.get(correo=request.user.email)
                     usuario.precios.add(precio)
                     usuario.save()
+                    notificacion = Notificacion(id=uuid.uuid1(), tipo="editar_precio", accion="editó precio", modelo_base_datos="Precio y Cotización", numero_modificado=len(id), id_modelo=cotizacion[n].id, nombre=cotizacion[n].nombre, id_proyecto=proyecto.id, fecha=hora_actual)
+                    notificacion.save()
+                    notificacion.usuario_modificacion.add(usuario)
+                    notificacion.save()
                 producto.lista_precios.add(precio)
                 producto.save()
                 producto_proyecto.estado_cotizacion = "Precio"

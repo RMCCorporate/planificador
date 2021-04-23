@@ -176,3 +176,21 @@ class Usuario(models.Model):
 class Correlativo_cotizacion(models.Model):
     año = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
+
+class Permisos_notificacion(models.Model):
+    nombre = models.CharField(max_length=128, primary_key=True)
+    usuarios = models.ManyToManyField(Usuario)
+
+class Notificacion(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    tipo = models.CharField(max_length=128, null=True)
+    usuario_modificacion =  models.ManyToManyField(Usuario)
+    accion = models.CharField(max_length=128, null=True)
+    modelo_base_datos = models.CharField(max_length=128, null=True)
+    numero_modificado = models.IntegerField(null=True)
+    id_modelo = models.CharField(max_length=128, null=True)
+    nombre = models.CharField(max_length=128, null=True)
+    id_proyecto = models.CharField(max_length=128, null=True)
+    fecha = models.DateTimeField(auto_now_add=False, null=True)
+    
+
