@@ -1,5 +1,5 @@
 body {
-  font-family: 'Lora';
+  font-family: 'Roboto Condensed', sans-serif;
   background: url("../img/bg_fondo.jpg");
   background-attachment: fixed;
   background-position: center;
@@ -12,7 +12,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Raleway';
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 p {
@@ -28,7 +28,7 @@ p {
   margin-bottom: 5rem;
   text-transform: uppercase;
   line-height: 1;
-  font-family: 'Raleway';
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 .site-heading .site-heading-upper {
@@ -81,7 +81,7 @@ p {
 
 #mainNav {
   background-color: rgb(68, 118, 184);
-  font-family: 'Raleway';
+  font-family: 'Roboto Condensed', sans-serif;
 }
 
 #mainNav .navbar-brand {
@@ -89,7 +89,7 @@ p {
 }
 
 #mainNav .navbar-nav .nav-item .nav-link {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgb(68, 118, 184);
   font-weight: 800;
 }
 
@@ -266,7 +266,7 @@ a.link:hover{
 }
 
 .section-content{
-  font-family: 'Lora' !important;
+  font-family: 'Roboto Condensed', sans-serif;
   font-size: 16px !important;
   font-weight: 400 !important;
   line-height: 28px !important;
