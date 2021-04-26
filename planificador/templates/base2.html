@@ -15,6 +15,40 @@
     
     </head>
     <body>
+        <header class="header">
+            <div class="logo-box">
+                <img src="../static/planificador/img/principal.png" alt="Logo" class="logo">
+            </div>
+            <div class="nav-bar">
+                <ul>
+                  <li class="nav-bar">
+                    <a href="{% url 'home' %}">INICIO</a>
+                  </li>
+                  <li class="nav-bar">
+                    <a href="{% url 'planificador' %}">PLANIFICADOR</a>
+                  </li>
+                  <li class="nav-bar">
+                    <a href="{% url 'proyectos' %}">PROYECTOS</a>
+                  </li>
+                  <li class="nav-bar">
+                    <a href="{% url 'productos' %}">PRODUCTOS</a>
+                  </li>
+                  <li class="nav-bar">
+                    <a href="{% url 'proveedores' %}">PROVEEDORES</a>
+                  </li>
+                  <li style="float:right">
+                    <a class="nav-bar" href="{% url 'notificaciones' %}">NOTIFICACIONES</a>
+                  </li>
+                  <li style="float:right">
+                    <a class="nav-bar" href="{% url 'notificaciones' %}">A</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="profile-box">
+                <img src="../static/planificador/img/profile.png" alt="Logo" class="profile">
+            </div>
+              
+        </header>
         {% block content %}
 
 

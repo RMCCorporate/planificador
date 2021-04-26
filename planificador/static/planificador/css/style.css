@@ -1,3 +1,10 @@
+/*
+COLORS:
+Blue: #466ea5
+Black:  #575855
+grey: #fbfbfb
+*/
+
 * {
     margin:0;
     padding: 0;
@@ -10,9 +17,68 @@ body {
     font-size: 16px;
     line-height: 1.7;
     color: black;
+    padding:20px;
 }
 
 .header {
-    height: 20vh;
-    background-image: url(../img/bg_fondo.jpg);
+    height: 70px;
+    background-image: linear-gradient(to right bottom, rgb(87,88,85), rgb(87,88,85)); 
+    background-size: cover;
+    background-position: top;
+    position: relative;
+}
+
+.logo-box {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+
+.logo {
+    height: 70px;
+}
+
+.profile-box {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.profile {
+    height: 70px;
+}
+
+ul {
+    list-style-type: none;
+    overflow: hidden;
+
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar {
+    padding: 36px;
+    display: inline;
+}
+
+.nav-bar a {
+    display: inline;
+    color: white;
+    text-align: center;
+    margin: 20px;
+    padding: 30px;
+    text-decoration: none;
+  }
+
+.btn:link,
+.btn:visited {
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 15px 40px;
+}
+
+.btn-gray {
+    background-color: #575855;
+    color: white;
 }
