@@ -26,11 +26,18 @@ def mostrar_clases():
 
 def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_modificado, id_modelo, nombre):
     hora_actual = datetime.now()
+    usuario = Usuario.objects.get(correo=correo_usuario)
+    permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
     notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, fecha=hora_actual)
     notificacion.save()
-    usuario = Usuario.objects.get(correo=correo_usuario)
-    notificacion.usuario_modificacion.add(usuario)
+    notificacion.usuario_modificacion = usuario
     notificacion.save()
+    for i in permiso_notificacion.usuarios.all():
+        if i.correo == correo_usuario:
+            permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
+            for x in permiso_notificacion.usuarios.all():
+                x.notificaciones += 1
+                x.save()
 
 #Mostrar proveedores
 @login_required(login_url='/login')

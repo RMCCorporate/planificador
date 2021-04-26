@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Producto, SubClase, Proveedor, Clase, Usuario
+from planificador.models import Producto, SubClase, Proveedor, Clase, Usuario, Permisos_notificacion, Notificacion
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from planificador.decorators import allowed_users
@@ -7,6 +7,22 @@ import openpyxl
 import uuid
 
 # Create your views here.
+def takedate(elem):
+    return elem.fecha
+
+@login_required(login_url='/login')
+def notificaciones(request):
+    lista_notificaciones = []
+    permisos_notificacion = Permisos_notificacion.objects.filter(usuarios__correo=request.user.email)
+    for i in permisos_notificacion:
+        notificaciones = Notificacion.objects.filter(tipo=i.nombre)
+        for i in notificaciones:
+            if i:
+                lista_notificaciones.append(i)
+    lista_notificaciones.sort(key=takedate)
+    lista_notificaciones.reverse()
+    return render(request, 'planificador/notificaciones.html', {'notificacion':lista_notificaciones})
+
 @login_required(login_url='/login')
 def index(request):
     #group = str(request.user.groups.all()[0])
@@ -76,8 +92,13 @@ def crear_usuario(request):
         grupo = Group.objects.get(name=nombre_grupo)
         nuevo_usuario.groups.add(grupo)
         nuevo_usuario.save()
-        usuario_info = Usuario(correo=correo, nombre=nombre, apellido=apellido, segundo_apellido=segundo_apellido, celular=celular, cargo=cargo, telefono=telefono)
+        usuario_info = Usuario(correo=correo, nombre=nombre, apellido=apellido, segundo_apellido=segundo_apellido, celular=celular, cargo=cargo, telefono=telefono, notificaciones=0)
         usuario_info.save()
+        permisos = ["editar_precio", "editar_producto_proyecto", "eliminar_producto_proyecto", "agregar_producto_proyecto", "crear_proyecto", "crear_cotizacion","editar_fecha_respuesta_cotización", "eliminar_cotización", "enviar_correo","agregar_proveedor", "editar_proveedor", "eliminar_contacto", "eliminar_proveedor", "agregar_producto", "editar_producto", "eliminar_producto"]
+        for i in permisos:
+            permiso = Permisos_notificacion.objects.get(nombre=i)
+            permiso.usuarios.add(usuario_info)
+            permiso.save()
         return redirect('/')
     else:
         return render(request, 'planificador/crear_usuario.html')
@@ -104,10 +125,47 @@ def crear_grupo(request):
         usuarios = User.objects.all()
         return render(request, 'planificador/crear_grupo.html', {'usuarios':usuarios})
 
-
+@allowed_users(allowed_roles=['Admin'])
+@login_required(login_url='/login')
+def crear_permisos(request):
+    permisos = ["editar_precio", "editar_producto_proyecto", "eliminar_producto_proyecto", "agregar_producto_proyecto", "crear_proyecto", "crear_cotizacion","editar_fecha_respuesta_cotización", "eliminar_cotización", "enviar_correo","agregar_proveedor", "editar_proveedor", "eliminar_contacto", "eliminar_proveedor", "agregar_producto", "editar_producto", "eliminar_producto"]
+    for i in permisos:
+        nuevo_permiso = Permisos_notificacion(nombre=i)
+        nuevo_permiso.save()
+    return redirect('/')
+  
+@login_required(login_url='/login')
+def permisos_notificacion(request):
+    if request.method == "POST":
+        usuario = Usuario.objects.get(correo=request.user.email)
+        todos_los_permisos = Permisos_notificacion.objects.all()
+        for n in todos_los_permisos:
+            for j in n.usuarios.all():
+                if j == usuario:
+                    n.usuarios.remove(j)
+        permisos = request.POST.getlist("permiso")
+        for i in permisos:
+            permiso = Permisos_notificacion.objects.get(nombre=i)
+            permiso.usuarios.add(usuario)
+            permiso.save()
+        return redirect('/')
+    else:
+        permisos = Permisos_notificacion.objects.all()
+        lista_con = []
+        lista_sin = []
+        for i in permisos:
+            con = False
+            for x in i.usuarios.all():
+                if x.correo == request.user.email:
+                    con = True
+            if con:
+                lista_con.append(i.nombre)
+            else:
+                lista_sin.append(i.nombre)
+        return render(request, 'planificador/permisos_notificacion.html', {'con':lista_con, 'sin':lista_sin})
+    
 @login_required(login_url='/login')
 def usuario(request):
-    print(request.user.email)
     usuario = Usuario.objects.get(correo=str(request.user.email))
     lista_precios = usuario.precios.all()
     Productos = usuario.productos_proyecto.all()

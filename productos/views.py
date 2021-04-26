@@ -28,11 +28,18 @@ def isfloat(value):
 
 def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_modificado, id_modelo, nombre):
     hora_actual = datetime.now()
-    notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, fecha=hora_actual)
-    notificacion.save()
     usuario = Usuario.objects.get(correo=correo_usuario)
-    notificacion.usuario_modificacion.add(usuario)
+    permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
+    notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, usuario_modificacion=usuario, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, fecha=hora_actual)
     notificacion.save()
+  #  notificacion.usuario_modificacion = usuario
+   # notificacion.save()
+    for i in permiso_notificacion.usuarios.all():
+        if i.correo == correo_usuario:
+            permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
+            for x in permiso_notificacion.usuarios.all():
+                x.notificaciones += 1
+                x.save()
 
 #Mostrar productos
 @login_required(login_url='/login')
@@ -240,7 +247,7 @@ def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
     filtro = Filtro_producto.objects.get(nombre_producto=producto.nombre)
     filtro.delete()
-    crear_notificacion("eliminar_producto", request.user.email, "elimnó producto", "Producto", 1, producto.id, producto.nombre)
+    crear_notificacion("eliminar_producto", request.user.email, "eliminó producto", "Producto", 1, producto.id, producto.nombre)
     producto.delete()
     productos = Producto.objects.all()
     return redirect('/productos')

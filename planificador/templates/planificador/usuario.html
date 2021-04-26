@@ -9,6 +9,7 @@
             <h1>{{Usuario.nombre}} {{Usuario.apellido}} {{Usuario.segundo_apellido}}</h1>
         </div>
         <a href="{% url 'editar_usuario' Usuario.correo %}" class="btn btn-primary">Editar información</a>
+        <a href="{% url 'permisos_notificacion'  %}" class="btn btn-primary">Editar permisos notificación</a>
         <div class="card-body">
           <h5 class="card-title">Información general</h5>
           <p class="card-text">

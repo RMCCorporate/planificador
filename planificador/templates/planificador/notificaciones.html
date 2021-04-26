@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}
+{% endblock%}
+{% block content %}
+    {% load static %}
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Notificacion</th>
+                    <th scope="col">Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila in notificacion %}
+            <tr>
+                {% if fila.id_proyecto == None %}
+                <th>{{fila.usuario_modificacion.nombre}} {{fila.usuario_modificacion.apellido}} - {{fila.accion}} ({{fila.numero_modificado}}) - {{fila.id_modelo}}: {{fila.nombre}}</a></th>
+          {% else %}
+          <th>{{fila.usuario_modificacion.nombre}} {{fila.usuario_modificacion.apellido}} - {{fila.accion}} ({{fila.numero_modificado}}) en el proyecto {{fila.id_proyecto}}</a></th>
+          {% endif %}      
+          <th> {{fila.fecha}}</th>
+              {% endfor %}  
+    </tr>
+            </tbody>
+    </table>
+{% endblock %}

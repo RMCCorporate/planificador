@@ -172,6 +172,7 @@ class Usuario(models.Model):
     productos_proyecto = models.ManyToManyField(Producto_proyecto)
     proyectos = models.ManyToManyField(Proyecto)
     cotizaciones = models.ManyToManyField(Cotizacion)
+    notificaciones = models.IntegerField(null=True)
 
 class Correlativo_cotizacion(models.Model):
     año = models.IntegerField(primary_key=True)
@@ -184,7 +185,7 @@ class Permisos_notificacion(models.Model):
 class Notificacion(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     tipo = models.CharField(max_length=128, null=True)
-    usuario_modificacion =  models.ManyToManyField(Usuario)
+    usuario_modificacion =  models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
     accion = models.CharField(max_length=128, null=True)
     modelo_base_datos = models.CharField(max_length=128, null=True)
     numero_modificado = models.IntegerField(null=True)
