@@ -38,8 +38,6 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
     for i in permiso_notificacion.usuarios.all():
         i.notificaciones += 1
         i.save()
-        #ENVIAR CORREO
-        print(notificacion.id_proyecto)
         if not notificacion.id_proyecto:
             texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
                 "NOMBRE", 
