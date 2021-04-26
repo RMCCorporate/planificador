@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario
 from datetime import date, datetime
 from django.core.files import File
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from django.core.files.temp import NamedTemporaryFile
 from django.contrib.auth.decorators import login_required
 from django import forms
@@ -32,14 +35,49 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
     permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
     notificacion = Notificacion(id=uuid.uuid1(), tipo=tipo, accion=accion, usuario_modificacion=usuario, modelo_base_datos=modelo_base_datos, numero_modificado=numero_modificado, id_modelo=id_modelo, nombre=nombre, fecha=hora_actual)
     notificacion.save()
-  #  notificacion.usuario_modificacion = usuario
-   # notificacion.save()
     for i in permiso_notificacion.usuarios.all():
-        if i.correo == correo_usuario:
-            permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
-            for x in permiso_notificacion.usuarios.all():
-                x.notificaciones += 1
-                x.save()
+        i.notificaciones += 1
+        i.save()
+        #ENVIAR CORREO
+        print(notificacion.id_proyecto)
+        if not notificacion.id_proyecto:
+            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
+                "NOMBRE", 
+                "APELLIDO", 
+                notificacion.usuario_modificacion.nombre, 
+                notificacion.usuario_modificacion.apellido,
+                notificacion.accion,
+                notificacion.id_modelo,
+                notificacion.nombre,
+                notificacion.fecha
+                )
+        else:
+             texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} en el proyecto {} {} con fecha {}".format(
+                "NOMBRE", 
+                "APELLIDO", 
+                notificacion.usuario_modificacion.nombre, 
+                notificacion.usuario_modificacion.apellido,
+                notificacion.accion,
+                notificacion.id_proyecto,
+                notificacion.nombre,
+                notificacion.fecha
+                )
+        #CAMBIAR A SUPPLY
+        correo_enviador = 'tcorrea@rmc.cl'
+        clave_enviador = 'Tom12345'
+        #CAMBIAR A i.correo
+        correo_prueba = 'tacorreahucke@gmail.com'
+        mensaje = MIMEMultipart()
+        mensaje['From'] = correo_enviador
+        mensaje['To'] = correo_prueba
+        mensaje['Subject'] = 'NOTIFICACIÓN {}'.format(notificacion.tipo)
+        mensaje.attach(MIMEText(texto_correo, 'plain'))
+        session = smtplib.SMTP('smtp.gmail.com', 587)
+        session.starttls()
+        session.login(correo_enviador, clave_enviador)
+        text = mensaje.as_string()
+        session.sendmail(correo_enviador, correo_prueba, text)
+        session.quit()
 
 #Mostrar productos
 @login_required(login_url='/login')

@@ -114,9 +114,7 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
         else:
             texto_correo = texto_ingles
         correo_enviador = usuario.correo
-        #LLEGUE ACA
         clave_enviador = clave
-        #CAMBIAR DESPUÉS A "CORREO":
         correo_prueba = i.correo
         mensaje = MIMEMultipart()
         mensaje['From'] = correo_enviador
