@@ -7,40 +7,28 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet">
+       
         <link href="{% static 'planificador/css/login.css' %}" rel="stylesheet">
-        <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+		<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+	<img src="../static/planificador/img/principal.png" class="avatar">
+	<h1>SOFTWARE INTERNO</h1>
 	<div class="loginbox">
-		<img src="../static/planificador/img/principal.png" class="avatar">
-					<h3 id="form-title">LOGIN</h3>
-					
-					<form method="POST" action="">{% csrf_token %}
-						<div class="input-group mb-3">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-user"></i></span>
-							</div>
-							<input type="text" name="username" placeholder="Username..." class="form-control">
-						</div>
-						<div class="input-group mb-2">
-							<div class="input-group-append">
-								<span class="input-group-text"><i class="fas fa-key"></i></span>
-							</div>
-								<input type="password" name="password" placeholder="Password..." class="form-control" >
-						</div>
-                        {% for message in messages %}
-                        <p id="messages"> {{message}} </p>
-                        {% endfor %}
-							<div class="d-flex justify-content-center mt-3 login_container">
-				 				<input class="btn login_btn" type="submit" value="Login">
-				   			</div>
-					</form>
-
-				</div>
+			<h2>INGRESA</h2>
+			<form method="POST" action="">{% csrf_token %}
+				<p>MAIL</p>
+				<input type="text" name="username" placeholder="Ej:rmc.corporate@dominio.cl">
+				<p>CONTRASEÑA</p>
+				<input type="password" name="password" placeholder="***********" class="form-control" >
+				{% for message in messages %}
+				<p id="messages"> {{message}} </p>
+				{% endfor %}
+				<input type="submit" value="Iniciar sesión">
+			</form>
+		</div>
 		
-				
-
 </body>
-
 </html>
