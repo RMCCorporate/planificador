@@ -27,6 +27,7 @@ body {
     transform: translate(-50%, -50%);
     box-sizing: border-box;
     padding:20px 47.8066px;
+    border-radius: 5px;
 }
 
 .avatar{
@@ -83,6 +84,7 @@ h1{
     height: 31px;
     color: #575855;
     font-size: 11pt;
+    border-radius: 5px;
 }
 
 .loginbox input[type="submit"]
@@ -98,4 +100,5 @@ h1{
     width:124px;
     position: absolute;
     transform: translate(95%, 20%);
+    border-radius: 5px;
 }

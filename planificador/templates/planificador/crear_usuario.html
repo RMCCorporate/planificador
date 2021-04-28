@@ -1,66 +1,85 @@
-{% extends "base.html" %}
+{% extends "base/base2.html" %}
 {% block title %} NUEVO PROVEEDOR {% endblock%}
 {% block content %}
-<h1>Crear nuevo usuario</h1>
 
+
+<head>
+	<title>Login</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/nuevo_usuario.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+  <div class="title">INGRESA TUS DATOS</div>
+  <br>
 <form action="" method="POST"> {% csrf_token %}
-    <div class="form-row">
-        <div class="form-group col-md-2">
-        <label for="nickname">Nickname</label>
-        <input type="text" class="form-control" id="nickname" name="nickname">
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NICKNAME</label>
+          <input type="text" name="nickname" placeholder="Ingresa tu nickname" required>
         </div>
-        <div class="form-group col-md-2">
-        <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" class="form-control" id="nombre">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+          <input type="text" name="nombre" placeholder="Ingresa tu nombre" required>
         </div>
-        <div class="form-group col-md-2">
-            <label for="apellido">Apellido</label>
-            <input type="text" name="apellido" class="form-control" id="apellido">
+        <div class="input-box">
+          <span class="details">APELLIDO</label>
+          <input type="text" name="apellido" placeholder="Ingresa tu apellido" required>
         </div>
-        <div class="form-group col-md-2">
-          <label for="segundo_apellido">Segundo apellido</label>
-          <input type="text" name="segundo_apellido" class="form-control" id="segundo_apellido">
-      </div>
-        <div class="form-group col-md-2">
-          <label for="correo">Correo</label>
-          <input type="text" name="correo" class="form-control" id="correo">
-      </div>
-      <div class="form-group col-md-2">
-        <label for="contraseña">Contraseña</label>
-        <input type="text" name="contraseña" class="form-control" id="contraseña">
+        <div class="input-box">
+          <span class="details">SEGUNDO APELLIDO</label>
+          <input type="text" name="segundo_apellido" placeholder="Ingresa tu segundo apellido" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CORREO</label>
+          <input type="text" name="correo" placeholder="Ingresa tu correo" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CONTRASEÑA</label>
+          <input type="text" name="contraseña" placeholder="Ingresa tu contraseña" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CELULAR</label>
+          <input type="text" name="celular" placeholder="Ingresa tu celular" required>
+        </div>
+        <div class="input-box">
+          <span class="details">TELEFONO FIJO</label>
+          <input type="text" name="telefono" placeholder="Ingresa tu telefono fijo" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CARGO</label>
+          <input type="text" name="cargo" placeholder="Ingresa tu cargo" required>
+        </div>
     </div>
+      <div class="grupo-details">
+        <span class="grupo-title">ROL</span>
+        <div class="category">
+          <label for="dot-1">
+            <input type="radio" name="grupo" value="Admin">
+            <span  class="grupo">Admin</span>
+          </label>
+          <label for="dot-2">
+            <input type="radio" name="grupo" value="Cotizador">
+            <span  class="grupo" >Cotizador</span>
+          </label>
+          <label for="dot-3">
+            <input type="radio"  name="grupo" value="Planificador">
+            <span  class="grupo" name="grupo" value="Planificador">Planificador</span>
+          </label>
+        </div>
+      </div>
+      <br>
+  
+      <button class="button" type="submit">Registrar</button>
+    </div>
+  
    
-  <div class="form-group col-md-2">
-    <label for="celular">Celular</label>
-    <input type="text" name="celular" class="form-control" id="celular">
-</div>
-<div class="form-group col-md-2">
-  <label for="telefono">Telefono fijo</label>
-  <input type="text" name="telefono" class="form-control" id="telefono">
-</div>
-<div class="form-group col-md-2">
-  <label for="cargo">Cargo</label>
-  <input type="text" name="cargo" class="form-control" id="cargo">
-</div>
-
-    </div>
-      </div>
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          Grupo
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            
-              <input type="checkbox" name="grupo" value="Admin">Admin
-              <br>
-              <input type="checkbox" name="grupo" value="Planificador">Planificador
-              <br> 
-              <input type="checkbox" name="grupo" value="Cotizador">Cotizador
-              <br> 
-           
-        </div>
-      </div>
-    
-    <button class="btn btn-secondary btn-lg btn-block" type="submit">Crear</button>
     </form>
 {% endblock%}
