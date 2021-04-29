@@ -1,29 +1,49 @@
-{% extends "base.html" %}
+{% extends "base/base2.html" %}
 {% block title %} PRODUCTOS {% endblock%}
-{% block content %}             
-    <ul class="list-group list-group-flush">
+{% block content %}  
+<head>
+	<title>PRODUCTOS</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+	<link href="{% static 'planificador/css/productos.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="table-container">
+    <h1 class=heading>PRODUCTOS</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>CÓDIGO</th>
+                <th>NOMBRE</th>
+                <th>SUBCLASE</th>
+                <th>CLASE</th>
+                <th>#</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in Productos %}
+            <tr>
+                <td data-label="CÓDIGO"><a href="{% url 'producto' fila.0.id %}">{{fila.0.id}}</a></td>
+                <td data-label="NOMBRE"> {{fila.0.nombre}}</td>
+                <td data-label="SUBCLASE"> {{fila.1.nombre}}</td>
+                <td data-label="CLASE"> {{fila.2.nombre}}</td>
+                <td data-label="#"> # </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
+    
         <a href="{% url 'nuevo_producto' %}" class="btn btn-primary">Añadir producto</a>
         <a href="{% url 'nuevo_proveedor_producto' %}" class="btn btn-primary">Añadir nombre proveedor-productos</a>
-            <h1>PRODUCTOS</h1>
-                <table class="table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">Código</th>
-                                <th scope="col">Nombre</th>
-                            </tr>
-                        </thead>
-                        <tbody>       
-                        {% for fila in Productos %}
-                        <tr>
-                            <th><a href="{% url 'producto' fila.id %}">{{fila.id}}</a></th>
-                            <th> {{fila.nombre}}</th>
-                        {% endfor %}
-                        </tr>
-                        
-                          </tbody>
-                </table>
-                
-        </ul>
+  
         <form action="productos" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="file"

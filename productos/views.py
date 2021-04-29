@@ -149,7 +149,20 @@ def productos(request):
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'productos/resultado_planilla_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
-    return render(request, "productos/productos.html", {"Productos":productos})
+    else:
+        lista_productos = []
+        for i in productos:
+            aux = []
+            subclase = i.subclase_set.all()[0]
+            clase = subclase.clase_set.all()[0]
+            aux.append(i)
+            aux.append(subclase)
+            aux.append(clase)
+            lista_productos.append(aux)
+        #print(lista_productos)
+        for i in lista_productos:
+            print(i)
+        return render(request, "productos/productos.html", {"Productos":lista_productos})
 
 #Agregar producto
 @login_required(login_url='/login')
