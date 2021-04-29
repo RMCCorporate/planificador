@@ -31,13 +31,6 @@ body{
     border-radius: 5px;
 }
 
-.container .title{
-    font-size: 25px;
-    font-weight: 500;
-    position: relative;
-    text-align: center;
-}
-
 
 .container form .user-details{
     display: flex;

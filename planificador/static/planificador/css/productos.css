@@ -21,6 +21,18 @@ body{
     padding: 0 10%;
     margin: 40px auto 0;
 }
+
+.title{
+    padding: 15px;
+    border-bottom: 2px solid;
+    
+}
+
+.title h1{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 25px;
+}
+
 .heading{
     font-size: 30px;
     margin-bottom: 40px;

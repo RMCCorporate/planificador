@@ -159,9 +159,6 @@ def productos(request):
             aux.append(subclase)
             aux.append(clase)
             lista_productos.append(aux)
-        #print(lista_productos)
-        for i in lista_productos:
-            print(i)
         return render(request, "productos/productos.html", {"Productos":lista_productos})
 
 #Agregar producto
