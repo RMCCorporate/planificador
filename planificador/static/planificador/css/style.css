@@ -48,70 +48,69 @@ body {
    
   }
   
-  .wrapper .navbar{
-    background: #575855;
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 0px 15px 150px;
-    border-radius: 5px;
-  }
-  
-  .wrapper .navbar ul li a{
-    color: white;
-  }
-  
-  .wrapper .navbar .left ul,
-  .wrapper .navbar .right ul li a{
-    display: flex;
-    align-items: center;
-    height: 40px;
-  }
-  
-  .wrapper .navbar .left ul li,
-  .wrapper .navbar .right img{
-    margin: 0 10px;
-    padding: 0px 20px;
-  }
-  
-  .wrapper .navbar .right a{
-    text-align: right;
-  }
-  
-  .wrapper .navbar .right a span{
-    font-size: 10px;
-  }
-  
-  .wrapper .navbar .right ul li{
-    position: relative;
-    padding: 0px 30px;
-  }
-  
-  .wrapper .navbar .right ul li .dropdown{
-    position: absolute;
-    top: 65px;
-    right: 0;
-    background: #575855;
-    padding: 10px ;
-    border-radius: 5px;
-    display: none;
-  }
-  
-  .wrapper .navbar .right ul li .dropdown .fas{
-    margin-right: 10px;
-  }
-  
-  .wrapper .navbar .right ul li .dropdown:before{
-    content: "";
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 10px solid;
-    border-color: transparent transparent #575855 transparent;
-  }
-  
-  .wrapper .navbar .right ul li.active .dropdown{
-    display: block;
-  }
+.wrapper .navbar{
+  background: #575855;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 0px 15px 150px;
+  border-radius: 5px;
+}
 
-  
+.wrapper .navbar ul li a{
+  color: white;
+}
+
+.wrapper .navbar .left ul,
+.wrapper .navbar .right ul li a{
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.wrapper .navbar .left ul li,
+.wrapper .navbar .right img{
+  margin: 0 10px;
+  padding: 0px 20px;
+}
+
+.wrapper .navbar .right a{
+  text-align: right;
+}
+
+.wrapper .navbar .right a span{
+  font-size: 10px;
+}
+
+.wrapper .navbar .right ul li{
+  position: relative;
+  padding: 0px 30px;
+}
+
+.wrapper .navbar .right ul li .dropdown{
+  position: absolute;
+  top: 65px;
+  right: 0;
+  background: #575855;
+  padding: 10px ;
+  border-radius: 5px;
+  display: none;
+}
+
+.wrapper .navbar .right ul li .dropdown .fas{
+  margin-right: 10px;
+}
+
+.wrapper .navbar .right ul li .dropdown:before{
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 10px solid;
+  border-color: transparent transparent #575855 transparent;
+}
+
+.wrapper .navbar .right ul li.active .dropdown{
+  display: block;
+}
+

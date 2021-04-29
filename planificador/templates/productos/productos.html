@@ -7,7 +7,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
-	<link href="{% static 'planificador/css/productos.css' %}" rel="stylesheet">
+    
+    <link href="{% static 'planificador/css/productos.css' %}" rel="stylesheet">
 	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
@@ -17,6 +18,12 @@
     <h1>PRODUCTOS</h1>
 </div>
 <div class="table-container">
+        <a href="{% url 'nuevo_producto' %}">
+            <button class="button">Añadir producto</button>
+        </a>
+        <a href="{% url 'nuevo_proveedor_producto' %}">
+            <button class="button">Añadir proveedor-producto</button>
+        </a>
     <table class="table">
         <thead>
             <tr>
@@ -34,17 +41,41 @@
                 <td data-label="NOMBRE"> {{fila.0.nombre}}</td>
                 <td data-label="SUBCLASE"> {{fila.1.nombre}}</td>
                 <td data-label="CLASE"> {{fila.2.nombre}}</td>
-                <td data-label="#"> # </td>
+                <td data-label="#">
+                    <div class="menu">
+                        <ul>
+                            <li>
+                                    <a href="#">
+                                        <p></p> <i class="fas fa-angle-down"></i>
+                                    </a>
+                                <div class="dropdown">
+                                    <ul>
+                                        <li><a  href="{% url 'usuario' %}"><i class="fas fa-user"></i> Ver</a></li>
+                                        <li><a  href="{% url 'notificaciones' %}"><i class="fas fa-bell"></i> Editar</a></li>
+                                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Eliminar</a></li>
+                                    </ul>
+                                </div>
+                                </li>
+                    </ul>
+               
+                    </div>
+                </td>
+                
+                
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-
+    <script>
+        document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+                this.classList.toggle("active");
+        });
+    </script>
 </div>
-    
-        <a href="{% url 'nuevo_producto' %}" class="btn btn-primary">Añadir producto</a>
-        <a href="{% url 'nuevo_proveedor_producto' %}" class="btn btn-primary">Añadir nombre proveedor-productos</a>
+
+        
+        
   
         <form action="productos" method="post" enctype="multipart/form-data">
             {% csrf_token %}

@@ -19,7 +19,21 @@ body{
 
 .table-container{
     padding: 0 10%;
-    margin: 40px auto 0;
+    margin: 30px auto 0;
+}
+
+.table-container .button{
+    border: solid;
+    height: 25px;
+    margin: 5px;
+    background: #fff;
+    color: #4676b8;
+    font-size: 10pt;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    text-align: center;
+    width:150px;
+    border-radius: 5px;
 }
 
 .title{
@@ -37,15 +51,16 @@ body{
     font-size: 30px;
     margin-bottom: 40px;
 }
-.table{
+.table-container .table{
     width: 100%;
+    margin: 40px auto 0;
     border-collapse: collapse;
 }
-.table thead{
+.table-container .table thead{
     background-color: #466ea5;
     text-align:left;
 }
-.table thead tr th{
+.table-container .table thead tr th{
     font-size: 15px;
     font-weight: 600;
     letter-spacing: 0.35px;
@@ -54,7 +69,7 @@ body{
     padding: 8px;
     vertical-align: top;
 }
-.table tbody tr td{
+.table-container .table tbody tr td{
     font-size: 12px;
     font-weight: normal;
     letter-spacing: 0.35px;
@@ -64,6 +79,52 @@ body{
     vertical-align: top;
     border-bottom: 0.8184pt solid #b3b3b3;;
 }
+
+.table-container .table tbody tr td .menu ul li a{
+    display: flex;
+    align-items: center;
+    height: 40px;
+    opacity: 1;
+  }
+  
+.table-container .table tbody tr td .menu a{
+    text-align: right;
+    opacity: 1;
+}
+
+.table-container .table tbody tr td .menu a span{
+    font-size: 10px;
+    opacity: 1;
+}
+
+.table-container .table tbody tr td .menu ul li{
+    position: relative;
+    padding: 0px 0px;
+    opacity: 1.0;
+}
+
+.table-container .table tbody tr td .menu ul li .dropdown{
+    position: absolute;
+    opacity: 1;
+    top: 25px;
+    right: 0;
+    border: 1px solid black;
+    background: white;
+    padding: 10px ;
+    border-radius: 5px;
+    display: none;
+}
+
+.table-container .table tbody tr td .menu ul li .dropdown .fas{
+    margin-right: 0px;
+    opacity: 1.0;
+}
+
+.table-container .table tbody tr td .menu ul li.active .dropdown{
+    display: block;
+    opacity: 1.0;
+}
+
 
 @media (max-width:768px){
     .table thead{
