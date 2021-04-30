@@ -1,33 +1,71 @@
 {% extends "base/base2.html" %}
-{% block title %} PRODUCTOS {% endblock%}
-{% block content %}  
+{% load widget_tweaks %}
+{% block content %} 
+
+
 <head>
 	<title>PRODUCTOS</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
-    
     <link href="{% static 'planificador/css/productos.css' %}" rel="stylesheet">
-	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 </head>
 
-<div class="title">
-    <h1>PRODUCTOS</h1>
-</div>
+
+<div class="btn">
+    <span class="fas fa-bars"></span>
+  </div>
+    <form method="get">
+<nav class="sidebar">
+    <div class="text">
+        MENÚ BÚSQUEDA</div>
+<ul>
+  <li>
+            <a href="#" class="feat-btn">Clases
+              <span class="fas fa-caret-down first"></span>
+            </a>
+            <ul class="feat-show">
+                {% for i in myFilter.form.nombre_clase %}
+                <li><a href="#">{{i}}</a></li>
+                {% endfor %}
+
+  </li>
+  <li>
+            <a href="#" class="serv-btn">Sub-Clases
+              <span class="fas fa-caret-down second"></span>
+            </a>
+            <ul class="serv-show">
+                {% for n in myFilter.form.nombre_subclase %}
+                <li><a href="#">{{n}}</a></li>
+                {% endfor %}
+  </ul>
+  </li>
+  </ul>
+  <button type="submit"><i class="fa fa-search"></i></button>
+  </nav>
+  
+</form>
+
 <div class="table-container">
         <a href="{% url 'nuevo_producto' %}">
-            <button class="button">Añadir producto</button>
+            <button class="button_añadir">Añadir producto</button>
         </a>
         <a href="{% url 'nuevo_proveedor_producto' %}">
-            <button class="button">Añadir proveedor-producto</button>
+            <button class="button_añadir">Añadir proveedor-producto</button>
         </a>
         <form method="get">
-            {{myFilter.form.as_p}}
-        <button class="btn btn-primary" type="submit">Search</button>
+            <div class="search">
+                    {% render_field myFilter.form.nombre_producto class="busquedaproducto" %}
+                <button type="submit"><i class="fa fa-search"></i></button>
+            </div>
         </form>
+        
     <table class="table">
         <thead>
             <tr>
@@ -93,6 +131,22 @@
                    >
         </form>
     
-        
+<script>
+    $('.btn').click(function(){
+        $(this).toggleClass("click");
+        $('.sidebar').toggleClass("show");
+    });
+        $('.feat-btn').click(function(){
+        $('nav ul .feat-show').toggleClass("show");
+        $('nav ul .first').toggleClass("rotate");
+        });
+        $('.serv-btn').click(function(){
+        $('nav ul .serv-show').toggleClass("show1");
+        $('nav ul .second').toggleClass("rotate");
+        });
+        $('nav ul li').click(function(){
+        $(this).addClass("active").siblings().removeClass("active");
+        });
+</script>
         
 {% endblock%}

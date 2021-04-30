@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'proveedores',
     'livereload',
     'proyectos',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

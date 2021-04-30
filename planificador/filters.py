@@ -18,7 +18,7 @@ class SubclaseFilter(django_filters.FilterSet):
 class Filtro_productoFilter(django_filters.FilterSet):
     nombre_subclase = django_filters.ModelMultipleChoiceFilter(queryset=SubClase.objects.all(), widget=forms.CheckboxSelectMultiple)
     nombre_clase = django_filters.ModelMultipleChoiceFilter(queryset=Clase.objects.all(), widget=forms.CheckboxSelectMultiple)
-    nombre_producto = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'busqueda_producto'}))
+    nombre_producto = django_filters.CharFilter(lookup_expr='icontains')
     class Meta:
         model = Filtro_producto
         fields = ['nombre_producto','nombre_clase','nombre_subclase']
