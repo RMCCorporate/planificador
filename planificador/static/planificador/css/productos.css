@@ -109,7 +109,7 @@ nav ul .feat-show.show{
 nav ul .serv-show.show1{
     display: block;
   }
-  
+
 nav ul ul li{
   line-height: 42px;
   border-top: none;
@@ -157,7 +157,11 @@ nav ul li a span.rotate{
     font-size: 30px;
     font-weight: 500;
   }
-  
+
+  /*
+TABLA
+*/
+
 .table-container{
     padding: 0 17%;
     margin: 30px auto 0;
@@ -178,25 +182,32 @@ nav ul li a span.rotate{
 }
 
 .table-container .search{
-    width: 50%;
+    width: 30%;
+    height: 30px;
     position: relative;
+    background-color: #fbfbfb;
+    top: -27.5px;
+    left: 70%;
     display: flex;
-    border:1px solid;
+    border-bottom:1px solid;
 }
 
 .table-container .search .busquedaproducto{
-    width: 40px;
-    height: 20px;
+    border: none;
+    text-align: right;
+    padding-right: 10px;
+    background-color: #fbfbfb;
+    width: 100%;
 }
 
 .table-container .search button{
-    border: 1px solid;
+    background-color: #fbfbfb;
+    border: none;
 }
 
 .title{
     padding: 15px;
     border-bottom: 2px solid;
-    
 }
 
 .title h1{
