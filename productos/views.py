@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario
+from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from datetime import date, datetime
 from django.core.files import File
 import smtplib
@@ -141,7 +142,7 @@ def productos(request):
                             sub_clase = SubClase.objects.get(nombre=subclase)
                             sub_clase.productos.add(nuevo_producto)
                             clase = sub_clase.clase_set.all()
-                            nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, nombre_subclase=subclase)
+                            nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, id_producto=id, nombre_subclase=subclase)
                             nuevo_filtro_producto.save()
                             sub_clase.save()
         if creado:
@@ -159,7 +160,11 @@ def productos(request):
             aux.append(subclase)
             aux.append(clase)
             lista_productos.append(aux)
-        return render(request, "productos/productos.html", {"Productos":lista_productos})
+        productos = Filtro_producto.objects.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        producto = myFilter.qs
+        lista_producto = list(producto)
+        return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter,})
 
 #Agregar producto
 @login_required(login_url='/login')
@@ -179,7 +184,7 @@ def recibir_datos_producto(request):
     subclase = SubClase.objects.get(nombre=sub_clase)
     subclase.productos.add(nuevo_producto)
     clase = subclase.clase_set.all()
-    nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, nombre_subclase=subclase.nombre)
+    nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, id_producto=id, nombre_subclase=subclase.nombre)
     nuevo_filtro_producto.save()
     crear_notificacion("agregar_producto", request.user.email, "creó producto", "Productos", 1, nuevo_producto.id, nuevo_producto.nombre)
     return redirect('/productos/producto/{}'.format(nuevo_producto.id))

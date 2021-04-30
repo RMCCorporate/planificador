@@ -146,6 +146,7 @@ class Producto_proveedor(models.Model):
 class Filtro_producto(models.Model):
     nombre_producto = models.CharField(max_length=128, primary_key=True)
     nombre_clase = models.CharField(max_length=128)
+    id_producto = models.CharField(max_length=128, null=True)
     nombre_subclase = models.CharField(max_length=128)
 
 class Cotizacion(models.Model):

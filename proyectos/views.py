@@ -181,8 +181,7 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
         text = mensaje.as_string()
         session.sendmail(correo_enviador, correo_prueba, text)
         session.quit()
-
-            
+           
 # Vista proyectos
 @login_required(login_url='/login')
 def proyectos(request):

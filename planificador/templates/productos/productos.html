@@ -24,6 +24,10 @@
         <a href="{% url 'nuevo_proveedor_producto' %}">
             <button class="button">Añadir proveedor-producto</button>
         </a>
+        <form method="get">
+            {{myFilter.form.as_p}}
+        <button class="btn btn-primary" type="submit">Search</button>
+        </form>
     <table class="table">
         <thead>
             <tr>
@@ -35,12 +39,12 @@
             </tr>
         </thead>
         <tbody>
-            {% for fila in Productos %}
+            {% for obj in myFilter.qs %}
             <tr>
-                <td data-label="CÓDIGO"><a href="{% url 'producto' fila.0.id %}">{{fila.0.id}}</a></td>
-                <td data-label="NOMBRE"> {{fila.0.nombre}}</td>
-                <td data-label="SUBCLASE"> {{fila.1.nombre}}</td>
-                <td data-label="CLASE"> {{fila.2.nombre}}</td>
+                <td data-label="CÓDIGO"><a href="{% url 'producto' obj.id_producto %}">{{obj.nombre_producto}}</a></td>
+                <td data-label="NOMBRE"> {{obj.nombre_clase}}</td>
+                <td data-label="SUBCLASE"> {{obj.nombre_subclase}}</td>
+                <td data-label="CLASE"> {{obj.nombre_clase}}</td>
                 <td data-label="#">
                     <div class="menu">
                         <ul>
