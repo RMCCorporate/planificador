@@ -92,9 +92,9 @@
                                     </a>
                                 <div class="dropdown">
                                     <ul>
-                                        <li><a  href="{% url 'usuario' %}"><i class="fas fa-user"></i> Ver</a></li>
-                                        <li><a  href="{% url 'notificaciones' %}"><i class="fas fa-bell"></i> Editar</a></li>
-                                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Eliminar</a></li>
+                                        <li><a  href="{% url 'producto' obj.id_producto%}"><i class="fas fa-user"></i> Ver</a></li>
+                                        <li><a  href="{% url 'mostrar_edicion_producto' obj.id_producto%}"><i class="fas fa-bell"></i> Editar</a></li>
+                                        <li><a href="{% url 'eliminar_producto' obj.id_producto%}" onclick="return confirm('¿Estás seguro que quieres eliminar el producto?')"><i class="fas fa-sign-out-alt"></i> Eliminar</a></li>
                                     </ul>
                                 </div>
                                 </li>
