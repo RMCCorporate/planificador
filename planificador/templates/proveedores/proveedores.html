@@ -1,35 +1,85 @@
-{% extends "base.html" %}
-{% block title %} PROVEEDOR {% endblock%}
-{% block content %}             
-    <ul class="list-group list-group-flush">
-        
-        <a href="{% url 'nuevo' %}" class="btn btn-primary">Añadir proveedor</a>
-   
-            <h1>PROVEEDORES</h1>
-                <table class="table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">RUT</th>
-                                <th scope="col">Nombre</th>
-                               
-                            </tr>
-                        </thead>
-                        <tbody>       
-                        {% for fila in Proveedores %}
-                        <tr>
-                        <th>
-                            
-                            <a href="{% url 'proveedor' fila.rut %}">{{fila.rut}}</a></th>
-                            
-                        <th> {{fila.nombre}}</th>
-                                {% endfor %}
-                        </tr>
-                        
-                          </tbody>
-                </table>
-        </ul>
-        <br>
-        <br>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>PRODUCTOS</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/productos.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="title">
+    <h1>PROVEEDORES</h1>
+</div>
+<div class="subtitle">
+    <h4>{{len}} proveedores</h4>
+</div>
+<div class="table-container">
+    <a href="{% url 'nuevo' %}">
+        <button class="button_añadir">Añadir proveedor</button>
+    </a>
+ 
+    <form method="get">
+        <div class="search">
+                {% render_field myFilter.form.nombre class="busquedaproducto" %}
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </div>
+    </form>
+    
+<table class="table">
+    <thead>
+        <tr>
+            <th>RUT</th>
+            <th>NOMBRE</th>
+            <th>#</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fila in myFilter.qs %}
+        <tr>
+            <td data-label="CÓDIGO"><a href="{% url 'proveedor' fila.rut %}">{{fila.rut}}</a></td>
+            <td data-label="NOMBRE">{{fila.nombre}}</td>
+            <td data-label="#">
+                <div class="menu">
+                    <ul>
+                        <li>
+                                <a href="#">
+                                    <p></p> <i class="fas fa-angle-down"></i>
+                                </a>
+                            <div class="dropdown">
+                                <ul>
+                                    <li><a  href="{% url 'proveedor' fila.rut %}"><i class="fas fa-user"></i> Ver</a></li>
+                                    <li><a  href="{% url 'mostrar_edicion_proveedor' fila.rut %}"><i class="fas fa-bell"></i> Editar</a></li>
+                                    <li><a href="{% url 'eliminar_proveedor'  fila.rut %}" onclick="return confirm('¿Estás seguro que quieres eliminar el proveedor?')"><i class="fas fa-sign-out-alt"></i> Eliminar</a></li>
+                                </ul>
+                            </div>
+                            </li>
+                </ul>
+           
+                </div>
+            </td>
+            
+            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+            this.classList.toggle("active");
+    });
+</script>
+</div>
+
+
         <form action="proveedores" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <h3>Agregar proveedores mediante plantilla</h3>

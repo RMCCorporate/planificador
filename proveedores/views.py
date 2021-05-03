@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor, Usuario, Notificacion, Permisos_notificacion
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
+from planificador.filters import ProveedoresFilter
 from planificador.decorators import allowed_users
 import openpyxl
 import uuid
@@ -176,7 +177,10 @@ def proveedores(request):
             booleano_fallados = True
         return render(request, 'proveedores/resultado_planilla_proveedores.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     proveedores = Proveedor.objects.all()
-    return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores})
+    myFilter = ProveedoresFilter(request.GET, queryset=proveedores)
+    print(myFilter)
+    proveedor = myFilter.qs
+    return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores, 'len':len(proveedores), "myFilter":myFilter})
 
 #Agregar proveedor
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -292,6 +296,8 @@ def mostrar_edicion_proveedor(request, rut):
 @login_required(login_url='/login')
 def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
+    filtro = Filtro_producto.objects.get(nombre=proveedor.nombre)
+    filtro.delete()
     for i in proveedor.contactos_asociados.all():
         i.delete()
     crear_notificacion("eliminar_proveedor", request.user.email, "eliminó proveedor", "Proveedor", 1, proveedor.rut, proveedor.nombre)
