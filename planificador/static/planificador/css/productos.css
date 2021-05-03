@@ -23,7 +23,7 @@ SIDEBAR MENU
 
 .btn{
   position: absolute;
-  top: 155px;
+  top: 200px;
   left: 45px;
   height: 45px;
   width: 45px;
@@ -213,6 +213,15 @@ TABLA
 .title h1{
     font-family: 'Monserrat', sans-serif;
     font-size: 25px;
+}
+
+.subtitle{
+  padding: 15px;
+}
+
+.subtitle h4{
+  font-family: 'Monserrat', sans-serif;
+  font-size: 15px;
 }
 
 .heading{

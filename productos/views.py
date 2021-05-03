@@ -176,7 +176,7 @@ def productos(request):
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         producto = myFilter.qs
         lista_producto = list(producto)
-        return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter,})
+        return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter, "len":len(lista_productos)})
 
 #Agregar producto
 @login_required(login_url='/login')
