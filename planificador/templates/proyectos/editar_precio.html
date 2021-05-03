@@ -9,9 +9,10 @@
           <table class="table">
               <thead class="thead-light">
                   <tr>
-            
                       <th scope="col">Nombre</th>
+
                       <th scope="col">Valor unitario</th>
+                      <th scope="col">Fecha</th>
                       <th scope="col">Valor importación</th>
                       <th scope="col">Moneda</th>
                       <th scope="col">Valor cambio</th>
@@ -24,7 +25,9 @@
 
                   <th>{{fila.0.proyecto.nombre}}</th>
                   <th><input type="hidden" value="{{fila.0.proyecto.id}}" name="id"><input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre"><input type="text" value="{{fila.1.valor}}" name="valor"></th>
+                  <th><input type="text" value="{{fila.1.fecha}}" name="fecha"></th>
                   <th><input type="text" value="{{fila.1.valor_importación}}" name="valor_importacion"></th>
+                  
                   <th><input type="text" value="{{fila.1.tipo_cambio}}" name="tipo_cambio"></th>
                   <th><input type="text" value="{{fila.1.valor_cambio}}" name="valor_cambio"></th>
                   <th>

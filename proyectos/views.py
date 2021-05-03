@@ -234,10 +234,10 @@ def proyecto(request, id):
             demora_respuesta = i.fecha_respuesta - i.fecha_salida
         else:
             demora_respuesta = date.today() - i.fecha_salida
-        if i.fecha_actualizacion_precio:
+        if i.fecha_actualizacion_precio and i.fecha_respuesta:
             demora_precio = i.fecha_actualizacion_precio - i.fecha_respuesta
         else:
-            demora_precio = " "
+            demora_precio = 0
         aux.append(demora_respuesta)
         aux.append(demora_precio)
         lista_cotizaciones.append(aux)
