@@ -7,7 +7,7 @@ class Precio(models.Model):
     valor_importación = models.FloatField(null=True)
     tipo_cambio = models.CharField(max_length=128, default="CLP")
     valor_cambio = models.FloatField(null=True)
-    fecha = models.DateTimeField(auto_now_add=True, null=True)
+    fecha = models.DateTimeField(null=True)
     nombre_proveedor = models.CharField(max_length=128, null=True)
     nombre_cotizacion = models.CharField(max_length=128, null=True)
     comentarios = models.TextField(null=True)
@@ -15,7 +15,7 @@ class Precio(models.Model):
 
 class Producto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
-    nombre = models.CharField(max_length=128)
+    nombre = models.CharField(max_length=512)
     lista_precios = models.ManyToManyField(Precio)
     fecha_actualizacion = models.DateTimeField(auto_now_add=True, null=True)
     unidad = models.CharField(max_length=128, null=True)

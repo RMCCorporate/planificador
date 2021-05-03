@@ -186,6 +186,9 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
 @login_required(login_url='/login')
 def proyectos(request):
     proyectos = Proyecto.objects.all()
+    for i in proyectos:
+        print(i.nombre)
+        print(i.id)
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
 @login_required(login_url='/login')
@@ -577,8 +580,7 @@ def recibir_cantidades_planificador(request):
         usuario = Usuario.objects.get(correo=request.user.email)
         usuario.productos_proyecto.add(producto_proyecto)
         usuario.save()
-    proyectos = Proyecto.objects.all()
-    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    return redirect('/proyectos')
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')

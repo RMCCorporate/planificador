@@ -137,6 +137,18 @@ def productos(request):
                                     aux.append("Producto creado sin kilos. No es un número")
                                     datos_fallados.append(aux)
                             nuevo_producto.save()
+                            #CREAMOS UN PRECIO (PARA POBLAR BBDD)
+                            if row_data[5] != "None" and row_data[6] != "None" and row_data[10] != "None":
+                                nuevo_precio = Precio(id=uuid.uuid1(), fecha=row_data[5], valor=row_data[6], nombre_proveedor=row_data[10].upper())
+                                nuevo_precio.save()
+                                if row_data[7] != "None":
+                                    nuevo_precio.valor_importación = row_data[7]
+                                if row_data[8] != "None":
+                                    nuevo_precio.tipo_cambio = row_data[8].upper()
+                                if row_data[9] != "None":
+                                    nuevo_precio.valor_cambio = row_data[9]
+                                nuevo_precio.save()
+                                nuevo_producto.lista_precios.add(nuevo_precio)
                             contador_creado += 1
                             creado = True
                             sub_clase = SubClase.objects.get(nombre=subclase)
@@ -300,5 +312,4 @@ def eliminar_producto(request, id):
     filtro.delete()
     crear_notificacion("eliminar_producto", request.user.email, "eliminó producto", "Producto", 1, producto.id, producto.nombre)
     producto.delete()
-    productos = Producto.objects.all()
     return redirect('/productos')
