@@ -55,7 +55,11 @@
             <tr>
                 <td data-label="CÓDIGO">{{Proveedor.rut}}</td>
                 <td data-label="NOMBRE"> {{Proveedor.nombre}}</td>
-                <td data-label="SUB-CLASE(S)"> {{Proveedor.razon_social}}</td>
+                <td data-label="SUB-CLASE(S)">
+                  {% if Proveedor.razon_social != "None" and Proveedor.razon_social%} 
+                   {{Proveedor.razon_social}}
+                   {% endif %}
+                  </td>
                 <td data-label="IDIOMA">
                   {% if Proveedor.idioma == "ESP" %} 
                   ESPAÑOL
@@ -96,8 +100,8 @@
     <br>
     <br>
     <div class="table-container">
-      <div class="informacion_container">
-        <h4>Contactos</h4>
+      <div class="contactos_container">
+        <h4>CONTACTOS</h4>
       </div>
         <table class="table2">
         <thead>
@@ -120,8 +124,10 @@
         </tbody>
     </table>
     </div>  
+    <br>
+    <br>
     <div class="table-container">
-      <div class="informacion_container">
+      <div class="calificacion_container">
         <h4>CALIFICACIONES</h4>
       </div>
         <table class="table3">
@@ -149,24 +155,6 @@
   </script>
   </div>
 
- 
-
-
-
- 
-   
-    <div class="card text-center">
-        <div class="card-body">
-          <h5 class="card-title">Calificación general {{promedio}}</h5>
-          <p class="card-text">
-            {% for fila in calificaciones %}
-                {{fila.calificacion}}: {{fila.nota}}
-                <br>
-            {% endfor %}
-          </p>
-        </div>
-    </div>
-  
  
 
 {% endblock %}

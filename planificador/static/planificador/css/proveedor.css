@@ -64,7 +64,31 @@ body{
     border-bottom: 2px solid;
 }
 
-.container .table-container .boton_container .informacion_container h4{
+.container .table-container .informacion_container h4{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 15px;
+}
+
+.container .table-container .contactos_container{
+    position: relative;
+    width: 50%;
+    top: 0%;
+    border-bottom: 2px solid;
+}
+
+.container .table-container .contactos_container h4{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 15px;
+}
+
+.container .table-container .calificacion_container{
+    position: relative;
+    width: 20%;
+    top: 0%;
+    border-bottom: 2px solid;
+}
+
+.container .table-container .calificacion_container h4{
     font-family: 'Monserrat', sans-serif;
     font-size: 15px;
 }
@@ -130,14 +154,15 @@ body{
 }
 
 .container .table-container .table2{
-    width: 100%;
-    margin: 40px auto 0;
+    width: 50%;
+    margin: 40px 0px;
     border-collapse: collapse;
+    position: relative;
+    left: 0%;
 }
 
 .container .table-container .table2 thead{
     background-color: #466ea5;
- 
     text-align:left;
 }
 .container .table-container .table2 thead tr th{
@@ -151,6 +176,39 @@ body{
 }
 
 .container .table-container .table2 tbody tr td{
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 0.35px;
+    background-color: white;
+    opacity: 1;
+    padding: 6px 10px;
+    vertical-align: top;
+    border-bottom: 0.8184pt solid #b3b3b3;;
+}
+
+.container .table-container .table3{
+    width: 20%;
+    margin: 50px 0px;
+    border-collapse: collapse;
+    position: relative;
+    left: 0%;
+}
+
+.container .table-container .table3 thead{
+    background-color: #466ea5;
+    text-align:left;
+}
+.container .table-container .table3 thead tr th{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.35px;
+    color:white;
+    opacity: 1;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.container .table-container .table3 tbody tr td{
     font-size: 12px;
     font-weight: normal;
     letter-spacing: 0.35px;
@@ -181,6 +239,9 @@ body{
   }
 
 
+/*
+DROPDOWNS
+*/
 .container .table-container .table tbody tr td .menu ul li a{
     display: flex;
     align-items: center;
@@ -205,10 +266,7 @@ body{
 }
 
 .container .table-container .table tbody tr td .menu ul li .dropdown{
-    position: absolute;
     opacity: 1;
-    top: 25px;
-    right: 0;
     border: 1px solid black;
     background: white;
     padding: 10px ;
@@ -224,4 +282,6 @@ body{
 .container .table-container .table tbody tr td .menu ul li.active .dropdown{
     display: block;
     opacity: 1.0;
+    position: relative;
+    top:100%;
 }
