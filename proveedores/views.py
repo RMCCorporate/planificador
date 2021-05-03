@@ -178,8 +178,6 @@ def proveedores(request):
         return render(request, 'proveedores/resultado_planilla_proveedores.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     proveedores = Proveedor.objects.all()
     myFilter = ProveedoresFilter(request.GET, queryset=proveedores)
-    print(myFilter)
-    proveedor = myFilter.qs
     return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores, 'len':len(proveedores), "myFilter":myFilter})
 
 #Agregar proveedor
@@ -233,8 +231,15 @@ def proveedor(request, rut):
     suma_total = 0
     for i in calificaciones:
         suma_total += i.nota
-    promedio = suma_total/len(calificaciones)
-    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":promedio})
+    promedio = round(suma_total/len(calificaciones))
+    diferencia = 5 - promedio
+    lista_promedio = []
+    for x in range(promedio):
+        lista_promedio.append(x)
+    lista_diferencia = []
+    for i in range(diferencia):
+        lista_diferencia.append(i)
+    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":lista_promedio, "diferencia":lista_diferencia})
 
 
 #Edición proveedor

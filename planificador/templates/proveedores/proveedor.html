@@ -1,34 +1,160 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
-{% block content %}
-    {% load static %}
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>{{Proveedor.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/proveedor.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 
-    <div class="card text-center">
-        <div class="card-header">
-            {{Proveedor.nombre}}
-            <br>
-            <a href="{% url 'mostrar_edicion_proveedor' Proveedor.rut %}" class="btn btn-primary">Editar</a>
-            <br>
-            <a href="{% url 'eliminar_proveedor' Proveedor.rut %}" class="btn btn-primary">Eliminar</a>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Información general</h5>
-          <p class="card-text">
-            Razón Social: {{Proveedor.razon_social}}
-              <br>
-              Sub-Clases:
-              {% for fila in subclase %}
-                {{fila.nombre}}
-                <br>
-              {% endfor %}
-             
-              <br>
-          </p>
-        </div>
+
+    <div class="title">
+      <h1>PROVEEDORES</h1>
     </div>
-    
+    <div class="subtitle">
+      <h4>Proveedores | {{Proveedor.nombre}}</h4>
+    </div>
+    <div class="container">
+    <div class="table-container">
+      <div class="title_container">
+        <h1>{{Proveedor.nombre}}</h1>
+      </div>
+      <div class="boton_container">
+        <a href="{% url 'mostrar_edicion_proveedor' Proveedor.rut %}">
+          <button class="button_editar">Editar</button>
+        </a>
+        <a href="{% url 'eliminar_proveedor' Proveedor.rut %}" onclick="return confirm('¿Estás seguro que quieres eliminar el producto?')">
+          <button class="button_eliminar">Eliminar</button>
+      </a>
+      </div>
+      <div class="informacion_container">
+        <h4>INFORMACIÓN GENERAL</h4>
+      </div>
+     
+      <table class="table">
+        <thead>
+            <tr>
+                <th>RUT</th>
+                <th>NOMBRE</th>
+                <th>RAZÓN SOCIAL</th>
+                <th>IDIOMA</th>
+                <th>SUB-CLASE(S)</th>
+                <th>CALIFICACIONES</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="CÓDIGO">{{Proveedor.rut}}</td>
+                <td data-label="NOMBRE"> {{Proveedor.nombre}}</td>
+                <td data-label="SUB-CLASE(S)"> {{Proveedor.razon_social}}</td>
+                <td data-label="IDIOMA">
+                  {% if Proveedor.idioma == "ESP" %} 
+                  ESPAÑOL
+                  {% else %}
+                  INGLÉS
+                  {% endif %}
+                </td>
+                <td data-label="SUB-CLASE(S)"> 
+                  <div class="menu">
+                    <ul>
+                        <li>
+                                <a href="#">
+                                    <p></p> <i class="fas fa-angle-down"></i>
+                                </a>
+                            <div class="dropdown">
+                                <ul>
+                                  {% for fila in subclase %}
+                                    <li>{{fila.nombre}}</li>
+                                  {% endfor %}
+                                </ul>
+                            </div>
+                            </li>
+                </ul>
+                </div>
+                </td>
+                <td data-label="CALIFICACIONES">
+                    {% for i in promedio %}
+                    <span class="fa fa-star checked"></span>
+                    {% endfor %}
+                    {% for n in diferencia %}
+                      <span class="fa fa-star"></span>
+                    {% endfor %}</p> </i>          
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+    <br>
+    <br>
+    <div class="table-container">
+      <div class="informacion_container">
+        <h4>Contactos</h4>
+      </div>
+        <table class="table2">
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>CORREO</th>
+                <th>TELÉFONO</th>
+             
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in contactos %}
+            <tr>
+                <td data-label="FECHA CREACIÓN">{{fila.nombre}}</td>
+                <td data-label="VALOR UNITARIO">{{fila.correo}}</td>
+                <td data-label="MONEDA">{{fila.telefono}}</td>
 
+                {% endfor %}  
+            </tr>
+        </tbody>
+    </table>
+    </div>  
+    <div class="table-container">
+      <div class="informacion_container">
+        <h4>CALIFICACIONES</h4>
+      </div>
+        <table class="table3">
+        <thead>
+            <tr>
+                <th>CALIFICACIÓN</th>
+                <th>NOTA</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in calificaciones %}
+            <tr>
+                <td data-label="FECHA CREACIÓN">{{fila.calificacion}}</td>
+                <td data-label="VALOR UNITARIO">{{fila.nota}}</td>
+  
+                {% endfor %}  
+            </tr>
+        </tbody>
+    </table>
+    </div>   
+    <script>
+      document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+              this.classList.toggle("active");
+      });
+  </script>
+  </div>
+
+ 
+
+
+
+ 
+   
     <div class="card text-center">
         <div class="card-body">
           <h5 class="card-title">Calificación general {{promedio}}</h5>
@@ -41,37 +167,6 @@
         </div>
     </div>
   
-        <div class="card">
-          <div class="card-header" id="headingTwo">
-            <h2 class="mb-0">
-              <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                CONTACTO
-              </button>
-            </h2>
-          </div>
-            <div class="card-body">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Teléfono</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for fila in contactos %}
-                    <tr>
-                    <th>{{fila.nombre}}</th>
-                    <th> {{fila.correo}}</th>
-                    <th>{{fila.telefono}}</th>
-                      {% endfor %}  
-            </tr>
-                    </tbody>
-            </table>
-                
-            </div>
-          </div>
-        </div>
  
 
 {% endblock %}
