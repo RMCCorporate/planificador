@@ -301,8 +301,17 @@ def mostrar_edicion_proveedor(request, rut):
         subclase = proveedor.subclases_asociadas.all()
         contactos = proveedor.contactos_asociados.all()
         calificaciones = Calificacion_Proveedor.objects.filter(proveedor=rut)
-        lista_clases = mostrar_clases()
-        return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Subclases":subclase, "Contactos":contactos, "Calificaciones":calificaciones, "clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3], "nombre_3":lista_clases[0][2]})
+        lista_clases = []
+        clases = Clase.objects.all()
+        for i in clases:
+            aux = []
+            aux.append(i)
+            aux2 = []
+            for n in i.subclases.all():
+                aux2.append(n)
+            aux.append(aux2)
+            lista_clases.append(aux)
+        return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Subclases":subclase, "Contactos":contactos, "Calificaciones":calificaciones, "lista_clases":lista_clases})
 
 #Eliminar proveedor
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])

@@ -1,135 +1,99 @@
-{% extends "base.html" %}
-{% block title %} EDITAR Proveedor {% endblock%}
+{% extends "base/base2.html" %}
+{% block title %} EDITAR PROVEEDOR {% endblock%}
 {% block content %}
-<h1> {{Proveedor.nombre}}</h1>
-    <br>
-    <form action="{{Proveedor.rut}}" method="POST">{% csrf_token %}
-        
-          <div class="card">
-            <div class="card-header" id="headingThree">
-              <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                  SUB-CLASES
-                </button>
-              </h2>
+
+<head>
+	<title>{{Proveedor.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/editar_proveedor.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+
+  <form action="{{Proveedor.rut}}" method="POST">{% csrf_token %}
+    <div class="container">
+      <div class="title">EDITAR - {{Proveedor.nombre}}</div>
+      <div class="user-details">
+        <div class="input-box">
+          <span class="details">SUB-CLASE(S)</label>
+              <br>
+                  <select multiple class="custom-select" id="subclase" name="subclase" required>
+                    <option></option>
+                    {% for i in Subclases %}
+                        <option value="{{i.nombre}}" selected> {{i.nombre}}</option>
+                      {% endfor %}
+                    {% for fila in lista_clases %}
+                    <option value="" disabled>CLASE: {{fila.0.nombre}}</option>
+                      
+                      {% for i in  fila.1 %}
+                        <option value="{{i.nombre}}"> {{i.nombre}}</option>
+                      {% endfor %}
+                    {% endfor %} 
+                  </select>
             </div>
-            <div class="card-body">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                          <th scope="col">Nombre Subclase</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for fila in Subclases %}
-                    <tr>
-                    <th>{{fila.nombre}}</th>
-                      {% endfor %}  
-                    </tr>
-                    </tbody>
-            </table>   
-            </div>
+            {% for fila in Calificaciones %}
+              <div class="input-box">
+                <span class="details">{{fila.calificacion}}</label>
+                <input type="text" name={{fila.calificacion}} placeholder="Ingresa nueva nota para {{fila.calificacion}}" value={{fila.nota}}>
+              </div>
+            {% endfor %}  
+            
+           
           </div>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-              {{nombre_1}}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                {% for fila in clase1 %}
-                  <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
-                  <br> 
-                {% endfor %}
-            </div>
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-              {{nombre_2}}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                {% for fila in clase2 %}
-                  <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
-                  <br> 
-                {% endfor %}
-            </div>
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-              {{nombre_3}}
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-                {% for fila in clase3 %}
-                  <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
-                  <br> 
-                {% endfor %}
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header" id="headingFour">
-              <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                  CALIFICACIONES
-                </button>
-              </h2>
-            </div>
-       
-            <div class="card-body">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Calificación</th>
-                            <th scope="col">Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for fila in Calificaciones %}
-                    <tr>
-                    <th>{{fila.calificacion}}</th>
-                    <th><input type="text" class="form-control" name={{fila.calificacion}} id={{fila.calificacion}} value={{fila.nota}}></th>
-                      {% endfor %}  
-                    </tr>
-                    </tbody>  
-            </table>   
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header" id="headingFive">
-              <h2 class="mb-0">
-                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                  CONTACTOS
-                </button>
-              </h2>
-            </div>
-            <div class="card-body">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Correo</th>
-                            <th scope="col">Teléfono</th>
-                            <th scope="col">¿Eliminar?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for fila in Contactos %}
-                    <tr>
-                    <th>{{fila.nombre}}</th>
-                    <th>{{fila.correo}}</th>
-                    <th>{{fila.telefono}}</th>
-                    <th><input type="checkbox" name="eliminar" value={{fila.correo}}>
-                      <input type="hidden" name="eliminar" value="No">eliminar</th>
-                      {% endfor %}  
-                    </tr>
-                    <tr>
-                    <th><input type="text" class="form-control" name="contacto" id="contacto"></th>
-                    <th><input type="text" class="form-control" name="correo" id="correo"></th>
-                    <th><input type="text" class="form-control" name="telefono" id="telefono"></th>
-                </tr>
+      </div>
+
+<div class="table-container">
+      <table class="table">
+        <span class="details">ELIMINAR CONTACTO</label>
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>CORREO</th>
+                <th>TELÉFONO</th>
+                <th>¿ELIMINAR?</th>
                 
-                    </tbody>
-                    
-            </table>   
-            </div>
-          </div>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in Contactos %}
+            <tr>
+                <td data-label="CÓDIGO">{{fila.nombre}}</td>
+                <td data-label="NOMBRE"> {{fila.correo}}</td>
+                <td data-label="SUBCLASE">{{fila.telefono}}</td>
+                <td data-label="CLASE"> <input type="checkbox" name="eliminar" value={{fila.correo}}></td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    <div class="table-container">
+      <table class="table">
+        <span class="details">AÑADIR CONTACTO</label>
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>CORREO</th>
+                <th>TELÉFONO</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in Contactos %}
+            <tr>
+                <td data-label="CÓDIGO"><input type="text" class="form-control" name="contacto" id="contacto"></td>
+                <td data-label="NOMBRE"> <input type="text" class="form-control" name="correo" id="correo"></td>
+                <td data-label="SUBCLASE"><input type="text" class="form-control" name="telefono" id="telefono"></td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+        
         <input class="btn btn-primary" type="Submit" value="Guardar">
     </form>
     
