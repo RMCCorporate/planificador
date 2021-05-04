@@ -181,9 +181,18 @@ def productos(request):
 #Agregar producto
 @login_required(login_url='/login')
 def agregar_producto(request):
+    lista_clases = []
     clases = Clase.objects.all()
     subclases = SubClase.objects.all()
-    return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases})
+    for i in clases:
+        aux = []
+        aux.append(i)
+        aux2 = []
+        for n in i.subclases.all():
+            aux2.append(n)
+        aux.append(aux2)
+        lista_clases.append(aux)
+    return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases, "lista_clases":lista_clases})
 
 def recibir_datos_producto(request):
     id = request.GET["id"]

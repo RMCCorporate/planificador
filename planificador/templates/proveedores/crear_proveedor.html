@@ -1,28 +1,71 @@
-{% extends "base.html" %}
+{% extends "base/base2.html" %}
 {% block title %} NUEVO PROVEEDOR {% endblock%}
 {% block content %}
-<h1>Crear nuevo proveedor</h1>
 
-<form action="agregar_nuevo" method="GET">
-    <div class="form-row">
-        <div class="form-group col-md-2">
-        <label for="rut">RUT</label>
-        <input type="text" class="form-control" id="rut" name="rut">
+<head>
+	<title>Crear proveedor</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/crear_proveedor.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+  <div class="title">CREAR PROVEEDOR</div>
+  <br>
+  <form action="agregar_nuevo" method="GET">
+    <div class="user-details">
+        <div class="input-box">
+          <span class="rut">RUT</label>
+          <input type="text" name="id" placeholder="Ingresa RUT de proveedor" required>
         </div>
-        <div class="form-group col-md-2">
-        <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" class="form-control" id="nombre">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+          <input type="text" name="nombre" placeholder="Ingresa nombre de proveedor" required>
         </div>
-        <div class="form-group col-md-2">
-            <label for="razon_social">Razón Social</label>
-            <input type="text" name="razon_social" class="form-control" id="razon_social">
+        <div class="input-box">
+          <span class="details">RAZÓN SOCIAL</label>
+          <input type="text" name="razon_social" placeholder="Ingresa razón social de proveedor">
         </div>
-        <div class="form-group col-md-2">
-          <label for="direccion">Direccion</label>
-          <input type="text" name="direccion" class="form-control" id="direccion">
-      </div>
+        <div class="input-box">
+          <span class="details">DIRECCIÓN</label>
+          <input type="text" name="direccion" placeholder="Ingresa dirección de proveedor" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CONTACTO - NOMBRE</label>
+          <input type="text" name="nombre_contacto" placeholder="Ingresa nombre de contacto" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CONTACTO - CORREO</label>
+          <input type="text" name="correo" placeholder="Ingresa correo de contacto" required>
+        </div>
+        <div class="input-box">
+          <span class="details">CONTACTO - TELÉFONO</label>
+          <input type="text" name="telefono" placeholder="Ingresa teléfono de contacto">
+        </div>
+        <div class="input-box">
+          <span class="details">SUB-CLASE</label>
+ 
+              <select class="custom-select" id="subclase" name="subclase" required>
+                <option selected>ELEGIR SUB-CLASE</option>
+                {% for fila in Subclases %}
+                  <option value="{{fila.nombre}}">{{fila.nombre}}</option>
+                {% endfor %} 
+              </select>
+          
+        </div>
+ 
     </div>
-      </div>
+    <br>
+      <button class="button" type="submit">Crear</button>
+  </form>
+  </div>
+
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
           {{nombre_1}}
@@ -56,22 +99,7 @@
             {% endfor %}
         </div>
       </div>
-    <h3>CONTACTOS</h3>
-    <div class="form-row">
-        <div class="form-group col-md-2">
-        <label for="nombre_contacto">Nombre</label>
-        <input type="text" class="form-control" id="nombre_contacto" name="nombre_contacto">
-        </div>
-        <div class="form-group col-md-2">
-        <label for="correo">Correo</label>
-        <input type="text" name="correo" class="form-control" id="correo">
-        </div>
-        <div class="form-group col-md-2">
-            <label for="telefono">Teléfono</label>
-            <input type="text" name="telefono" class="form-control" id="telefono">
-        </div>
-    </div>
-     
+   
       
     
     <button class="btn btn-secondary btn-lg btn-block" type="submit">Crear</button>

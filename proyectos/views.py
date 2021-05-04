@@ -186,9 +186,6 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
 @login_required(login_url='/login')
 def proyectos(request):
     proyectos = Proyecto.objects.all()
-    for i in proyectos:
-        print(i.nombre)
-        print(i.id)
     return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
 
 @login_required(login_url='/login')
