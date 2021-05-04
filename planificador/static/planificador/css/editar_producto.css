@@ -1,0 +1,134 @@
+/*
+COLORS:
+negro dentro: #60615e
+fondo: #fbfbfb
+bordes y letras de inputs: #d8d8d8
+bordes y letras boton: #a9bbd5
+*/
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Condensed', sans-serif;
+  }
+
+body{
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background: linear-gradient(135deg,#fbfbfb,#fbfbfb);
+}
+
+.container{
+    max-width: 700px;
+    width: 100%;
+    background: white;
+    padding: 25px 30px;
+    border-radius: 5px;
+}
+
+
+.container form .user-details{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+form .user-details .input-box{
+    margin: 0px 0 12px 0;
+    width: calc(100% / 2 - 20px);
+}
+
+form .user-details .custom-select {
+    position: relative;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+  
+  
+.user-details .input-box .details{
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+.user-details .input-box input{
+    height: 35px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border:solid;
+    border-color: #b3b3b3;
+    border-width: 0.8184pt;
+    padding-left: 15px;
+}
+
+.user-details .input-box .custom-select{
+    height: 205px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border:solid;
+    border-color: #b3b3b3;
+    border-width: 0.8184pt;
+    padding-left: 15px;
+}
+
+.user-details .input-box input:focus,
+.user-details .input-box input:valid{
+    border-color:#b3b3b3;
+}
+
+form .grupo-details .grupo-title{
+    font-size:20px;
+    font-weight: 500;
+}
+
+form .grupo-details .category{
+    display:flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.grupo-details .category label{
+    display:flex;
+    align-items: center;
+}
+
+form .button{
+    height: 30px;
+    width: 20%;
+    position: relative;
+    left: 40%;
+    outline: none;
+    background-color: white;
+    border:solid;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    border-radius: 5px;
+    color:#4676b8;
+}
+
+
+@media (max-width: 584px){
+    .container{
+        max-width: 100%;
+    }
+    form .user-details .input-box{
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    form .grupo-details .category{
+        width: 100%;
+    }
+    .container form .user-details{
+        max-height: 300px;
+        overflow-y: scroll;
+    }
+    .user-details::-webkit-scrollbar{
+        width: 0;
+    }
+}

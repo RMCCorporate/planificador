@@ -1,12 +1,43 @@
-{% extends "base.html" %}
-{% block title %} EDITAR PRODUCTO {% endblock%}
+{% extends "base/base2.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
 {% block content %}
-<h1> {{Producto.nombre}}</h1>
+
+<head>
+	<title>Editar producto</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/editar_producto.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+  <div class="title">EDITAR - {{Producto.nombre}}</div>
+  <br>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">UNIDAD</label>
+            {{form.unidad}}
+        </div>
+        <div class="input-box">
+          <span class="details">KILOS</label>
+            {{form.kilos}}
+        </div>
+        <div class="input-box">
+          <span class="details">IMAGEN</label>
+            {{form.imagen}}
+        </div>
+            </div>
     <br>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-         {{ form.as_p }}
-        <button type="submit">Upload</button>
-      </form>
+      <button class="button" type="submit">Editar</button>
+  </form>
+  </div>
+
     
 {% endblock%}

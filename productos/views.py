@@ -303,8 +303,6 @@ def mostrar_edicion_producto(request, id):
         form = ImageForm(request.POST, request.FILES, instance=producto)
         if form.is_valid():
             form.save()
-            # Get the current instance object to display in the template
-            img_obj = form.instance
             crear_notificacion("editar_producto", request.user.email, "editó información producto", "Producto", 1, producto.id, producto.nombre)
             return redirect('/productos/producto/{}'.format(producto.id))
     else:
