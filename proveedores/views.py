@@ -23,7 +23,7 @@ def mostrar_clases():
     clase1 = subclases[0]
     clase2 = subclases[1]
     clase3 = subclases[2]
-    return [nombres, clase1, clase2, clase3]
+    return [nombres, clase1, clase2, clase3, subclases]
 
 def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_modificado, id_modelo, nombre):
     hora_actual = datetime.now()
@@ -184,9 +184,17 @@ def proveedores(request):
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def agregar_proveedor(request):
+    lista_clases = []
     clases = Clase.objects.all()
-    lista_clases = mostrar_clases()
-    return render(request, "proveedores/crear_proveedor.html", {"clase1":lista_clases[1], "clase2":lista_clases[2], "nombre_1":lista_clases[0][0], "nombre_2":lista_clases[0][1], "clase3":lista_clases[3],  "nombre_3":lista_clases[0][2]})
+    for i in clases:
+        aux = []
+        aux.append(i)
+        aux2 = []
+        for n in i.subclases.all():
+            aux2.append(n)
+        aux.append(aux2)
+        lista_clases.append(aux)
+    return render(request, "proveedores/crear_proveedor.html", {"lista_clases":lista_clases})
 
 @login_required(login_url='/login')
 def recibir_datos_proveedor(request):

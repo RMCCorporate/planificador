@@ -45,7 +45,7 @@
                 {% for fila in lista_clases %}
                 <option value="" disabled>CLASE: {{fila.0.nombre}}</option>
                   {% for i in fila.1 %}
-                    <option value="{{i.nombre}}">- {{i.nombre}}</option>
+                    <option value="{{i.nombre}}">{{i.nombre}}</option>
                   {% endfor %} 
                 {% endfor %} 
               </select>

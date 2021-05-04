@@ -49,59 +49,24 @@
           <input type="text" name="telefono" placeholder="Ingresa teléfono de contacto">
         </div>
         <div class="input-box">
-          <span class="details">SUB-CLASE</label>
- 
-              <select class="custom-select" id="subclase" name="subclase" required>
-                <option selected>ELEGIR SUB-CLASE</option>
-                {% for fila in Subclases %}
-                  <option value="{{fila.nombre}}">{{fila.nombre}}</option>
-                {% endfor %} 
-              </select>
-          
-        </div>
+          <span class="details">SUB-CLASE(S)</label>
+              <br>
+                  <select multiple class="custom-select" id="subclase" name="subclase" required>
+                    <option></option>
+                    {% for fila in lista_clases %}
+                    <option value="" disabled>CLASE: {{fila.0.nombre}}</option>
+                      {% for i in fila.1 %}
+                        <option value="{{i.nombre}}"> {{i.nombre}}</option>
+                      {% endfor %} 
+                    {% endfor %} 
+                  </select>
+              
+            </div>
+
  
     </div>
     <br>
       <button class="button" type="submit">Crear</button>
   </form>
   </div>
-
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-          {{nombre_1}}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            {% for fila in clase1 %}
-              <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
-              <br> 
-            {% endfor %}
-        </div>
-      </div>
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-          {{nombre_2}}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-            {% for fila in clase2 %}
-              <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
-              <br> 
-            {% endfor %}
-        </div>
-      </div>
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
-          {{nombre_3}}
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton3">
-            {% for fila in clase3 %}
-              <input type="checkbox" name="subclase" value="{{fila.nombre}}">{{fila.nombre}}
-              <br> 
-            {% endfor %}
-        </div>
-      </div>
-   
-      
-    
-    <button class="btn btn-secondary btn-lg btn-block" type="submit">Crear</button>
-    </form>
 {% endblock%}
