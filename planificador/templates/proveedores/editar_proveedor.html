@@ -42,59 +42,26 @@
                 <span class="details">{{fila.calificacion}}</label>
                 <input type="text" name={{fila.calificacion}} placeholder="Ingresa nueva nota para {{fila.calificacion}}" value={{fila.nota}}>
               </div>
-            {% endfor %}  
-            
+            {% endfor %}
+            <div class="title">NUEVO CONTACTO</div>
+            <div class="input-box">
+              <span class="details">Nombre</label>
+              <input type="text" name="contacto" placeholder="Ingresa nombre de nuevo contacto">
+            </div>
+            <div class="input-box">
+                <span class="details">Correo</label>
+                <input type="text" name="correo" placeholder="Ingresa correo de nuevo contacto" >
+              </div>
+              <div class="input-box">
+                <span class="details">Teléfono</label>
+                <input type="text" name="telefono" placeholder="Ingresa teléfono de nuevo contacto">
+              </div>
            
           </div>
+           <input class="button" type="Submit" value="Guardar">
       </div>
 
-<div class="table-container">
-      <table class="table">
-        <span class="details">ELIMINAR CONTACTO</label>
-        <thead>
-            <tr>
-                <th>NOMBRE</th>
-                <th>CORREO</th>
-                <th>TELÉFONO</th>
-                <th>¿ELIMINAR?</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-          {% for fila in Contactos %}
-            <tr>
-                <td data-label="CÓDIGO">{{fila.nombre}}</td>
-                <td data-label="NOMBRE"> {{fila.correo}}</td>
-                <td data-label="SUBCLASE">{{fila.telefono}}</td>
-                <td data-label="CLASE"> <input type="checkbox" name="eliminar" value={{fila.correo}}></td>
-            </tr>
-            {% endfor %}
-
-        </tbody>
-    </table>
-    <div class="table-container">
-      <table class="table">
-        <span class="details">AÑADIR CONTACTO</label>
-        <thead>
-            <tr>
-                <th>NOMBRE</th>
-                <th>CORREO</th>
-                <th>TELÉFONO</th>
-            </tr>
-        </thead>
-        <tbody>
-          {% for fila in Contactos %}
-            <tr>
-                <td data-label="CÓDIGO"><input type="text" class="form-control" name="contacto" id="contacto"></td>
-                <td data-label="NOMBRE"> <input type="text" class="form-control" name="correo" id="correo"></td>
-                <td data-label="SUBCLASE"><input type="text" class="form-control" name="telefono" id="telefono"></td>
-            </tr>
-            {% endfor %}
-
-        </tbody>
-    </table>
-        
-        <input class="btn btn-primary" type="Submit" value="Guardar">
+       
     </form>
     
 {% endblock%}
