@@ -21,7 +21,10 @@
             <br>
             Proveedor: {{Cotizacion.proveedor_asociado.nombre}}
             <br>
-            Contacto: {{Cotizacion.contacto_asociado.nombre}} -  {{Cotizacion.contacto_asociado.correo}} 
+            Contactos: 
+            {% for i in contactos %}
+              {{i.nombre}} -  {{i.correo}} 
+            {% endfor %}
           </p>
         </div>
     </div>

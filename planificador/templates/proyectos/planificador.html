@@ -1,71 +1,56 @@
-{% extends "base.html" %}
-{% block title %} PROVEEDOR {% endblock%}
-{% block content %}             
-<form action="mostrar_filtro" method="GET">
-    <h1>PLANIFICADOR PROYECTO</h1>
-    <br>
-    <div class="form-row">
-        <div class="form-group col-md-2">
-        <label for="centro_costos">Número de propuesta</label>
-        <input type="text" class="form-control" id="centro_costos" name="centro_costos" aria-describedby="ayuda_centro_costos" required>
-    
-        </div>
-        <div class="form-group col-md-2">
-        <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" class="form-control" id="nombre" aria-describedby="ayuda_nombre" required>
-        <small id="ayuda_nombre" class="text-muted">
-            Nombre referencial proyecto.
-        </small>    
-        </div>
-    </div>
-    <br>
-    <br>
-    <h5>TIPO DE CAMBIO (Opcional)</h5>
-    <div class="form-row">
-        <div class="form-group col-md-2">
-        <label for="rut">Divisa</label>
-        <input type="text" class="form-control" id="tipo_cambio" name="tipo_cambio" aria-describedby="ayuda_tipo_cambio" value="CLP">
-        <small id="ayuda_tipo_cambio" class="text-muted">
-            Abreviatura del nombre del tipo de cambio. Ej: USD, EUR, CLP, etc.
-        </small>       
-        </div>
-        <div class="form-group col-md-2">
-        <label for="nombre">Valor cambio</label>
-        <input type="text" name="valor_cambio" class="form-control" id="valor_cambio" aria-describedby="ayuda_valor_cambio" value="1">
-        <small id="ayuda_valor_cambio" class="text-muted">
-            Valor del cambio.
-        </small>    
-        </div>
-    </div>
-    <br>
-    <br>
-    <h5>FECHAS PROYECTO (Opcional)</h5>
-    <div class="col-md-4">
-       
-        <div class="col-sm-10">
-            <label for="fecha_inicio" class="col-sm-2 col-form-label">Fecha inicio proyecto</label>
-          <input type="date" name="fecha_inicio" class="form-control" id="fecha_inicio" aria-describedby="ayuda_fecha_inicio">
-          <small id="ayuda_fecha_inicio" class="text-muted">
-            Formato: YYYY-MM-DD
-        </small>  
-        </div>
-    </div>
-    <div class="col-md-4">
-        <label for="fecha_termino" class="col-sm-2 col-form-label">Fecha término proyecto</label>
-        <div class="col-sm-10">
-          <input type="date" name="fecha_termino" class="form-control" id="fecha_termino" aria-describedby="ayuda_fecha_termino">
-          <small id="ayuda_fecha_termino" class="text-muted">
-            Formato: YYYY-MM-DD
-        </small> 
-        </div>
-    </div>
-    <br>
-    <br>
-  
-   
+{% extends "base/base2.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
 
+
+<head>
+	<title>Crear proyecto</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+	<link href="{% static 'planificador/css/planificador.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+    <div class="title">PLANIFICADOR PROYECTO</div>
+    <br>
+<form action="mostrar_filtro" method="GET">
+    <br>
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NÚMERO DE PROPUESTA</label>
+          <input type="text" name="centro_costos" placeholder="Ingresa tu número de propuesta" required>
+        </div>
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+          <input type="text" name="nombre" placeholder="Nombre referencial proyecto." required>
+        </div>
+        <div class="input-box">
+          <span class="details">DIVISA</label>
+          <input type="text" name="tipo_cambio" placeholder="Abreviatura del tipo de cambio. Ej: USD, EUR, CLP, etc.">
+        </div>
+        <div class="input-box">
+          <span class="details">VALOR CAMBIO</label>
+          <input type="text" name="valor_cambio" placeholder="Valor del cambio en pesos chilenos.">
+        </div>
+        <div class="input-box">
+          <span class="details">FECHA INICIO PROYECTO</label>
+          <input type="date" name="fecha_inicio" placeholder="Formato: YYYY-MM-DD" required>
+        </div>
+        <div class="input-box">
+          <span class="details">FECHA TÉRMINO PROYECTO</label>
+          <input type="date" name="fecha_termino" placeholder="Formato: YYYY-MM-DD" required>
+        </div>
+      
       </div>
-    <button class="btn btn-secondary btn-lg btn-block" type="submit">Elegir cantidades producto</button>
+      <br>
+
+    <button class="button" type="submit">Elegir cantidades producto</button>
     </form>
+</div>
 
 {% endblock%}

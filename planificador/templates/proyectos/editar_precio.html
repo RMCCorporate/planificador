@@ -1,58 +1,101 @@
-{% extends "base.html" %}
-{% block title %} NUEVO PROVEEDOR {% endblock%}
-{% block content %}
-<h1>Editar precios</h1>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>Editar precios</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/editar_precio.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
 
-<form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
-  <div class="card">
-      <div class="card-body">
-          <table class="table">
-              <thead class="thead-light">
-                  <tr>
-                      <th scope="col">Nombre</th>
-
-                      <th scope="col">Valor unitario</th>
-                      <th scope="col">Fecha</th>
-                      <th scope="col">Valor importación</th>
-                      <th scope="col">Moneda</th>
-                      <th scope="col">Valor cambio</th>
-                      <th scope="col">Nombre cotización</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {% for fila in info_productos %}
-              <tr>
-
-                  <th>{{fila.0.proyecto.nombre}}</th>
-                  <th><input type="hidden" value="{{fila.0.proyecto.id}}" name="id"><input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre"><input type="text" value="{{fila.1.valor}}" name="valor"></th>
-                  <th><input type="text" value="{{fila.1.fecha}}" name="fecha"></th>
-                  <th><input type="text" value="{{fila.1.valor_importación}}" name="valor_importacion"></th>
+<div class="container">
+  <div class="table-container">
+    <form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
+      <div class="title_container">
+        <h1>EDITAR PRECIOS</h1>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+                <th>NOMBRE</th>
+                <th>VALOR UNITARIO</th>
+                <th>FECHA</th>
+                <th>VALOR IMPORTACIÓN</th>
+                <th>MONEDA</th>
+                <th>VALOR CAMBIO</th>
+                <th>COTIZACIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in info_productos %}
+            <tr>
+                <td data-label="NOMBRE">
+                  {{fila.0.proyecto.nombre}}
                   
-                  <th><input type="text" value="{{fila.1.tipo_cambio}}" name="tipo_cambio"></th>
-                  <th><input type="text" value="{{fila.1.valor_cambio}}" name="valor_cambio"></th>
-                  <th>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        Elegir cotización
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><input type="radio" value="no_hay" name="{{fila.0.proyecto.nombre}}" checked>Seleccionar cotizador</li>
-                        {% for i in fila.2 %}
-                              {% if i != "no_hay" %}
-                                <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
-                              {% else %}
-                                <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.nombre}}">No hay</li>
-                              {% endif %}
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  </th>
-                {% endfor %}  
-      </tr>
-              </tbody>
-      </table>
-          
-      <button class="btn btn-primary" type="submit">Guardar</button>
+                </td>
+                <td data-label="VALOR UNITARIO">
+                  <input type="hidden" value="{{fila.0.proyecto.id}}" name="id">
+                  <input type="hidden" name="id_producto" value="{{fila.0.nombre}}">
+                  <input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre">
+                  <input type="text" value="{{fila.1.valor}}" name="valor">
+                </td>
+                <td data-label="FECHA"> 
+                  <input type="text" value="{{fila.1.fecha}}" name="fecha">
+                </td>
+                <td data-label="VALOR IMPORTACIÓN"> 
+                  <input type="text" value="{{fila.1.valor_importación}}" name="valor_importacion">
+                </td>
+                <td data-label="MONEDA"> 
+                  <input type="text" value="{{fila.1.tipo_cambio}}" name="tipo_cambio">
+                </td>
+                <td data-label="VALOR CAMBIO"> 
+                  <input type="text" value="{{fila.1.valor_cambio}}" name="valor_cambio">
+                </td>
+                <td data-label="COTIZACIÓN">
+                  <div class="menu">
+                    <ul>
+                      <li>
+                          <a href="#">
+                              <p></p> <i class="fas fa-angle-down"></i>
+                          </a>
+                          <div class="dropdown">
+                              <ul>
+                                <li><input type="radio" value="no_hay" name="{{fila.0.proyecto.nombre}}" checked>Seleccionar cotizador</li>
+                                {% for i in fila.2 %}
+                                {% if i != "no_hay" %}
+                                  <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
+                                {% else %}
+                                  <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.nombre}}">No hay</li>
+                                {% endif %}
+                               {% endfor %}
+                              </ul>
+                          </div>
+                          </li>
+                   </ul>
+                  </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="boton_container">
+      <button class="button_editar" type="submit">Guardar</button>
     </div>
   </div>
+    </form>
+    <script>
+      document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+              this.classList.toggle("active");
+      });
+  </script>
+  </div>
+  
+            
 {% endblock%}

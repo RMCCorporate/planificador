@@ -1,24 +1,44 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
+{% extends "base/base2.html" %}
+{% block title %} EDITAR PROVEEDOR {% endblock%}
 {% block content %}
-{% load static %}
-<h1>NUEVO Correo</h1>
-<br>
-<form action="{{Cotizacion.id}}" method="POST">{% csrf_token %}
-    Nombre referencial cotización: {{Cotizacion.nombre}}
-    <br>
-    Contacto: {{Cotizacion.contacto_asociado.nombre}} - {{Cotizacion.contacto_asociado.correo}}
-    <br>
-    <br>
-    Subject: <input type="text" name="subject">
-    <br>
-    Texto extra: <input type="text" name="texto">
-    <br>
-    Contraseña correo RMC: <input type="text" name="clave">
-    <br>
-  <button class="btn btn-primary" type="submit">Enviar</button>  
 
-</div>    
-</form>
+<head>
+	<title>ENVIAR CORREO - {{Cotizacion.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/enviar_correo.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<form action="{{Cotizacion.id}}" method="POST">{% csrf_token %}
+  <div class="container">
+    <div class="title">ENVIAR CORREO - {{Cotizacion.nombre}}</div>
+    <div class="user-details">
+      <div class="input-box">
+        <span class="details">CONTACTO(S): {% for i in contactos %}
+          {{i.nombre}}
+          {% endfor %}
+          </div>
+            <div class="input-box">
+              <span class="details">ASUNTO
+              <input type="text" name="subject" placeholder="Ingresa el asunto del correo" required>
+            </div>
+          <div class="input-box">
+            <span class="details">TEXTO</label>
+              <textarea class="texto" name="texto" cols="50" rows="10" placeholder="Ingresa el texto que vendrá después de los productos."></textarea>
+          </div>
+          <div class="input-box">
+              <span class="details">CONTRASEÑA CORREO RMC</label>
+              <input type="text" name="clave" placeholder="Ingresa contraseña correo RMC" required>
+            </div>
+        </div>
+         <input class="button" type="Submit" value="Enviar correo">
+    </div>
+  </form>
+
 {% endblock %}

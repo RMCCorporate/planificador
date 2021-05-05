@@ -1,36 +1,65 @@
-{% extends "base.html" %}
-{% block title %} PROVEEDOR {% endblock%}
-{% block content %}
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>Crear proyecto - {{Proyecto.id}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/lista_productos.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
 
-
-<form action="lista_proveedores" method="GET">
-    <h1>ELECCIÓN CANTIDADES DE PRODUCTOS</h1>
-    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos"> 
+<div class="container">
+<div class="table-container">
+  <form action="lista_proveedores" method="GET">
+    <div class="title_container">
+      <input type="hidden" value="{{Proyecto.id}}" name="centro_costos"> 
+      <h1>ELEGIR CANTIDADES PRODUCTOS</h1>
+    </div>
     <table class="table">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Nombre producto</th>
-                <th scope="col">Unidad</th>
-                <th scope="col">Cantidad</th>
-               
-            </tr>
-        </thead>
-        <tbody>
-            {% for fila in Productos %}
-            <tr>
-              <th>{{fila.0.nombre}}
+      <thead>
+          <tr>
+              <th>NOMBRE</th>
+              <th>CANTIDAD</th>
+              <th>UNIDAD</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for fila in Productos %}
+          <tr>
+              <td data-label="NOMBRE">
+                {{fila.0.nombre}}
                 <input type="hidden" name="id_producto" value="{{fila.0.nombre}}">
-              </th>
-              <th>{{fila.0.unidad}}</th>
-              <th><input type="text" class="form-control" id="cantidad" name="cantidad"></th>
-              {% if forloop.last %}
-              <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
+              </td>
+              
+              <td data-label="CANTIDAD"> 
+                <input type="text" class="form-control" id="cantidad" name="cantidad">
+                {% if forloop.last %}
+                <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
                 {% endif %}
-                  {% endfor %}
-            </tr>
-        </tbody>
-</table>
-    <button class="btn btn-secondary btn-lg btn-block" type="submit">Guardar proyecto</button>
-    </form>
+              </td>
+              <td data-label="UNIDAD"> {{fila.0.unidad}}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  <div class="boton_container">
+    <button class="button_editar" type="submit">Guardar proyecto</button>
+  </div>
+  
+</div>
+    
+  </form>
+</div>
+</div>
+
+
+   
 
 {% endblock%}

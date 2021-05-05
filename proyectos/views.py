@@ -88,7 +88,7 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
   </tr>
 </table>
 <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">&nbsp;</td>
-""".format(usuario.correo, usuario.nombre + " " + usuario.apellido + " " + usuario.segundo_apellido[0].upper(), usuario.cargo,  usuario.celular, usuario.telefono)
+""".format(usuario.correo, usuario.nombre + " " + usuario.apellido + " " + usuario.segundo_apellido[0].upper() + ".", usuario.cargo,  usuario.celular, usuario.telefono)
     texto_correo = ""
     texto_lista_productos = ""
     for i in cotizacion.productos_asociados.all():
@@ -115,7 +115,8 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
             texto_correo = texto_ingles
         correo_enviador = usuario.correo
         clave_enviador = clave
-        correo_prueba = i.correo
+        #CAMBIAR A "i.correo"
+        correo_prueba = "tacorrea@uc.cl"
         mensaje = MIMEMultipart()
         mensaje['From'] = correo_enviador
         mensaje['To'] = correo_prueba
@@ -613,8 +614,8 @@ def agregar_cotizacion(request, id):
             nuevo_producto_proyecto.estado_cotizacion = "Creada"
             nuevo_producto_proyecto.save()
         for contacto in contactos:
-            contacto_asociado = Contacto.objects.get(nombre=contacto)
-            nueva_cotizacion.contacto_asociado.add(contacto_asociado)
+            contacto_agregar = Contacto.objects.get(nombre=contacto)
+            nueva_cotizacion.contacto_asociado.add(contacto_agregar)
             nueva_cotizacion.save()
         return redirect('/proyectos/proyecto/{}'.format(proyecto_asociado.id))
     else:
@@ -671,7 +672,8 @@ def mostrar_cotizacion(request, id):
     for i in cotizacion.productos_asociados.all():
         producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
         productos.append(producto_proyecto)
-    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos})
+    contactos = cotizacion.contacto_asociado.all()
+    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
@@ -715,5 +717,6 @@ def enviar_correo(request, id):
         crear_notificacion("enviar_correo", request.user.email, "envió correo con cotización", "Cotización", 1, cotizacion.id, cotizacion.nombre, cotizacion.proyecto_asociado.id)
         return redirect('/proyectos/proyecto/{}'.format(proyecto))
     else:
-        return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion})
+        contacto = cotizacion.contacto_asociado.all()
+        return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion, "contactos":contacto})
         
