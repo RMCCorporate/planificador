@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion
-from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
+from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 import smtplib
@@ -187,7 +187,9 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
 @login_required(login_url='/login')
 def proyectos(request):
     proyectos = Proyecto.objects.all()
-    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos})
+    lenght = len(proyectos)
+    myFilter = ProyectosFilter(request.GET, queryset=proyectos)
+    return render(request, "proyectos/proyectos.html", {"Proyectos":proyectos, "len":lenght, "myFilter":myFilter})
 
 @login_required(login_url='/login')
 def proyecto(request, id):

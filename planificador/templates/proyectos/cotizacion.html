@@ -1,79 +1,145 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
-{% block content %}
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>{{Cotizacion.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/cotizacion.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
     {% load static %}
-    <div class="card text-center">
-        <div class="card-header">
-            {{Cotizacion.nombre}}
-            <a href="{% url 'enviar_correo' Cotizacion.id %}" class="btn btn-primary">Enviar correo</a>
-            <br>
-            <a href="{% url 'editar_cotizacion' Cotizacion.id %}" class="btn btn-primary">Editar fecha respuesta</a>
-             <br>
-            <a href="{% url 'eliminar_cotizacion' Cotizacion.id %}" class="btn btn-primary">Eliminar cotización</a>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Información general</h5>
-          <p class="card-text">
-            Centro costos: {{Cotizacion.proyecto_asociado.id}}
-            <br>
-            Nombre proyecto: {{Cotizacion.proyecto_asociado.nombre}}
-            <br>
-            Proveedor: {{Cotizacion.proveedor_asociado.nombre}}
-            <br>
-            Contactos: 
-            {% for i in contactos %}
-              {{i.nombre}} -  {{i.correo}} 
-            {% endfor %}
-          </p>
-        </div>
+
+    <div class="title">
+      <h1>COTIZACIÓN</h1>
     </div>
-    <div class="card text-center">
-      <div class="card-body">
-        <h5 class="card-title">Fechas general</h5>
-        <p class="card-text">
-          Fecha salida: {{Cotizacion.fecha_salida}}
-          <br>
-          Fecha respuesta: {{Cotizacion.fecha_respuesta}}
-          <br>
-          Fecha actualización precio: {{Cotizacion.fecha_actualizacion_precio}}
-        </p>
-      </div>
-  </div>
-</div>
-<div class="card">
-  <div class="card-header" id="headingTwo">
-    <h2 class="mb-0">
-      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        Productos
-      </button>
-    </h2>
-  </div>
-    <div class="card-body">
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Fecha uso</th>
-                    <th scope="col">Usuario modificación</th>
-                </tr>
-            </thead>
-            <tbody>
-              {% for fila in Productos %}
-            <tr>
-                <th>{{fila.proyecto.nombre}}</a></th>
-                <th>{{fila.cantidades}}</th>
-                <th>{{fila.status}}</th>
-                <th>{{fila.fecha_uso}}</th>
-                <th>{{fila.usuario_modificacion}}</th>
+
+
+  
+<div class="container">
+  <div class="table-container">
+    <br>
+    <div class="title_container">
+      <h1>{{Cotizacion.nombre}}</h1>
+    </div>
+    <div class="boton_container">
+      <a href="{% url 'enviar_correo' Cotizacion.id %}">
+        <button class="button_editar">Enviar correo</button>
+      </a>
+      <a href="{% url 'editar_cotizacion' Cotizacion.id %}">
+        <button class="button_editar">Editar fecha respuesta</button>
+      </a>
+      <a href="{% url 'eliminar_cotizacion' Cotizacion.id %}" onclick="return confirm('¿Estás seguro que quieres eliminar la cotización?')">
+        <button class="button_eliminar">Eliminar</button>
+    </a>
+    </div>
+    <div class="informacion_container">
+      <h4>INFORMACIÓN GENERAL</h4>
+    </div>
+    <table class="table">
+      <thead>
+          <tr>
+              <th>CENTRO COSTOS</th>
+              <th>NOMBRE PROYECTO</th>
+              <th>PROVEEDOR</th>
+              <th>CONTACTOS</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td data-label="CENTRO COSTOS">{{Cotizacion.proyecto_asociado.id}}</td>
+              <td data-label="NOMBRE PROYECTO"> {{Cotizacion.proyecto_asociado.nombre}}</td>
+              <td data-label="PROVEEDOR"> {{Cotizacion.proveedor_asociado.nombre}}</td>
+              <td data-label="CONTACTOS">
+                <div class="menu">
+                  <ul>
+                    <li>
+                        <a href="#">
+                            <p></p> <i class="fas fa-angle-down"></i>
+                        </a>
+                        <div class="dropdown">
+                            <ul>
+                              {% for i in contactos %}
+                                <li>{{i.nombre}} -  {{i.correo}} </li>
+                              {% endfor %}
+                            </ul>
+                        </div>
+                        </li>
+                 </ul>
+                </div>
                 
+                </td>
+          </tr>
+      </tbody>
+  </table>
+  <br>
+  <div class="informacion_container">
+    <h4>FECHAS</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>FECHA SALIDA</th>
+            <th>FECHA RESPUESTA</th>
+            <th>FECHA ACTUALIZACIÓN PRECIO</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="FECHA SALIDA">{{Cotizacion.fecha_salida}}</td>
+            {% if Cotizacion.fecha_respuesta %}
+            <td data-label="FECHA RESPUESTA"> {{Cotizacion.fecha_respuesta}}</td>
+            {% else %}
+            <td data-label="FECHA RESPUESTA"> No se ha ingresado fecha respuesta.</td>
+            {% endif %}
+            {% if Cotizacion.fecha_actualizacion_precio %}
+            <td data-label="FECHA ACTUALIZACIÓN PRECIO"> {{Cotizacion.fecha_actualizacion_precio}}</td>
+            {% else %}
+            <td data-label="FECHA ACTUALIZACIÓN PRECIO"> No se ha actualizado el precio.</td>
+            {% endif %}
+        </tr>
+    </tbody>
+</table>
+<br>
+  <div class="informacion_container">
+    <h4>PRODUCTOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CANTIDAD</th>
+            <th>STATUS</th>
+            <th>FECHA USO</th>
+            <th>USUARIO MODIFICACIÓN</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in Productos %}
+          <tr>
+              <td data-label="NOMBRE">{{fila.proyecto.nombre}}</td>
+              <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+              <td data-label="STATUS"> {{fila.status}}</td>
+              <td data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+              <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
               {% endfor %}  
-    </tr>
-            </tbody>
-    </table>
-        
+          </tr>
+    </tbody>
+</table>
+  </div>
+  
+  <script>
+    document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+            this.classList.toggle("active");
+    });
+</script>
+</div>
 
     
  

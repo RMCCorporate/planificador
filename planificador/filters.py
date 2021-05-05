@@ -1,6 +1,6 @@
 import django_filters
 from django import forms
-from planificador.models import Producto, SubClase, Filtro_producto, Clase, Proveedor
+from planificador.models import Producto, SubClase, Filtro_producto, Clase, Proveedor, Proyecto
 
 class ProductoFilter(django_filters.FilterSet):
     class Meta:
@@ -29,3 +29,10 @@ class ProveedoresFilter(django_filters.FilterSet):
     class Meta:
         model = Proveedor
         fields = ['rut', 'nombre']
+
+class ProyectosFilter(django_filters.FilterSet):
+    nombre = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'busquedaproducto'}))
+    id = django_filters.CharFilter(lookup_expr='icontains', widget=forms.TextInput(attrs={'class': 'busquedaproducto'}))
+    class Meta:
+        model = Proyecto
+        fields = ['id', 'nombre']

@@ -1,28 +1,55 @@
-{% extends "base.html" %}
-{% block content %}             
-    <ul class="list-group list-group-flush">
-            <h1>PROYECTOS</h1>
-                <table class="table">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">Centro Costos</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Estado</th>
-                                <th scope="col">Creador</th>
-                            </tr>
-                        </thead>
-                        <tbody>       
-                        {% for fila in Proyectos %}
-                        <tr>
-                            <th><a href="{% url 'proyecto' fila.id %}">{{fila.id}}</a></th>
-                            <th> {{fila.nombre}}</th>
-                            <th> {{fila.estado}}</th>
-                            <th> {{fila.creador}}</th>
-                        {% endfor %}
-                        </tr>
-                        
-                          </tbody>
-                </table>
-        </ul>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>PROVEEDORES</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/productos.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+<div class="title">
+    <h1>PROYECTOS</h1>
+</div>
+<div class="subtitle">
+    <h4>{{len}} proyectos</h4>
+</div>
+<div class="table-container">
+    <a href="{% url 'planificador' %}">
+        <button class="button_añadir">Añadir proyecto</button>
+    </a>
+    <form method="get">
+        <div class="search">
+                {% render_field myFilter.form.nombre class="busquedaproducto" %}
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>CENTRO COSTOS</th>
+                <th>NOMBRE</th>
+                <th>ESTADO</th>
+                <th>CREADOR</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in myFilter.qs %}
+            <tr>
+                <td data-label="CENTRO COSTOS"><a href="{% url 'proyecto' fila.id %}">{{fila.id}}</a></td>
+                <td data-label="NOMBRE">{{fila.nombre}}</td>
+                <td data-label="ESTADO">{{fila.estado}}</td>
+                <td data-label="CREADOR">{{fila.creador}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   
 
 {% endblock%}
