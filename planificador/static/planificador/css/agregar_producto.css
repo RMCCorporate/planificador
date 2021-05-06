@@ -169,7 +169,7 @@ TABLA
 
 .table-container .button_añadir{
     border: solid;
-    height: 25px;
+    height: 35px;
     margin: 5px;
     background: #fff;
     color: #4676b8;
@@ -177,7 +177,7 @@ TABLA
     border-color: #4676b8;
     border-width: 0.8184pt;
     text-align: center;
-    width:150px;
+    width:250px;
     border-radius: 5px;
 }
 
@@ -190,6 +190,18 @@ TABLA
     left: 70%;
     display: flex;
     border-bottom:1px solid;
+}
+
+.table-container .informacion_container{
+  position: relative;
+  width: 100%;
+  top: 0%;
+  border-bottom: 2px solid;
+}
+
+.table-container .informacion_container h4{
+  font-family: 'Monserrat', sans-serif;
+  font-size: 15px;
 }
 
 .table-container .search .busquedaproducto{

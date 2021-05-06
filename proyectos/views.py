@@ -397,37 +397,59 @@ def editar_datos_producto_proyecto(request, id):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def agregar_producto(request, id):
-    print("PASA POR ACA PARECE")
-    proyecto = Proyecto.objects.get(id=id)
     if request.method == "GET":
-        print(request.path_info)
-        proyectos = Proyecto.objects.all()
-        productos = Filtro_producto.objects.all()
-        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-        producto = myFilter.qs
-        #RECIBIR SUBCLASE
-        lista_productos = []
-        return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyecto":proyecto, "myFilter":myFilter})
-    else:
-        print("PASA POR EL POST")
+        if request.path_info == "/agregar_producto/lista_productos_agregar":
+            id = request.GET["id"]
+            instancia_proyecto = Proyecto.objects.get(id=id)
+            productos = request.GET.getlist("productos_checkeados")
+            lista_productos = []
+            for i in productos:
+                aux = []
+                instancia_producto = Producto.objects.get(nombre=i)
+                sub_clase = instancia_producto.subclase_set.all()[0]
+                aux.append(instancia_producto)
+                aux.append(sub_clase)
+                lista_productos.append(aux)
+            proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+            return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
+        else:
+            if id == "guardar_datos_filtro_agregar_proyecto":
+                id = request.GET["id"]
+            proyecto = Proyecto.objects.get(id=id)
+            productos = Filtro_producto.objects.all()
+            myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+            #RECIBIR SUBCLASE
+            lista_productos = []
+            return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyecto":proyecto, "myFilter":myFilter})
+    elif request.method == "POST":
         productos_filtro = request.POST.getlist("producto")
+        usuario_modificacion = request.user.first_name + " " + request.user.last_name
         id_ql = request.POST["id"]
-        print(id_ql)
+        proyecto = Proyecto.objects.get(id=id_ql)
+        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+        for i in productos_filtro:
+            booleano_repeticion = False
+            for n in productos_proyecto:
+                if n.proyecto.nombre == i:
+                    booleano_repeticion = True
+            if not booleano_repeticion and i:
+                producto = Producto.objects.get(nombre=i)
+                nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
+                nuevo_producto_proyecto.save()
         productos = Filtro_producto.objects.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         producto = myFilter.qs
         #RECIBIR SUBCLASE
         lista_productos = []
-        print(productos_filtro)
-        return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_filtro})
+        nuevo_productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+        return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":nuevo_productos_proyecto})
+
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
-def recibir_datos_agregar_producto(request):
-    proyectos = Proyecto.objects.all()
-    producto = request.POST.getlist("producto")
-    id = request.GET.getlist("id")
-    print(id)
+def recibir_datos_agregar_producto(request, id):
+    producto = request.POST.getlist("productos")
+    id = request.GET["id"]
     lista_productos = []
     for i in producto:
         aux = []

@@ -23,6 +23,7 @@
   <span class="fas fa-bars"></span>
 </div>
 <form method="get">
+  <input type="hidden" value="{{Proyecto.id}}" name="id">
 <nav class="sidebar">
   <div class="text">
       MENÚ BÚSQUEDA</div>
@@ -52,29 +53,60 @@
 </nav>
 </form>
 <div class="table-container">
-  <form method="GET">
+
+ 
+    <form action="lista_productos_agregar" method="GET">
+      <input type="hidden" value="{{Proyecto.id}}" name="id">
+      <div class="informacion_container">
+        <h4>PRODUCTOS PROYECTO</h4>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+              <th># <input type="hidden" value="{{id}}" name="id"> </th>
+                <th>NOMBRE</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in productos_proyecto %}
+            <tr>
+                <td data-label="#"><input type=checkbox name="productos_checkeados" value="{{fila.proyecto.nombre}}" checked></td>
+                <td data-label="NOMBRE"> {{fila.proyecto.nombre}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+      <button class="button_añadir" type="submit">Elegir información productos</button>
+    </form>
+    <br>
+    <br>
+    <form method="GET">
       <div class="search">
               {% render_field myFilter.form.nombre_producto class="busquedaproducto" %}
           <button type="submit"><i class="fa fa-search"></i></button>
+          <input type="hidden" value="{{Proyecto.id}}" name="id">
       </div>
   </form>
   <form action="guardar_datos_filtro_agregar_proyecto" method="POST">{% csrf_token %}
-    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
-    <input type="hidden" value="{{Proyecto.nombre}}" name="nombre"> 
+    <input type="hidden" value="{{Proyecto.id}}" name="id">
+    <input type="hidden" value="{{Proyecto.nombre}}" name="nombre">
+    <div class="informacion_container">
+      <h4>BÚSQUEDA PRODUCTOS</h4>
+    </div>
   <table class="table">
     <thead>
         <tr>
           <th># <input type="hidden" value="{{id}}" name="id"> </th>
-            <th>CÓDIGO</th>
             <th>NOMBRE</th>
+            <th>CLASE</th>
             <th>SUBCLASE</th>
-            
         </tr>
     </thead>
     <tbody>
       {% for fila in myFilter.qs %}
         <tr>
-            <td data-label="#"><input type=checkbox name="producto" value="{{fila.nombre_producto}}"> {{fila.nombre_producto}}</td>
+            <td data-label="#"><input type=checkbox name="producto" value="{{fila.nombre_producto}}"> </td>
             <td data-label="NOMBRE"> {{fila.nombre_producto}}</td>
             <td data-label="CLASE"> {{fila.nombre_clase}}</td>
             <td data-label="SUBCLASE"> {{fila.nombre_subclase}}</td>
@@ -82,20 +114,10 @@
         {% endfor %}
     </tbody>
 </table>
-<h5>PRODUCTOS SELECCIONADOS</h5>
-    {% for i in productos_proyecto %}
-        {{i}}
-    <br>
-    {% endfor %}
-  <button class="button" type="submit">Guardar filtro</button>
+<br>
+  <button class="button_añadir" type="submit">Guardar filtro</button>
 </form>
-<form action="lista_productos_agregar" method="GET">
-  <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
-  {% for i in productos_proyecto %}
-   <input type="hidden" name="lista_productos" value="{{i.nombre}}">
-  {% endfor %}
-  <button class="button" type="submit">Elegir información productos</button>
-</form>
+
     
 <script>
   $('.btn').click(function(){
