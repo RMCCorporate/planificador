@@ -1,28 +1,45 @@
-{% extends "base.html" %}
-{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% extends "base/base2.html" %}
+{% block title %} EDITAR COTIZACIÓN {% endblock%}
 {% block content %}
-<h1>Editar cotizacion</h1>
 
+
+<head>
+	<title>Editar cotización - {{Cotizacion.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/editar_cotizacion.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+  <div class="title">EDITAR COTIZACIÓN</div>
+  <br>
 <form action="{{Cotizacion.id}}" method="POST">{% csrf_token %}
-  <div class="card">
-      <div class="card-body">
-        <div class="form-group col-md-2">
-            <label for="nombre">Nombre cotización</label>
-            <input type="text" class="form-control" id="nombre" name="nombre" aria-describedby="ayuda_nombre" value="{{Cotizacion.nombre}}">
-            <small id="ayuda_nombre" class="text-muted">
-                Nuevo nombre de cotización
-            </small>       
+  <div class="user-details">
+        <div class="input-box">
+          <span class="details">NOMBRE COTIZACIÓN</label>
+          <input type="text" name="nombre" value="{{Cotizacion.nombre}}" required>
         </div>
-        <div class="card-body">
-            <div class="form-group col-md-2">
-                <label for="fecha_respuesta">Fecha respuesta</label>
-                <input type="text" class="form-control" id="fecha_respuesta" name="fecha_respuesta" aria-describedby="ayuda_nombre" value="{{Cotizacion.fecha_respuesta}}" required>
-                <small id="ayuda_fecha_respuesta" class="text-muted">
-                    Fecha en que respondió el proveedor. Formato: YYYY-MM-DD
-                </small>       
-            </div>
-
-      <button class="btn btn-primary" type="submit">Guardar</button>
+        <div class="input-box">
+          <span class="details">FECHA RESPUESTA</label>
+            {% if fecha_respuesta %}
+            <input type="text" name="nombre" placeholder="Fecha en que respondió el proveedor. Formato: YYYY-MM-DD" value="{{Cotizacion.fecha_respuesta}}" required>
+            {% else %}
+            <input type="text" name="nombre" placeholder="Fecha respuesta correo. Formato: YYYY-MM-DD" required>
+            {% endif %}
+        </div>
+      </div>
+      <br>
+      <button class="button" type="submit">Guardar</button>
     </div>
+  
+   
+    </form>
+  
   </div>
 {% endblock%}
