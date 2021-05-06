@@ -1,54 +1,92 @@
-{% extends "base.html" %}
-{% block title %} NUEVO PROVEEDOR {% endblock%}
-{% block content %}
-<h1>Editar información productos</h1>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>EDITAR PRODUCTO PROYECTO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/editar_producto_proyecto.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
 
+
+<div class="title">
+  <h1>EDITAR PRODUCTO PROYECTO</h1>
+</div>
 <form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
-  <div class="card">
-      <div class="card-body">
-          <table class="table">
-              <thead class="thead-light">
-                  <tr>
+  <div class="table-container">
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>STATUS</th>
+            <th>FECHA USO</th>
+            <th>CANTIDADES</th>
+            <th>¿ELIMINAR?</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fila in info_productos %}
+        <tr>
+            <td data-label="NOMBRE">
+                <input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre">
+                <input type="hidden" value="{{fila.0.proyecto.id}}" name="id">
+                {{fila.0.proyecto.nombre}}
+            </td>
+            <td data-label="STATUS">
+                <div class="menu">
+                    <ul>
+                        <li>
+                                <a href="#">
+                                    <p>{{fila.0.status}}</p> <i class="fas fa-angle-down"></i>
+                                </a>
+                            <div class="dropdown">
+                                <ul>
+                                    <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}"></li>
+                                    <li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}">Bodega</li>
+                                    <li<input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}">Futuro</li>
+                                </ul>
+                            </div>
+                            </li>
+                </ul>
+           
             
-                      <th scope="col">Nombre</th>
-                 
-                      <th scope="col">Status</th>
-                      <th scope="col">Fecha uso</th>
-                      <th scope="col">Cantidades</th>
-                      <th scope="col">¿Eliminar?</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {% for fila in info_productos %}
-              <tr>
-
-                  <th><input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre">
-                    <input type="hidden" value="{{fila.0.proyecto.id}}" name="id">{{fila.0.proyecto.nombre}}</th>
-                    
-                  <th>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{fila.0.status}}
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}"></li>
-                        <li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}">Bodega</li>
-                        <li><input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}">Futuro</li>
-                      
-                      </ul>
-                    </div>
-                    </th>
-                  <th><input type="date" name="fecha_uso"></th>
-                  <th><input type="text" value="{{fila.0.cantidades}}" name="cantidades"></th>
-                  <th><input type="checkbox" value="{{fila.0.id}}" name="eliminar"></th>
-                  
-                {% endfor %}  
-      </tr>
-              </tbody>
+            </td>
+             <td data-label="NOMBRE">
+              <input type="date" name="fecha_uso" placeholder="Formato: YYYY-MM-DD">
+            </td>
+            <td data-label="CANTIDADES">
+              {% if fila.0.cantidades %}
+              <input type="text" value="{{fila.0.cantidades}}" name="cantidades">
+              {% else %}
+              <input type="text" value=0 name="cantidades">
+              {% endif %}
+            </td>
+            <td data-label="¿ELIMINAR?">
+              <input type="checkbox" value="{{fila.0.id}}" name="eliminar">
+            </td>
+           
+            
+            
+        </tr>
+        {% endfor %}
+    </tbody>
       </table>
           
-      <button class="btn btn-primary" type="submit">Guardar</button>
+      <button class="button_añadir" type="submit">Guardar</button>
     </div>
   </div>
+</div>
   </form>
+  <script>
+    document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+            this.classList.toggle("active");
+    });
+</script>
 {% endblock%}
