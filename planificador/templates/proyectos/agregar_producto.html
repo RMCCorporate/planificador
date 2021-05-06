@@ -1,34 +1,118 @@
-{% extends "base.html" %}
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>PRODUCTOS</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/agregar_producto.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
 
-{% block content %}
-<h1>Búsqueda filtros</h1>
+
+<div class="title">
+  <h1>BÚSQUEDA PRODUCTO</h1>
+</div>
+<div class="btn">
+  <span class="fas fa-bars"></span>
+</div>
 <form method="get">
-  {{myFilter.form}}
-<button class="btn btn-primary" type="submit">Search</button>
+<nav class="sidebar">
+  <div class="text">
+      MENÚ BÚSQUEDA</div>
+<ul>
+<li>
+          <a href="#" class="feat-btn">Clases
+            <span class="fas fa-caret-down first"></span>
+          </a>
+          <ul class="feat-show">
+              {% for i in myFilter.form.nombre_clase %}
+              <li><a href="#">{{i}}</a></li>
+              {% endfor %}
+
+</li>
+<li>
+          <a href="#" class="serv-btn">Sub-Clases
+            <span class="fas fa-caret-down second"></span>
+          </a>
+          <ul class="serv-show">
+              {% for n in myFilter.form.nombre_subclase %}
+              <li><a href="#">{{n}}</a></li>
+              {% endfor %}
+</ul>
+</li>
+</ul>
+<button type="submit"><i class="fa fa-search"></i></button>
+</nav>
 </form>
-<form action="crear_nuevo_producto" method="POST"> {% csrf_token %}
+<div class="table-container">
+  <form method="GET">
+      <div class="search">
+              {% render_field myFilter.form.nombre_producto class="busquedaproducto" %}
+          <button type="submit"><i class="fa fa-search"></i></button>
+      </div>
+  </form>
+  <form action="guardar_datos_filtro_agregar_proyecto" method="GET">
+    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
+    <input type="hidden" value="{{Proyecto.nombre}}" name="nombre"> 
   <table class="table">
-    <thead class="thead-light">
+    <thead>
         <tr>
-            <th scope="col">Nombre <input type="hidden" value="{{id}}" name="id"></th>
-            <th scope="col">Clase</th>
-            <th scope="col">Sub-clase</th>
+          <th># <input type="hidden" value="{{id}}" name="id"> </th>
+            <th>CÓDIGO</th>
+            <th>NOMBRE</th>
+            <th>SUBCLASE</th>
+            
         </tr>
     </thead>
     <tbody>
       {% for fila in myFilter.qs %}
-    <tr>
-      <th><input type=checkbox name="producto" value="{{fila.nombre_producto}}"> {{fila.nombre_producto}}</th>
-        <th>{{fila.nombre_clase}}</th>
-        <th>{{fila.nombre_subclase}}</th>
-      {% endfor %}
-    </tr>
+        <tr>
+            <td data-label="#"><input type=checkbox name="producto" value="{{fila.nombre_producto}}"> {{fila.nombre_producto}}</td>
+            <td data-label="NOMBRE"> {{fila.nombre_producto}}</td>
+            <td data-label="CLASE"> {{fila.nombre_clase}}</td>
+            <td data-label="SUBCLASE"> {{fila.nombre_subclase}}</td>
+        </tr>
+        {% endfor %}
     </tbody>
-  </table>
-  <br>
-  <br>
-  
-  <button class="btn btn-primary" type="submit">Elegir información producto</button>
+</table>
+<h5>PRODUCTOS SELECCIONADOS</h5>
+    {% for i in productos_proyecto %}
+        {{i}}
+    <br>
+    {% endfor %}
+  <button class="button" type="submit">Guardar filtro</button>
 </form>
-
+<form action="lista_productos_agregar" method="GET">
+  <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
+  {% for i in productos_proyecto %}
+   <input type="hidden" name="lista_productos" value="{{i.nombre}}">
+  {% endfor %}
+  <button class="button" type="submit">Elegir información productos</button>
+</form>
+    
+<script>
+  $('.btn').click(function(){
+      $(this).toggleClass("click");
+      $('.sidebar').toggleClass("show");
+  });
+      $('.feat-btn').click(function(){
+      $('nav ul .feat-show').toggleClass("show");
+      $('nav ul .first').toggleClass("rotate");
+      });
+      $('.serv-btn').click(function(){
+      $('nav ul .serv-show').toggleClass("show1");
+      $('nav ul .second').toggleClass("rotate");
+      });
+      $('nav ul li').click(function(){
+      $(this).addClass("active").siblings().removeClass("active");
+      });
+</script>
+      
 {% endblock %}

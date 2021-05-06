@@ -397,44 +397,70 @@ def editar_datos_producto_proyecto(request, id):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def agregar_producto(request, id):
-    if request.method =="POST":
-        proyectos = Proyecto.objects.all()
-        producto = request.POST.getlist("producto")
-        id = request.POST.getlist("id")
-        lista_productos = []
-        for i in producto:
-            aux = []
-            instancia_producto = Producto.objects.get(nombre=i)
-            sub_clase = instancia_producto.subclase_set.all()[0]
-            aux.append(instancia_producto)
-            aux.append(sub_clase)
-            lista_productos.append(aux)
-        instancia_proyecto = Proyecto.objects.get(id=id[0])
-        proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
-        return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
-    else:
-        proyectos = Proyecto.objects.all()
-        clases = Clase.objects.all()
-        subclases = []
-        nombres = []
-        for clase in clases:
-            subclases_aux = []
-            nombres.append(clase.nombre)
-            for subclase in clase.subclases.all():
-                subclases_aux.append(subclase)
-            subclases.append(subclases_aux)
-        lista_clases = []
-        for n, i in enumerate(clases):
-            lista_aux = []
-            lista_aux.append(i)
-            lista_aux.append(clases_lista_productos(subclases[n]))
-            lista_clases.append(lista_aux)
-        productos = Filtro_producto.objects.all()
-        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-        producto = myFilter.qs
-        #RECIBIR SUBCLASE
-        lista_productos = []
-        return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "Clases":lista_clases, "myFilter":myFilter, "producto":lista_productos})
+    proyectos = Proyecto.objects.all()
+    productos = Producto.objects.all()
+    lista_productos = []
+    for i in productos:
+        aux = []
+        subclase = i.subclase_set.all()[0]
+        clase = subclase.clase_set.all()[0]
+        aux.append(i)
+        aux.append(subclase)
+        aux.append(clase)
+        lista_productos.append(aux)
+    productos = Filtro_producto.objects.all()
+    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+    producto = myFilter.qs
+    #RECIBIR SUBCLASE
+    lista_productos = []
+    return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "myFilter":myFilter, "producto":lista_productos})
+
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def guardar_datos_filtro_agregar_proyecto(request):
+    print("PASA POR GUARDAR DATOS FILTRO")
+    usuario_modificacion = request.user.first_name + " " + request.user.last_name
+    proyecto = Proyecto.objects.get(id=request.GET["id"])
+    productos_proyecto_anterior = proyecto.productos.all()
+    productos_filtro = request.GET.getlist("productos")
+    booleano_repeticion = False
+    for i in productos_filtro:
+        for n in productos_proyecto_anterior:
+            if n.nombre == i:
+                booleano_repeticion = True
+    for i in productos_filtro:
+        if not booleano_repeticion: 
+            producto = Producto.objects.get(nombre=i)
+            nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
+            nuevo_producto_proyecto.save()
+            proyecto.save()
+            usuario = Usuario.objects.get(correo=request.user.email)
+            usuario.proyectos.add(proyecto)
+            usuario.save()
+    productos_proyecto = proyecto.productos.all()
+    productos = Filtro_producto.objects.all()
+    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+    producto = myFilter.qs
+    return render(request, 'proyectos/agregar_producto.html', {"id":request.GET["id"], "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def recibir_datos_agregar_producto(request):
+    print("PASA POR ACA")
+    proyectos = Proyecto.objects.all()
+    producto = request.POST.getlist("producto")
+    id = request.POST.getlist("id")
+    lista_productos = []
+    for i in producto:
+        aux = []
+        instancia_producto = Producto.objects.get(nombre=i)
+        sub_clase = instancia_producto.subclase_set.all()[0]
+        aux.append(instancia_producto)
+        aux.append(sub_clase)
+        lista_productos.append(aux)
+    instancia_proyecto = Proyecto.objects.get(id=id[0])
+    proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+    return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
 
 @login_required(login_url='/login')
 def crear_nuevo_producto(request):
@@ -493,7 +519,6 @@ def mostrar_filtro(request):
     fecha_inicio = request.GET["fecha_inicio"]
     fecha_termino = request.GET["fecha_termino"]
     precio_final = 0
-    #CAMBIAR CREADOR CUANDO SE CREEN USUARIOS
     creador = request.user.first_name + " " + request.user.last_name
     fecha_actual = datetime.now()
     if fecha_inicio and fecha_termino:
