@@ -398,14 +398,16 @@ def editar_datos_producto_proyecto(request, id):
 @login_required(login_url='/login')
 def agregar_producto(request, id):
     print("PASA POR ACA PARECE")
+    proyecto = Proyecto.objects.get(id=id)
     if request.method == "GET":
+        print(request.path_info)
         proyectos = Proyecto.objects.all()
         productos = Filtro_producto.objects.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         producto = myFilter.qs
         #RECIBIR SUBCLASE
         lista_productos = []
-        return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "myFilter":myFilter})
+        return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyecto":proyecto, "myFilter":myFilter})
     else:
         print("PASA POR EL POST")
         productos_filtro = request.POST.getlist("producto")
@@ -417,44 +419,15 @@ def agregar_producto(request, id):
         #RECIBIR SUBCLASE
         lista_productos = []
         print(productos_filtro)
-        return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyectos":proyectos, "myFilter":myFilter, "productos_proyecto":productos_filtro})
-
-@allowed_users(allowed_roles=['Admin', 'Planificador'])
-@login_required(login_url='/login')
-def guardar_datos_filtro_agregar_proyecto(request):
-    print("PASA POR GUARDAR DATOS FILTRO")
-    usuario_modificacion = request.user.first_name + " " + request.user.last_name
-    proyecto = Proyecto.objects.get(id=request.GET["id"])
-    productos_proyecto_anterior = proyecto.productos.all()
-    productos_filtro = request.GET.getlist("productos")
-    booleano_repeticion = False
-    print("AAAA")
-    for i in productos_filtro:
-        for n in productos_proyecto_anterior:
-            if n.nombre == i:
-                booleano_repeticion = True
-    for i in productos_filtro:
-        if not booleano_repeticion: 
-            producto = Producto.objects.get(nombre=i)
-            nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
-            nuevo_producto_proyecto.save()
-            proyecto.save()
-            usuario = Usuario.objects.get(correo=request.user.email)
-            usuario.proyectos.add(proyecto)
-            usuario.save()
-    productos_proyecto = proyecto.productos.all()
-    productos = Filtro_producto.objects.all()
-    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    producto = myFilter.qs
-    return render(request, 'proyectos/agregar_producto.html', {"id":request.GET["id"], "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+        return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_filtro})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def recibir_datos_agregar_producto(request):
-    print("PASA POR ACA")
     proyectos = Proyecto.objects.all()
     producto = request.POST.getlist("producto")
-    id = request.POST.getlist("id")
+    id = request.GET.getlist("id")
+    print(id)
     lista_productos = []
     for i in producto:
         aux = []
