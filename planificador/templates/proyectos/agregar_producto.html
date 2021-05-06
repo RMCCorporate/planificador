@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% block content %} 
 <head>
-	<title>PRODUCTOS</title>
+	<title>AGREGAR PRODUCTOS</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +58,7 @@
           <button type="submit"><i class="fa fa-search"></i></button>
       </div>
   </form>
-  <form action="guardar_datos_filtro_agregar_proyecto" method="GET">
+  <form action="guardar_datos_filtro_agregar_proyecto" method="POST">{% csrf_token %}
     <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
     <input type="hidden" value="{{Proyecto.nombre}}" name="nombre"> 
   <table class="table">

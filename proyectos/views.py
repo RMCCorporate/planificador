@@ -397,23 +397,27 @@ def editar_datos_producto_proyecto(request, id):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def agregar_producto(request, id):
-    proyectos = Proyecto.objects.all()
-    productos = Producto.objects.all()
-    lista_productos = []
-    for i in productos:
-        aux = []
-        subclase = i.subclase_set.all()[0]
-        clase = subclase.clase_set.all()[0]
-        aux.append(i)
-        aux.append(subclase)
-        aux.append(clase)
-        lista_productos.append(aux)
-    productos = Filtro_producto.objects.all()
-    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    producto = myFilter.qs
-    #RECIBIR SUBCLASE
-    lista_productos = []
-    return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "myFilter":myFilter, "producto":lista_productos})
+    print("PASA POR ACA PARECE")
+    if request.method == "GET":
+        proyectos = Proyecto.objects.all()
+        productos = Filtro_producto.objects.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        producto = myFilter.qs
+        #RECIBIR SUBCLASE
+        lista_productos = []
+        return render(request, "proyectos/agregar_producto.html", {"id":id, "Proyectos":proyectos, "myFilter":myFilter})
+    else:
+        print("PASA POR EL POST")
+        productos_filtro = request.POST.getlist("producto")
+        id_ql = request.POST["id"]
+        print(id_ql)
+        productos = Filtro_producto.objects.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        producto = myFilter.qs
+        #RECIBIR SUBCLASE
+        lista_productos = []
+        print(productos_filtro)
+        return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyectos":proyectos, "myFilter":myFilter, "productos_proyecto":productos_filtro})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
@@ -424,6 +428,7 @@ def guardar_datos_filtro_agregar_proyecto(request):
     productos_proyecto_anterior = proyecto.productos.all()
     productos_filtro = request.GET.getlist("productos")
     booleano_repeticion = False
+    print("AAAA")
     for i in productos_filtro:
         for n in productos_proyecto_anterior:
             if n.nombre == i:
@@ -516,6 +521,10 @@ def mostrar_filtro(request):
     nombre = request.GET["nombre"]
     tipo_cambio = request.GET["tipo_cambio"]
     valor_cambio = request.GET["valor_cambio"]
+    if not valor_cambio:
+        valor_cambio = 0
+    if not tipo_cambio:
+        tipo_cambio = "CLP"
     fecha_inicio = request.GET["fecha_inicio"]
     fecha_termino = request.GET["fecha_termino"]
     precio_final = 0
