@@ -36,10 +36,11 @@ body{
   font-size: 15px;
 }
 
+
 .container .table-container{
     position: relative;
-    top:0%;
-    left:5%;
+    top: 0%;
+    left: 5%;
     right: 5%;
     padding-right: 10%;
 

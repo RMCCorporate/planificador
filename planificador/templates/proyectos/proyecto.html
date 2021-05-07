@@ -132,6 +132,11 @@
     <tbody>
       {% for fila in cotizaciones %}
         <tr>
+          <script>
+            document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+                    this.classList.toggle("active");
+            });
+        </script>
             <td data-label="NOMBRE"><a href="{% url 'mostrar_cotizacion' fila.0.id %}"> {{fila.0.nombre}}</a></td>
             <td data-label="PROVEEDOR"> {{fila.0.proveedor_asociado.nombre}}</td>
             <td data-label="PRODUCTOS ASOCIADOS">
@@ -144,7 +149,7 @@
                         <div class="dropdown">
                             <ul>
                               {% for i in fila.1 %}
-                                <li><a>{{i.0.nombre}}: {{i.1.cantidades}} {{i.0.unidad}}</a></li>
+                                <li>{{i.0.nombre}}: {{i.1.cantidades}} {{i.0.unidad}}</a></li>
                               {% endfor %}
                             </ul>
                         </div>
