@@ -39,22 +39,14 @@ body{
 .container .table-container{
     position: relative;
     top:0%;
+    width: 70%;
     left:25%;
-    padding-right: 30%;
+    padding-right: 0%;
 
 }
 
 .container .table-container .title_container{
     padding: 0px;
-}
-
-.container .table-container .boton_container{
-    position: relative;
-    width: 100%;
-    top: 80%;
-    margin: 2% auto 0;
-    border-collapse: collapse;
-    left: 75%;
 }
 
 .container .table-container .informacion_container{
@@ -64,13 +56,13 @@ body{
     border-bottom: 2px solid;
 }
 
-.container .table-container .boton_container .informacion_container h4{
+.container .table-container .informacion_container h4{
     font-family: 'Monserrat', sans-serif;
     font-size: 15px;
 }
 
 
-.container .table-container .boton_container .button_editar{
+.container .table-container  .button_editar{
     border: solid;
     height: 25px;
     margin: 0;
@@ -84,7 +76,7 @@ body{
     border-radius: 5px;
 }
 
-.container .table-container .boton_container .button_eliminar{
+.container .table-container .button_eliminar{
     border: solid;
     height: 25px;
     margin: 1%;
@@ -164,7 +156,7 @@ body{
 
 .container .imagen_container {
     position: relative;
-    top: 0%;
+    top: 25px;
     left:0%;
     width: 20%;
   }

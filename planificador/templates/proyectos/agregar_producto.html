@@ -12,46 +12,17 @@
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 </head>
 
 
 <div class="title">
   <h1>BÚSQUEDA PRODUCTO</h1>
 </div>
-<div class="btn">
-  <span class="fas fa-bars"></span>
-</div>
-<form method="get">
-  <input type="hidden" value="{{Proyecto.id}}" name="id">
-<nav class="sidebar">
-  <div class="text">
-      MENÚ BÚSQUEDA</div>
-<ul>
-<li>
-          <a href="#" class="feat-btn">Clases
-            <span class="fas fa-caret-down first"></span>
-          </a>
-          <ul class="feat-show">
-              {% for i in myFilter.form.nombre_clase %}
-              <li><a href="#">{{i}}</a></li>
-              {% endfor %}
 
-</li>
-<li>
-          <a href="#" class="serv-btn">Sub-Clases
-            <span class="fas fa-caret-down second"></span>
-          </a>
-          <ul class="serv-show">
-              {% for n in myFilter.form.nombre_subclase %}
-              <li><a href="#">{{n}}</a></li>
-              {% endfor %}
-</ul>
-</li>
-</ul>
-<button type="submit"><i class="fa fa-search"></i></button>
-</nav>
-</form>
 <div class="table-container">
     <form action="lista_productos_agregar" method="GET">
       <input type="hidden" value="{{Proyecto.id}}" name="id">
@@ -79,20 +50,13 @@
     </form>
     <br>
     <br>
-    <form method="GET">
-      <div class="search">
-              {% render_field myFilter.form.nombre_producto class="busquedaproducto" %}
-          <button type="submit"><i class="fa fa-search"></i></button>
-          <input type="hidden" value="{{Proyecto.id}}" name="id">
-      </div>
-  </form>
   <form action="guardar_datos_filtro_agregar_proyecto" method="POST">{% csrf_token %}
     <input type="hidden" value="{{Proyecto.id}}" name="id">
     <input type="hidden" value="{{Proyecto.nombre}}" name="nombre">
     <div class="informacion_container">
       <h4>BÚSQUEDA PRODUCTOS</h4>
     </div>
-  <table class="table">
+  <table class="table" id="example" class="display">
     <thead>
         <tr>
           <th># <input type="hidden" value="{{id}}" name="id"> </th>
@@ -115,7 +79,11 @@
 <br>
   <button class="button_añadir" type="submit">Guardar filtro</button>
 </form>
-
+<script>$(document).ready(function() {
+  $('#example').DataTable( {
+      "pagingType": "full_numbers"
+  } );
+} );</script>
     
 <script>
   $('.btn').click(function(){

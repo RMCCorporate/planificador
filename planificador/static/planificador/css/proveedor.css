@@ -48,15 +48,6 @@ body{
     padding: 10px;
 }
 
-.container .table-container .boton_container{
-    position: relative;
-    width: 100%;
-    top: 80%;
-    margin: 2% auto 0;
-    border-collapse: collapse;
-    left: 75%;
-}
-
 .container .table-container .informacion_container{
     position: relative;
     width: 100%;
@@ -94,7 +85,7 @@ body{
 }
 
 
-.container .table-container .boton_container .button_editar{
+.container .table-container .button_editar{
     border: solid;
     height: 25px;
     margin: 0;
@@ -108,7 +99,7 @@ body{
     border-radius: 5px;
 }
 
-.container .table-container .boton_container .button_eliminar{
+.container .table-container .button_eliminar{
     border: solid;
     height: 25px;
     margin: 1%;

@@ -32,14 +32,14 @@
   <div class="title_container">
     <h1>{{Producto.nombre}}</h1>
   </div>
-  <div class="boton_container">
+
     <a href="{% url 'mostrar_edicion_producto' Producto.id %}">
       <button class="button_editar">Editar</button>
     </a>
     <a href="{% url 'eliminar_producto' Producto.id %}" onclick="return confirm('¿Estás seguro que quieres eliminar el producto?')">
       <button class="button_eliminar">Eliminar</button>
   </a>
-  </div>
+
   <div class="informacion_container">
     <h4>INFORMACIÓN GENERAL</h4>
   </div>

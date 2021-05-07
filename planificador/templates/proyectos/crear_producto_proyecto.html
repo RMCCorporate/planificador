@@ -1,48 +1,66 @@
-{% extends "base.html" %}
-{% block title %} NUEVO PROVEEDOR {% endblock%}
-{% block content %}
-<h1>Agregar productos</h1>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>Crear proyecto - {{Proyecto.id}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/lista_productos.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
 
+<div class="container">
+  <div class="table-container">
 <form action="/proyectos/crear_nuevo_producto" method="POST" id="crear_nuevo_producto">{% csrf_token %}
-  <div class="card">
-      <div class="card-body">
-          <table class="table">
-              <thead class="thead-light">
-                  <tr>
-                      <th scope="col">Nombre</th>
-                      <th scope="col">Subclase</th>
-                      <th scope="col">Status</th>
-                      <th scope="col">Fecha uso</th>
-                      <th scope="col">Cantidades</th>
-                  </tr>
-              </thead>
-              <tbody>
-                {% for i in Producto %}
-              <tr>
-                  <th>{{i.0.nombre}}
-                    <input type="hidden" value="{{Proyecto.id}}" name="id_proyecto">
-                    <input type="hidden" value="{{i.0.id}}" name="id_producto">
-                  </th>
-                  <th>{{i.1.nombre}}</th>
-                <th>
-                    <div class="dropdown">
-                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                        Estado
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                        <li><input type="radio" value="Urgente" name="{{i.0.id}}">Urgente</li>
-                        <li><input type="radio" value="Futuro" name="{{i.0.id}}" checked>Futuro</li>
-                      </ul>
-                    </div>
-                    </th>
-                  <th><input type="date" name="fecha_uso"></th>
-                  <th><input type="text" name="cantidades"></th>
-      </tr>
-      {% endfor %}
-              </tbody>
-      </table>
-          
-      <button class="btn btn-primary" type="submit">Guardar</button>
-    </div>
+  <div class="title_container">
+    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos"> 
+    <h1>AGREGAR PRODUCTOS</h1>
   </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>SUBCLASE</th>
+            <th>STATUS</th>
+            <th>FECHA USO</th>
+            <th>CANTIDADES</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for i in Producto %}
+        <tr>
+            <td data-label="NOMBRE">
+              {{i.0.nombre}}
+              <input type="hidden" value="{{Proyecto.id}}" name="id_proyecto">
+              <input type="hidden" value="{{i.0.id}}" name="id_producto">
+            </td>
+            <td data-label="SUBCLASE"> 
+              {{i.1.nombre}}
+            </td>
+            <td data-label="STATUS">
+              <li><input type="radio" value="Urgente" name="{{i.0.id}}">Urgente</li>
+              <li><input type="radio" value="Futuro" name="{{i.0.id}}" checked>Futuro</li>
+            </td>
+            <td data-label="FECHA USO"> 
+              <input type="date" name="fecha_uso">
+            </td>
+            <td data-label="CANTIDADES"> 
+              <input type="text" name="cantidades">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="boton_container">
+  <button class="button_editar" type="submit">Guardar proyecto</button>
+</div>
+
+</div>
+</div>
 {% endblock%}

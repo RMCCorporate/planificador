@@ -12,7 +12,10 @@
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 </head>
 
 
@@ -89,20 +92,17 @@
     </form>
     <br>
     <br>
-    <form method="GET">
-      <div class="search">
-              {% render_field myFilter.form.nombre_producto class="busquedaproducto" %}
-          <button type="submit"><i class="fa fa-search"></i></button>
-          <input type="hidden" value="{{Proyecto.id}}" name="id">
-      </div>
-  </form>
+  
+  
 <form action="guardar_filtro" method="GET">
     <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
     <input type="hidden" value="{{Proyecto.nombre}}" name="nombre">
     <div class="informacion_container">
       <h4>BÚSQUEDA PRODUCTOS</h4>
     </div>
-  <table class="table">
+    <br>
+  <br>
+  <table class="table" id="example" class="display">
     <thead>
         <tr>
           <th># <input type="hidden" value="{{id}}" name="id"> </th>
@@ -125,7 +125,11 @@
 <br>
   <button class="button_añadir" type="submit">Guardar filtro</button>
 </form>
-
+<script>$(document).ready(function() {
+  $('#example').DataTable( {
+      "pagingType": "full_numbers"
+  } );
+} );</script>
 <script>
     $('.btn').click(function(){
         $(this).toggleClass("click");

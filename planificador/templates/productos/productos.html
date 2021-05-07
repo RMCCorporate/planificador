@@ -12,7 +12,10 @@
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
 </head>
 
 <div class="title">
@@ -21,39 +24,7 @@
 <div class="subtitle">
     <h4>{{len}} productos</h4>
 </div>
-<div class="btn">
-    <span class="fas fa-bars"></span>
-  </div>
-    <form method="get">
-<nav class="sidebar">
-    <div class="text">
-        MENÚ BÚSQUEDA</div>
-<ul>
-  <li>
-            <a href="#" class="feat-btn">Clases
-              <span class="fas fa-caret-down first"></span>
-            </a>
-            <ul class="feat-show">
-                {% for i in myFilter.form.nombre_clase %}
-                <li><a href="#">{{i}}</a></li>
-                {% endfor %}
 
-  </li>
-  <li>
-            <a href="#" class="serv-btn">Sub-Clases
-              <span class="fas fa-caret-down second"></span>
-            </a>
-            <ul class="serv-show">
-                {% for n in myFilter.form.nombre_subclase %}
-                <li><a href="#">{{n}}</a></li>
-                {% endfor %}
-  </ul>
-  </li>
-  </ul>
-  <button type="submit"><i class="fa fa-search"></i></button>
-  </nav>
-  
-</form>
 
 <div class="table-container">
         <a href="{% url 'nuevo_producto' %}">
@@ -62,49 +33,27 @@
         <a href="{% url 'nuevo_proveedor_producto' %}">
             <button class="button_añadir">Añadir proveedor-producto</button>
         </a>
-        <form method="get">
-            <div class="search">
-                    {% render_field myFilter.form.nombre_producto class="busquedaproducto" %}
-                <button type="submit"><i class="fa fa-search"></i></button>
-            </div>
-        </form>
-        
-    <table class="table">
+      
+    <br>
+    <br>
+    <table class="table" id="example" class="display">
         <thead>
             <tr>
                 <th>CÓDIGO</th>
                 <th>NOMBRE</th>
                 <th>SUBCLASE</th>
                 <th>CLASE</th>
-                <th>#</th>
+           
             </tr>
         </thead>
         <tbody>
             {% for obj in myFilter.qs %}
             <tr>
-                <td data-label="CÓDIGO"><a href="{% url 'producto' obj.id_producto %}">{{obj.nombre_producto}}</a></td>
-                <td data-label="NOMBRE"> {{obj.nombre_clase}}</td>
+                <td data-label="CÓDIGO"><a href="{% url 'producto' obj.id_producto %}">{{obj.id_producto}}</a></td>
+                <td data-label="NOMBRE"> {{obj.nombre_producto}}</td>
                 <td data-label="SUBCLASE"> {{obj.nombre_subclase}}</td>
                 <td data-label="CLASE"> {{obj.nombre_clase}}</td>
-                <td data-label="#">
-                    <div class="menu">
-                        <ul>
-                            <li>
-                                    <a href="#">
-                                        <p></p> <i class="fas fa-angle-down"></i>
-                                    </a>
-                                <div class="dropdown">
-                                    <ul>
-                                        <li><a  href="{% url 'producto' obj.id_producto%}"><i class="fas fa-user"></i> Ver</a></li>
-                                        <li><a  href="{% url 'mostrar_edicion_producto' obj.id_producto%}"><i class="fas fa-bell"></i> Editar</a></li>
-                                        <li><a href="{% url 'eliminar_producto' obj.id_producto%}" onclick="return confirm('¿Estás seguro que quieres eliminar el producto?')"><i class="fas fa-sign-out-alt"></i> Eliminar</a></li>
-                                    </ul>
-                                </div>
-                                </li>
-                    </ul>
-               
-                    </div>
-                </td>
+                
                 
                 
             </tr>
@@ -133,7 +82,13 @@
                    value="Upload"
                    >
         </form>
-    
+
+        <script>$(document).ready(function() {
+            $('#example').DataTable( {
+                "pagingType": "full_numbers"
+            } );
+        } );</script>
+
 <script>
     $('.btn').click(function(){
         $(this).toggleClass("click");
@@ -150,6 +105,7 @@
         $('nav ul li').click(function(){
         $(this).addClass("active").siblings().removeClass("active");
         });
+
 </script>
-        
+    
 {% endblock%}
