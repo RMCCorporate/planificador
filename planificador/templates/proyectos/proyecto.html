@@ -1,193 +1,234 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
-{% block content %}
-    {% load static %}
-    <div class="card text-center">
-        <div class="card-header">
-            {{Proyecto.nombre}} - {{Proyecto.estado}}
-            <br>
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Información general</h5>
-          <p class="card-text">
-            Centro Costos: {{Proyecto.id}}
-            <br>
-            Precio Final: {{precio_final}} PONER PRECIO
-            <br>
-            Creador: {{Proyecto.creador}}
-          </p>
-        </div>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>{{Proyecto.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/proyecto.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="title">
+  <h1>{{Proyecto.nombre}}</h1>
+</div>
+<br>
+<br>
+<div class="container">
+  <div class="table-container">
+    <div class="informacion_container">
+      <h4>INFORMACIÓN GENERAL</h4>
     </div>
-    <div class="card text-center">
-      
-      <div class="card-body">
-        <h5 class="card-title">Fechas general</h5>
-        <p class="card-text">
-          Fecha creación: {{Proyecto.fecha_creacion}}
-          <br>
-          Fecha inicio: {{Proyecto.fecha_inicio}}
-          <br>
-          Fecha término: {{Proyecto.fecha_final}}
-        </p>
-      </div>
+    <table class="table">
+      <thead>
+          <tr>
+              <th>CENTRO COSTOS</th>
+              <th>PRECIO FINAL</th>
+              <th>ESTADO</th>
+              <th>CREADOR</th>
+          </tr>
+      </thead>
+      <tbody>
+          <tr>
+              <td data-label="CENTRO COSTOS">{{Proyecto.id}}</td>
+              <td data-label="PRECIO FINAL"> {{precio_final}} PONER PRECIO</td>
+              <td data-label="ESTADO"> {{Proyecto.estado}}</td>
+              <td data-label="CREADOR"> {{Proyecto.creador}}</td>
+          </tr>
+      </tbody>
+  </table>
   </div>
+  <br>
+<br>
+  <div class="table-container">
+  <div class="informacion_container">
+    <h4>INFORMACIÓN FECHAS</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>FECHA CREACIÓN</th>
+            <th>FECHA INICIO</th>
+            <th>FECHA TÉRMINO</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="FECHA CREACIÓN">{{Proyecto.fecha_creacion}}</td>
+            <td data-label="FECHA INICIO"> {{Proyecto.fecha_inicio}}</td>
+            <td data-label="FECHA TÉRMINO"> {{Proyecto.fecha_final}}</td>
+        </tr>
+    </tbody>
+</table>
 </div>
-<div class="card">
-  <div class="card-header" id="headingTwo">
-    <h2 class="mb-0">
-      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        Productos
-      </button>
-      <a href="{% url 'agregar_producto' Proyecto.id %}" class="btn btn-primary">Agregar producto</a>
-    </h2>
+<div class="table-container">
+  <div class="boton_container">
+    <a href="{% url 'agregar_producto' Proyecto.id %}">
+      <button class="button_editar">Agregar producto</button>
+    </a>
+    <a href="{% url 'editar_producto_proyecto' Proyecto.id %}">
+      <button class="button_eliminar">Editar/Eliminar productos</button>
+  </a>
   </div>
-  <th><a href="{% url 'editar_producto_proyecto' Proyecto.id %}" class="btn btn-primary">Editar/Elimnar productos</a></th>
-    <div class="card-body">
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Cantidad</th>
-                    <th scope="col">Estado</th>
-                    <th scope="col">Estado cotización</th>
-                    <th scope="col">Fecha uso</th>
-                    <th scope="col">Usuario modificación</th>
-                </tr>
-            </thead>
-            <tbody>
-              {% for fila in Productos %}
-            <tr>
-                <th>{{fila.proyecto.nombre}}</a></th>
-                <th>{{fila.cantidades}}</th>
-                <th>{{fila.status}}</th>
-                <th>{{fila.estado_cotizacion}}</th>
-                <th>{{fila.fecha_uso}}</th>
-                <th>{{fila.usuario_modificacion}}</th>
-                
-              {% endfor %}  
-    </tr>
-            </tbody>
-    </table>
-        
-
+  <div class="informacion_container">
+    <h4>PRODUCTOS</h4>
   </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CANTIDAD</th>
+            <th>ESTADO</th>
+            <th>ESTADO COTIZACIÓN</th>
+            <th>FECHA USO</th>
+            <th>USUARIO MODIFICACIÓN</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in Productos %}
+        <tr>
+            <td data-label="NOMBRE">{{fila.proyecto.nombre}}</td>
+            <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+            <td data-label="ESTADO">{{fila.status}}</td>
+            <td data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            <td data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+            <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
 </div>
-<div class="card">
-  <div class="card-header" id="headingTwo">
-    <h2 class="mb-0">
-      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        Cotizaciones
-      </button>
-    </h2>
+<br>
+<br>
+<div class="table-container">
+  <div class="boton_container">
+    <a href="{% url 'agregar_cotizacion' Proyecto.id %}">
+      <button class="button_editar">Agregar cotización</button>
+    </a>
   </div>
- 
-  <th><a href="{% url 'agregar_cotizacion' Proyecto.id %}" class="btn btn-primary">Agregar cotizacion</a></th>
-    <div class="card-body">
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Nombre referencial</th>
-                    <th scope="col">Proveedor</th>
-                    <th scope="col">Productos cotizados</th>
-                    <th scope="col">Fecha salida</th>
-                    <th scope="col">Fecha respuesta</th>
-                    <th scope="col">Fecha actualizacion precio</th>
-                    <th scope="col">Demora respuesta</th>
-                    <th scope="col">Demora ingreso precio</th>
-                    <th scope="col">Usuario modificación</th>
-                </tr>
-            </thead>
-            <tbody>
-              {% for fila in cotizaciones %}
-            <tr>
-                <th><a href="{% url 'mostrar_cotizacion' fila.0.id %}" class="btn btn-primary"> {{fila.0.nombre}}</a></th>
-                <th>{{fila.0.proveedor_asociado.nombre}}</th>
-                <th>
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                      Productos
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                      {% for i in fila.1 %}
-                      <a class="dropdown-item"></a> {{i.0.nombre}}: {{i.1.cantidades}} {{i.0.unidad}}</a>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                </th>
-                <th>{{fila.0.fecha_salida}}</th>
-                <th>{{fila.0.fecha_respuesta}}</th>
-                <th>{{fila.0.fecha_actualizacion_precio}}</th>
-                <th>{{fila.2}}</th>
-                <th>{{fila.3}}</th>
-                <th>{{fila.0.usuario_modificacion}}</th>
-                
-              {% endfor %}  
-    </tr>
-            </tbody>
-    </table>
-        
-
+  <div class="informacion_container">
+    <h4>COTIZACIONES</h4>
   </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>PROVEEDOR</th>
+            <th>PRODUCTOS ASOCIADOS</th>
+            <th>FECHA SALIDA</th>
+            <th>FECHA RESPUESTA</th>
+            <th>FECHA ACTUALIZACIÓN PRECIO</th>
+            <th>DEMORA RESPUESTA</th>
+            <th>DEMORA INGRESO PRECIO</th>
+            <th>USUARIO MODIFICACIÓN</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in cotizaciones %}
+        <tr>
+            <td data-label="NOMBRE"><a href="{% url 'mostrar_cotizacion' fila.0.id %}"> {{fila.0.nombre}}</a></td>
+            <td data-label="PROVEEDOR"> {{fila.0.proveedor_asociado.nombre}}</td>
+            <td data-label="PRODUCTOS ASOCIADOS">
+              <div class="menu">
+                <ul>
+                    <li>
+                            <a>
+                                <p>PRODUCTOS</p> <i class="fas fa-angle-down"></i>
+                            </a>
+                        <div class="dropdown">
+                            <ul>
+                              {% for i in fila.1 %}
+                                <li><a>{{i.0.nombre}}: {{i.1.cantidades}} {{i.0.unidad}}</a></li>
+                              {% endfor %}
+                            </ul>
+                        </div>
+                        </li>
+            </ul>
+            </div>
+            </td>
+            <td data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+            <td data-label="FECHA RESPUESTA"> {{fila.0.fecha_respuesta}}</td>
+            <td data-label="FECHA ACTUALIZACIÓN PRECIO">{{fila.0.fecha_actualizacion_precio}}</td>
+            <td data-label="DEMORA RESPUESTA"> {{fila.2}}</td>
+            <td data-label="DEMORA INGRESO PRECIO">{{fila.3}}</td>
+            <td data-label="USUARIO MODIFICACIÓN">{{fila.0.usuario_modificacion}}</td>
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
 </div>
-
-<div class="card">
-  <div class="card-header" id="headingTwo">
-    <h2 class="mb-0">
-      <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-        Productos cotizados
-      </button>
-    </h2>
+<br>
+<br>
+<div class="table-container">
+  <div class="boton_container">
+    <a href="{% url 'editar_precios' Proyecto.id %}">
+      <button class="button_editar">Editar precios</button>
+    </a>
   </div>
-  <th><a href="{% url 'editar_precios' Proyecto.id %}" class="btn btn-primary">Editar precios</a></th>
-    <div class="card-body">
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Sub-clase</th>
-                    <th scope="col">Precio unitario</th>
-                    <th scope="col">Proveedor</th>
-                    <th scope="col">Cotización</th>
-                    <th scope="col">Usuario modificación</th>
-                </tr>
-            </thead>
-            <tbody>
-              {% for fila1 in info_productos %}
-              {% for fila in fila1 %}
-            <tr>
-                <th>{{fila.0.nombre}}</a></th>
-                <th>{{fila.1.0.nombre}}</th>
-                <th>
-                  {% if fila.3 != " " %}
-                  <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                      {{fila.3.valor}} {{fila.3.tipo_cambio}}
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
-                      <li><a class="dropdown-item"></a> - Valor: {{fila.3.valor}}</a></li>
-                      <li><a class="dropdown-item"></a> - Moneda: {{fila.3.tipo_cambio}}</a></li>
-                      <li><a class="dropdown-item"></a> - Valor importación: {{fila.3.valor_importación}}</a></li>
-                      <li><a class="dropdown-item"></a> - Tipo cambio: {{fila.3.valor_cambio}}</a></li>
-                      <li><a class="dropdown-item"></a> - Fecha: {{fila.3.fecha}}</a></li>
-                      <li><a class="dropdown-item"></a> - Proveedor: {{fila.3.nombre_proveedor}}</a></li>
-                      <li><a class="dropdown-item"></a> - Comentarios: {{fila.3.comentarios}}</a></li>
-                    </ul>
-                  </div>
-                  {% endif %}
-                </th>
-                <th>{{fila.4.proveedor_asociado.nombre}}</th>
-                <th>{{fila.4.nombre}}</th>
-                <th>{{fila.3.usuario_modificacion}}</th>
-                {% endfor %} 
-              {% endfor %}  
-    </tr>
-            </tbody>
-    </table>
-        
-
+  <div class="informacion_container">
+    <h4>PRODUCTOS COTIZADOS</h4>
   </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>SUB-CLASE</th>
+            <th>DETALLE PRECIO</th>
+            <th>PROVEEDOR</th>
+            <th>COTIZACIÓN</th>
+            <th>USUARIO MODIFICACIÓN</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila1 in info_productos %}
+      {% for fila in fila1 %}
+        <tr>
+            <td data-label="NOMBRE">{{fila.0.nombre}}</a></td>
+            <td data-label="SUB-CLASE"> {{fila.1.0.nombre}}</td>
+            <td data-label="PRECIO UNITARIO">
+              <div class="menu2">
+                <ul>
+                    <li>
+                            <a>
+                                <p>PRECIO</p> <i class="fas fa-angle-down"></i>
+                            </a>
+                        <div class="dropdown2">
+                            <ul>
+                              <li><a> Valor: {{fila.3.0.valor}}</a></li>
+                              <li><a> Moneda: {{fila.3.0.tipo_cambio}}</a></li>
+                              <li><a> Valor importación: {{fila.3.0.valor_importación}}</a></li>
+                              <li><a> Tipo cambio: {{fila.3.0.valor_cambio}}</a></li>
+                              <li><a> Fecha: {{fila.3.0.fecha}}</a></li>
+                              <li><a> Proveedor: {{fila.3.0.nombre_proveedor}}</a></li>
+                            </ul>
+                        </div>
+                        </li>
+            </ul>
+            </div>
+            </td>
+            <td data-label="PROVEEDOR">{{fila.4.proveedor_asociado.nombre}}</td>
+            <td data-label="COTIZACIÓN">{{fila.4.nombre}}</td>
+            <td data-label="USUARIO MODIFICACIÓN">{{fila.3.0usuario_modificacion}}</td>
+            {% endfor %} 
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
 </div>
+  </div>
+
+    <script>
+      document.querySelector("tr td .menu ul li").addEventListener("click", function(){
+              this.classList.toggle("active");
+      });
+  </script>
+
  
 
 {% endblock %}

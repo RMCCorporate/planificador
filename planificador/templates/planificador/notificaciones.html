@@ -1,28 +1,53 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
-{% block content %}
-    {% load static %}
-<div class="card">
-    <div class="card-body">
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>NOTIFICACIONES</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/notificaciones.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="title">
+    <h1>NOTIFICACIONES</h1>
+  </div>
+
+  <div class="container">
+    <div class="table-container">
         <table class="table">
-            <thead class="thead-light">
+            <thead>
                 <tr>
-                    <th scope="col">Notificacion</th>
-                    <th scope="col">Fecha</th>
+                    <th>NOTIFICACIÓN</th>
+                    <th>FECHA</th>
                 </tr>
             </thead>
             <tbody>
-              {% for fila in notificacion %}
-            <tr>
-                {% if fila.id_proyecto == None %}
-                <th>{{fila.usuario_modificacion.nombre}} {{fila.usuario_modificacion.apellido}} - {{fila.accion}} ({{fila.numero_modificado}}) - {{fila.id_modelo}}: {{fila.nombre}}</a></th>
-          {% else %}
-          <th>{{fila.usuario_modificacion.nombre}} {{fila.usuario_modificacion.apellido}} - {{fila.accion}} ({{fila.numero_modificado}}) en el proyecto {{fila.id_proyecto}}</a></th>
-          {% endif %}      
-          <th> {{fila.fecha}}</th>
-              {% endfor %}  
-    </tr>
+                {% for fila in notificacion %}
+                <tr>
+                    {% if fila.id_proyecto == None %}
+                    <td data-label="NOTIFICACIÓN">
+                        {{fila.usuario_modificacion.nombre}} {{fila.usuario_modificacion.apellido}} - {{fila.accion}} ({{fila.numero_modificado}}) - {{fila.id_modelo}}: {{fila.nombre}}
+                    </td>
+                    {% else %}
+                    <td data-label="NOTIFICACIÓN">
+                        {{fila.usuario_modificacion.nombre}} {{fila.usuario_modificacion.apellido}} - {{fila.accion}} ({{fila.numero_modificado}}) en el proyecto {{fila.id_proyecto}}
+                    </td>
+                    {% endif %}
+                    <td data-label="FECHA">{{fila.fecha}}</td>
+                    {% endfor %} 
+              
+                </tr>
             </tbody>
-    </table>
+        </table>
+        </div>
+    </div>
+
+
 {% endblock %}

@@ -1,138 +1,172 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
-{% block content %}
-    {% load static %}
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>{{Usuario.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/usuario.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
 
-    <div class="card text-center">
-        <div class="card-header">
-            <h1>{{Usuario.nombre}} {{Usuario.apellido}} {{Usuario.segundo_apellido}}</h1>
-        </div>
-        <a href="{% url 'editar_usuario' Usuario.correo %}" class="btn btn-primary">Editar información</a>
-        <a href="{% url 'permisos_notificacion'  %}" class="btn btn-primary">Editar permisos notificación</a>
-        <div class="card-body">
-          <h5 class="card-title">Información general</h5>
-          <p class="card-text">
-            Cargo: {{Usuario.cargo}}
-              <br>
-              Correo: {{Usuario.correo}}
-              <br>
-              Celular: {{Usuario.celular}}
-              <br>
-              Telefono fijo: {{Usuario.telefono}}
-          </p>
-        </div>
-    </div>
-        <div class="card">
-            <div class="card-body">
-                <table class="table">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col">Fecha creación</th>
-                            <th scope="col">Valor unitario</th>
-                            <th scope="col">Moneda</th>
-                            <th scope="col">Proveedor</th>
-                            <th scope="col">Comentarios</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                      {% for fila in lista_precios %}
-                    <tr>
-                  <th>{{fila.fecha}}</a></th>
-                  <th> {{fila.valor}}</th>
-                  <th>{{fila.tipo_cambio}}</th>
-                  <th>{{fila.nombre_proveedor}}</th>
-                  <th>{{fila.comentarios}}</th>
-
-                      {% endfor %}  
-            </tr>
-                    </tbody>
-            </table>
-      
-          </div>
-        </div>
-        <div class="card-body">
-            <table class="table">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Cantidad</th>
-                        <th scope="col">Status</th>
-                        <th scope="col">Fecha uso</th>
-                        <th scope="col">Usuario modificación</th>
-                    </tr>
-                </thead>
-                <tbody>
-                  {% for fila in Productos %}
-                <tr>
-                    <th>{{fila.proyecto.nombre}}</a></th>
-                    <th>{{fila.cantidades}}</th>
-                    <th>{{fila.status}}</th>
-                    <th>{{fila.fecha_uso}}</th>
-                    <th>{{fila.usuario_modificacion}}</th>
-                    
-                  {% endfor %}  
-        </tr>
-                </tbody>
-        </table>
-        
-    
-      </div>
-    </div>
-    <div class="card-body">
-        <table class="table">
-            <thead class="thead-light">
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Fecha creación</th>
-                    <th scope="col">Fecha inicio</th>
-                    <th scope="col">Fecha final</th>
-                    <th scope="col">Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-              {% for fila in Proyectos %}
-            <tr>
-                <th>{{fila.nombre}}</a></th>
-                <th>{{fila.fecha_creacion}}</th>
-                <th>{{fila.fecha_inicio}}</th>
-                <th>{{fila.fecha_final}}</th>
-                <th>{{fila.estado}}</th>
-                
-              {% endfor %}  
-    </tr>
-            </tbody>
-    </table>
-        
-
+<div class="title">
+  <h1>PERFIL - {{Usuario.nombre}} {{Usuario.apellido}} {{Usuario.segundo_apellido}}</h1>
+</div>
+<div class="container">
+<div class="table-container">
+  <div class="boton_container">
+    <a href="{% url 'editar_usuario' Usuario.correo %}">
+      <button class="button_editar">Editar información</button>
+    </a>
+    <a href="{% url 'permisos_notificacion'  %}">
+      <button class="button_editar">Editar notificaciones</button>
+  </a>
   </div>
-</div>
-<div class="card-body">
-    <table class="table">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Nombre referencial</th>
-                <th scope="col">Proveedor</th>
-                <th scope="col">Fecha salida</th>
-                <th scope="col">Fecha respuesta</th>
-                <th scope="col">Fecha actualizacion precio</th>
-            </tr>
-        </thead>
-        <tbody>
-          {% for fila in cotizaciones %}
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
         <tr>
-            <th>{{fila.nombre}}</th>
-            <th>{{fila.proveedor_asociado.nombre}}</th>
-            <th>{{fila.fecha_salida}}</th>
-            <th>{{fila.fecha_respuesta}}</th>
-            <th>{{fila.fecha_actualizacion_precio}}</th>
-          {% endfor %}  
-</tr>
-        </tbody>
+            <th>CARGO</th>
+            <th>CORREO</th>
+            <th>CELULAR</th>
+            <th>TELÉFONO FIJO</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="CARGO">{{Usuario.cargo}}</td>
+            <td data-label="CORREO"> {{Usuario.correo}}</td>
+            <td data-label="CELULAR"> {{Usuario.celular}}</td>
+            <td data-label="SUB-CLASE"> {{Usuario.telefono}}</td>
+        </tr>
+    </tbody>
 </table>
-    
+</div>
+<br>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>HISTORIAL PRECIOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>FECHA CREACIÓN</th>
+            <th>VALOR UNITARIO</th>
+            <th>MONEDA</th>
+            <th>PROVEEDOR</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in lista_precios %}
+        <tr>
+            <td data-label="FECHA CREACIÓN">{{fila.fecha}}</td>
+            <td data-label="VALOR UNITARIO"> {{fila.valor}}</td>
+            <td data-label="MONEDA">{{fila.tipo_cambio}}</td>
+            <td data-label="PROVEEDOR"> {{fila.nombre_proveedor}}</td>
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>HISTORIAL PRODUCTOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CANTIDAD</th>
+            <th>STATUS</th>
+            <th>FECHA USO</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in Productos %}
+        <tr>
+            <td data-label="NOMBRE">{{fila.proyecto.nombre}}</td>
+            <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+            <td data-label="STATUS">{{fila.status}}</td>
+            <td data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>PROYECTOS ASOCIADOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>FECHA CREACION</th>
+            <th>FECHA INICIO</th>
+            <th>FECHA FINAL</th>
+            <th>ESTADO</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in Proyectos %}
+        <tr>
+            <td data-label="NOMBRE">{{fila.nombre}}</td>
+            <td data-label="FECHA CREACION"> {{fila.fecha_creacion}}</td>
+            <td data-label="FECHA INICIO">{{fila.fecha_inicio}}</td>
+            <td data-label="FECHA FINAL"> {{fila.fecha_final}}</td>
+            <td data-label="ESTADO"> {{fila.estado}}</td>
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>HISTORIAL COTIZACIONES</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>PROVEEDOR</th>
+            <th>FECHA SALIDA</th>
+            <th>FECHA RESPUESTA</th>
+            <th>FECHA ACTUALIZACIÓN PRECIO</th>
 
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in cotizaciones %}
+        <tr>
+            <td data-label="NOMBRE">{{fila.nombre}}</td>
+            <td data-label="PROVEEDOR"> {{fila.proveedor_asociado.nombre}}</td>
+            <td data-label="FECHA SALIDA"> {{fila.fecha_salida}}</td>
+            <td data-label="FECHA RESPUESTA">{{fila.fecha_respuesta}}</td>
+            <td data-label="FECHA ACTUALIZACIÓN PRECIO"> {{fila.fecha_actualizacion_precio}}</td>
+         
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
+</div>    
 </div>
-</div>
+  
+
+
         
 {% endblock %}

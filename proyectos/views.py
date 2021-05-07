@@ -571,7 +571,6 @@ def guardar_datos_filtro(request):
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
     producto = myFilter.qs
-    print(productos_proyecto)
     return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
 #Recibir vista planificador I
