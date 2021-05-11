@@ -162,7 +162,125 @@ def permisos_notificacion(request):
                 lista_con.append(i.nombre)
             else:
                 lista_sin.append(i.nombre)
-        return render(request, 'planificador/permisos_notificacion.html', {'con':lista_con, 'sin':lista_sin})
+        lista_ordenada = [["PRODUCTO"], ["PROYECTO"], ["COTIZACIÓN"], ["PROVEEDOR"]]
+        for i in lista_con:
+            if i[-4:] == "ucto":
+                aux = []
+                aux.append("Si")
+                aux.append(i)
+                if i[:3] == "agr":
+                    aux.append("Agregar")
+                elif i[:3] == "edi":
+                    aux.append("Editar")
+                elif i[:3] == "eli":
+                    aux.append("Eliminar")
+                lista_ordenada[0].append(aux)
+            elif i[-4:] == "ecto":
+                aux = []
+                aux.append("Si")
+                aux.append(i)
+                if i[:3] == "cre":
+                    aux.append("Crear proyecto")
+                elif i[:3] == "agr":
+                    aux.append("Agregar producto en proyecto")
+                elif i[:3] == "edi":
+                    aux.append("Editar producto en proyecto")
+                elif i[:3] == "eli":
+                    aux.append("Eliminar producto en proyecto")
+                lista_ordenada[1].append(aux)
+            elif i[-4:] ==  "ción" or i[-4:] ==  "cion" or i[-4:] == "rreo" or i[-4:] == "ecio":
+                aux = []
+                aux.append("Si")
+                aux.append(i)
+                if i[:3] == "cre":
+                    aux.append("Crear cotización")
+                elif i[:3] == "env":
+                    aux.append("Enviar correo de cotización")
+                elif i[:8] == "editar_f":
+                    aux.append("Editar fecha respuesta de cotización")
+                elif i[:8] == "editar_p":
+                    aux.append("Agregar precio de productos en cotización")
+                elif i[:3] == "eli":
+                    aux.append("Eliminar cotización de proyecto")
+                lista_ordenada[2].append(aux)
+            elif i[-4:] == "edor" or i[-4:] == "acto":
+                aux = []
+                aux.append("Si")
+                aux.append(i)
+                if i[:3] == "agr":
+                    aux.append("Agregar")
+                elif i[:3] == "edi":
+                    aux.append("Editar")
+                elif i[:10] == "eliminar_c":
+                    aux.append("Eliminar contacto")
+                elif i[:3] == "eliminar_p":
+                    aux.append("Eliminar proveedor")
+                lista_ordenada[3].append(aux)
+        for i in lista_sin:
+            if i[-4:] == "ucto":
+                aux = []
+                aux.append("No")
+                aux.append(i)
+                if i[:3] == "agr":
+                    aux.append("Agregar")
+                elif i[:3] == "edi":
+                    aux.append("Editar")
+                elif i[:3] == "eli":
+                    aux.append("Eliminar")
+                lista_ordenada[0].append(aux)
+            elif i[-4:] == "ecto":
+                aux = []
+                aux.append("No")
+                aux.append(i)
+                if i[:3] == "cre":
+                    aux.append("Crear proyecto")
+                elif i[:3] == "agr":
+                    aux.append("Agregar producto en proyecto")
+                elif i[:3] == "edi":
+                    aux.append("Editar producto en proyecto")
+                elif i[:3] == "eli":
+                    aux.append("Eliminar producto en proyecto")
+                lista_ordenada[1].append(aux)
+            elif i[-4:] ==  "ción" or i[-4:] ==  "cion" or i[-4:] == "rreo" or i[-4:] == "ecio":
+                aux = []
+                aux.append("No")
+                aux.append(i)
+                if i[:3] == "cre":
+                    aux.append("Crear cotización")
+                elif i[:3] == "env":
+                    aux.append("Enviar correo de cotización")
+                elif i[:8] == "editar_f":
+                    aux.append("Editar fecha respuesta de cotización")
+                elif i[:8] == "editar_p":
+                    aux.append("Agregar precio de productos en cotización")
+                elif i[:3] == "eli":
+                    aux.append("Eliminar cotización de proyecto")
+                lista_ordenada[2].append(aux)
+            elif i[-4:] == "edor" or i[-4:] == "acto":
+                aux = []
+                aux.append("No")
+                aux.append(i)
+                if i[:3] == "agr":
+                    aux.append("Agregar")
+                elif i[:3] == "edi":
+                    aux.append("Editar")
+                elif i[:10] == "eliminar_c":
+                    aux.append("Eliminar contacto")
+                elif i[:10] == "eliminar_p":
+                    aux.append("Eliminar proveedor")
+                lista_ordenada[3].append(aux)
+        lista_final = []
+        for i in lista_ordenada:
+            lista = []
+            for x in i:
+                if type(x) == list:
+                    lista.append(x)
+            aux = []
+            aux.append(i[0])
+            aux.append(lista)
+            lista_final.append(aux)
+            #print(lista_ordenada)
+        return render(request, 'planificador/permisos_notificacion.html', {'con':lista_con, 'sin':lista_sin, "lista_ordenada":lista_final})
     
 @login_required(login_url='/login')
 def usuario(request):

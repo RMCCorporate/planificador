@@ -1,20 +1,69 @@
-{% extends "base.html" %}
-{% block title %} NUEVO PROVEEDOR {% endblock%}
-{% block content %}
-<h1>Editar notificaciones</h1>
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>NOTIFICACIONES</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/editar_permisos.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
 
-<form action="" method="POST"> {% csrf_token %}
-    
-     
-            {% for i in con %}
-                <input type="checkbox" name="permiso" value="{{i}}" checked>{{i}}
-                <br>
-            {% endfor %}
-            {% for n in sin %}
-                <input type="checkbox" name="permiso" value="{{n}}">{{n}}
-                <br>
-            {% endfor %}
-
-    <button class="btn btn-secondary btn-lg btn-block" type="submit">Editar</button>
+<div class="title">
+    <h1>CONFIGURACIONES</h1>
+  </div>
+  <div class="subtitle">
+    <h4>Configuración | Editar notificaciones</h4>
+  </div>
+<div class="container">
+    <div class="table-container">
+      <div class="title_container">
+        <h1>NOTIFICACIONES</h1>
+      </div>
+      <form action="" method="POST"> {% csrf_token %}
+        {% for i in lista_ordenada %}
+        <div class="informacion_container">
+            <h4>SOBRE {{i.0}}</h4>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>NOTIFICACIÓN</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for x in i.1 %}
+                {% if x.0 == "Si" %}
+                <tr>
+                    <td data-label="NOTIFICACIÓN">{{x.2}}</td>
+                    <td data-label="NOMBRE"><input type="checkbox" name="permiso" value="{{x.1}}" checked></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td data-label="NOTIFICACIÓN">{{x.2}}</td>
+                    <td data-label="NOMBRE"><input type="checkbox" name="permiso" value="{{x.1}}" ></td>
+                </tr>
+                    
+                {% endif %}
+                {% endfor %}
+           
+            </tbody>
+           
+        </table>
+        <br>
+        <br>
+        {% endfor %}
+        <button class="button_editar" type="submit">Editar</button>
+        </div>
+       
     </form>
+
 {% endblock%}
