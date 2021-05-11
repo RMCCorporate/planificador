@@ -36,17 +36,28 @@ body{
   font-size: 15px;
 }
 
+.container{
+    position: relative;
+    top:0%;
+    left:0%;
+    padding-right: 0%;
+}
+
 .container .table-container{
     position: relative;
     top:0%;
     left:0%;
     padding-right: 0%;
-
 }
 
 .container .table-container .title_container{
     padding: 10px;
 }
+
+.container .data-container{
+    display: flex;
+    justify-content: space-around;
+ }
 
 .container .table-container .informacion_container{
     position: relative;
@@ -59,12 +70,8 @@ body{
     font-family: 'Monserrat', sans-serif;
     font-size: 15px;
 }
-
-.container .table-container .contactos_container{
-    position: relative;
-    width: 50%;
-    top: 0%;
-    border-bottom: 2px solid;
+.contactos_container{
+    flex:3 1 800px;
 }
 
 .container .table-container .contactos_container h4{
@@ -72,18 +79,14 @@ body{
     font-size: 15px;
 }
 
-.container .table-container .calificacion_container{
-    position: relative;
-    width: 20%;
-    top: 0%;
-    border-bottom: 2px solid;
+.calificacion_container{
+    flex:1 1 200px;
 }
 
 .container .table-container .calificacion_container h4{
     font-family: 'Monserrat', sans-serif;
     font-size: 15px;
 }
-
 
 .container .table-container .button_editar{
     border: solid;
@@ -145,8 +148,8 @@ body{
 }
 
 .container .table-container .table2{
-    width: 50%;
-    margin: 40px 0px;
+    width: 100%;
+    margin: 40px 0;
     border-collapse: collapse;
     position: relative;
     left: 0%;
