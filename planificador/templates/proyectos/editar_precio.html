@@ -59,27 +59,20 @@
                   <input type="text" value="{{fila.1.valor_cambio}}" name="valor_cambio">
                 </td>
                 <td data-label="COTIZACIÓN">
-                  <div class="menu">
-                    <ul>
-                      <li>
-                          <a href="#">
-                              <p></p> <i class="fas fa-angle-down"></i>
-                          </a>
-                          <div class="dropdown">
-                              <ul>
-                                <li><input type="radio" value="no_hay" name="{{fila.0.proyecto.nombre}}" checked>Seleccionar cotizador</li>
-                                {% for i in fila.2 %}
+                  <div class="dropdown">
+                    <button class="dropbtn">COTIZACIÓN</button>
+                    <div class="dropdown-content">
+                      <li><input type="radio" value="no_hay" name="{{fila.0.proyecto.nombre}}" checked>Seleccionar cotizador</li>
+                      {% for i in fila.2 %}
                                 {% if i != "no_hay" %}
                                   <li><input type="radio" value="{{i.nombre}}" name="{{fila.0.proyecto.nombre}}">{{i.nombre}}</li>
                                 {% else %}
                                   <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.nombre}}">No hay</li>
                                 {% endif %}
                                {% endfor %}
-                              </ul>
-                          </div>
-                          </li>
-                   </ul>
+                    </div>
                   </div>
+                 
                 </td>
             </tr>
             {% endfor %}

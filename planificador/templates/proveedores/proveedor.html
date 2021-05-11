@@ -67,23 +67,16 @@
                   INGLÉS
                   {% endif %}
                 </td>
-                <td data-label="SUB-CLASE(S)"> 
-                  <div class="menu">
-                    <ul>
-                        <li>
-                                <a href="#">
-                                    <p></p> <i class="fas fa-angle-down"></i>
-                                </a>
-                            <div class="dropdown">
-                                <ul>
-                                  {% for fila in subclase %}
+                <td data-label="SUB-CLASE(S)">
+                  <div class="dropdown">
+                    <button class="dropbtn">SUB-CLASE(S)</button>
+                    <div class="dropdown-content">
+                      {% for fila in subclase %}
                                     <li>{{fila.nombre}}</li>
                                   {% endfor %}
-                                </ul>
-                            </div>
-                            </li>
-                </ul>
-                </div>
+                    </div>
+                  </div>
+             
                 </td>
                 <td data-label="CALIFICACIONES">
                     {% for i in promedio %}

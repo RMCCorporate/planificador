@@ -40,22 +40,15 @@
                 {{fila.0.proyecto.nombre}}
             </td>
             <td data-label="STATUS">
-                <div class="menu">
-                    <ul>
-                        <li>
-                                <a href="#">
-                                    <p>{{fila.0.status}}</p> <i class="fas fa-angle-down"></i>
-                                </a>
-                            <div class="dropdown">
-                                <ul>
-                                    <li><input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}"></li>
-                                    <li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}">Bodega</li>
-                                    <li<input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}">Futuro</li>
-                                </ul>
-                            </div>
-                            </li>
-                </ul>
-           
+              <div class="dropdown">
+                <button class="dropbtn">{{fila.0.status}}</button>
+                <div class="dropdown-content">
+                  <input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}">
+                  <a><li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}"> Bodega</a></li>
+                  <a><li><input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}"> Futuro</a></li>
+                </div>
+              </div>
+              
             
             </td>
              <td data-label="NOMBRE">
