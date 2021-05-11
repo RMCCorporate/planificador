@@ -70,7 +70,7 @@
 <div class="table-container">
   <div class="boton_container">
     <a href="{% url 'agregar_producto' Proyecto.id %}">
-      <button class="button_editar">Agregar producto</button>
+      <button class="button_editar">Agregar producto(s)</button>
     </a>
     <a href="{% url 'editar_producto_proyecto' Proyecto.id %}">
       <button class="button_eliminar">Editar/Eliminar productos</button>
@@ -94,10 +94,22 @@
       {% for fila in Productos %}
         <tr>
             <td data-label="NOMBRE">{{fila.proyecto.nombre}}</td>
-            <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+            {% if fila.cantidades %}
+              <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+            {% else %}
+            <td data-label="CANTIDAD"> 0</td>
+            {% endif %}
+            {% if fila.status %}
             <td data-label="ESTADO">{{fila.status}}</td>
+            {% else %}
+            <td data-label="ESTADO">Futuro</td>
+            {% endif %}
             <td data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            {% if fila.fecha_uso %}
             <td data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+            {% else %}
+            <td data-label="FECHA USO"> No se ha ingresado.</td>
+            {% endif %}
             <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
             {% endfor %}  
         </tr>
@@ -149,11 +161,31 @@
                 </div>
               </div>
             </td>
+            {% if fila.0.fecha_salida %}
             <td data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+            {% else %}
+            <td data-label="FECHA SALIDA"> No se ha ingresado.</td>
+            {% endif %}
+            {% if fila.0.fecha_respuesta %}
             <td data-label="FECHA RESPUESTA"> {{fila.0.fecha_respuesta}}</td>
+            {% else %}
+            <td data-label="FECHA RESPUESTA"> No se ha ingresado.</td>
+            {% endif %}
+            {% if fila.0.fecha_actualizacion_precio %}
             <td data-label="FECHA ACTUALIZACIÓN PRECIO">{{fila.0.fecha_actualizacion_precio}}</td>
+            {% else %}
+            <td data-label="FECHA ACTUALIZACIÓN PRECIO"> No se ha ingresado.</td>
+            {% endif %}
+            {% if fila.2 %}
             <td data-label="DEMORA RESPUESTA"> {{fila.2}}</td>
+            {% else %}
+            <td data-label="DEMORA RESPUESTA"> No se ha ingresado fecha respuesta.</td>
+            {% endif %}
+            {% if fila.3 %}
             <td data-label="DEMORA INGRESO PRECIO">{{fila.3}}</td>
+            {% else %}
+            <td data-label="DEMORA INGRESO PRECIO">No se ha ingresado precio.</td>
+            {% endif %}
             <td data-label="USUARIO MODIFICACIÓN">{{fila.0.usuario_modificacion}}</td>
             {% endfor %}  
         </tr>
@@ -192,18 +224,33 @@
               <div class="dropdown">
                 <button class="dropbtn">PRECIO</button>
                 <div class="dropdown-content">
-                  <li><a> Valor: {{fila.3.0.valor}}</a></li>
-                  <li><a> Moneda: {{fila.3.0.tipo_cambio}}</a></li>
-                  <li><a> Valor importación: {{fila.3.0.valor_importación}}</a></li>
-                  <li><a> Tipo cambio: {{fila.3.0.valor_cambio}}</a></li>
-                  <li><a> Fecha: {{fila.3.0.fecha}}</a></li>
-                  <li><a> Proveedor: {{fila.3.0.nombre_proveedor}}</a></li>
+                  {% if fila.3.0.valor %}
+                    <li><a> Valor: {{fila.3.0.valor}}</a></li>
+                    <li><a> Moneda: {{fila.3.0.tipo_cambio}}</a></li>
+                    <li><a> Valor importación: {{fila.3.0.valor_importación}}</a></li>
+                    <li><a> Tipo cambio: {{fila.3.0.valor_cambio}}</a></li>
+                    <li><a> Fecha: {{fila.3.0.fecha}}</a></li>
+                    <li><a> Proveedor: {{fila.3.0.nombre_proveedor}}</a></li>
+                  {% else %}
+                    <li><a> Valor: {{fila.3.valor}}</a></li>
+                    <li><a> Moneda: {{fila.3.tipo_cambio}}</a></li>
+                    <li><a> Valor importación: {{fila.3.valor_importación}}</a></li>
+                    <li><a> Tipo cambio: {{fila.3.valor_cambio}}</a></li>
+                    <li><a> Fecha: {{fila.3.fecha}}</a></li>
+                    <li><a> Proveedor: {{fila.3.nombre_proveedor}}</a></li>
+                    {% endif %}
                 </div>
               </div>
             </td>
             <td data-label="PROVEEDOR">{{fila.4.proveedor_asociado.nombre}}</td>
             <td data-label="COTIZACIÓN">{{fila.4.nombre}}</td>
-            <td data-label="USUARIO MODIFICACIÓN">{{fila.3.0.usuario_modificacion}}</td>
+            {% if fila.3.0.usuario_modificacion %}
+              <td data-label="USUARIO MODIFICACIÓN">{{fila.3.0.usuario_modificacion}}</td>
+            {% elif fila.3.usuario_modificacion %}
+            <td data-label="USUARIO MODIFICACIÓN">{{fila.3.usuario_modificacion}}</td>
+            {% else %}
+            <td data-label="USUARIO MODIFICACIÓN">Precio ingresado por planilla.</td>
+            {% endif %}
             {% endfor %} 
             {% endfor %}  
         </tr>

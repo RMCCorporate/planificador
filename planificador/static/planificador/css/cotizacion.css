@@ -161,48 +161,49 @@ body{
     border-bottom: 0.8184pt solid #b3b3b3;;
 }
 
-.table-container .table tbody tr td .menu ul li a{
-    display: flex;
-    align-items: center;
-    height: 40px;
-    opacity: 1;
+.dropbtn {
+    background-color: #4676b8;
+    color: white;
+    padding: 8px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
   }
   
-.table-container .table tbody tr td .menu a{
-    text-align: right;
-    opacity: 1;
-}
-
-.table-container .table tbody tr td .menu a span{
-    font-size: 10px;
-    opacity: 1;
-}
-
-.table-container .table tbody tr td .menu ul li{
+  /* The container <div> - needed to position the dropdown content */
+  .dropdown {
     position: relative;
-    padding: 0px 0px;
-    width: 120%;
-    opacity: 1.0;
-}
-
-.table-container .table tbody tr td .menu ul li .dropdown{
-    position: absolute;
-    opacity: 1;
-    top: 25px;
-    right: 0;
-    border: 1px solid black;
-    background: white;
-    padding: 10px ;
-    border-radius: 5px;
+    display: inline-block;
+  }
+  
+  /* Dropdown Content (Hidden by Default) */
+  .dropdown-content {
     display: none;
-}
-
-.table-container .table tbody tr td .menu ul li .dropdown .fas{
-    margin-right: 0px;
-    opacity: 1.0;
-}
-
-.table-container .table tbody tr td .menu ul li.active .dropdown{
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    width: 300px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+  }
+  
+  /* Links inside the dropdown */
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
     display: block;
-    opacity: 1.0;
-}
+  }
+  
+  /* Change color of dropdown links on hover */
+  .dropdown-content a:hover {background-color: #f1f1f1}
+  
+  /* Show the dropdown menu on hover */
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  /* Change the background color of the dropdown button when the dropdown content is shown */
+  .dropdown:hover .dropbtn {
+    background-color: #466ea5;
+  }

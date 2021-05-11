@@ -248,6 +248,10 @@ def proyecto(request, id):
     else:
         proyecto.estado = 'Incompleto'
         proyecto.save()
+    for i in aux_productos_final:
+        for n in i:
+            print(n[3])
+        #print(i)
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -284,7 +288,10 @@ def editar_precios(request, id):
                     if valor_cambio[n] == "None" and valor_cambio[n] != "":
                         valor_cambio = 1
                     fecha_actual = datetime.now()
-                    precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
+                    if valor_cambio == 1:
+                        precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio,  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
+                    else:
+                        precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
                     precio.save()
                     cotizacion[n].fecha_actualizacion_precio = datetime.now()
                     cotizacion[n].save()

@@ -44,8 +44,13 @@
                 <button class="dropbtn">{{fila.0.status}}</button>
                 <div class="dropdown-content">
                   <input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}">
-                  <a><li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}"> Bodega</a></li>
+                  {% if fila.0.status == "Bodega" %}
+                  <a><li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}" checked> Bodega</a></li>
                   <a><li><input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}"> Futuro</a></li>
+                  {% else %}
+                  <a><li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}"> Bodega</a></li>
+                  <a><li><input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}" checked> Futuro</a></li>
+                  {% endif %}
                 </div>
               </div>
               

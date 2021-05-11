@@ -57,22 +57,15 @@
               <td data-label="NOMBRE PROYECTO"> {{Cotizacion.proyecto_asociado.nombre}}</td>
               <td data-label="PROVEEDOR"> {{Cotizacion.proveedor_asociado.nombre}}</td>
               <td data-label="CONTACTOS">
-                <div class="menu">
-                  <ul>
-                    <li>
-                        <a href="#">
-                            <p></p> <i class="fas fa-angle-down"></i>
-                        </a>
-                        <div class="dropdown">
-                            <ul>
-                              {% for i in contactos %}
-                                <li>{{i.nombre}} -  {{i.correo}} </li>
-                              {% endfor %}
-                            </ul>
-                        </div>
-                        </li>
-                 </ul>
+                <div class="dropdown">
+                  <button class="dropbtn">CONTACTOS</button>
+                  <div class="dropdown-content">
+                    {% for i in contactos %}
+                      <li> {{i.nombre}} -  {{i.correo}} </li>
+                    {% endfor %}
+                  </div>
                 </div>
+               
                 
                 </td>
           </tr>
@@ -115,7 +108,7 @@
         <tr>
             <th>NOMBRE</th>
             <th>CANTIDAD</th>
-            <th>STATUS</th>
+            <th>ESTADO</th>
             <th>FECHA USO</th>
             <th>USUARIO MODIFICACIÓN</th>
         </tr>

@@ -28,9 +28,9 @@
         <div class="input-box">
           <span class="details">FECHA RESPUESTA</label>
             {% if fecha_respuesta %}
-            <input type="text" name="nombre" placeholder="Fecha en que respondió el proveedor. Formato: YYYY-MM-DD" value="{{Cotizacion.fecha_respuesta}}" required>
+            <input type="text" name="fecha_respuesta" placeholder="Fecha en que respondió el proveedor. Formato: YYYY-MM-DD" value="{{Cotizacion.fecha_respuesta}}" required>
             {% else %}
-            <input type="text" name="nombre" placeholder="Fecha respuesta correo. Formato: YYYY-MM-DD" required>
+            <input type="text" name="fecha_respuesta" placeholder="Fecha respuesta correo. Formato: YYYY-MM-DD" required>
             {% endif %}
         </div>
       </div>
