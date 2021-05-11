@@ -1,55 +1,72 @@
-{% extends "base.html" %}
-{% block title %}
-{% endblock%}
-{% block content %}
-{% load static %}
-<h1>NUEVA COTIZACIÓN</h1>
-<br>
-<form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
-    Nombre referencial cotización: <input type="text" name="nombre">
-    {% for i in Proveedores %}
-    <div class="card text-center">
-        <div class="card-header">
-            <input type="radio" value="{{i.0.nombre}}" name="proveedor">{{i.0.nombre}}
+{% extends "base/base2.html" %}
+{% load widget_tweaks %}
+{% block content %} 
+<head>
+	<title>{{Producto.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/nueva_cotizacion.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="title">
+  <h1>NUEVA COTIZACIÓN</h1>
+</div>
+<div class="subtitle">
+  <h4>Cotizaciones | Nueva cotización</h4>
+</div>
+<div class="container">
+  <form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
+    <div class="user-details">
+      <div class="input-box">
+        <br>
+        <span class="details">NOMBRE REFERENCIAL</label>
+        <input type="text" name="nombre" placeholder="Ingresa nombre referencial de cotización" required>
+      </div>
+      <div class="table-container">
+        {% for i in Proveedores %}
+        <br>
+        <div class="title_container">
+          <div class="informacion_container">
+            <h4><input type="radio" value="{{i.0.nombre}}" name="proveedor"> {{i.0.nombre}}</h4>
+          </div>
         </div>
-        <div class="card-body">
-          <h5 class="card-title">Escoger contacto</h5>
-          <p class="card-text">
+        <h5>Escoger contacto</h5>
             {% for contacto in i.0.contactos_asociados.all %}
                  <input type="checkbox" value="{{contacto.nombre}}" name="contacto"> {{contacto.nombre}}
-                 <br>
             {% endfor %}
-          </p>
-        </div>
-    </div>
-    <div class="card text-center">
-      <div class="card-body">
-        <h5 class="card-title">Productos asociados</h5>
-        
-        <table class="table">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">Nombre</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Unidad</th>
-                <th scope="col">Fecha uso</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for producto in i.1 %}
-        <tr>
-            <th><input type="checkbox" name="productos" value="{{producto.0}}">{{producto.0}}</a></th>
-            <th>{{producto.1}}</th>
-            <th>{{producto.2}}</th>
-            <th>{{producto.3}}</th>
-        </tr>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>CANTIDAD</th>
+                    <th>UNIDAD</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for producto in i.1 %}
+                <tr>
+                    <td data-label="NOMBRE"><input type="checkbox" name="productos" value="{{producto.0}}"> {{producto.0}}</td>
+                    {% if producto.1 %}
+                    <td data-label="CANTIDAD"> {{producto.1}}</td>
+                    {% else %}
+                    <td data-label="CANTIDAD"> 0</td>
+                    {% endif %}
+                    <td data-label="UNIDAD"> {{producto.2}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
         {% endfor %}
-        </tbody>
-</table>
+</div>
+<br>
 
-      </div>
-  </div>
-  {% endfor %}
   <button class="btn btn-primary" type="submit">Guardar</button>  
 
 </div>    

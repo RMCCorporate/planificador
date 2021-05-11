@@ -26,6 +26,9 @@ def notificaciones(request):
 @login_required(login_url='/login')
 def index(request):
     #group = str(request.user.groups.all()[0])
+    return render(request, 'planificador/index.html')
+
+def agregar_subclases(request):
     if request.method == "POST":
         datos_fallados = []
         booleano_fallados = False
@@ -68,10 +71,10 @@ def index(request):
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'planificador/resultado_planilla.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
-                
-    return render(request, 'planificador/index.html')
+    else:
+        return render(request, 'planificador/nueva_subclase.html')  
 
-#@allowed_users(allowed_roles=['Admin'])
+@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_usuario(request):
     if request.method == "POST":
@@ -103,7 +106,7 @@ def crear_usuario(request):
     else:
         return render(request, 'planificador/crear_usuario.html')
 
-#@allowed_users(allowed_roles=['Admin'])
+@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_grupo(request):
     if request.method == "POST":
