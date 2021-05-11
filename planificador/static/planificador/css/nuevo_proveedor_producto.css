@@ -43,6 +43,8 @@ form .user-details .input-box{
     width: calc(100% / 2 - 20px);
 }
 
+
+
 form .user-details .custom-select {
     position: relative;
     font-family: 'Roboto Condensed', sans-serif;

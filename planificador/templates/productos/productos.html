@@ -27,8 +27,12 @@
 
 
 <div class="table-container">
+       <br>
         <a href="{% url 'nuevo_producto' %}">
             <button class="button_añadir">Añadir producto</button>
+        </a>
+        <a href="{% url 'nuevo_producto_planilla' %}">
+            <button class="button_añadir">Añadir productos planilla</button>
         </a>
         <a href="{% url 'nuevo_proveedor_producto' %}">
             <button class="button_añadir">Añadir proveedor-producto</button>
@@ -69,20 +73,6 @@
 </div>
 
         
-        
-  
-        <form action="productos" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <input type="file"
-                   title="Upload excel file"
-                   name="excel_file"
-                   >
-            <p>
-            <input type="submit"
-                   value="Upload"
-                   >
-        </form>
-
         <script>$(document).ready(function() {
             $('#example').DataTable( {
                 "pagingType": "full_numbers"

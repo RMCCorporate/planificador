@@ -82,6 +82,22 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
 @login_required(login_url='/login')
 def productos(request):
     productos = Producto.objects.all()
+    lista_productos = []
+    for i in productos:
+        aux = []
+        subclase = i.subclase_set.all()[0]
+        clase = subclase.clase_set.all()[0]
+        aux.append(i)
+        aux.append(subclase)
+        aux.append(clase)
+        lista_productos.append(aux)
+    productos = Filtro_producto.objects.all()
+    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+    producto = myFilter.qs
+    lista_producto = list(producto)
+    return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter, "len":len(lista_productos)})
+
+def nuevo_producto_planilla(request):
     if request.method == "POST":
         datos_fallados = []
         booleano_fallados = False
@@ -163,21 +179,7 @@ def productos(request):
             booleano_fallados = True
         return render(request, 'productos/resultado_planilla_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     else:
-        lista_productos = []
-        for i in productos:
-            aux = []
-            subclase = i.subclase_set.all()[0]
-            clase = subclase.clase_set.all()[0]
-            aux.append(i)
-            aux.append(subclase)
-            aux.append(clase)
-            lista_productos.append(aux)
-        productos = Filtro_producto.objects.all()
-        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-        producto = myFilter.qs
-        lista_producto = list(producto)
-        return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter, "len":len(lista_productos)})
-
+        return render(request, 'productos/nuevo_producto_planilla.html')
 #Agregar producto
 @login_required(login_url='/login')
 def agregar_producto(request):
