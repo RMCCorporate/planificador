@@ -28,6 +28,9 @@
     <a href="{% url 'nuevo' %}">
         <button class="button_añadir">Añadir proveedor</button>
     </a>
+    <a href="{% url 'nuevo_proveedor_planilla' %}">
+        <button class="button_añadir">Añadir proveedor planilla</button>
+    </a>
     <br>
     <br>
 <table class="table" id="example" class="display">
@@ -65,20 +68,4 @@
 </script>
 </div>
 
-
-        <form action="proveedores" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <h3>Agregar proveedores mediante plantilla</h3>
-            <br>
-            <input type="file"
-                   title="Upload excel file"
-                   name="excel_file"
-                   >
-       
-            <input type="submit"
-                   value="Upload"
-                   >
-            <br>
-            <br>
-        </form>
 {% endblock%}

@@ -58,9 +58,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
                 notificacion.nombre,
                 notificacion.fecha
                 )
-        #CAMBIAR A SUPPLY
-        correo_enviador = 'tcorrea@rmc.cl'
-        clave_enviador = 'Tom12345'
+        correo_enviador = 'logistica@rmc.cl'
+        clave_enviador = 'RMC.1234'
         #CAMBIAR A i.correo
         correo_prueba = 'tacorreahucke@gmail.com'
         mensaje = MIMEMultipart()
@@ -79,6 +78,12 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
 #Mostrar proveedores
 @login_required(login_url='/login')
 def proveedores(request):
+    
+    proveedores = Proveedor.objects.all()
+    myFilter = ProveedoresFilter(request.GET, queryset=proveedores)
+    return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores, 'len':len(proveedores), "myFilter":myFilter})
+
+def nuevo_proveedor_planilla(request):
     if request.method == "POST":
         datos_fallados = []
         booleano_fallados = False
@@ -176,10 +181,8 @@ def proveedores(request):
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'proveedores/resultado_planilla_proveedores.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
-    proveedores = Proveedor.objects.all()
-    myFilter = ProveedoresFilter(request.GET, queryset=proveedores)
-    return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores, 'len':len(proveedores), "myFilter":myFilter})
-
+    else:
+        return render(request, 'proveedores/nuevo_proveedor_planilla.html')
 #Agregar proveedor
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')

@@ -61,9 +61,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
                 notificacion.nombre,
                 notificacion.fecha
                 )
-        #CAMBIAR A SUPPLY
-        correo_enviador = 'tcorrea@rmc.cl'
-        clave_enviador = 'Tom12345'
+        correo_enviador = 'logistica@rmc.cl'
+        clave_enviador = 'RMC.1234'
         #CAMBIAR A i.correo
         correo_prueba = 'tacorreahucke@gmail.com'
         mensaje = MIMEMultipart()
@@ -94,7 +93,6 @@ def productos(request):
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
     producto = myFilter.qs
-    lista_producto = list(producto)
     return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter, "len":len(lista_productos)})
 
 def nuevo_producto_planilla(request):
@@ -180,6 +178,7 @@ def nuevo_producto_planilla(request):
         return render(request, 'productos/resultado_planilla_productos.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
     else:
         return render(request, 'productos/nuevo_producto_planilla.html')
+
 #Agregar producto
 @login_required(login_url='/login')
 def agregar_producto(request):

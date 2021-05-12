@@ -167,8 +167,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
                 notificacion.fecha
                 )
         #CAMBIAR A SUPPLY
-        correo_enviador = 'tcorrea@rmc.cl'
-        clave_enviador = 'Tom12345'
+        correo_enviador = 'logistica@rmc.cl'
+        clave_enviador = 'RMC.1234'
         #CAMBIAR A i.correo
         correo_prueba = 'tacorreahucke@gmail.com'
         mensaje = MIMEMultipart()
