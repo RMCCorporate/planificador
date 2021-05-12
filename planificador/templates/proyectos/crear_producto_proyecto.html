@@ -44,14 +44,27 @@
               {{i.1.nombre}}
             </td>
             <td data-label="STATUS">
-              <li><input type="radio" value="Urgente" name="{{i.0.id}}">Urgente</li>
-              <li><input type="radio" value="Futuro" name="{{i.0.id}}" checked>Futuro</li>
+              {% if i.2.status == "Urgente" %}
+              <li><input type="radio" value="Urgente" name="{{i.0.id}}" checked> Urgente</li>
+              <li><input type="radio" value="Futuro" name="{{i.0.id}}"> Futuro</li>
+              {% else %}
+              <li><input type="radio" value="Urgente" name="{{i.0.id}}"> Urgente</li>
+              <li><input type="radio" value="Futuro" name="{{i.0.id}}" checked> Futuro</li>
+              {% endif %}
             </td>
-            <td data-label="FECHA USO"> 
-              <input type="date" name="fecha_uso">
+            <td data-label="FECHA USO">
+              {% if i.2.fecha_uso %}
+                <input type="text" name="fecha_uso" value="{{i.2.fecha_uso}}" disabled>
+              {% else %}
+                <input type="date" name="fecha_uso">
+              {% endif %}
             </td>
             <td data-label="CANTIDADES"> 
+              {% if i.2.cantidades %}
+              <input type="text" name="cantidades" value="{{i.2.cantidades}}" disabled>
+              {% else %}
               <input type="text" name="cantidades">
+              {% endif %}
             </td>
         </tr>
         {% endfor %}

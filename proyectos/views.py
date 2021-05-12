@@ -416,7 +416,12 @@ def agregar_producto(request, id):
                 sub_clase = instancia_producto.subclase_set.all()[0]
                 aux.append(instancia_producto)
                 aux.append(sub_clase)
+                if Producto_proyecto.objects.filter(producto=instancia_proyecto, proyecto=instancia_producto).exists():
+                    aux.append(Producto_proyecto.objects.get(producto=instancia_proyecto, proyecto=instancia_producto))
                 lista_productos.append(aux)
+            for i in lista_productos:
+                print(i[2])
+                print(i[2].fecha_uso)
             proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
             return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
         else:
