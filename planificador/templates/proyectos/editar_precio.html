@@ -25,12 +25,12 @@
         <thead>
             <tr>
                 <th>NOMBRE</th>
-                <th>VALOR UNITARIO</th>
-                <th>FECHA</th>
+                <th>VALOR UNITARIO (*)</th>
+                <th>FECHA (*)</th>
                 <th>VALOR IMPORTACIÓN</th>
                 <th>MONEDA</th>
                 <th>VALOR CAMBIO</th>
-                <th>COTIZACIÓN</th>
+                <th>COTIZACIÓN </th>
             </tr>
         </thead>
         <tbody>
@@ -44,10 +44,10 @@
                   <input type="hidden" value="{{fila.0.proyecto.id}}" name="id">
                   <input type="hidden" name="id_producto" value="{{fila.0.nombre}}">
                   <input type="hidden" value="{{fila.0.proyecto.nombre}}" name="nombre">
-                  <input type="text" value="{{fila.1.valor}}" name="valor">
+                  <input type="text" value="{{fila.1.valor}}" name="valor" required>
                 </td>
                 <td data-label="FECHA"> 
-                  <input type="text" value="{{fila.1.fecha}}" name="fecha">
+                  <input type="text" value="{{fila.1.fecha}}" name="fecha" required>
                 </td>
                 <td data-label="VALOR IMPORTACIÓN"> 
                   <input type="text" value="{{fila.1.valor_importación}}" name="valor_importacion">
