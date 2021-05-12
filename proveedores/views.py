@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor, Usuario, Notificacion, Permisos_notificacion
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
-from planificador.filters import ProveedoresFilter
+from planificador.filters import ProveedoresFilter, Filtro_producto
 from planificador.decorators import allowed_users
 import openpyxl
 import uuid
@@ -38,8 +38,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
         i.save()
         if not notificacion.id_proyecto:
             texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
-                "NOMBRE", 
-                "APELLIDO", 
+                i.nombre, 
+                i.apellido, 
                 notificacion.usuario_modificacion.nombre, 
                 notificacion.usuario_modificacion.apellido,
                 notificacion.accion,
@@ -49,8 +49,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
                 )
         else:
              texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} en el proyecto {} {} con fecha {}".format(
-                "NOMBRE", 
-                "APELLIDO", 
+                i.nombre, 
+                i.apellido, 
                 notificacion.usuario_modificacion.nombre, 
                 notificacion.usuario_modificacion.apellido,
                 notificacion.accion,
@@ -318,8 +318,6 @@ def mostrar_edicion_proveedor(request, rut):
 @login_required(login_url='/login')
 def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
-    filtro = Filtro_producto.objects.get(nombre=proveedor.nombre)
-    filtro.delete()
     for i in proveedor.contactos_asociados.all():
         i.delete()
     crear_notificacion("eliminar_proveedor", request.user.email, "eliminó proveedor", "Proveedor", 1, proveedor.rut, proveedor.nombre)

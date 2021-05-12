@@ -108,7 +108,7 @@
       {% if nombre_proveedor != "" %}
         {% for fila in nombre_proveedor %}
           <tr>
-              <td data-label="PROVEEDOR">{{fila.producto.nombre}}</td>
+              <td data-label="PROVEEDOR">{{fila.producto}}</td>
               <td data-label="NOMBRE"> {{fila.nombre_proveedor}}</td>
               {% endfor %}  
           </tr>

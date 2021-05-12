@@ -146,8 +146,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
         i.save()
         if not notificacion.id_proyecto:
             texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
-                "NOMBRE", 
-                "APELLIDO", 
+                i.nombre, 
+                i.apellido, 
                 notificacion.usuario_modificacion.nombre, 
                 notificacion.usuario_modificacion.apellido,
                 notificacion.accion,
@@ -157,8 +157,8 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
                 )
         else:
              texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} en el proyecto {} {} con fecha {}".format(
-                "NOMBRE", 
-                "APELLIDO", 
+                i.nombre, 
+                i.apellido, 
                 notificacion.usuario_modificacion.nombre, 
                 notificacion.usuario_modificacion.apellido,
                 notificacion.accion,
