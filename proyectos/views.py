@@ -210,6 +210,16 @@ def proyecto(request, id):
             aux2_productos = []
             precio = ""
             producto_proyecto = Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)
+            if producto_proyecto.fecha_uso:
+                if 10 < (producto_proyecto.fecha_uso - date.today()).days:
+                    producto_proyecto.estado_tiempo = "Verde"
+                    producto_proyecto.save()
+                elif 10 >= (producto_proyecto.fecha_uso - date.today()).days > 5:
+                    producto_proyecto.estado_tiempo = "Naranjo"
+                    producto_proyecto.save()
+                elif 5 >= (producto_proyecto.fecha_uso - date.today()).days:
+                    producto_proyecto.estado_tiempo = "Rojo"
+                    producto_proyecto.save()
             producto_asociado = producto_proyecto.proyecto
             subclase = producto_asociado.subclase_set.all()
             precio = list(producto_asociado.lista_precios.all())
@@ -231,16 +241,24 @@ def proyecto(request, id):
             aux3.append(aux2)
         aux_productos_final.append(aux_productos)
         aux.append(aux3)
+        estado = ""
         if i.fecha_respuesta:
             demora_respuesta = i.fecha_respuesta - i.fecha_salida
         else:
             demora_respuesta = date.today() - i.fecha_salida
+            if demora_respuesta.days > 10:
+                estado = "Rojo"
+            elif 10 >= demora_respuesta.days > 5:
+                estado = "Naranjo"
+            elif 5 >= demora_respuesta.days:
+                estado = "Verde"
         if i.fecha_actualizacion_precio and i.fecha_respuesta:
             demora_precio = i.fecha_actualizacion_precio - i.fecha_respuesta
         else:
             demora_precio = 0
         aux.append(demora_respuesta)
         aux.append(demora_precio)
+        aux.append(estado)
         lista_cotizaciones.append(aux)
     lista_precio = list(dict.fromkeys(lista_productos_precio))
     if len(lista_precio) == len(productos_proyecto):
@@ -249,6 +267,7 @@ def proyecto(request, id):
     else:
         proyecto.estado = 'Incompleto'
         proyecto.save()
+    #PRECIOS
     for i in productos_proyecto:
         precios = i.proyecto.lista_precios.all()
         if len(precios) != 0:

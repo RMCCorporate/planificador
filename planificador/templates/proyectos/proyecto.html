@@ -104,11 +104,24 @@
             {% else %}
             <td data-label="ESTADO">Futuro</td>
             {% endif %}
-            <td data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            {% if fila.estado_cotizacion == "No" %}
+            <td style="color:red" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            {% elif fila.estado_cotizacion == "Precio" %}
+            <td style="color:green" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            {% elif fila.estado_cotizacion == "Creada" %}
+            <td style="color:orange" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            {% endif %}
             {% if fila.fecha_uso %}
-            <td data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                {% if fila.estado_tiempo == "Verde" %}
+                  <td style="color:green" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                {% elif fila.estado_tiempo == "Naranjo" %}
+                <td style="color:orange" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                {% elif fila.estado_tiempo == "Rojo" %}
+                {{CACA}}
+                <td style="color:red" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                {% endif %}
             {% else %}
-            <td data-label="FECHA USO"> No se ha ingresado.</td>
+              <td data-label="FECHA USO"> No se ha ingresado.</td>
             {% endif %}
             <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
             {% endfor %}  
@@ -162,9 +175,15 @@
               </div>
             </td>
             {% if fila.0.fecha_salida %}
-            <td data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              {% if fila.4 == "Rojo" %}
+              <td style="color:red" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              {% elif fila.4 == "Naranjo" %}
+              <td style="color:orange" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              {% elif fila.4 == "Verde" %}
+              <td style="color:green" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              {% endif %}
             {% else %}
-            <td data-label="FECHA SALIDA"> No se ha ingresado.</td>
+              <td data-label="FECHA SALIDA"> No se ha ingresado.</td>
             {% endif %}
             {% if fila.0.fecha_respuesta %}
             <td data-label="FECHA RESPUESTA"> {{fila.0.fecha_respuesta}}</td>
