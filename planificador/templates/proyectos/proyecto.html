@@ -117,8 +117,9 @@
                 {% elif fila.estado_tiempo == "Naranjo" %}
                 <td style="color:orange" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
                 {% elif fila.estado_tiempo == "Rojo" %}
-                {{CACA}}
                 <td style="color:red" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                {% elif fila.estado_tiempo == "No" %}
+                <td style="color:blue" data-label="FECHA USO"> {{fila.fecha_uso}} (No es posible)</td>
                 {% endif %}
             {% else %}
               <td data-label="FECHA USO"> No se ha ingresado.</td>
@@ -176,11 +177,13 @@
             </td>
             {% if fila.0.fecha_salida %}
               {% if fila.4 == "Rojo" %}
-              <td style="color:red" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+             <td style="color:red" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
               {% elif fila.4 == "Naranjo" %}
               <td style="color:orange" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
               {% elif fila.4 == "Verde" %}
               <td style="color:green" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              {% else %}
+              <td>{{fila.4}}</td>
               {% endif %}
             {% else %}
               <td data-label="FECHA SALIDA"> No se ha ingresado.</td>
@@ -196,12 +199,12 @@
             <td data-label="FECHA ACTUALIZACIÓN PRECIO"> No se ha ingresado.</td>
             {% endif %}
             {% if fila.2 %}
-            <td data-label="DEMORA RESPUESTA"> {{fila.2}}</td>
+            <td data-label="DEMORA RESPUESTA"> {{fila.2.days}} días</td>
             {% else %}
             <td data-label="DEMORA RESPUESTA"> No se ha ingresado fecha respuesta.</td>
             {% endif %}
             {% if fila.3 %}
-            <td data-label="DEMORA INGRESO PRECIO">{{fila.3}}</td>
+            <td data-label="DEMORA INGRESO PRECIO">{{fila.3.days}} días</td>
             {% else %}
             <td data-label="DEMORA INGRESO PRECIO">No se ha ingresado precio.</td>
             {% endif %}

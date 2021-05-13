@@ -210,16 +210,6 @@ def proyecto(request, id):
             aux2_productos = []
             precio = ""
             producto_proyecto = Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)
-            if producto_proyecto.fecha_uso:
-                if 10 < (producto_proyecto.fecha_uso - date.today()).days:
-                    producto_proyecto.estado_tiempo = "Verde"
-                    producto_proyecto.save()
-                elif 10 >= (producto_proyecto.fecha_uso - date.today()).days > 5:
-                    producto_proyecto.estado_tiempo = "Naranjo"
-                    producto_proyecto.save()
-                elif 5 >= (producto_proyecto.fecha_uso - date.today()).days:
-                    producto_proyecto.estado_tiempo = "Rojo"
-                    producto_proyecto.save()
             producto_asociado = producto_proyecto.proyecto
             subclase = producto_asociado.subclase_set.all()
             precio = list(producto_asociado.lista_precios.all())
@@ -244,6 +234,12 @@ def proyecto(request, id):
         estado = ""
         if i.fecha_respuesta:
             demora_respuesta = i.fecha_respuesta - i.fecha_salida
+            if demora_respuesta.days > 10:
+                estado = "Rojo"
+            elif 10 >= demora_respuesta.days > 5:
+                estado = "Naranjo"
+            elif 5 >= demora_respuesta.days:
+                estado = "Verde"
         else:
             demora_respuesta = date.today() - i.fecha_salida
             if demora_respuesta.days > 10:
@@ -282,6 +278,19 @@ def proyecto(request, id):
         if a.valor_importación:
             ultimo_precio += a.valor_importación*a.valor_cambio
         precio_final += ultimo_precio
+        if i.fecha_uso:
+                if 10 < (i.fecha_uso - date.today()).days:
+                    i.estado_tiempo = "Verde"
+                    i.save()
+                elif 10 >= (i.fecha_uso - date.today()).days > 5:
+                    i.estado_tiempo = "Naranjo"
+                    i.save()
+                elif 5 >= (i.fecha_uso - date.today()).days:
+                    i.estado_tiempo = "Rojo"
+                    i.save()
+                else:
+                    i.estado_tiempo = "No"
+                    i.save()
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final, "precio":precio_final})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -439,6 +448,7 @@ def agregar_producto(request, id):
             id = request.GET["id"]
             instancia_proyecto = Proyecto.objects.get(id=id)
             productos = request.GET.getlist("productos_checkeados")
+            print(productos)
             lista_productos = []
             for i in productos:
                 aux = []
@@ -487,6 +497,7 @@ def agregar_producto(request, id):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def recibir_datos_agregar_producto(request, id):
+    print("PASA POR ACA RECIBIR")
     producto = request.POST.getlist("productos")
     id = request.GET["id"]
     lista_productos = []
