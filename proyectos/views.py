@@ -419,9 +419,6 @@ def agregar_producto(request, id):
                 if Producto_proyecto.objects.filter(producto=instancia_proyecto, proyecto=instancia_producto).exists():
                     aux.append(Producto_proyecto.objects.get(producto=instancia_proyecto, proyecto=instancia_producto))
                 lista_productos.append(aux)
-            for i in lista_productos:
-                print(i[2])
-                print(i[2].fecha_uso)
             proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
             return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
         else:
@@ -554,7 +551,6 @@ def mostrar_filtro(request):
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
     producto = myFilter.qs
-    lista_producto = list(producto)
     productos_proyecto = nuevo_proyecto.productos.all()
     return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
@@ -590,7 +586,7 @@ def guardar_datos_filtro(request):
 @login_required(login_url='/login')
 def recibir_datos_planificador(request):
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
-    productos_repetidos = request.GET.getlist("lista_productos")
+    productos_repetidos = request.GET.getlist("productos_checkeados")
     productos = list(dict.fromkeys(productos_repetidos))
     lista_subclases_productos = []
     for producto in productos:
@@ -642,7 +638,7 @@ def agregar_cotizacion(request, id):
         else:
             correlativo = Correlativo_cotizacion(año=año_hoy, numero=0)
             correlativo.save()
-        nombre_con_correlativo = str(correlativo.numero) + " - " + nombre
+        nombre_con_correlativo =  nombre + " - " + str(correlativo.numero)
         nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
         nueva_cotizacion.save()
         usuario = Usuario.objects.get(correo=str(request.user.email))

@@ -26,9 +26,11 @@
     <div class="user-details">
       <div class="input-box">
         <br>
-        <span class="details">NOMBRE REFERENCIAL (*)</label>
-        <input type="text" name="nombre" placeholder="Ingresa nombre referencial de cotización" required>
+        <span class="details">NOMBRE REFERENCIAL (*) (**)</label>
+        <input type="text" name="nombre" placeholder="Formato: YYZZZ" required>
+        <span class="details"> (**) YY: Año. ZZZ: Correlativo proyecto. WWW: Correlativo cotización (automático)</span>
       </div>
+      
       <div class="table-container">
         {% for i in Proveedores %}
         <br>
