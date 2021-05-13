@@ -197,6 +197,7 @@ def proyecto(request, id):
     productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
     aux_productos_final = []
     cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
+    precio_final = 0
     lista_productos_precio = []
     lista_cotizaciones = []
     for i in cotizaciones:
@@ -248,11 +249,21 @@ def proyecto(request, id):
     else:
         proyecto.estado = 'Incompleto'
         proyecto.save()
-    for i in aux_productos_final:
-        for n in i:
-            print(n[3])
-        #print(i)
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final})
+    for i in productos_proyecto:
+        precios = i.proyecto.lista_precios.all()
+        if len(precios) != 0:
+            a = list(precios).pop()
+            ultimo_precio = a.valor
+        if a.valor_cambio:
+            ultimo_precio = a.valor * a.valor_cambio
+        if i.cantidades:
+            ultimo_precio = ultimo_precio*i.cantidades
+        else:
+            ultimo_precio = 0
+        if a.valor_importación:
+            ultimo_precio += a.valor_importación*a.valor_cambio
+        precio_final += ultimo_precio
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final, "precio":precio_final})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
@@ -638,7 +649,14 @@ def agregar_cotizacion(request, id):
         else:
             correlativo = Correlativo_cotizacion(año=año_hoy, numero=0)
             correlativo.save()
-        nombre_con_correlativo =  nombre + " - " + str(correlativo.numero)
+        if len(str(correlativo.numero)) == 1:
+            nombre_con_correlativo =  nombre + " - " + "000" + str(correlativo.numero)
+        elif len(str(correlativo.numero)) == 2:
+            nombre_con_correlativo =  nombre + " - " + "00" + str(correlativo.numero)
+        elif len(str(correlativo.numero)) == 3:
+            nombre_con_correlativo =  nombre + " - " + "0" + str(correlativo.numero)
+        elif len(str(correlativo.numero)) == 4:
+            nombre_con_correlativo =  nombre + " - " + str(correlativo.numero)
         nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
         nueva_cotizacion.save()
         usuario = Usuario.objects.get(correo=str(request.user.email))
