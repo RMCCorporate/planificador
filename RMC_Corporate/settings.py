@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'productos',
     'proveedores',
     'proyectos',
-    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
