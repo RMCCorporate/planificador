@@ -32,7 +32,7 @@ DEBUG = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
-ALLOWED_HOSTS = ['127.0.0.1', 'planificador-proyectos-dev.us-west-2.elasticbeanstalk.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'planificador.eba-bycjifwt.us-west-2.elasticbeanstalk.com']
 
 
 # Application definition
@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'users',
     'productos',
     'proveedores',
-    'livereload',
     'proyectos',
     'widget_tweaks',
 ]
@@ -61,7 +60,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'livereload.middleware.LiveReloadScript',
 ]
 
 ROOT_URLCONF = 'RMC_Corporate.urls'
