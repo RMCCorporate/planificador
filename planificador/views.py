@@ -74,7 +74,7 @@ def agregar_subclases(request):
     else:
         return render(request, 'planificador/nueva_subclase.html')  
 
-@allowed_users(allowed_roles=['Admin'])
+#@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_usuario(request):
     if request.method == "POST":
@@ -106,7 +106,7 @@ def crear_usuario(request):
     else:
         return render(request, 'planificador/crear_usuario.html')
 
-@allowed_users(allowed_roles=['Admin'])
+#@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_grupo(request):
     if request.method == "POST":
@@ -128,7 +128,7 @@ def crear_grupo(request):
         usuarios = User.objects.all()
         return render(request, 'planificador/crear_grupo.html', {'usuarios':usuarios})
 
-@allowed_users(allowed_roles=['Admin'])
+#@allowed_users(allowed_roles=['Admin'])
 @login_required(login_url='/login')
 def crear_permisos(request):
     permisos = ["editar_precio", "editar_producto_proyecto", "eliminar_producto_proyecto", "agregar_producto_proyecto", "crear_proyecto", "crear_cotizacion","editar_fecha_respuesta_cotización", "eliminar_cotización", "enviar_correo","agregar_proveedor", "editar_proveedor", "eliminar_contacto", "eliminar_proveedor", "agregar_producto", "editar_producto", "eliminar_producto"]
