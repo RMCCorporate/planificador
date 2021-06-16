@@ -448,7 +448,6 @@ def agregar_producto(request, id):
             id = request.GET["id"]
             instancia_proyecto = Proyecto.objects.get(id=id)
             productos = request.GET.getlist("productos_checkeados")
-            print(productos)
             lista_productos = []
             for i in productos:
                 aux = []
@@ -497,7 +496,6 @@ def agregar_producto(request, id):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def recibir_datos_agregar_producto(request, id):
-    print("PASA POR ACA RECIBIR")
     producto = request.POST.getlist("productos")
     id = request.GET["id"]
     lista_productos = []

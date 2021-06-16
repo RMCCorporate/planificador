@@ -66,7 +66,11 @@
     </tbody>
 </table>
 </div>
+<br>
 <div class="table-container">
+  <div class="informacion_container">
+    <h4>PRODUCTOS</h4>
+  </div>
   <div class="boton_container">
     <a href="{% url 'agregar_producto' Proyecto.id %}">
       <button class="button_editar">Agregar producto(s)</button>
@@ -74,9 +78,6 @@
     <a href="{% url 'editar_producto_proyecto' Proyecto.id %}">
       <button class="button_eliminar">Editar/Eliminar productos</button>
   </a>
-  </div>
-  <div class="informacion_container">
-    <h4>PRODUCTOS</h4>
   </div>
     <table class="table2">
     <thead>
@@ -94,36 +95,36 @@
         <tr>
             <td data-label="NOMBRE">{{fila.proyecto.nombre}}</td>
             {% if fila.cantidades %}
-              <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+                <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
             {% else %}
-            <td data-label="CANTIDAD"> 0</td>
+              <td data-label="CANTIDAD"> 0</td>
             {% endif %}
             {% if fila.status %}
-            <td data-label="ESTADO">{{fila.status}}</td>
+              <td data-label="ESTADO">{{fila.status}}</td>
             {% else %}
-            <td data-label="ESTADO">Futuro</td>
+              <td data-label="ESTADO">Futuro</td>
             {% endif %}
             {% if fila.estado_cotizacion == "No" %}
-            <td style="color:red" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+              <td style="color:red" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
             {% elif fila.estado_cotizacion == "Precio" %}
-            <td style="color:green" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+              <td style="color:green" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
             {% elif fila.estado_cotizacion == "Creada" %}
-            <td style="color:orange" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+              <td style="color:orange" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
             {% endif %}
             {% if fila.fecha_uso %}
                 {% if fila.estado_tiempo == "Verde" %}
                   <td style="color:green" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
                 {% elif fila.estado_tiempo == "Naranjo" %}
-                <td style="color:orange" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                  <td style="color:orange" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
                 {% elif fila.estado_tiempo == "Rojo" %}
-                <td style="color:red" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
+                  <td style="color:red" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
                 {% elif fila.estado_tiempo == "No" %}
-                <td style="color:blue" data-label="FECHA USO"> {{fila.fecha_uso}} (No es posible)</td>
+                  <td style="color:blue" data-label="FECHA USO"> {{fila.fecha_uso}} (No es posible)</td>
                 {% endif %}
             {% else %}
               <td data-label="FECHA USO"> No se ha ingresado.</td>
             {% endif %}
-            <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
+              <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
             {% endfor %}  
         </tr>
     </tbody>
@@ -132,13 +133,13 @@
 <br>
 <br>
 <div class="table-container">
+  <div class="informacion_container">
+    <h4>COTIZACIONES</h4>
+  </div>
   <div class="boton_container">
     <a href="{% url 'agregar_cotizacion' Proyecto.id %}">
       <button class="button_editar">Agregar cotización</button>
     </a>
-  </div>
-  <div class="informacion_container">
-    <h4>COTIZACIONES</h4>
   </div>
     <table class="table2">
     <thead>
@@ -216,13 +217,13 @@
 <br>
 <br>
 <div class="table-container">
+  <div class="informacion_container">
+    <h4>PRODUCTOS COTIZADOS</h4>
+  </div>
   <div class="boton_container">
     <a href="{% url 'editar_precios' Proyecto.id %}">
       <button class="button_editar">Editar precios</button>
     </a>
-  </div>
-  <div class="informacion_container">
-    <h4>PRODUCTOS COTIZADOS</h4>
   </div>
     <table class="table2">
     <thead>

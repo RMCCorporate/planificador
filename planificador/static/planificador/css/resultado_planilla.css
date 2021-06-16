@@ -130,4 +130,7 @@ body{
     border-bottom: 0.8184pt solid #b3b3b3;;
 }
 
-
+.no-error{
+    font-size: 20px;
+    padding-left: 15px;
+}

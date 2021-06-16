@@ -26,7 +26,9 @@ def notificaciones(request):
 @login_required(login_url='/login')
 def index(request):
     #group = str(request.user.groups.all()[0])
-    return render(request, 'planificador/index.html')
+    usuario = str(request.user.groups.all()[0])
+    print(usuario)
+    return render(request, 'planificador/index.html', {"rol":usuario})
 
 def agregar_subclases(request):
     if request.method == "POST":

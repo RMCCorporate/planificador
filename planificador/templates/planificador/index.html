@@ -1,7 +1,7 @@
 {% extends "base/base2.html" %}
 {% block content %} 
 <head>
-	<title>PRODUCTOS</title>
+	<title>INICIO</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,9 +20,10 @@
     <!-- Message -->
     <section>
         <div class="title">
-            <h1>BIENVENIDO A LA PÁGINA PLANIFICADOR</h1>
+            <h1>BIENVENIDO AL SOFTWARE</h1>
         </div>
         <br>
+        {% if rol == "Admin" %}
         <a href="{% url 'crear_usuario' %}">
             <button class="button_añadir">Añadir usuario</button>
         </a>
@@ -32,6 +33,7 @@
         <a href="{% url 'crear_permisos' %}">
             <button class="button_añadir">Añadir permisos</button>
         </a>
+        {% endif %}
         <a href="{% url 'agregar_subclases' %}">
             <button class="button_añadir">Añadir sub-clases</button>
         </a>

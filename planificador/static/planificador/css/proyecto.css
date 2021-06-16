@@ -54,9 +54,7 @@ body{
     position: relative;
     width: 100%;
     top: 80%;
-    margin: 2% auto 0;
     border-collapse: collapse;
-    left: 75%;
 }
 
 .container .table-container .informacion_container{
@@ -84,6 +82,8 @@ body{
     text-align: center;
     width:10%;
     border-radius: 5px;
+    margin-top:1%;
+    margin-bottom:1%;
 }
 
 .container .table-container .boton_container .button_eliminar{
@@ -133,7 +133,6 @@ body{
 
 .container .table-container .table2{
     width: 100%;
-    margin: 40px auto 0;
     border-collapse: collapse;
 }
 
