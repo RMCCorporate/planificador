@@ -7,12 +7,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
     <link href="{% static 'planificador/css/proveedor.css' %}" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 
@@ -54,28 +48,22 @@
             <tr>
                 <td data-label="CÓDIGO">{{Proveedor.rut}}</td>
                 <td data-label="NOMBRE"> {{Proveedor.nombre}}</td>
-                <td data-label="SUB-CLASE(S)">
+                <td data-label="RAZÓN SOCIAL">
                   {% if Proveedor.razon_social != "None" and Proveedor.razon_social%} 
                    {{Proveedor.razon_social}}
                    {% endif %}
                   </td>
                 <td data-label="IDIOMA">
-                  {% if Proveedor.idioma == "ESP" %} 
-                  ESPAÑOL
+                  {% if Proveedor.idioma == "ES" %} 
+                    ESPAÑOL
                   {% else %}
-                  INGLÉS
+                    INGLÉS
                   {% endif %}
                 </td>
                 <td data-label="SUB-CLASE(S)">
-                  <div class="dropdown">
-                    <button class="dropbtn">SUB-CLASE(S)</button>
-                    <div class="dropdown-content">
                       {% for fila in subclase %}
-                                    <li>{{fila.nombre}}</li>
-                                  {% endfor %}
-                    </div>
-                  </div>
-             
+                        <li>{{fila.nombre}}</li>
+                      {% endfor %}
                 </td>
                 <td data-label="CALIFICACIONES">
                     {% for i in promedio %}

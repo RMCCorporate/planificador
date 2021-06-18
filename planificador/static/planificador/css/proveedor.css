@@ -18,7 +18,6 @@ body{
 }
 
 .title{
-    padding: 15px;
     border-bottom: 2px solid;
 }
 
@@ -28,7 +27,6 @@ body{
 }
 
 .subtitle{
-  padding: 5px;
 }
 
 .subtitle h4{
@@ -51,7 +49,7 @@ body{
 }
 
 .container .table-container .title_container{
-    padding: 10px;
+    color:#466ea5;
 }
 
 .container .data-container{

@@ -244,7 +244,14 @@
             <td data-label="SUB-CLASE"> {{fila.1.0.nombre}}</td>
             <td data-label="PRECIO UNITARIO">
               <div class="dropdown">
-                <button class="dropbtn">PRECIO</button>
+                <button class="dropbtn">
+                  {% if fila.3.0.valor %}
+                    {{fila.3.0.valor}} {{fila.3.0.tipo_cambio}}
+                  {% else %}
+                    {{fila.3.valor}} {{fila.3.tipo_cambio}}
+                  {% endif %}
+                
+                </button>
                 <div class="dropdown-content">
                   {% if fila.3.0.valor %}
                     <li><a> Valor: {{fila.3.0.valor}}</a></li>

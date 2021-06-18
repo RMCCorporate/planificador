@@ -30,16 +30,16 @@ TABLA
 .table-container .button_añadir{
     border: solid;
     height: 35px;
-    margin: 5px;
+    margin: 1%;
     position: relative;
-    left: 60%;
+    left: 66.666%;
     background: #fff;
     color: #4676b8;
     font-size: 10pt;
     border-color: #4676b8;
     border-width: 0.8184pt;
     text-align: center;
-    width:200px;
+    width:15%;
     border-radius: 5px;
 }
 
