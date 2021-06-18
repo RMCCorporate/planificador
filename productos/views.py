@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario
+from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario, Correlativo_producto
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from datetime import date, datetime
 from django.core.files import File
@@ -196,17 +196,33 @@ def agregar_producto(request):
     return render(request, "productos/crear_producto.html", {"Clases":clases, "Subclases":subclases, "lista_clases":lista_clases})
 
 def recibir_datos_producto(request):
-    id = request.GET["id"]
     nombre = request.GET["nombre"]
     sub_clase = request.GET["subclase"]
     unidad = request.GET["unidad"]
     kilos = request.GET["peso"]
-    nuevo_producto = Producto(id=id, nombre=nombre, unidad=unidad, kilos=kilos)
-    nuevo_producto.save()
+    if Correlativo_producto.objects.filter(producto=0).exists():
+        correlativo = Correlativo_producto.objects.get(producto=0)
+        correlativo.numero += 1
+        correlativo.save()
+    else:
+        correlativo = Correlativo_producto(producto=0, numero=9000000)
+        correlativo.save()
+    if kilos and (unidad != "ELEGIR UNIDAD" and unidad):
+        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre, unidad=unidad, kilos=kilos)
+        nuevo_producto.save()
+    elif kilos and (unidad == "ELEGIR UNIDAD"):
+        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre, kilos=kilos)
+        nuevo_producto.save()
+    elif (unidad != "ELEGIR UNIDAD") and not kilos:
+        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre, unidad=unidad)
+        nuevo_producto.save()
+    else:
+        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre)
+        nuevo_producto.save()
     subclase = SubClase.objects.get(nombre=sub_clase)
     subclase.productos.add(nuevo_producto)
     clase = subclase.clase_set.all()
-    nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, id_producto=id, nombre_subclase=subclase.nombre)
+    nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, id_producto=correlativo.numero, nombre_subclase=subclase.nombre)
     nuevo_filtro_producto.save()
     crear_notificacion("agregar_producto", request.user.email, "creó producto", "Productos", 1, nuevo_producto.id, nuevo_producto.nombre)
     return redirect('/productos/producto/{}'.format(nuevo_producto.id))

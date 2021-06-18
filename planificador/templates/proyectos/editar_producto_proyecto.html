@@ -5,13 +5,7 @@
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.gstatic.com"> 
     <link href="{% static 'planificador/css/editar_producto_proyecto.css' %}" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 </head>
 
 
@@ -43,20 +37,18 @@
                 <button class="dropbtn">{{fila.0.status}}</button>
                 <div class="dropdown-content">
                   <input type="hidden" value="no_hay" name="{{fila.0.proyecto.id}}">
-                  {% if fila.0.status == "Bodega" %}
-                  <a><li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}" checked> Bodega</a></li>
+                  {% if fila.0.status == "Urgente" %}
+                  <a><li><input type="radio" value="Urgente" name="{{fila.0.proyecto.id}}" checked> Urgente</a></li>
                   <a><li><input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}"> Futuro</a></li>
                   {% else %}
-                  <a><li><input type="radio" value="Bodega" name="{{fila.0.proyecto.id}}"> Bodega</a></li>
+                  <a><li><input type="radio" value="Urgente" name="{{fila.0.proyecto.id}}"> Urgente</a></li>
                   <a><li><input type="radio" value="Futuro" name="{{fila.0.proyecto.id}}" checked> Futuro</a></li>
                   {% endif %}
                 </div>
               </div>
-              
-            
             </td>
-             <td data-label="NOMBRE">
-              <input type="date" name="fecha_uso" placeholder="Formato: YYYY-MM-DD">
+             <td data-label="FECHA USO">
+              <input type="date" name="fecha_uso"  value="{{fila.0.fecha_uso|date:'Y-m-d'}}" placeholder="Formato: YYYY-MM-DD" >
             </td>
             <td data-label="CANTIDADES">
               {% if fila.0.cantidades %}
@@ -66,7 +58,7 @@
               {% endif %}
             </td>
             <td data-label="¿ELIMINAR?">
-              <input type="checkbox" value="{{fila.0.id}}" name="eliminar">
+              <input class="checkbox" type="checkbox" value="{{fila.0.id}}" name="eliminar">
             </td>
            
             
@@ -75,7 +67,7 @@
         {% endfor %}
     </tbody>
       </table>
-          
+      <button href="/proyectos/{{fila.0.proyecto.id}}/" class="button_añadir" type="submit">Cancelar</button>
       <button class="button_añadir" type="submit">Guardar</button>
     </div>
   </div>

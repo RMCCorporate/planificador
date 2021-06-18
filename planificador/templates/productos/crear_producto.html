@@ -7,12 +7,7 @@
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.gstatic.com"> 
-
 	<link href="{% static 'planificador/css/crear_producto.css' %}" rel="stylesheet">
-	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 </head>
 
 
@@ -22,20 +17,26 @@
   <form action="agregar_nuevo" method="GET">
     <div class="user-details">
         <div class="input-box">
-          <span class="details">CÓDIGO (*)</label>
-          <input type="text" name="id" placeholder="Ingresa código de producto" required>
-        </div>
-        <div class="input-box">
           <span class="details">NOMBRE (*)</label>
-          <input type="text" name="nombre" placeholder="Ingresa nombre de producto" required>
+          <input type="text" name="nombre" placeholder="Nombre de producto. Ej: PERNO HEX Gº5 UNC 5/8-11X4.1/2" required>
         </div>
         <div class="input-box">
-          <span class="details">UNIDAD (*)</label>
-          <input type="text" name="unidad" placeholder="Ingresa unidad de producto" required>
+          <span class="details">UNIDAD</label>
+          <select class="custom-select" id="unidad" name="unidad">
+            <option selected>ELEGIR UNIDAD</option>
+            <option value="Kilos">Kilos</option>
+            <option value="Unidad">Unidad</option>
+            <option value="Metros">Metros</option>
+            <option value="Litros">Litros</option>
+            <option value="Días">Días</option>
+            <option value="Horas">Horas</option>
+            <option value="Par">Par</option>
+            <option value="Bolsas">Bolsas</option>
+          </select>
         </div>
         <div class="input-box">
           <span class="details">PESO UNITARIO</label>
-          <input type="text" name="peso" placeholder="Peso unitario de producto en kilos">
+          <input type="text" name="peso" placeholder="Peso unitario de producto en kilos. Ej: 50">
         </div>
         <div class="input-box">
           <span class="details">SUB-CLASE (*)</label>

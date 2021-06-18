@@ -12,6 +12,15 @@ azul tablas: #466ea5
     padding: 0;
     box-sizing: border-box;
 }
+
+input{
+    padding:5px;
+}
+
+.checkbox{
+    margin-left: 30%;
+}
+
 body{
     background-color:#fbfbfb;
     font-family: 'Roboto Condensed', sans-serif;

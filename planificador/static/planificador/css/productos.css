@@ -169,7 +169,7 @@ TABLA
 
 .table-container .button_añadir{
     border: solid;
-    height: 25px;
+    height: 45px;
     margin: 5px;
     background: #fff;
     color: #4676b8;
@@ -177,7 +177,7 @@ TABLA
     border-color: #4676b8;
     border-width: 0.8184pt;
     text-align: center;
-    width:150px;
+    width:180px;
     border-radius: 5px;
 }
 
