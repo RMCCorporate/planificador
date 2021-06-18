@@ -26,8 +26,9 @@
                     <div class="right">
                         <ul>
                             <li>
+                                <div class="user">
                                 <a href="#">
-                                <p>{{request.user.first_name}} {{request.user.last_name}}<br></p><i class="fas fa-angle-down"></i>
+                                <p>{{request.user.first_name}} {{request.user.last_name}}<br></p><i class="fas fa-angle-down" style="height: 15px; width:20px;"></i>
                             </a>
                               <div class="dropdown">
                                   <ul>
@@ -36,7 +37,7 @@
                                     <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                                 </ul>
                               </div>
-                              
+                            </div>
                             </li>
                         </ul>
                     </div>
