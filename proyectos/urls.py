@@ -14,7 +14,6 @@ urlpatterns = [
     path('proyectos/editar_producto_proyecto/<str:id>', views.editar_datos_producto_proyecto, name='editar_producto_proyecto'),
     path('proyectos/agregar_cotizacion/<str:id>', views.agregar_cotizacion, name='agregar_cotizacion'),
     path('agregar_producto/<str:id>', views.agregar_producto, name='agregar_producto'),
-    path('proyectos/agregar_producto/lista_productos_agregar/<str:id>', views.recibir_datos_agregar_producto, name='lista_productos_agregar'),
     path('proyectos/crear_nuevo_producto', views.crear_nuevo_producto, name='crear_nuevo_producto'),
     path('proyectos/mostrar_cotizacion/<str:id>', views.mostrar_cotizacion, name='mostrar_cotizacion'),
     path('proyectos/editar_cotizacion/<str:id>', views.editar_cotizacion, name='editar_cotizacion'),
