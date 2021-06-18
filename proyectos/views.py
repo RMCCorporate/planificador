@@ -449,6 +449,7 @@ def agregar_producto(request, id):
             instancia_proyecto = Proyecto.objects.get(id=id)
             productos = request.GET.getlist("productos_checkeados")
             lista_productos = []
+            subclase = "No definida"
             for i in productos:
                 aux = []
                 instancia_producto = Producto.objects.get(nombre=i)
@@ -458,7 +459,8 @@ def agregar_producto(request, id):
                 if Producto_proyecto.objects.filter(producto=instancia_proyecto, proyecto=instancia_producto).exists():
                     aux.append(Producto_proyecto.objects.get(producto=instancia_proyecto, proyecto=instancia_producto))
                 lista_productos.append(aux)
-            proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
+            if Proveedor.objects.filter(subclases_asociadas=sub_clase).exists():
+                proveedores = Proveedor.objects.filter(subclases_asociadas=sub_clase)
             return render(request, "proyectos/crear_producto_proyecto.html", {"Proyecto":instancia_proyecto, "Producto":lista_productos, "Proveedores":proveedores})
         else:
             if id == "guardar_datos_filtro_agregar_proyecto":
@@ -543,55 +545,43 @@ def crear_nuevo_producto(request):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def planificador(request):
-    clases = Clase.objects.all()
-    subclases = []
-    nombres = []
-    for clase in clases:
-        subclases_aux = []
-        nombres.append(clase.nombre)
-        for subclase in clase.subclases.all():
-            subclases_aux.append(subclase)
-        subclases.append(subclases_aux)
-    clase1 = clases_lista_productos(subclases[0])
-    clase2 = clases_lista_productos(subclases[1])
-    clase3 = clases_lista_productos(subclases[2])
-    return render(request, "proyectos/planificador.html", {"Nombre1":nombres[0], "Subclases1":clase1, "Nombre2":nombres[1], "Subclases2":clase2, "Nombre3":nombres[2], "Subclases3":clase3})
+    return render(request, "proyectos/planificador.html")
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def mostrar_filtro(request):
     centro_costos = request.GET["centro_costos"]
-    nombre = request.GET["nombre"]
-    tipo_cambio = request.GET["tipo_cambio"]
-    valor_cambio = request.GET["valor_cambio"]
-    if not valor_cambio:
-        valor_cambio = 0
-    if not tipo_cambio:
-        tipo_cambio = "CLP"
-    fecha_inicio = request.GET["fecha_inicio"]
-    fecha_termino = request.GET["fecha_termino"]
-    precio_final = 0
-    creador = request.user.first_name + " " + request.user.last_name
-    fecha_actual = datetime.now()
-    if fecha_inicio and fecha_termino:
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
-        nuevo_proyecto.save()
-    elif not fecha_termino and (fecha_inicio and fecha_inicio != "None"):
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
-        nuevo_proyecto.save()
-    elif (fecha_termino and fecha_termino != "None") and not fecha_inicio:
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
-        nuevo_proyecto.save()
+    if Proyecto.objects.filter(id=centro_costos).exists():
+        return render(request, "proyectos/error_planificador.html")
     else:
-        nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=precio_final, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
-        nuevo_proyecto.save()
-    crear_notificacion("crear_proyecto", request.user.email, "creó un proyecto", "Proyecto", 1, centro_costos, nombre, centro_costos)
-    #PRODUCTOS:
-    productos = Filtro_producto.objects.all()
-    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    producto = myFilter.qs
-    productos_proyecto = nuevo_proyecto.productos.all()
-    return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+        nombre = request.GET["nombre"]
+        tipo_cambio = request.GET["tipo_cambio"]
+        valor_cambio = request.GET["valor_cambio"]
+        if not valor_cambio:
+            valor_cambio = 0
+        if not tipo_cambio:
+            tipo_cambio = "CLP"
+        fecha_inicio = request.GET["fecha_inicio"]
+        fecha_termino = request.GET["fecha_termino"]
+        creador = request.user.first_name + " " + request.user.last_name
+        fecha_actual = datetime.now()
+        if fecha_inicio and fecha_termino:
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto.save()
+        elif not fecha_termino and (fecha_inicio and fecha_inicio != "None"):
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto.save()
+        elif (fecha_termino and fecha_termino != "None") and not fecha_inicio:
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto.save()
+        else:
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto.save()
+        crear_notificacion("crear_proyecto", request.user.email, "creó un proyecto", "Proyecto", 1, centro_costos, nombre, centro_costos)
+        productos = Filtro_producto.objects.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        productos_proyecto = nuevo_proyecto.productos.all()
+        return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')

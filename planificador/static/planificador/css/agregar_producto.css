@@ -54,6 +54,8 @@ SIDEBAR MENU
 }
 .sidebar.show{
   left: 0px;
+  border-right: 1px solid;
+  height: 100%;
 }
 .sidebar .text{
   color: #1e1e1e;

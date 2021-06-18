@@ -33,6 +33,7 @@ SIDEBAR MENU
   cursor: pointer;
   transition: left 0.4s ease;
 }
+
 .btn.click{
   left: 260px;
 }
@@ -54,6 +55,8 @@ SIDEBAR MENU
 }
 .sidebar.show{
   left: 0px;
+  border-right: 1px solid;
+  height: 100%;
 }
 .sidebar .text{
   color: #1e1e1e;
@@ -61,7 +64,8 @@ SIDEBAR MENU
   font-weight: 600;
   line-height: 65px;
   text-align: center;
-  background: #fbfbfb;
+  background: #466ea5;
+  color:#fbfbfb;
   letter-spacing: 1px;
 }
 nav ul{
@@ -138,6 +142,14 @@ nav ul li a span{
 }
 nav ul li a span.rotate{
   transform: translateY(-50%) rotate(-180deg);
+}
+
+.button-search{
+  height: 50px;
+  width: 30%;
+  margin-left: 70%;
+  background-color: #466ea5;
+  color: #fbfbfb;
 }
 
 .content{
