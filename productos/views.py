@@ -13,14 +13,31 @@ from django import forms
 import openpyxl
 import uuid
 
-class UploadFileForm(forms.Form):
-    file = forms.FileField()
+
+UNIDAD_CHOICES = [
+    ('', ''),
+    ('Unidad', 'Unidad'),
+    ('Kilos', 'Kilos'),
+    ('Metros', 'Metros'),
+    ('Litros', 'Litros'),
+    ('Días', 'Días'),
+    ('Horas', 'Horas'),
+    ('Par', 'Par'),
+    ('Bolsas', 'Bolsas'),
+]
 
 class ImageForm(forms.ModelForm):
     """Form for the image model"""
+    unidad = forms.CharField(
+        required=False,
+        widget=forms.Select(attrs={'class':'custom-select'}, choices=UNIDAD_CHOICES),
+        )     
+    kilos = forms.CharField(required=False)
+    imagen = forms.ImageField(required=False)
     class Meta:
         model = Producto
         fields = ('unidad', 'kilos', 'imagen')
+       
 
 def isfloat(value):
     try:
@@ -92,7 +109,6 @@ def productos(request):
         lista_productos.append(aux)
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    producto = myFilter.qs
     return render(request, "productos/productos.html", {"Productos":lista_productos, "myFilter":myFilter, "len":len(lista_productos)})
 
 def nuevo_producto_planilla(request):
@@ -239,7 +255,9 @@ def producto(request, id):
         nombre_proveedor = Producto_proveedor.objects.filter(proyecto=producto)
     else:
         nombre_proveedor = ""
-    print(nombre_proveedor)
+    print(a)
+    for i in a:
+        print(i.valor)
     return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase, "nombre_proveedor":nombre_proveedor})
 
 @login_required(login_url='/login')
