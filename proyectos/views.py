@@ -573,16 +573,8 @@ def mostrar_filtro(request):
     crear_notificacion("crear_proyecto", request.user.email, "creó un proyecto", "Proyecto", 1, centro_costos, nombre, centro_costos)
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    lista_clases = []
-    clases = Clase.objects.all()
-    for i in clases:
-        aux = []
-        aux.append(i)
-        aux.append(i.subclases.all())
-        lista_clases.append(aux)
-    print(lista_clases)
     productos_proyecto = nuevo_proyecto.productos.all()
-    return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto, "lista_clases":lista_clases})
+    return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
@@ -639,15 +631,25 @@ def recibir_cantidades_planificador(request):
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
     cantidad = request.GET.getlist("cantidad")
     productos = request.GET.getlist("id_producto")
+    boton = request.GET["boton"]
     for counter, i in enumerate(productos):
         nuevo_producto = Producto.objects.get(nombre=i)
         producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=nuevo_producto)
-        producto_proyecto.cantidades = float(cantidad[counter])
+        if cantidad[counter]:
+            producto_proyecto.cantidades = float(cantidad[counter])
+        else:
+            producto_proyecto.cantidades = 0
         producto_proyecto.save()
         usuario = Usuario.objects.get(correo=request.user.email)
         usuario.productos_proyecto.add(producto_proyecto)
         usuario.save()
-    return redirect('/proyectos')
+    if boton == "Guardar y continuar":
+        productos = Filtro_producto.objects.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        productos_proyecto = proyecto.productos.all()
+        return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+    else:
+        return redirect('/proyectos')
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
