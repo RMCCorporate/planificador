@@ -440,6 +440,17 @@ def editar_datos_producto_proyecto(request, id):
             lista_info_productos.append(lista_aux)
         return render(request, "proyectos/editar_producto_proyecto.html", {"info_productos":lista_info_productos})
 
+@login_required(login_url='/login')
+def editar_fechas(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    if request.method == "POST":
+        proyecto.fecha_inicio = request.POST["fecha_inicio"]
+        proyecto.fecha_final = request.POST["fecha_termino"]
+        proyecto.save()
+        return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
+    else:
+        return render(request, "proyectos/editar_fechas.html", {"Proyecto":proyecto})
+
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def agregar_producto(request, id):
@@ -778,4 +789,4 @@ def enviar_correo(request, id):
     else:
         contacto = cotizacion.contacto_asociado.all()
         return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion, "contactos":contacto})
-        
+

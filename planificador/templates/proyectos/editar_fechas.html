@@ -1,0 +1,31 @@
+{% extends "base/base2.html" %}
+{% block title %} EDITAR PROVEEDOR {% endblock%}
+{% block content %}
+
+<head>
+	<title>{{Proyecto.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+	<link href="{% static 'planificador/css/editar_proveedor.css' %}" rel="stylesheet">
+
+</head>
+  <form action="{{Proyecto.id}}" method="POST">{% csrf_token %}
+    <div class="container">
+      <div class="title">EDITAR - {{Proyecto.nombre}}</div>
+      <div class="user-details">
+        <div class="input-box">
+            <input type="date" name="fecha_inicio" placeholder="Formato: YYYY-MM-DD" value="{{Proyecto.fecha_inicio|date:'Y-m-d'}}">
+        </div>
+        <div class="input-box">
+            <input type="date" name="fecha_termino" placeholder="Formato: YYYY-MM-DD"  value="{{Proyecto.fecha_final|date:'Y-m-d'}}">
+        </div>
+      </div>
+        <input class="button" type="Submit" value="Guardar">
+    </div>
+
+       
+    </form>
+    
+{% endblock%}

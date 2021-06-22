@@ -24,6 +24,7 @@
     <div class="informacion_container">
       <h4>INFORMACIÓN GENERAL</h4>
     </div>
+    <br>
     <table class="table">
       <thead>
           <tr>
@@ -48,6 +49,11 @@
   <div class="table-container">
   <div class="informacion_container">
     <h4>INFORMACIÓN FECHAS</h4>
+  </div>
+  <div class="boton_container">
+    <a href="{% url 'editar_fechas' Proyecto.id %}">
+      <button class="button_editar">Editar fechas</button>
+    </a>
   </div>
   <table class="table">
     <thead>
