@@ -14,9 +14,19 @@
                 <div class="logo-box">
                     <a href="{% url 'home' %}"><img src="../../static/planificador/img/principal.png" alt="Logo" class="logo"></i></a>
                 </div>
+                <div class="atras-box">
+                    <button class="atras" onclick="goBack()"><i class="arrowleft"></i></button>
+
+                    <script>
+                    function goBack() {
+                      window.history.back();
+                    }
+                    </script> 
+                </div>
                 <div class="navbar">
                     <div class="left">
                         <ul>
+                           
                             <li><a href="{% url 'planificador' %}">PLANIFICADOR</a></li>
                             <li><a href="{% url 'proyectos' %}">PROYECTOS</a></li>
                             <li><a href="{% url 'productos' %}">PRODUCTOS</a></li>
