@@ -21,3 +21,11 @@
     width:150px;
     border-radius: 5px;
 }
+
+.footer{
+    width: 102%;
+    background-color: #575855;
+    margin-left: -1%;
+    height: 75px;
+    margin-top: 500px;
+  }

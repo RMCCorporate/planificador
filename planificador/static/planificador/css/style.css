@@ -118,3 +118,12 @@ body {
 .user{
   margin-right: 30px;
 }
+
+.footer{
+  width: 102%;
+  background-color: #575855;
+  margin-left: -1%;
+  padding: 20px;
+  margin-top: 100px;
+  height: 75px;
+}
