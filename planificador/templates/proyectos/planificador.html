@@ -17,8 +17,13 @@
     <br>
     <div class="user-details">
         <div class="input-box">
+          {% if error %}
           <span class="details">NÚMERO DE PROPUESTA (*) (**)</label>
-          <input type="text" name="centro_costos" placeholder="Formato: PXXXX-YYZZZ" required>
+            <input type="text" name="centro_costos" placeholder="Centro de costos ya existente." required>
+          {% else %}
+          <span class="details">NÚMERO DE PROPUESTA (*) (**)</label>
+            <input type="text" name="centro_costos" placeholder="Formato: PXXXX-YYZZZ" required>
+          {% endif %}
         </div>
         <div class="input-box">
           <span class="details">NOMBRE (*)</label>
@@ -43,7 +48,7 @@
       (**) PXXXX-YYZZZ = XXXX = Código único de cliente. YY = Año. ZZZ = Correlativo número proyecto (001 - 999).
       </div>
       <br>
-
+      <input type="hidden" value="No" name="edicion">
     <button class="button" type="submit">Elegir cantidades producto</button>
     </form>
 </div>
