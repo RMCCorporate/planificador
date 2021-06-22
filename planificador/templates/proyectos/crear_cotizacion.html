@@ -35,31 +35,21 @@
         <br>
         <div class="title_container">
           <div class="informacion_container">
-            <h4><input type="radio" value="{{i.0.nombre}}" name="proveedor"> {{i.0.nombre}}</h4>
+            <h4>{{i.0.proyecto.nombre}} - {{i.0.cantidades}} {{i.0.proyecto.unidad}}</h4>
           </div>
         </div>
-        <h5>Escoger contacto</h5>
-            {% for contacto in i.0.contactos_asociados.all %}
-                 <input type="checkbox" value="{{contacto.nombre}}" name="contacto"> {{contacto.nombre}}
-            {% endfor %}
           <table class="table">
             <thead>
                 <tr>
-                    <th>NOMBRE</th>
-                    <th>CANTIDAD</th>
-                    <th>UNIDAD</th>
+                    <th>PROVEEDOR</th>
+                    <th>CONTACTO</th>
                 </tr>
             </thead>
             <tbody>
               {% for producto in i.1 %}
                 <tr>
-                    <td data-label="NOMBRE"><input type="checkbox" name="productos" value="{{producto.0}}"> {{producto.0}}</td>
-                    {% if producto.1 %}
-                    <td data-label="CANTIDAD"> {{producto.1}}</td>
-                    {% else %}
-                    <td data-label="CANTIDAD"> 0</td>
-                    {% endif %}
-                    <td data-label="UNIDAD"> {{producto.2}}</td>
+                    <td data-label="NOMBRE"><input type="checkbox" name="contacto" value="{{i.0.proyecto.id}}**{{producto.0}}**{{producto.1}}">{{producto.0}}</td>
+                    <td data-label="CONTACTO"> {{producto.1}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

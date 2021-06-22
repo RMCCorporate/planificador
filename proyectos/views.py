@@ -658,10 +658,15 @@ def agregar_cotizacion(request, id):
         proyecto_asociado = Proyecto.objects.get(id=id)
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
         nombre = request.POST["nombre"]
-        proveedor = request.POST["proveedor"]
-        contactos = request.POST.getlist("contacto")
-        productos = request.POST.getlist("productos")
-        proveedor_asociado = Proveedor.objects.get(nombre=proveedor)
+        info_productos = request.POST.getlist("contacto")
+        diccionario_proveedores = {}
+        for i in info_productos:
+            producto,proveedor,contacto = i.split('**')
+            if proveedor not in diccionario_proveedores.keys():
+                diccionario_proveedores[proveedor] = [[contacto],[producto]]
+            else:
+                diccionario_proveedores[proveedor][0].append(contacto)
+                diccionario_proveedores[proveedor][1].append(producto)
         año_hoy = datetime.now().year
         if Correlativo_cotizacion.objects.filter(año=año_hoy).exists():
             correlativo = Correlativo_cotizacion.objects.get(año=año_hoy)
@@ -678,70 +683,46 @@ def agregar_cotizacion(request, id):
             nombre_con_correlativo =  nombre + " - " + "0" + str(correlativo.numero)
         elif len(str(correlativo.numero)) == 4:
             nombre_con_correlativo =  nombre + " - " + str(correlativo.numero)
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor_asociado, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
-        nueva_cotizacion.save()
-        usuario = Usuario.objects.get(correo=str(request.user.email))
-        usuario.cotizaciones.add(nueva_cotizacion)
-        usuario.save()
-        crear_notificacion("crear_cotizacion", request.user.email, "creó una cotización", "Cotización", 1, nueva_cotizacion.id, nueva_cotizacion.nombre, proyecto_asociado.id)
-        for i in productos:
-            nuevo_producto = Producto.objects.get(nombre=i)
-            nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto_asociado, proyecto=nuevo_producto)
-            nueva_cotizacion.productos_asociados.add(nuevo_producto)
+        for nombre_proveedor in diccionario_proveedores:
+            proveedor = Proveedor.objects.get(nombre=nombre_proveedor)
+            nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre_con_correlativo, proyecto_asociado=proyecto_asociado, proveedor_asociado=proveedor, fecha_salida = datetime.now(), usuario_modificacion=usuario_modificacion)
             nueva_cotizacion.save()
-            nuevo_producto_proyecto.estado_cotizacion = "Creada"
-            nuevo_producto_proyecto.save()
-        for contacto in contactos:
-            contacto_agregar = Contacto.objects.get(nombre=contacto)
-            nueva_cotizacion.contacto_asociado.add(contacto_agregar)
-            nueva_cotizacion.save()
+            usuario = Usuario.objects.get(correo=str(request.user.email))
+            usuario.cotizaciones.add(nueva_cotizacion)
+            usuario.save()
+            for id in diccionario_proveedores[nombre_proveedor][1]:
+                nuevo_producto = Producto.objects.get(id=id)
+                nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto_asociado, proyecto=nuevo_producto)
+                nueva_cotizacion.productos_asociados.add(nuevo_producto)
+                nueva_cotizacion.save()
+                nuevo_producto_proyecto.estado_cotizacion = "Creada"
+                nuevo_producto_proyecto.save()
+            contactos_sin_repetir = list(dict.fromkeys(diccionario_proveedores[nombre_proveedor][0]))
+            for contactos in contactos_sin_repetir:
+                contacto_agregar = Contacto.objects.get(nombre=contactos)
+                nueva_cotizacion.contacto_asociado.add(contacto_agregar)
+                nueva_cotizacion.save()
+        crear_notificacion("crear_cotizacion", request.user.email, "creó cotizaciones", "Cotización", 1, nueva_cotizacion.id, nueva_cotizacion.nombre, proyecto_asociado.id)
         return redirect('/proyectos/proyecto/{}'.format(proyecto_asociado.id))
     else:
         proyecto = Proyecto.objects.get(id=id)
         productos = proyecto.productos.all()
-        lista_proveedores = []
-        lista_producto_proyecto = []
+        lista_productos = []
         for i in productos:
+            lista_producto_proyecto = []
+            lista_proveedores = []
             producto_proyecto = Producto_proyecto.objects.filter(producto=proyecto, proyecto=i)
-            lista_producto_proyecto.append(producto_proyecto)
+            lista_producto_proyecto.append(producto_proyecto[0])
             proveedores = Proveedor.objects.filter(subclases_asociadas=producto_proyecto[0].proyecto.subclase_set.all()[0])
-            for n in proveedores:           
-                lista_proveedores.append(n.nombre)
-        proveedores_no_repetidos =  list(dict.fromkeys(lista_proveedores))
-        lista_proveedores_productos = []
-        for i in lista_producto_proyecto:
-            lista_aux = []
-            proveedores_para_producto = Proveedor.objects.filter(subclases_asociadas=i[0].proyecto.subclase_set.all()[0])
-            for x in proveedores_para_producto:
-                lista_aux.append(x.nombre)
-            lista_proveedores_productos.append(lista_aux)
-        lista_final = []
-        for proveedor in proveedores_no_repetidos:
-            aux = []
-            nuevo_proveedor = Proveedor.objects.get(nombre=proveedor)
-            aux.append(nuevo_proveedor)
-            aux2 = []
-            for counter, i in enumerate(lista_proveedores_productos):
-                booleano = False
-                lista_aux = []
-                for x in i:
-                    if x == proveedor:
-                        booleano = True
-                if booleano:
-                    lista_aux.append(lista_producto_proyecto[counter][0].proyecto.nombre)
-                    lista_aux.append(lista_producto_proyecto[counter][0].cantidades)
-                    lista_aux.append(lista_producto_proyecto[counter][0].proyecto.unidad)
-                    lista_aux.append(lista_producto_proyecto[counter][0].fecha_uso)
-                    aux2.append(lista_aux)
-                    aux.append(aux2)
-            lista_final.append(aux)
-        lista_final_final = []
-        for i in lista_final:
-            lista_aux = []
-            lista_aux.append(i[0])
-            lista_aux.append(i[1])
-            lista_final_final.append(lista_aux)
-        return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_final_final})
+            for n in proveedores:
+                for contacto in n.contactos_asociados.all():
+                    aux = []          
+                    aux.append(n)
+                    aux.append(contacto)
+                    lista_proveedores.append(aux)
+            lista_producto_proyecto.append(lista_proveedores)
+            lista_productos.append(lista_producto_proyecto)
+        return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_productos})
 
 @login_required(login_url='/login')
 def mostrar_cotizacion(request, id):
