@@ -13,12 +13,15 @@
 </head>
   <form action="{{Proyecto.id}}" method="POST">{% csrf_token %}
     <div class="container">
-      <div class="title">EDITAR - {{Proyecto.nombre}}</div>
+      <div class="title">EDITAR FECHAS- {{Proyecto.nombre}}</div>
+      <br>
       <div class="user-details">
         <div class="input-box">
+            <span class="details">FECHA INICIO</label>
             <input type="date" name="fecha_inicio" placeholder="Formato: YYYY-MM-DD" value="{{Proyecto.fecha_inicio|date:'Y-m-d'}}">
         </div>
         <div class="input-box">
+            <span class="details">FECHA TÉRMINO</label>
             <input type="date" name="fecha_termino" placeholder="Formato: YYYY-MM-DD"  value="{{Proyecto.fecha_final|date:'Y-m-d'}}">
         </div>
       </div>
