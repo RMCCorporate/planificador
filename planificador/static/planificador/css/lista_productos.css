@@ -82,21 +82,18 @@ body{
     text-align: center;
     width:20%;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-.container .table-container .boton_container .button_eliminar{
-    border: solid;
-    height: 25px;
-    margin: 1%;
-    background: white;
-    color: #4676b8;
-    font-size: 10pt;
-    border-color: #4676b8;
-    border-width: 0.8184pt;
-    text-align: center;
-    width:10%;
-    border-radius: 5px;
-}
+.button_editar:hover{
+    background-color: #fbfbfb;
+  }
+  
+  .button_editar:active{
+    background-color: white;
+    box-shadow: 0 5px #fbfbfb;
+    transform: translateY(2px);
+  }
 
 .container .table-container .table{
     width: 100%;

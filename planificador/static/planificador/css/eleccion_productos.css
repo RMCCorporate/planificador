@@ -191,8 +191,18 @@ TABLA
     text-align: center;
     width:250px;
     border-radius: 5px;
+    cursor: pointer;
 }
 
+.button_añadir:hover{
+  background-color: #fbfbfb;
+}
+
+.button_añadir:active{
+  background-color: white;
+  box-shadow: 0 5px #fbfbfb;
+  transform: translateY(2px);
+}
 .table-container .search{
     width: 30%;
     height: 30px;

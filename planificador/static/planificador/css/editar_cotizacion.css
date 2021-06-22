@@ -93,6 +93,17 @@ form .button{
     border-width: 0.8184pt;
     border-radius: 5px;
     color:#4676b8;
+    cursor: pointer;
+}
+
+.button:hover{
+    background-color: #fbfbfb;
+}
+
+.button:active{
+    background-color: white;
+    box-shadow: 0 5px #fbfbfb;
+    transform: translateY(2px);
 }
 
 @media (max-width: 584px){

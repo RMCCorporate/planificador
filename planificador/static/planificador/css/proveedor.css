@@ -99,6 +99,17 @@ body{
     text-align: center;
     width:10%;
     border-radius: 5px;
+    cursor: pointer;
+}
+
+.button_editar:hover{
+    background-color: #fbfbfb;
+}
+
+.button_editar:active{
+    background-color: white;
+    box-shadow: 0 5px #fbfbfb;
+    transform: translateY(2px);
 }
 
 .container .table-container .button_eliminar{
@@ -113,8 +124,18 @@ body{
     text-align: center;
     width:10%;
     border-radius: 5px;
+    cursor: pointer;
 }
 
+.button_eliminar:hover{
+    background-color: #fbfbfb;
+}
+
+.button_eliminar:active{
+    background-color: white;
+    box-shadow: 0 5px #fbfbfb;
+    transform: translateY(2px);
+}
 .container .table-container .table{
     width: 100%;
     margin: 40px auto 0;
