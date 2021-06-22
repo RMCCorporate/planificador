@@ -27,6 +27,7 @@ urlpatterns = [
     path('planificador/crear_permisos/', views.crear_permisos, name="crear_permisos"),
     path('planificador/usuario/', views.usuario, name="usuario"),
     path('planificador/nueva_subclase/', views.agregar_subclases, name="agregar_subclases"),
+    path('planificador/actualizar_planilla/', views.actualizar_planilla, name="actualizar_planilla"),
     path('planificador/permisos_notificacion/', views.permisos_notificacion, name="permisos_notificacion"),
     path('planificador/editar_usuario/<str:correo>', views.editar_usuario, name="editar_usuario"),
     path('notificaciones/', views.notificaciones, name='notificaciones'),

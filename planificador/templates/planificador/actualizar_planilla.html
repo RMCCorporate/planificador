@@ -1,0 +1,35 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO PRODUCTO PROVEEDOR {% endblock%}
+{% block content %}
+
+<head>
+	<title>ACTUALIZAR PLANILLA</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+	<link href="{% static 'planificador/css/agregar_subclases.css' %}" rel="stylesheet">
+</head>
+
+<div class="container">
+    <div class="title">ACTUALIZAR PLANILLA</div>
+    <br>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+      <div class="user-details">
+            <span class="details">SUBIR PLANILLA EXCEL</label>
+                <br>
+            <input type="file"
+                name="excel_file"
+                >
+            <br>
+            </div>
+        <br>
+            <button class="button" type="submit">Agregar</button>
+ </form>
+</div>
+       
+    
+        
+        
+{% endblock%}

@@ -33,10 +33,16 @@
         <a href="{% url 'crear_permisos' %}">
             <button class="button_añadir">Añadir permisos</button>
         </a>
+        <a href="{% url 'actualizar_planilla' %}">
+            <button class="button_añadir">Actualizar planilla</button>
+        </a>
         {% endif %}
         <a href="{% url 'agregar_subclases' %}">
             <button class="button_añadir">Añadir sub-clases</button>
         </a>
-        
+        {% if planilla %}
+            <a href="media/{{planilla}}" download="planilla_planificador">
+                <button class="button_añadir">Descargar</button></a>
+        {% endif %}        
     </section>
 {% endblock %}

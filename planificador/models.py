@@ -203,4 +203,6 @@ class Notificacion(models.Model):
     def __str__(self):
         return self.tipo
     
-
+class Planilla(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    planilla = models.FileField(upload_to="img")

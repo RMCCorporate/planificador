@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Producto, SubClase, Proveedor, Clase, Usuario, Permisos_notificacion, Notificacion
+from planificador.models import Producto, SubClase, Proveedor, Clase, Usuario, Permisos_notificacion, Notificacion, Planilla
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from planificador.decorators import allowed_users
@@ -27,8 +27,26 @@ def notificaciones(request):
 def index(request):
     #group = str(request.user.groups.all()[0])
     usuario = str(request.user.groups.all()[0])
-    print(usuario)
-    return render(request, 'planificador/index.html', {"rol":usuario})
+    if Planilla.objects.filter(id="0").exists():
+        planilla = Planilla.objects.get(id="0").planilla
+    else:
+        planilla = False
+    
+    return render(request, 'planificador/index.html', {"rol":usuario, "planilla":planilla})
+
+def actualizar_planilla(request):
+    if request.method == "POST":
+        excel_file = request.FILES["excel_file"]
+        if not Planilla.objects.filter(id="0").exists():
+            nueva_planilla = Planilla(id="0", planilla=excel_file)
+            nueva_planilla.save()
+        else:
+            nueva_planilla = Planilla.objects.get(id="0")
+            nueva_planilla.planilla = excel_file
+            nueva_planilla.save()
+        return redirect('/')
+    else:
+        return render(request, 'planificador/actualizar_planilla.html')
 
 def agregar_subclases(request):
     if request.method == "POST":
