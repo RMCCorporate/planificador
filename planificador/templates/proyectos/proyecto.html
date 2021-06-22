@@ -50,11 +50,15 @@
   <div class="informacion_container">
     <h4>INFORMACIÓN FECHAS</h4>
   </div>
+  {% if rol == "Admin" or rol == "Planificador"%}
   <div class="boton_container">
     <a href="{% url 'editar_fechas' Proyecto.id %}">
       <button class="button_editar">Editar fechas</button>
     </a>
   </div>
+  {% else %}
+  <br>
+  {% endif %}
   <table class="table">
     <thead>
         <tr>
@@ -77,6 +81,7 @@
   <div class="informacion_container">
     <h4>PRODUCTOS</h4>
   </div>
+  {% if rol == "Admin" or rol == "Planificador"%}
   <div class="boton_container">
     <a href="{% url 'agregar_producto' Proyecto.id %}">
       <button class="button_editar">Agregar producto(s)</button>
@@ -85,6 +90,9 @@
       <button class="button_eliminar">Editar/Eliminar productos</button>
   </a>
   </div>
+  {% else %}
+  <br>
+  {% endif %}
     <table class="table2">
     <thead>
         <tr>
@@ -142,11 +150,15 @@
   <div class="informacion_container">
     <h4>COTIZACIONES</h4>
   </div>
+  {% if rol == "Admin" or rol == "Cotizador"%}
   <div class="boton_container">
     <a href="{% url 'agregar_cotizacion' Proyecto.id %}">
       <button class="button_editar">Agregar cotización</button>
     </a>
   </div>
+  {% else %}
+  <br>
+  {% endif %}
     <table class="table2">
     <thead>
         <tr>
@@ -226,11 +238,15 @@
   <div class="informacion_container">
     <h4>PRODUCTOS COTIZADOS</h4>
   </div>
+  {% if rol == "Admin" or rol == "Cotizador"%}
   <div class="boton_container">
     <a href="{% url 'editar_precios' Proyecto.id %}">
       <button class="button_editar">Editar precios</button>
     </a>
   </div>
+  {% else %}
+  <br>
+  {% endif %}
     <table class="table2">
     <thead>
         <tr>

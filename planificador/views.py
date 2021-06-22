@@ -25,13 +25,11 @@ def notificaciones(request):
 
 @login_required(login_url='/login')
 def index(request):
-    #group = str(request.user.groups.all()[0])
     usuario = str(request.user.groups.all()[0])
     if Planilla.objects.filter(id="0").exists():
         planilla = Planilla.objects.get(id="0").planilla
     else:
         planilla = False
-    
     return render(request, 'planificador/index.html', {"rol":usuario, "planilla":planilla})
 
 def actualizar_planilla(request):

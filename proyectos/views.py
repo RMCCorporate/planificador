@@ -193,6 +193,7 @@ def proyectos(request):
 
 @login_required(login_url='/login')
 def proyecto(request, id):
+    usuario = str(request.user.groups.all()[0])
     proyecto = Proyecto.objects.get(id=id)
     productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
     aux_productos_final = []
@@ -291,7 +292,7 @@ def proyecto(request, id):
                 else:
                     i.estado_tiempo = "No"
                     i.save()
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final, "precio":precio_final})
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final, "precio":precio_final, "rol": usuario})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
@@ -549,10 +550,13 @@ def crear_nuevo_producto(request):
     return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     
 # Vista planificador I
-@allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def planificador(request):
-    return render(request, "proyectos/planificador.html")
+    usuario = str(request.user)
+    if usuario == "tacorrea@uc.cl" or usuario == "pcorrea" or usuario == "rcasascordero" or usuario == "vvergara":
+        return render(request, "proyectos/planificador.html")
+    else:
+        return redirect('/')
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
