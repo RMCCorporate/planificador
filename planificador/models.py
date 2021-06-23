@@ -164,6 +164,7 @@ class Cotizacion(models.Model):
 
 class Usuario(models.Model):
     correo = models.CharField(max_length=128, primary_key=True)
+    nickname = models.CharField(max_length=128, null=True)
     nombre = models.CharField(max_length=128, null=True)
     apellido = models.CharField(max_length=128, null=True)
     segundo_apellido = models.CharField(max_length=128, null=True)
@@ -175,6 +176,7 @@ class Usuario(models.Model):
     proyectos = models.ManyToManyField(Proyecto)
     cotizaciones = models.ManyToManyField(Cotizacion)
     notificaciones = models.IntegerField(null=True)
+    session_key = models.CharField(max_length=100, null=True)
 
 class Correlativo_cotizacion(models.Model):
     año = models.IntegerField(primary_key=True)

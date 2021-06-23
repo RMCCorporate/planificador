@@ -113,7 +113,7 @@ def crear_usuario(request):
         grupo = Group.objects.get(name=nombre_grupo)
         nuevo_usuario.groups.add(grupo)
         nuevo_usuario.save()
-        usuario_info = Usuario(correo=correo, nombre=nombre, apellido=apellido, segundo_apellido=segundo_apellido, celular=celular, cargo=cargo, telefono=telefono, notificaciones=0)
+        usuario_info = Usuario(correo=correo, nickname=nickname, nombre=nombre, apellido=apellido, segundo_apellido=segundo_apellido, celular=celular, cargo=cargo, telefono=telefono, notificaciones=0)
         usuario_info.save()
         permisos = ["editar_precio", "editar_producto_proyecto", "eliminar_producto_proyecto", "agregar_producto_proyecto", "crear_proyecto", "crear_cotizacion","editar_fecha_respuesta_cotización", "eliminar_cotización", "enviar_correo","agregar_proveedor", "editar_proveedor", "eliminar_contacto", "eliminar_proveedor", "agregar_producto", "editar_producto", "eliminar_producto"]
         for i in permisos:

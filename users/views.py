@@ -5,6 +5,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as do_login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.sessions.models import Session
+from planificador.models import Usuario
 
 # Create your views here.
 def welcome(request):
@@ -27,11 +29,26 @@ def login(request):
             password = form.cleaned_data['password']
             # Verificamos las credenciales del usuario
             user = authenticate(username=username, password=password)
+            usuario = Usuario.objects.get(nickname=str(user))
             # Si existe un usuario con ese nombre y contraseña
             if user is not None:
                 # Hacemos el login manualmente
+               
+                if usuario.session_key: # check if user has session_key. This will be true for users logged in on another device
+                    try:
+                        s = Session.objects.get(session_key=usuario.session_key)
+                    except Session.DoesNotExist:
+                        pass
+                    else:
+                        s.delete() # delete the old session_key from db
+
                 do_login(request, user)
+                # set new session_key for user instance
+                usuario.session_key = request.session.session_key
+                usuario.save() # save the user
                 # Y le redireccionamos a la portada
+                
+                 # log the user in
                 return redirect('/')
         else:
             messages.info(request, 'Usuario o contraseña es incorrecta')
@@ -41,5 +58,9 @@ def login(request):
 
 def logout(request):
     # Redireccionamos a la portada
+    usuario = Usuario.objects.get(nickname=str(request.user))
+    usuario.session_key = None
+    usuario.save()
     do_logout(request)
+    #usuario = Usuario.objects.get(correo=re)
     return redirect('login')
