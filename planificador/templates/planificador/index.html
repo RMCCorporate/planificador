@@ -38,11 +38,13 @@
         </a>
         {% endif %}
         <a href="{% url 'agregar_subclases' %}">
-            <button class="button_añadir">Añadir sub-clases</button>
+            <button class="button_añadir">AÑADIR SUBCLASES</button>
         </a>
         {% if planilla %}
             <a href="media/{{planilla}}" download="planilla_planificador">
-                <button class="button_añadir">Descargar planilla</button></a>
+                <button class="button_añadir">PLANILLA DATOS  <i class="arrowdown"></i></button></a>
+               
+
         {% endif %}        
     </section>
 {% endblock %}

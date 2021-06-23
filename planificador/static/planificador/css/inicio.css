@@ -32,3 +32,14 @@
     box-shadow: 0 5px #fbfbfb;
     transform: translateY(2px);
 }
+
+.arrowdown {
+    border: solid #4676b8;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    margin-left: 5px;
+  }
+  

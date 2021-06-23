@@ -53,7 +53,7 @@
   {% if rol == "Admin" or rol == "Planificador"%}
   <div class="boton_container">
     <a href="{% url 'editar_fechas' Proyecto.id %}">
-      <button class="button_editar">Editar fechas</button>
+      <button class="button_editar">EDITAR FECHAS</button>
     </a>
   </div>
   {% else %}
@@ -84,10 +84,10 @@
   {% if rol == "Admin" or rol == "Planificador"%}
   <div class="boton_container">
     <a href="{% url 'agregar_producto' Proyecto.id %}">
-      <button class="button_editar">Agregar producto(s)</button>
+      <button class="button_editar">AGREGAR</button>
     </a>
     <a href="{% url 'editar_producto_proyecto' Proyecto.id %}">
-      <button class="button_eliminar">Editar/Eliminar productos</button>
+      <button class="button_eliminar">EDITAR/ELIMINAR</button>
   </a>
   </div>
   {% else %}
@@ -153,7 +153,7 @@
   {% if rol == "Admin" or rol == "Cotizador"%}
   <div class="boton_container">
     <a href="{% url 'agregar_cotizacion' Proyecto.id %}">
-      <button class="button_editar">Agregar cotización</button>
+      <button class="button_editar">AGREGAR</button>
     </a>
   </div>
   {% else %}
@@ -241,7 +241,7 @@
   {% if rol == "Admin" or rol == "Cotizador"%}
   <div class="boton_container">
     <a href="{% url 'editar_precios' Proyecto.id %}">
-      <button class="button_editar">Editar precios</button>
+      <button class="button_editar">EDITAR</button>
     </a>
   </div>
   {% else %}

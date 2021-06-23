@@ -662,7 +662,7 @@ def recibir_cantidades_planificador(request):
         usuario = Usuario.objects.get(correo=request.user.email)
         usuario.productos_proyecto.add(producto_proyecto)
         usuario.save()
-    if boton == "Guardar y continuar":
+    if boton == "GUARDAR Y CONTINUAR":
         productos = Filtro_producto.objects.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         productos_proyecto = proyecto.productos.all()
