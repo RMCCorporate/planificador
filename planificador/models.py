@@ -13,6 +13,10 @@ class Precio(models.Model):
     comentarios = models.TextField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
 
+class ImagenProducto(models.Model):
+    id = models.CharField(primary_key=True, max_length=128)
+    imagen = models.ImageField(upload_to='images', null=True)
+
 class Producto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     nombre = models.CharField(max_length=512)
@@ -20,9 +24,10 @@ class Producto(models.Model):
     fecha_actualizacion = models.DateTimeField(auto_now_add=True, null=True)
     unidad = models.CharField(max_length=128, null=True)
     kilos =  models.FloatField(null=True)
-    imagen = models.ImageField(upload_to='images', null=True)
+    imagen = models.ManyToManyField(ImagenProducto)
     def __str__(self):
         return self.nombre
+
 
 class SubClase(models.Model):
     nombre = models.CharField(primary_key=True, max_length=128)

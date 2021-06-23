@@ -23,15 +23,27 @@
     <div class="user-details">
         <div class="input-box">
           <span class="details">UNIDAD</label>
-            {{form.unidad}}
+            <select class="custom-select"  name="unidad">
+              {% if Producto.unidad %}
+              <option value="Producto.unidad" selected>{{Producto.unidad}}</option>
+              {% endif %}
+              <option value="Unidad">Unidad</option>
+              <option value="Kilos">Kilos</option>
+              <option value="Metros">Metros</option>
+              <option value="Litros">Litros</option>
+              <option value="Días">Días</option>
+              <option value="Horas">Horas</option>
+              <option value="Par">Par</option>
+              <option value="Bolsas">Bolsas</option>
+            </select>   
         </div>
         <div class="input-box">
           <span class="details">KILOS</label>
-            {{form.kilos}}
+            <input type="text" name="kilos" value={{Producto.kilos}}>
         </div>
         <div class="input-box">
           <span class="details">IMAGEN</label>
-            {{form.imagen}}
+            <input type="file" name="imagen">
         </div>
             </div>
     <br>

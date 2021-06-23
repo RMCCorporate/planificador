@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario, Correlativo_producto
+from planificador.models import Producto, Clase, SubClase, Precio, Filtro_producto, Producto_proveedor, Proveedor, Notificacion, Permisos_notificacion, Usuario, Correlativo_producto, ImagenProducto
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
 from datetime import date, datetime
 from django.core.files import File
@@ -251,14 +251,12 @@ def producto(request, id):
     a = lista_precios.order_by('-fecha')
     sub_clase = producto.subclase_set.all()[0]
     clase = sub_clase.clase_set.all()[0]
+    imagenes = producto.imagen.all()
     if Producto_proveedor.objects.filter(proyecto=producto).exists():
         nombre_proveedor = Producto_proveedor.objects.filter(proyecto=producto)
     else:
         nombre_proveedor = ""
-    print(a)
-    for i in a:
-        print(i.valor)
-    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase, "nombre_proveedor":nombre_proveedor})
+    return render(request, "productos/producto.html", {"Producto":producto, "lista_precios":a, "Subclase":sub_clase, "Clase":clase, "nombre_proveedor":nombre_proveedor, "imagenes":imagenes})
 
 @login_required(login_url='/login')
 def nuevo_proveedor_producto(request):
@@ -336,15 +334,22 @@ def nuevo_proveedor_producto(request):
 def mostrar_edicion_producto(request, id):
     producto = Producto.objects.get(id=id)
     if request.method == "POST":
-        form = ImageForm(request.POST, request.FILES, instance=producto)
-        if form.is_valid():
-            form.save()
-            crear_notificacion("editar_producto", request.user.email, "editó información producto", "Producto", 1, producto.id, producto.nombre)
-            return redirect('/productos/producto/{}'.format(producto.id))
+        unidad = request.POST["unidad"]
+        kilos = request.POST["kilos"]
+        imagen = request.FILES["imagen"]
+        if imagen:
+            nueva_imagen = ImagenProducto(id=uuid.uuid1(), imagen=imagen)
+            nueva_imagen.save()
+        producto.unidad = unidad
+        if kilos:
+            producto.kilos = kilos
+        producto.imagen.add(nueva_imagen)
+        producto.save()
+        crear_notificacion("editar_producto", request.user.email, "editó información producto", "Producto", 1, producto.id, producto.nombre)
+        return redirect('/productos/producto/{}'.format(producto.id))
     else:
         subclases = SubClase.objects.all()
-        form = ImageForm(instance=producto)
-        return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases, "form":form})
+        return render(request, "productos/editar_producto.html", {"Producto":producto, "Subclases":subclases})
 
 
 #Eliminar producto

@@ -18,8 +18,12 @@
 </div>
 <div class="container">
   <div class="imagen_container">
-    {% if Producto.imagen %}
-    <img src="{{ Producto.imagen.url}}" alt="connect" class="imagen">
+    {% if imagenes %}
+    {% for i in imagenes %}
+      <img class="mySlides" src="{{ i.imagen.url }}" alt="connect" >
+      <button class="w3-button w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+      <button class="w3-button w3-display-right" onclick="plusDivs(+1)">&#10095;</button>
+    {% endfor %}
     {% else %}
     <img src="../../static/planificador/img/default-image.jpg" class="imagen">
     {% endif %}
@@ -116,5 +120,23 @@
 </div>
         </div>
  
-  
+<script>
+  var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length} ;
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  x[slideIndex-1].style.display = "block";
+}
+</script>
 {% endblock %}
