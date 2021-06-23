@@ -7,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
     <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
 </head>
 
 <div class="title">
@@ -21,9 +22,10 @@
     {% if imagenes %}
     {% for i in imagenes %}
       <img class="mySlides" src="{{ i.imagen.url }}" alt="connect" >
-      <button class="w3-button w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
-      <button class="w3-button w3-display-right" onclick="plusDivs(+1)">&#10095;</button>
+    
     {% endfor %}
+    <button class="w3-button w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+    <button class="w3-button w3-display-right" onclick="plusDivs(+1)">&#10095;</button>
     {% else %}
     <img src="../../static/planificador/img/default-image.jpg" class="imagen">
     {% endif %}

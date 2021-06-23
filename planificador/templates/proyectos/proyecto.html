@@ -7,11 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
     <link href="{% static 'planificador/css/proyecto.css' %}" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
 </head>
 
 <div class="title">
@@ -184,14 +180,31 @@
             <td data-label="NOMBRE"><a href="{% url 'mostrar_cotizacion' fila.0.id %}"> {{fila.0.nombre}}</a></td>
             <td data-label="PROVEEDOR"> {{fila.0.proveedor_asociado.nombre}}</td>
             <td data-label="PRODUCTOS ASOCIADOS">
-              <div class="dropdown">
-                <button class="dropbtn">PRODUCTOS</button>
-                <div class="dropdown-content">
-                  {% for i in fila.1 %}
-                  <a><li>{{i.0.nombre}}: {{i.1.cantidades}} {{i.0.unidad}}</a></li>
-                {% endfor %}
+              {% if fila.1 %}
+              <button onclick="myFunction('{{fila.0.id}}')" class="w3-button w3-block w3-left-align">
+                +</button>
+                <div id="{{fila.0.id}}" class="w3-container w3-hide">
+                  <table class="table2">
+                    <thead>
+                      <tr>
+                          <th>NOMBRE</th>
+                          <th>CANTIDAD</th>
+                          <th>UNIDAD</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for i in fila.1 %}
+                        <tr>
+                          <td>{{i.0.nombre}}</td>
+                          <td >{{i.1.cantidades}}</td>
+                          <td>{{i.0.unidad}}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                  </table>
+                
                 </div>
-              </div>
+                {% endif %}
             </td>
             {% if fila.0.fecha_salida %}
               {% if fila.4 == "Rojo" %}
@@ -316,6 +329,15 @@
       });
   </script>
 
- 
+<script>
+  function myFunction(id) {
+    var x = document.getElementById(id);
+    if (x.className.indexOf("w3-show") == -1) {
+      x.className += " w3-show";
+    } else {
+      x.className = x.className.replace(" w3-show", "");
+    }
+  }
+  </script>
 
 {% endblock %}

@@ -349,3 +349,7 @@ body{
         text-align: left;
     }
 }
+
+.w3-container{
+    width: 164%;
+}

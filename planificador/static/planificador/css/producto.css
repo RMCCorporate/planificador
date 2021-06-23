@@ -218,3 +218,13 @@ body{
     transform: rotate(135deg);
     -webkit-transform: rotate(135deg);
   }
+
+  .w3-display-right{
+      top:65%;
+      left:29%;
+  }
+
+  .w3-display-left{
+    top:65%;
+    left:29%;
+}
