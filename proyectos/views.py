@@ -591,8 +591,8 @@ def mostrar_filtro(request):
             nuevo_proyecto.save()
         crear_notificacion("crear_proyecto", request.user.email, "creó un proyecto", "Proyecto", 1, centro_costos, nombre, centro_costos)
         productos = Filtro_producto.objects.all()
-        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         productos_proyecto = nuevo_proyecto.productos.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)     
         return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":nuevo_proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
@@ -618,8 +618,12 @@ def guardar_datos_filtro(request):
             usuario.save()
     productos_proyecto = proyecto.productos.all()
     productos = Filtro_producto.objects.all()
+    for i in productos_proyecto:
+        if productos.filter(nombre_producto=i):
+            s = productos.filter(nombre_producto=i)[0]
+            s.utilizado = proyecto.id
+            s.save()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    producto = myFilter.qs
     return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
 #Recibir vista planificador I
@@ -632,15 +636,10 @@ def recibir_datos_planificador(request):
     lista_subclases_productos = []
     for producto in productos:
         lista_aux_producto = []
-        lista_aux_proveedores = []
-        instancia_producto = Producto.objects.get(nombre=producto)
-        lista_aux_producto.append(instancia_producto)
-        subclases_producto = instancia_producto.subclase_set.all()
-        subclases_proveedores = Proveedor.objects.filter(subclases_asociadas=subclases_producto[0])
-        for i in subclases_proveedores:
-            lista_aux_proveedores.append(i)
-        lista_aux_producto.append(lista_aux_proveedores)
-        subclases_proveedores = []
+        producto_clase = Producto.objects.get(nombre=producto)
+        lista_aux_producto.append(producto_clase)
+        if Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto_clase):
+            lista_aux_producto.append(Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto_clase)[0])
         lista_subclases_productos.append(lista_aux_producto)
     return render(request, "proyectos/lista_productos.html", {"Proyecto":proyecto, "Productos":lista_subclases_productos})
 

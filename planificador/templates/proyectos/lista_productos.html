@@ -38,7 +38,11 @@
               </td>
               
               <td data-label="CANTIDAD"> 
-                <input type="text" class="form-control" id="cantidad" name="cantidad" pattern="\d*">
+                {% if fila.1.cantidades %}
+                <input type="text" class="form-control" id="cantidad" name="cantidad" pattern="^[1-9]\d*(\.\d+)?$" value={{fila.1.cantidades}}>
+                {% else %}
+                <input type="text" class="form-control" id="cantidad" name="cantidad" pattern="^[1-9]\d*(\.\d+)?$">
+                {% endif %}
                 {% if forloop.last %}
                 <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
                 {% endif %}

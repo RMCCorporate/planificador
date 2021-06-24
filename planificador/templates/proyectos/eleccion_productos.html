@@ -99,12 +99,14 @@
     </thead>
     <tbody>
       {% for fila in myFilter.qs %}
+      {% if fila.utilizado != Proyecto.id or not fila.utilizado %}
         <tr>
             <td data-label="#"><input type=checkbox name="productos" value="{{fila.nombre_producto}}"></td>
             <td data-label="NOMBRE"> {{fila.nombre_producto}}</td>
             <td data-label="CLASE"> {{fila.nombre_clase}}</td>
             <td data-label="SUBCLASE"> {{fila.nombre_subclase}}</td>
         </tr>
+      {% endif %}
         {% endfor %}
     </tbody>
 </table>
