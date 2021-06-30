@@ -31,9 +31,11 @@
       <a href="{% url 'enviar_correo' Cotizacion.id %}">
         <button class="button_editar">ENVIAR CORREO</button>
       </a>
+      {% if not orden_compra %}
       <a href="{% url 'crear_orden' Cotizacion.id %}">
         <button class="button_editar">CREAR ORDEN DE COMPRA</button>
       </a>
+      {% endif %}
       <a href="{% url 'editar_cotizacion' Cotizacion.id %}">
         <button class="button_editar">FECHA RESPUESTA</button>
       </a>
@@ -67,13 +69,41 @@
                     {% endfor %}
                   </div>
                 </div>
-               
-                
                 </td>
           </tr>
       </tbody>
   </table>
   <br>
+  {% if orden_compra %}
+  <div class="informacion_container">
+    <h4>INFORMACIÓN ORDEN COMPRA</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>CONDICIÓN ENTREGA</th>
+            <th>CONDICIÓN PAGO</th>
+            <th>STATUS LLEGADA</th>
+            <th>STATUS FINANCIERO</th>
+            <th>FORMA PAGO</th>
+            <th>DESTINO FACTURA</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="ID">{{orden_compra.id}}</td>
+            <td data-label="CONDICIÓN ENTREGA"> {{orden_compra.condicion_entrega}}</td>
+            <td data-label="CONDICIÓN PAGO"> {{orden_compra.condiciones_pago}}</td>
+            <td data-label="STATUS LLEGADA">{{orden_compra.status_llegada}}</td>
+            <td data-label="STATUS FINANCIERO">{{orden_compra.status_financiero}}</td>
+            <td data-label="FORMA PAGO">{{orden_compra.forma_pago}}</td>
+            <td data-label="DESTINO FACTURA">{{orden_compra.destino_factura.nombre}}</td>
+        </tr>
+    </tbody>
+</table>
+{% endif %}
+<br>
   <div class="informacion_container">
     <h4>FECHAS</h4>
   </div>
@@ -102,6 +132,7 @@
     </tbody>
 </table>
 <br>
+{% if not orden_compra %}
   <div class="informacion_container">
     <h4>PRODUCTOS</h4>
   </div>
@@ -127,8 +158,35 @@
           </tr>
     </tbody>
 </table>
+{% else %}
+  <div class="informacion_container">
+    <h4>PRODUCTOS</h4>
   </div>
-  
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CANTIDAD</th>
+            <th>ESTADO</th>
+            <th>FECHA USO</th>
+            <th>USUARIO MODIFICACIÓN</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in productos_orden_compra %}
+          <tr>
+              <td data-label="NOMBRE">{{fila.producto_asociado_cantidades.proyecto.nombre}}</td>
+              <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+              <td data-label="STATUS"> {{fila.producto_asociado_cantidades.status}}</td>
+              <td data-label="FECHA USO"> {{fila.producto_asociado_cantidades.fecha_uso}}</td>
+              <td data-label="USUARIO MODIFICACIÓN"> {{fila.producto_asociado_cantidades.usuario_modificacion}}</td>
+              {% endfor %}  
+          </tr>
+    </tbody>
+</table>
+{% endif %}
+  </div>
+
   <script>
     document.querySelector("tr td .menu ul li").addEventListener("click", function(){
             this.classList.toggle("active");

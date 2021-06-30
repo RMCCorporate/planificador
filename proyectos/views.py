@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -750,7 +750,13 @@ def mostrar_cotizacion(request, id):
         producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
         productos.append(producto_proyecto)
     contactos = cotizacion.contacto_asociado.all()
-    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos})
+    if cotizacion.orden_compra:
+        orden_compra = Orden_compra.objects.get(cotizacion_hija=cotizacion)
+        productos_orden_compra = cotizacion.productos_proyecto_asociados.all()
+    else:
+        orden_compra = False
+        productos_orden_compra = False
+    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos, "orden_compra":orden_compra, "productos_orden_compra":productos_orden_compra})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')

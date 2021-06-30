@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Correlativo_orden_compra, Producto_proyecto_cantidades
+from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from email.mime.multipart import MIMEMultipart
@@ -27,16 +27,7 @@ def crear_orden(request, id):
         observaciones = request.POST["observaciones"]
         productos = request.POST.getlist("id_producto")
         cotizacion_padre = Cotizacion.objects.get(id=id_cotizacion)
-        if Correlativo_orden_compra.objects.filter(id=cotizacion_padre.id).exists():
-            numero_correlativo = str(Correlativo_orden_compra.objects.filter(id=cotizacion_padre.id)[0].numero)
-            cambio_correlativo = Correlativo_orden_compra.objects.get(id=cotizacion_padre.id)
-            cambio_correlativo.numero += 1
-            cambio_correlativo.save()
-            nuevo_nombre = cotizacion_padre.nombre+" - " + numero_correlativo
-        else:
-            nuevo_correlativo = Correlativo_orden_compra(id=cotizacion_padre.id, numero=0)
-            nuevo_correlativo.save()
-            nuevo_nombre = str(nuevo_correlativo.numero)
+        nuevo_nombre = cotizacion_padre.nombre+" - " + id_orden
         nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nuevo_nombre, proyecto_asociado=cotizacion_padre.proyecto_asociado, orden_compra=True, proveedor_asociado=cotizacion_padre.proveedor_asociado, usuario_modificacion=cotizacion_padre.usuario_modificacion)
         nueva_cotizacion.save()
         for i in cotizacion_padre.contacto_asociado.all():
@@ -76,9 +67,9 @@ def crear_orden(request, id):
             nuevo_RMC.save()
             destino_factura = nuevo_RMC
         if observaciones:
-            nueva_orden_compra = Orden_compra(id=uuid.uuid1(), cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura, observaciones=observaciones)
+            nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura, observaciones=observaciones)
         else:
-            nueva_orden_compra = Orden_compra(id=uuid.uuid1(), cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura)
+            nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura)
         nueva_orden_compra.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(nueva_cotizacion.id))
     

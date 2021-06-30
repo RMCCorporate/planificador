@@ -177,10 +177,12 @@
                     this.classList.toggle("active");
             });
         </script>
-            <td data-label="NOMBRE"><a href="{% url 'mostrar_cotizacion' fila.0.id %}"> {{fila.0.nombre}}</a></td>
+            <td data-label="NOMBRE"><a href="{% url 'mostrar_cotizacion' fila.0.id %}"> {{fila.0.nombre}}
+            </a></td>
             <td data-label="PROVEEDOR"> {{fila.0.proveedor_asociado.nombre}}</td>
             <td data-label="PRODUCTOS ASOCIADOS">
               {% if fila.1 %}
+              {% if not fila.0.orden_compra %}
               <button onclick="myFunction('{{fila.0.id}}')" class="w3-button w3-block w3-left-align">
                 +</button>
                 <div id="{{fila.0.id}}" class="w3-container w3-hide">
@@ -204,6 +206,9 @@
                   </table>
                 
                 </div>
+                {% else %}
+                ORDEN COMPRA
+                {% endif %}
                 {% endif %}
             </td>
             {% if fila.0.fecha_salida %}

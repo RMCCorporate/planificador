@@ -200,9 +200,6 @@ class Correlativo_producto(models.Model):
     producto = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
 
-class Correlativo_orden_compra(models.Model):
-    id = models.CharField(max_length=128, primary_key=True)
-    numero = models.IntegerField()
 class Permisos_notificacion(models.Model):
     nombre = models.CharField(max_length=128, primary_key=True)
     usuarios = models.ManyToManyField(Usuario)
