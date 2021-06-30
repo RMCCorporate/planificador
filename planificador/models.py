@@ -156,11 +156,19 @@ class Filtro_producto(models.Model):
     nombre_subclase = models.CharField(max_length=128)
     utilizado = models.CharField(max_length=128, null=True)
 
+class Producto_proyecto_cantidades(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    proyecto_asociado_cantidades = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado_cantidades')
+    producto_asociado_cantidades = models.ForeignKey(Producto_proyecto, on_delete=models.CASCADE, related_name='producto_asociado_cantidades')
+    cantidades = models.CharField(max_length=128, null=True)
+
 class Cotizacion(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     nombre = models.CharField(max_length=128, null=True)
     proyecto_asociado = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado')
     productos_asociados = models.ManyToManyField(Producto, related_name='productos_asociados')
+    productos_proyecto_asociados = models.ManyToManyField(Producto_proyecto_cantidades, related_name='productos_proyecto_asociados', null=True)
+    orden_compra = models.BooleanField(null=True)
     proveedor_asociado = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='proveedor_asociado', null=True)
     contacto_asociado = models.ManyToManyField(Contacto, related_name='contacto_asociado')
     fecha_salida = models.DateField(auto_now=False, auto_now_add=False, null=True)
@@ -192,6 +200,9 @@ class Correlativo_producto(models.Model):
     producto = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
 
+class Correlativo_orden_compra(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    numero = models.IntegerField()
 class Permisos_notificacion(models.Model):
     nombre = models.CharField(max_length=128, primary_key=True)
     usuarios = models.ManyToManyField(Usuario)
@@ -230,5 +241,5 @@ class Orden_compra(models.Model):
     status_llegada = models.CharField(max_length=128, null=True)
     status_financiero = models.CharField(max_length=128, null=True)
     forma_pago = models.CharField(max_length=128, null=True)
-    destino_factura =  models.ForeignKey(Cotizacion, on_delete=models.CASCADE, null=True, related_name='destino_factura')
+    destino_factura =  models.ForeignKey(RMC, on_delete=models.CASCADE, null=True, related_name='destino_factura')
     observaciones = models.TextField(null=True)

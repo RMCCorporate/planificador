@@ -19,27 +19,30 @@
     <div class="user-details">
         <div class="input-box">
           <span class="details">ID</label>
+            <input type="hidden" value="{{cotizacion_padre.id}}" name="id_cotizacion">
           <input type="text" name="id" placeholder="Identificador orden de compra. Ej: 2015" required>
         </div>
         <div class="input-box">
           <span class="details">CONDICIÓN DE ENTREGA</label>
-          <input type="text" name="condicion_entrega" placeholder="Plazo de entrega producto. Ej: Inmediato">
+          <input type="text" name="condicion_entrega" placeholder="Plazo de entrega producto. Ej: Inmediato" required>
         </div>
         <div class="input-box">
             <span class="details">CONDICIÓN DE PAGO</label>
-            <input type="text" name="condicion_pago" placeholder="Plazo de pago. Ej: 30 días">
+            <input type="text" name="condicion_pago" placeholder="Plazo de pago. Ej: 30 días" required>
           </div>
           <div class="input-box">
             <span class="details">FORMA DE PAGO</label>
-            <input type="text" name="forma_pago" placeholder="Medio de pago. Ej: Transferencia">
+            <input type="text" name="forma_pago" placeholder="Medio de pago. Ej: Transferencia" required>
           </div>
         <div class="input-box">
         <span class="details">FACTURAR A:</label>
-        <select class="custom-select" id="empresa" name="unidad">
+        <select class="custom-select" id="empresa" name="empresa" required>
             <option selected>ELEGIR EMPRESA</option>
-            <option value="RMC LIMITADA">RMC LIMITADA</option>
-            <option value="RMC CORPORATE">RMC CORPORATE</option>
-            <option value="RMC EQUIPMENTS">RMC EQUIPMENTS</option>
+            <option value="76021113-3">INGENIERÍA Y SERVICIOS RMC LIMITADA</option>
+            <option value="77241485-4">RMC INDUSTRIAL SPA</option>
+            <option value="77241488-9">RMC EQUIPMENTS SPA</option>
+            <option value="77289504-6">RMC CORPORATE SPA</option>
+            <option value="77077958-8">RMC LABS SPA</option>
         </select>
         </div>
         <div class="input-box">
@@ -71,7 +74,7 @@
                         {{fila.proyecto.nombre}}
                     </td>
                     <td data-label="CANTIDAD"> 
-                        <input type="text" value="{{fila.cantidades}}" name="cantidades">
+                        <input type="text" value="{{fila.cantidades}}" name="{{fila.id}}">
                     </td>
                     <td data-label="UNIDAD"> 
                         {{fila.proyecto.unidad}}
