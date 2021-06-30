@@ -214,3 +214,21 @@ class Notificacion(models.Model):
 class Planilla(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     planilla = models.FileField(upload_to="img")
+
+class RMC(models.Model):
+    rut = models.CharField(max_length=128, primary_key=True)
+    nombre = models.CharField(max_length=128, null=True)
+    giro = models.CharField(max_length=128, null=True)
+    direccion = models.CharField(max_length=128, null=True)
+
+class Orden_compra(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    cotizacion_padre = models.ForeignKey(Cotizacion, on_delete=models.CASCADE, null=True, related_name='cotizacion_padre')
+    cotizacion_hija =  models.ForeignKey(Cotizacion, on_delete=models.CASCADE, null=True, related_name='cotizacion_hija')
+    condicion_entrega = models.CharField(max_length=128, null=True)
+    condiciones_pago = models.CharField(max_length=128, null=True)
+    status_llegada = models.CharField(max_length=128, null=True)
+    status_financiero = models.CharField(max_length=128, null=True)
+    forma_pago = models.CharField(max_length=128, null=True)
+    destino_factura =  models.ForeignKey(Cotizacion, on_delete=models.CASCADE, null=True, related_name='destino_factura')
+    observaciones = models.TextField(null=True)
