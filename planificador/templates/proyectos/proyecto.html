@@ -65,9 +65,9 @@
     </thead>
     <tbody>
         <tr>
-            <td data-label="FECHA CREACIÓN">{{Proyecto.fecha_creacion}}</td>
-            <td data-label="FECHA INICIO"> {{Proyecto.fecha_inicio}}</td>
-            <td data-label="FECHA TÉRMINO"> {{Proyecto.fecha_final}}</td>
+            <td data-label="FECHA CREACIÓN">{{Proyecto.fecha_creacion|date:'Y-m-d'}}</td>
+            <td data-label="FECHA INICIO"> {{Proyecto.fecha_inicio|date:'Y-m-d'}}</td>
+            <td data-label="FECHA TÉRMINO"> {{Proyecto.fecha_final|date:'Y-m-d'}}</td>
         </tr>
     </tbody>
 </table>
@@ -111,7 +111,7 @@
               <td data-label="CANTIDAD"> 0</td>
             {% endif %}
             {% if fila.1 != "No" %}
-              <td data-label="ÚLTIMO PRECIO REFERENCIA">{{fila.1.valor}} - {{fila.1.nombre_proveedor}} - {{fila.1.fecha}}</td>
+              <td data-label="ÚLTIMO PRECIO REFERENCIA">{{fila.1.valor}} - {{fila.1.nombre_proveedor}} - {{fila.1.fecha|date:'Y-m-d'}}</td>
             {% else %}
               <td data-label="ÚLTIMO PRECIO REFERENCIA">No hay precios.</td>
             {% endif %}
@@ -129,13 +129,13 @@
             {% endif %}
             {% if fila.0.fecha_uso %}
                 {% if fila.0.estado_tiempo == "Verde" %}
-                  <td style="color:green" data-label="FECHA USO"> {{fila.0.fecha_uso}}</td>
+                  <td style="color:green" data-label="FECHA USO"> {{fila.0.fecha_uso|date:'Y-m-d'}}</td>
                 {% elif fila.0.estado_tiempo == "Naranjo" %}
-                  <td style="color:orange" data-label="FECHA USO"> {{fila.0.fecha_uso}}</td>
+                  <td style="color:orange" data-label="FECHA USO"> {{fila.0.fecha_uso|date:'Y-m-d'}}</td>
                 {% elif fila.0.estado_tiempo == "Rojo" %}
-                  <td style="color:red" data-label="FECHA USO"> {{fila.0.fecha_uso}}</td>
+                  <td style="color:red" data-label="FECHA USO"> {{fila.0.fecha_uso|date:'Y-m-d'}}</td>
                 {% elif fila.0.estado_tiempo == "No" %}
-                  <td style="color:blue" data-label="FECHA USO"> {{fila.0.fecha_uso}} (No es posible)</td>
+                  <td style="color:blue" data-label="FECHA USO"> {{fila.0.fecha_uso|date:'Y-m-d'}} (No es posible)</td>
                 {% endif %}
             {% else %}
               <td data-label="FECHA USO"> No se ha ingresado.</td>
@@ -219,11 +219,11 @@
             </td>
             {% if fila.0.fecha_salida %}
               {% if fila.2.2 == "Rojo" %}
-             <td style="color:red" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+             <td style="color:red" data-label="FECHA SALIDA"> {{fila.0.fecha_salida|date:'Y-m-d'}}</td>
               {% elif fila.2.2 == "Naranjo" %}
-              <td style="color:orange" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              <td style="color:orange" data-label="FECHA SALIDA"> {{fila.0.fecha_salida|date:'Y-m-d'}}</td>
               {% elif fila.2.2 == "Verde" %}
-              <td style="color:green" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
+              <td style="color:green" data-label="FECHA SALIDA"> {{fila.0.fecha_salida|date:'Y-m-d'}}</td>
               {% else %}
               <td>{{fila.4}}</td>
               {% endif %}
@@ -231,12 +231,12 @@
               <td data-label="FECHA SALIDA"> No se ha ingresado.</td>
             {% endif %}
             {% if fila.0.fecha_respuesta %}
-            <td data-label="FECHA RESPUESTA"> {{fila.0.fecha_respuesta}}</td>
+            <td data-label="FECHA RESPUESTA"> {{fila.0.fecha_respuesta|date:'Y-m-d'}}</td>
             {% else %}
             <td data-label="FECHA RESPUESTA"> No se ha ingresado.</td>
             {% endif %}
             {% if fila.0.fecha_actualizacion_precio %}
-            <td data-label="FECHA ACTUALIZACIÓN PRECIO">{{fila.0.fecha_actualizacion_precio}}</td>
+            <td data-label="FECHA ACTUALIZACIÓN PRECIO">{{fila.0.fecha_actualizacion_precio|date:'Y-m-d'}}</td>
             {% else %}
             <td data-label="FECHA ACTUALIZACIÓN PRECIO"> No se ha ingresado.</td>
             {% endif %}
@@ -278,15 +278,15 @@
         <tr>
             <td data-label="NOMBRE">{{fila.0.nombre}}</a></td>
             <td data-label="PRECIO UNITARIO">
-             {{fila.1.0.valor}} {{fila.1.0.tipo_cambio}}
+             {{fila.1.valor}} {{fila.1.tipo_cambio}}
             </td>
             <td data-label="FECHA">
-              {{fila.1.0.fecha}}
+              {{fila.1.fecha|date:'Y-m-d'}}
              </td>
-            <td data-label="PROVEEDOR">{{fila.1.0.nombre_proveedor}}</td>
-            <td data-label="COTIZACIÓN">{{fila.1.0.nombre_cotizacion}}</td>
+            <td data-label="PROVEEDOR">{{fila.1.nombre_proveedor}}</td>
+            <td data-label="COTIZACIÓN">{{fila.1.nombre_cotizacion}}</td>
             {% if fila.1.0.usuario_modificacion %}
-              <td data-label="USUARIO MODIFICACIÓN">{{fila.1.0.usuario_modificacion}}</td>
+              <td data-label="USUARIO MODIFICACIÓN">{{fila.1.usuario_modificacion}}</td>
             {% else %}
             <td data-label="USUARIO MODIFICACIÓN">Precio ingresado por planilla.</td>
             {% endif %}

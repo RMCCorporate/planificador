@@ -212,17 +212,17 @@ def proyecto(request, id):
     tabla_cotizaciones = []
     tabla_productos_cotizados = []
     for i in cotizaciones:
-        aux_tabla_productos_cotizados = []
         aux_tabla_cotizaciones = []
         aux_tabla_cotizaciones_producto_proyecto = []
         aux_demoras = []
         aux_tabla_cotizaciones.append(i)
         for producto in i.productos_asociados.all():
+            aux_tabla_productos_cotizados = []
             aux_tabla_cotizaciones_producto_proyecto.append(Producto_proyecto.objects.get(proyecto=producto, producto=proyecto))
             if producto.lista_precios:
                 precios = producto.lista_precios.all()
                 if precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre).exists():
-                    precio = precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre)
+                    precio = list(precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre)).pop()
                     aux_tabla_productos_cotizados.append(producto)
                     aux_tabla_productos_cotizados.append(precio)
                     tabla_productos_cotizados.append(aux_tabla_productos_cotizados)
@@ -279,18 +279,18 @@ def proyecto(request, id):
             ultimo_precio += a.valor_importación*a.valor_cambio
         precio_final += ultimo_precio
         if i.fecha_uso:
-                if 10 < (i.fecha_uso - date.today()).days:
-                    i.estado_tiempo = "Verde"
-                    i.save()
-                elif 10 >= (i.fecha_uso - date.today()).days > 5:
-                    i.estado_tiempo = "Naranjo"
-                    i.save()
-                elif 5 >= (i.fecha_uso - date.today()).days:
-                    i.estado_tiempo = "Rojo"
-                    i.save()
-                else:
-                    i.estado_tiempo = "No"
-                    i.save()
+            if 10 < (i.fecha_uso - date.today()).days:
+                i.estado_tiempo = "Verde"
+                i.save()
+            elif 10 >= (i.fecha_uso - date.today()).days > 5:
+                i.estado_tiempo = "Naranjo"
+                i.save()
+            elif 5 >= (i.fecha_uso - date.today()).days:
+                i.estado_tiempo = "Rojo"
+                i.save()
+            else:
+                i.estado_tiempo = "No"
+                i.save()
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":tabla_productos, "cotizaciones":tabla_cotizaciones, "info_productos":tabla_productos_cotizados, "precio":precio_final, "rol": usuario})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -299,69 +299,45 @@ def editar_precios(request, id):
     if request.method == "POST":
         cotizacion = Cotizacion.objects.get(id=id)
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
-        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
         id_productos = request.POST.getlist("id_producto")
-        nombre = request.POST.getlist("nombre")
         valor = request.POST.getlist("valor")
         valor_importacion = request.POST.getlist("valor_importacion")
         tipo_cambio = request.POST.getlist("tipo_cambio")
         valor_cambio = request.POST.getlist("valor_cambio")
-        print(nombre)
-        print(valor)
-        print(valor_importacion)
-        print(tipo_cambio)
-        print(valor_cambio)
-
-        """
-        #lista_cotizacion = request.POST.getlist("cotizacion")
-        for n,i in enumerate(nombre):
-            nombre_producto = request.POST[i]
-            if nombre_producto != "no_hay":
-                cotizacion_nueva = Cotizacion.objects.get(nombre=nombre_producto)
-                cotizacion.append(cotizacion_nueva)
-                productos_proyecto[n].proveedores.add(cotizacion_nueva.proveedor_asociado)
-                productos_proyecto[n].save()
-            else:
-                cotizacion.append(" ")
-        notificacion = False
-        for n, producto in enumerate(id):
-            #contador = 0
+        fecha = request.POST.getlist("fecha")
+        fecha_actual = date.today()
+        for n, producto in enumerate(id_productos):
             producto = Producto.objects.get(id=producto)
-            producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=producto)
-            if valor[n] != "None" and valor[n] != "" and cotizacion[n] != " ":
-                if valor_importacion[n] != "None" and valor_importacion[n] != "":
-                    if valor_cambio[n] == "None" and valor_cambio[n] != "":
-                        valor_cambio = 1
-                    fecha_actual = datetime.now()
-                    if valor_cambio == 1:
-                        precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio,  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
-                    else:
-                        precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=valor_importacion[n], fecha=fecha_actual, tipo_cambio=tipo_cambio[n], valor_cambio=valor_cambio[n],  nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
-                    precio.save()
-                    cotizacion[n].fecha_actualizacion_precio = datetime.now()
-                    cotizacion[n].save()
-                    usuario = Usuario.objects.get(correo=request.user.email)
-                    usuario.precios.add(precio)
-                    usuario.save()
-                    notificacion = True
-                else:
-                    fecha_actual = datetime.now()
-                    precio = Precio(id=uuid.uuid1(), valor=valor[n], fecha=fecha_actual, nombre_proveedor=cotizacion[n].proveedor_asociado.nombre, nombre_cotizacion=cotizacion[n].nombre, usuario_modificacion=usuario_modificacion)
-                    precio.save()
-                    cotizacion[n].fecha_actualizacion_precio = datetime.now()
-                    cotizacion[n].save()
-                    usuario = Usuario.objects.get(correo=request.user.email)
-                    usuario.precios.add(precio)
-                    usuario.save()
-                    notificacion = True
-                producto.lista_precios.add(precio)
-                producto.save()
-                producto_proyecto.estado_cotizacion = "Precio"
-                producto_proyecto.save()
-        if notificacion:
-            crear_notificacion("editar_precio", request.user.email, "editó precio", "Precio y Cotización", len(id), proyecto.id, proyecto.nombre, proyecto.id)
-        #Renderizar
-        """
+            producto_proyecto = Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=producto)
+            if not valor_importacion[n]:
+                nuevo_valor_importacion = 0
+            else:
+                nuevo_valor_importacion = valor_importacion[n]
+            if not tipo_cambio[n]:
+                nuevo_tipo_cambio = "CLP"
+            else:
+                nuevo_tipo_cambio = tipo_cambio[n]
+            if not valor_cambio[n]:
+                nuevo_valor_cambio = 1
+            else:
+                nuevo_valor_cambio = valor_cambio[n]
+            precio = Precio(id=uuid.uuid1(), valor=valor[n], valor_importación=nuevo_valor_importacion, fecha=fecha_actual, tipo_cambio=nuevo_tipo_cambio, valor_cambio=nuevo_valor_cambio,  nombre_proveedor=cotizacion.proveedor_asociado.nombre, nombre_cotizacion=cotizacion.nombre, usuario_modificacion=usuario_modificacion)
+            precio.save()
+            cotizacion.fecha_actualizacion_precio = datetime.now()
+            cotizacion.save()
+            usuario = Usuario.objects.get(correo=request.user.email)
+            usuario.precios.add(precio)
+            usuario.save()
+            producto_proyecto.estado_cotizacion = "Precio"
+            producto_proyecto.save()
+            producto.lista_precios.add(precio)
+            producto.save()
+            producto_proyecto.estado_cotizacion = "Precio"
+            producto_proyecto.save()
+        for i in fecha:
+            cotizacion.fecha_respuesta = i
+            cotizacion.save()
+        crear_notificacion("editar_precio", request.user.email, "editó precio", "Precio y Cotización", len(id_productos), cotizacion.proyecto_asociado.id, cotizacion.proyecto_asociado.nombre, cotizacion.proyecto_asociado.id)
         return redirect('/proyectos/proyecto/{}'.format(cotizacion.proyecto_asociado.id))
     else:
         cotizacion = Cotizacion.objects.get(id=id)
@@ -752,10 +728,6 @@ def mostrar_cotizacion(request, id):
             lista_precio = producto.producto_asociado_cantidades.proyecto.lista_precios.all()
             if lista_precio.filter(nombre_cotizacion=orden_compra.cotizacion_hija.nombre).exists():
                 filtro = lista_precio.filter(nombre_cotizacion=orden_compra.cotizacion_hija.nombre)
-                print(filtro)
-            else:
-                print("NO")
-            print(lista_precio[0].nombre_cotizacion)
     else:
         orden_compra = False
         productos_orden_compra = False
