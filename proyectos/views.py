@@ -196,11 +196,9 @@ def proyecto(request, id):
     usuario = str(request.user.groups.all()[0])
     proyecto = Proyecto.objects.get(id=id)
     productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-    aux_productos_final = []
     cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
     precio_final = 0
     lista_productos_precio = []
-    lista_cotizaciones = []
     tabla_productos = []
     for i in productos_proyecto:
         aux_tabla_productos = []
@@ -248,10 +246,11 @@ def proyecto(request, id):
                 estado = "Naranjo"
             elif 5 >= demora_respuesta.days:
                 estado = "Verde"
+            demora_respuesta = None
         if i.fecha_actualizacion_precio and i.fecha_respuesta:
             demora_precio = i.fecha_actualizacion_precio - i.fecha_respuesta
         else:
-            demora_precio = 0
+            demora_precio = ""
         aux_demoras.append(demora_respuesta)
         aux_demoras.append(demora_precio)
         aux_demoras.append(estado)
@@ -292,26 +291,28 @@ def proyecto(request, id):
                 else:
                     i.estado_tiempo = "No"
                     i.save()
-    for i in tabla_cotizaciones:
-        print(i)
-        print(" ")
-        print(" ")
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":tabla_productos, "cotizaciones":tabla_cotizaciones, "info_productos":tabla_productos_cotizados, "precio":precio_final, "rol": usuario})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def editar_precios(request, id):
     if request.method == "POST":
-        proyecto = Proyecto.objects.get(id=id)
+        cotizacion = Cotizacion.objects.get(id=id)
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-        id = request.POST.getlist("id")
+        id_productos = request.POST.getlist("id_producto")
         nombre = request.POST.getlist("nombre")
         valor = request.POST.getlist("valor")
         valor_importacion = request.POST.getlist("valor_importacion")
         tipo_cambio = request.POST.getlist("tipo_cambio")
         valor_cambio = request.POST.getlist("valor_cambio")
-        cotizacion = []
+        print(nombre)
+        print(valor)
+        print(valor_importacion)
+        print(tipo_cambio)
+        print(valor_cambio)
+
+        """
         #lista_cotizacion = request.POST.getlist("cotizacion")
         for n,i in enumerate(nombre):
             nombre_producto = request.POST[i]
@@ -360,32 +361,22 @@ def editar_precios(request, id):
         if notificacion:
             crear_notificacion("editar_precio", request.user.email, "editó precio", "Precio y Cotización", len(id), proyecto.id, proyecto.nombre, proyecto.id)
         #Renderizar
-        return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
+        """
+        return redirect('/proyectos/proyecto/{}'.format(cotizacion.proyecto_asociado.id))
     else:
-        proyecto = Proyecto.objects.get(id=id)
-        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-        lista_info_productos = []
-        for i in productos_proyecto:
-            lista_aux = []
-            if i.estado_cotizacion != "No" and i.estado_cotizacion != None and i.estado_cotizacion != "":
-                producto = Producto.objects.get(nombre=i.proyecto)
-                ultimo_precio = list(producto.lista_precios.all())
-                if len(ultimo_precio) != 0:
-                    ultimo_precio = ultimo_precio.pop()
-                aux_productos = []
-                cotizacion = Cotizacion.objects.filter(proyecto_asociado=proyecto)
-                for x in cotizacion:
-                    for n in x.productos_asociados.all():
-                        if n.nombre == i.proyecto.nombre:
-                            aux_productos.append(x)
-                lista_aux.append(i)
-                lista_aux.append(ultimo_precio)
-                if aux_productos == []:
-                    aux_productos = ["no_hay"]
-                lista_aux.append(aux_productos)
-                lista_info_productos.append(lista_aux)
-        #RENDERIZADO
-        return render(request, "proyectos/editar_precio.html", {"info_productos":lista_info_productos})
+        cotizacion = Cotizacion.objects.get(id=id)
+        lista_productos = []
+        productos = cotizacion.productos_asociados.all()
+        for i in productos:
+            auxiliar_lista_productos = []
+            auxiliar_lista_productos.append(i)
+            precios = i.lista_precios.all()
+            if precios.filter(nombre_cotizacion=cotizacion.nombre).exists():
+                auxiliar_lista_productos.append(precios.filter(nombre_cotizacion=cotizacion.nombre))
+            else:
+                auxiliar_lista_productos.append([])
+            lista_productos.append(auxiliar_lista_productos)
+        return render(request, "proyectos/editar_precio.html", {"info_productos":lista_productos, "Cotizacion":cotizacion})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')

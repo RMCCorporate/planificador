@@ -36,9 +36,11 @@
         <button class="button_editar">CREAR ORDEN DE COMPRA</button>
       </a>
       {% endif %}
-      <a href="{% url 'editar_cotizacion' Cotizacion.id %}">
-        <button class="button_editar">FECHA RESPUESTA</button>
-      </a>
+      
+        <a href="{% url 'editar_precios' Cotizacion.id %}">
+          <button class="button_editar">EDITAR PRECIOS</button>
+        </a>
+  
       <a href="{% url 'eliminar_cotizacion' Cotizacion.id %}" onclick="return confirm('¿Estás seguro que quieres eliminar la cotización?')">
         <button class="button_eliminar">ELIMINAR</button>
     </a>

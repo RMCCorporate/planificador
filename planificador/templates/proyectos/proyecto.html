@@ -218,11 +218,11 @@
                 {% endif %}
             </td>
             {% if fila.0.fecha_salida %}
-              {% if fila.4 == "Rojo" %}
+              {% if fila.2.2 == "Rojo" %}
              <td style="color:red" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
-              {% elif fila.4 == "Naranjo" %}
+              {% elif fila.2.2 == "Naranjo" %}
               <td style="color:orange" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
-              {% elif fila.4 == "Verde" %}
+              {% elif fila.2.2 == "Verde" %}
               <td style="color:green" data-label="FECHA SALIDA"> {{fila.0.fecha_salida}}</td>
               {% else %}
               <td>{{fila.4}}</td>
@@ -240,13 +240,13 @@
             {% else %}
             <td data-label="FECHA ACTUALIZACIÓN PRECIO"> No se ha ingresado.</td>
             {% endif %}
-            {% if fila.2 %}
-            <td data-label="DEMORA RESPUESTA"> {{fila.2.days}} días</td>
+            {% if fila.2.0 != None %}
+            <td data-label="DEMORA RESPUESTA"> {{fila.2.0.days}} días</td>
             {% else %}
-            <td data-label="DEMORA RESPUESTA"> No se ha ingresado fecha respuesta.</td>
+            <td data-label="DEMORA RESPUESTA"> No se ha ingresado respuesta.</td>
             {% endif %}
-            {% if fila.3 %}
-            <td data-label="DEMORA INGRESO PRECIO">{{fila.3.days}} días</td>
+            {% if fila.2.1 %}
+            <td data-label="DEMORA INGRESO PRECIO">{{fila.2.1.days}} días</td>
             {% else %}
             <td data-label="DEMORA INGRESO PRECIO">No se ha ingresado precio.</td>
             {% endif %}
@@ -262,71 +262,35 @@
   <div class="informacion_container">
     <h4>PRODUCTOS COTIZADOS</h4>
   </div>
-  {% if rol == "Admin" or rol == "Cotizador"%}
-  <div class="boton_container">
-    <a href="{% url 'editar_precios' Proyecto.id %}">
-      <button class="button_editar">EDITAR</button>
-    </a>
-  </div>
-  {% else %}
-  <br>
-  {% endif %}
     <table class="table2">
     <thead>
         <tr>
             <th>NOMBRE</th>
-            <th>SUB-CLASE</th>
-            <th>DETALLE PRECIO</th>
+            <th>PRECIO</th>
+            <th>FECHA</th>
             <th>PROVEEDOR</th>
             <th>COTIZACIÓN</th>
             <th>USUARIO MODIFICACIÓN</th>
         </tr>
     </thead>
     <tbody>
-      {% for fila1 in info_productos %}
-      {% for fila in fila1 %}
+      {% for fila in info_productos %}
         <tr>
             <td data-label="NOMBRE">{{fila.0.nombre}}</a></td>
-            <td data-label="SUB-CLASE"> {{fila.1.0.nombre}}</td>
             <td data-label="PRECIO UNITARIO">
-              <div class="dropdown">
-                <button class="dropbtn">
-                  {% if fila.3.0.valor %}
-                    {{fila.3.0.valor}} {{fila.3.0.tipo_cambio}}
-                  {% else %}
-                    {{fila.3.valor}} {{fila.3.tipo_cambio}}
-                  {% endif %}
-                
-                </button>
-                <div class="dropdown-content">
-                  {% if fila.3.0.valor %}
-                    <li><a> Valor: {{fila.3.0.valor}}</a></li>
-                    <li><a> Moneda: {{fila.3.0.tipo_cambio}}</a></li>
-                    <li><a> Valor importación: {{fila.3.0.valor_importación}}</a></li>
-                    <li><a> Tipo cambio: {{fila.3.0.valor_cambio}}</a></li>
-                    <li><a> Fecha: {{fila.3.0.fecha}}</a></li>
-                    <li><a> Proveedor: {{fila.3.0.nombre_proveedor}}</a></li>
-                  {% else %}
-                    <li><a> Valor: {{fila.3.valor}}</a></li>
-                    <li><a> Moneda: {{fila.3.tipo_cambio}}</a></li>
-                    <li><a> Valor importación: {{fila.3.valor_importación}}</a></li>
-                    <li><a> Tipo cambio: {{fila.3.valor_cambio}}</a></li>
-                    <li><a> Fecha: {{fila.3.fecha}}</a></li>
-                    <li><a> Proveedor: {{fila.3.nombre_proveedor}}</a></li>
-                    {% endif %}
-                </div>
-              </div>
+             {{fila.1.0.valor}} {{fila.1.0.tipo_cambio}}
             </td>
-            <td data-label="PROVEEDOR">{{fila.4.proveedor_asociado.nombre}}</td>
-            <td data-label="COTIZACIÓN">{{fila.4.nombre}}</td>
-            {% if fila.3.0.usuario_modificacion %}
-              <td data-label="USUARIO MODIFICACIÓN">{{fila.3.0.usuario_modificacion}}</td>
-            {% elif fila.3.usuario_modificacion %}
-            <td data-label="USUARIO MODIFICACIÓN">{{fila.3.usuario_modificacion}}</td>
+            <td data-label="FECHA">
+              {{fila.1.0.fecha}}
+             </td>
+            <td data-label="PROVEEDOR">{{fila.1.0.nombre_proveedor}}</td>
+            <td data-label="COTIZACIÓN">{{fila.1.0.nombre_cotizacion}}</td>
+            {% if fila.1.0.usuario_modificacion %}
+              <td data-label="USUARIO MODIFICACIÓN">{{fila.1.0.usuario_modificacion}}</td>
             {% else %}
             <td data-label="USUARIO MODIFICACIÓN">Precio ingresado por planilla.</td>
             {% endif %}
-            {% endfor %} 
+
             {% endfor %}  
         </tr>
     </tbody>
