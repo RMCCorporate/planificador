@@ -201,37 +201,36 @@ def proyecto(request, id):
     precio_final = 0
     lista_productos_precio = []
     lista_cotizaciones = []
+    tabla_productos = []
+    for i in productos_proyecto:
+        aux_tabla_productos = []
+        if i.proyecto.lista_precios:
+            precio = list(i.proyecto.lista_precios.all()).pop()
+        else:
+            precio = "No"
+        aux_tabla_productos.append(i)
+        aux_tabla_productos.append(precio)
+        tabla_productos.append(aux_tabla_productos)
+    tabla_cotizaciones = []
+    tabla_productos_cotizados = []
     for i in cotizaciones:
-        aux_productos = []
-        aux = []
-        aux.append(i)
-        aux3 = []
+        aux_tabla_productos_cotizados = []
+        aux_tabla_cotizaciones = []
+        aux_tabla_cotizaciones_producto_proyecto = []
+        aux_demoras = []
+        aux_tabla_cotizaciones.append(i)
         for producto in i.productos_asociados.all():
-            aux2 = []
-            aux2_productos = []
-            precio = ""
-            producto_proyecto = Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)
-            producto_asociado = producto_proyecto.proyecto
-            subclase = producto_asociado.subclase_set.all()
-            precio = list(producto_asociado.lista_precios.all())
-            for n in precio:
-                if n.nombre_cotizacion == i.nombre:
-                    precio = n
-            if precio != []:
-                lista_productos_precio.append(producto.nombre)
-                aux2_productos.append(producto_asociado)
-                aux2_productos.append(subclase)
-                aux2_productos.append(producto_proyecto)
-                aux2_productos.append(precio)
-                aux2_productos.append(i)
-                aux_productos.append(aux2_productos)
-            aux2.append(producto)
-            aux2.append(producto_proyecto)
-            demora_respuesta = 0
-            aux2.append(demora_respuesta)
-            aux3.append(aux2)
-        aux_productos_final.append(aux_productos)
-        aux.append(aux3)
+            aux_tabla_cotizaciones_producto_proyecto.append(Producto_proyecto.objects.get(proyecto=producto, producto=proyecto))
+            if producto.lista_precios:
+                precios = producto.lista_precios.all()
+                if precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre).exists():
+                    precio = precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre)
+                    aux_tabla_productos_cotizados.append(producto)
+                    aux_tabla_productos_cotizados.append(precio)
+                    tabla_productos_cotizados.append(aux_tabla_productos_cotizados)
+                else:
+                    precio = ""
+        aux_tabla_cotizaciones.append(aux_tabla_cotizaciones_producto_proyecto)
         estado = ""
         if i.fecha_respuesta:
             demora_respuesta = i.fecha_respuesta - i.fecha_salida
@@ -253,10 +252,11 @@ def proyecto(request, id):
             demora_precio = i.fecha_actualizacion_precio - i.fecha_respuesta
         else:
             demora_precio = 0
-        aux.append(demora_respuesta)
-        aux.append(demora_precio)
-        aux.append(estado)
-        lista_cotizaciones.append(aux)
+        aux_demoras.append(demora_respuesta)
+        aux_demoras.append(demora_precio)
+        aux_demoras.append(estado)
+        aux_tabla_cotizaciones.append(aux_demoras)
+        tabla_cotizaciones.append(aux_tabla_cotizaciones)
     lista_precio = list(dict.fromkeys(lista_productos_precio))
     if len(lista_precio) == len(productos_proyecto):
         proyecto.estado = 'Completo'
@@ -292,7 +292,11 @@ def proyecto(request, id):
                 else:
                     i.estado_tiempo = "No"
                     i.save()
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":productos_proyecto, "cotizaciones":lista_cotizaciones, "info_productos":aux_productos_final, "precio":precio_final, "rol": usuario})
+    for i in tabla_cotizaciones:
+        print(i)
+        print(" ")
+        print(" ")
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":tabla_productos, "cotizaciones":tabla_cotizaciones, "info_productos":tabla_productos_cotizados, "precio":precio_final, "rol": usuario})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
@@ -753,6 +757,14 @@ def mostrar_cotizacion(request, id):
     if cotizacion.orden_compra:
         orden_compra = Orden_compra.objects.get(cotizacion_hija=cotizacion)
         productos_orden_compra = cotizacion.productos_proyecto_asociados.all()
+        for producto in orden_compra.cotizacion_hija.productos_proyecto_asociados.all():
+            lista_precio = producto.producto_asociado_cantidades.proyecto.lista_precios.all()
+            if lista_precio.filter(nombre_cotizacion=orden_compra.cotizacion_hija.nombre).exists():
+                filtro = lista_precio.filter(nombre_cotizacion=orden_compra.cotizacion_hija.nombre)
+                print(filtro)
+            else:
+                print("NO")
+            print(lista_precio[0].nombre_cotizacion)
     else:
         orden_compra = False
         productos_orden_compra = False

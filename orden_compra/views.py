@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades
+from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from email.mime.multipart import MIMEMultipart
@@ -8,6 +8,19 @@ from datetime import date, datetime
 from planificador.decorators import allowed_users
 import uuid
 
+def excel_oc(id_orden_compra):
+    orden_compra = Orden_compra.objects.get(id=id)
+    proveedor = orden_compra.cotizacion_hija.proveedor_asociado
+    productos = orden_compra.cotizacion_hija.productos_proyecto_asociados.all()
+    suma_productos = 0
+    for producto in productos:
+        if Producto_proveedor.objects.filter(proyecto=producto.producto_asociado_cantidades.proyecto, producto=proveedor).exists():
+            nombre_producto =  Producto_proveedor.objects.filter(proyecto=producto.producto_asociado_cantidades.proyecto, producto=proveedor).nombre_proveedor
+        else:
+            nombre_producto = producto.producto_asociado_cantidades.proyecto.nombre
+        cantidad = producto.producto_asociado_cantidades.cantidades
+        unidad = producto.producto_asociado_cantidades.proyecto.unidad
+        lista_precios = producto.producto_asociado_cantidades.proyecto.lista_precios.all()
 
 def crear_orden(request, id):
     if request.method == "GET":

@@ -94,6 +94,7 @@
         <tr>
             <th>NOMBRE</th>
             <th>CANTIDAD</th>
+            <th>ÚLTIMO PRECIO REFERENCIAL</th>
             <th>ESTADO</th>
             <th>ESTADO COTIZACIÓN</th>
             <th>FECHA USO</th>
@@ -103,38 +104,43 @@
     <tbody>
       {% for fila in Productos %}
         <tr>
-            <td data-label="NOMBRE">{{fila.proyecto.nombre}}</td>
-            {% if fila.cantidades %}
-                <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+            <td data-label="NOMBRE">{{fila.0.proyecto.nombre}}</td>
+            {% if fila.0.cantidades %}
+                <td data-label="CANTIDAD"> {{fila.0.cantidades}}</td>
             {% else %}
               <td data-label="CANTIDAD"> 0</td>
             {% endif %}
-            {% if fila.status %}
-              <td data-label="ESTADO">{{fila.status}}</td>
+            {% if fila.1 != "No" %}
+              <td data-label="ÚLTIMO PRECIO REFERENCIA">{{fila.1.valor}} - {{fila.1.nombre_proveedor}} - {{fila.1.fecha}}</td>
+            {% else %}
+              <td data-label="ÚLTIMO PRECIO REFERENCIA">No hay precios.</td>
+            {% endif %}
+            {% if fila.0.status %}
+              <td data-label="ESTADO">{{fila.0.status}}</td>
             {% else %}
               <td data-label="ESTADO">Futuro</td>
             {% endif %}
-            {% if fila.estado_cotizacion == "No" %}
-              <td style="color:red" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
-            {% elif fila.estado_cotizacion == "Precio" %}
-              <td style="color:green" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
-            {% elif fila.estado_cotizacion == "Creada" %}
-              <td style="color:orange" data-label="ESTADO COTIZACIÓN"> {{fila.estado_cotizacion}}</td>
+            {% if fila.0.estado_cotizacion == "No" %}
+              <td style="color:red" data-label="ESTADO COTIZACIÓN"> {{fila.0.estado_cotizacion}}</td>
+            {% elif fila.0.estado_cotizacion == "Precio" %}
+              <td style="color:green" data-label="ESTADO COTIZACIÓN"> {{fila.0.estado_cotizacion}}</td>
+            {% elif fila.0.estado_cotizacion == "Creada" %}
+              <td style="color:orange" data-label="ESTADO COTIZACIÓN"> {{fila.0.estado_cotizacion}}</td>
             {% endif %}
-            {% if fila.fecha_uso %}
-                {% if fila.estado_tiempo == "Verde" %}
-                  <td style="color:green" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
-                {% elif fila.estado_tiempo == "Naranjo" %}
-                  <td style="color:orange" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
-                {% elif fila.estado_tiempo == "Rojo" %}
-                  <td style="color:red" data-label="FECHA USO"> {{fila.fecha_uso}}</td>
-                {% elif fila.estado_tiempo == "No" %}
-                  <td style="color:blue" data-label="FECHA USO"> {{fila.fecha_uso}} (No es posible)</td>
+            {% if fila.0.fecha_uso %}
+                {% if fila.0.estado_tiempo == "Verde" %}
+                  <td style="color:green" data-label="FECHA USO"> {{fila.0.fecha_uso}}</td>
+                {% elif fila.0.estado_tiempo == "Naranjo" %}
+                  <td style="color:orange" data-label="FECHA USO"> {{fila.0.fecha_uso}}</td>
+                {% elif fila.0.estado_tiempo == "Rojo" %}
+                  <td style="color:red" data-label="FECHA USO"> {{fila.0.fecha_uso}}</td>
+                {% elif fila.0.estado_tiempo == "No" %}
+                  <td style="color:blue" data-label="FECHA USO"> {{fila.0.fecha_uso}} (No es posible)</td>
                 {% endif %}
             {% else %}
               <td data-label="FECHA USO"> No se ha ingresado.</td>
             {% endif %}
-              <td data-label="USUARIO MODIFICACIÓN"> {{fila.usuario_modificacion}}</td>
+              <td data-label="USUARIO MODIFICACIÓN"> {{fila.0.usuario_modificacion}}</td>
             {% endfor %}  
         </tr>
     </tbody>
@@ -197,9 +203,9 @@
                       <tbody>
                         {% for i in fila.1 %}
                         <tr>
-                          <td>{{i.0.nombre}}</td>
-                          <td >{{i.1.cantidades}}</td>
-                          <td>{{i.0.unidad}}</td>
+                          <td>{{i.proyecto.nombre}}</td>
+                          <td >{{i.cantidades}}</td>
+                          <td >{{i.proyecto.unidad}}</td>
                         </tr>
                         {% endfor %}
                       </tbody>
