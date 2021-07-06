@@ -62,13 +62,13 @@
               {% for fila in productos %}
                 <tr>
                     <td data-label="ELECCIÓN">
-                        <input type="checkbox" value="{{fila.0.proyecto.nombre}}" name="nombre">
+                        <input type="checkbox" value="{{fila.0.proyecto.nombre}}*{{fila.1.nombre_cotizacion}}*{{fila.1.id}}" name="nombre">
                     </td>
                     <td data-label="NOMBRE">
                         {{fila.0.proyecto.nombre}}
                     </td>
                     <td data-label="CANTIDAD"> 
-                        <input type="text" value="{{fila.0.cantidades}}" name="cantidades">
+                        <input type="text" value="{{fila.0.cantidades}}" name="{{fila.1.id}}">
                     </td>
                     <td data-label="UNIDAD"> 
                         {{fila.0.proyecto.unidad}}

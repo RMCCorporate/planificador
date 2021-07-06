@@ -784,6 +784,22 @@ def enviar_correo(request, id):
 def informar_orden_compra(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
+        varios = False
+        enviar = request.POST["enviar"]
+        if enviar == "todos":
+            varios = True
+            enviar = User.objects.filter(groups__name='Cotizador')
+        empresa = request.POST["empresa"]
+        observaciones = request.POST["observaciones"]
+        productos = request.POST.getlist("nombre")
+        productos_cantidades = []
+        for i in productos:
+            aux = []
+            nuevo = i.split("*")
+            aux.append(nuevo[0])
+            aux.append(nuevo[1])
+            aux.append(request.POST[nuevo[2]])
+            productos_cantidades.append(aux)
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
