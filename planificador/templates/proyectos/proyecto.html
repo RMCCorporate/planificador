@@ -262,6 +262,11 @@
   <div class="informacion_container">
     <h4>PRODUCTOS COTIZADOS</h4>
   </div>
+  <div class="boton_container">
+    <a href="{% url 'informar_orden_compra' Proyecto.id %}">
+      <button class="button_editar">INFORMAR ORDEN DE COMPRA</button>
+    </a>
+  </div>
     <table class="table2">
     <thead>
         <tr>
@@ -285,7 +290,7 @@
              </td>
             <td data-label="PROVEEDOR">{{fila.1.nombre_proveedor}}</td>
             <td data-label="COTIZACIÓN">{{fila.1.nombre_cotizacion}}</td>
-            {% if fila.1.0.usuario_modificacion %}
+            {% if fila.1.usuario_modificacion %}
               <td data-label="USUARIO MODIFICACIÓN">{{fila.1.usuario_modificacion}}</td>
             {% else %}
             <td data-label="USUARIO MODIFICACIÓN">Precio ingresado por planilla.</td>

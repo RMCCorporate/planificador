@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -9,6 +9,7 @@ from email.mime.text import MIMEText
 from datetime import date, datetime
 from planificador.decorators import allowed_users
 import uuid
+from django.contrib.auth.models import User, Permission
 
 lista_producto_general = []
 #Funciones:
@@ -778,3 +779,26 @@ def enviar_correo(request, id):
         contacto = cotizacion.contacto_asociado.all()
         return render(request, "proyectos/enviar_correo.html", {"Cotizacion":cotizacion, "contactos":contacto})
 
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def informar_orden_compra(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    if request.method == "POST":
+        return redirect('/proyectos/proyecto/{}'.format(id))
+    else:
+        cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
+        tabla_productos_cotizados = []
+        for i in cotizaciones:
+            for producto in i.productos_asociados.all():
+                aux_tabla_productos_cotizados = []
+                if producto.lista_precios:
+                    precios = producto.lista_precios.all()
+                    if precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre).exists():
+                        precio = list(precios.filter(nombre_cotizacion=i.nombre, nombre_proveedor=i.proveedor_asociado.nombre)).pop()
+                        aux_tabla_productos_cotizados.append(Producto_proyecto.objects.get(proyecto=producto, producto=proyecto))
+                        aux_tabla_productos_cotizados.append(precio)
+                        tabla_productos_cotizados.append(aux_tabla_productos_cotizados)
+                    else:
+                        precio = ""
+        cotizadores = User.objects.filter(groups__name='Cotizador')
+        return render(request, 'proyectos/informar_orden_compra.html', {"productos":tabla_productos_cotizados, "cotizadores":cotizadores})
