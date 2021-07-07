@@ -190,6 +190,7 @@ class Usuario(models.Model):
     proyectos = models.ManyToManyField(Proyecto)
     cotizaciones = models.ManyToManyField(Cotizacion)
     notificaciones = models.IntegerField(null=True)
+    orden_compra = models.IntegerField(null=True)
     session_key = models.CharField(max_length=100, null=True)
 
 class Correlativo_cotizacion(models.Model):

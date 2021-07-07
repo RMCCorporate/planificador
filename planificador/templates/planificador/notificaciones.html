@@ -15,7 +15,13 @@
 </head>
 
 <div class="title">
-    <h1>NOTIFICACIONES</h1>
+    {% if usuario.orden_compra %}
+    {% if usuario.orden_compra == 0 %}
+        <h1>NOTIFICACIONES</h1>
+    {% else %}
+        <h1>NOTIFICACIONES: {{usuario.orden_compra}} ÓRDENES DE COMPRA PENDIENTES</h1>
+    {% endif %}
+    {% endif %}
   </div>
 
   <div class="container">

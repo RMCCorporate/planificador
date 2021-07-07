@@ -792,13 +792,30 @@ def informar_orden_compra(request, id):
         observaciones = request.POST["observaciones"]
         productos = request.POST.getlist("nombre")
         productos_cantidades = []
+        cantidad_orden_compra = []
         for i in productos:
             aux = []
             nuevo = i.split("*")
             aux.append(nuevo[0])
             aux.append(nuevo[1])
+            cantidad_orden_compra.append(nuevo[1])
             aux.append(request.POST[nuevo[2]])
             productos_cantidades.append(aux)
+        numero_orden_compra = len(list(dict.fromkeys(cantidad_orden_compra)))
+        usuario_cotizador = Usuario.objects.get(correo=enviar)
+        if not usuario_cotizador.orden_compra:
+            usuario_cotizador.orden_compra = 0
+            usuario_cotizador.save()
+        usuario_cotizador.orden_compra += numero_orden_compra
+        usuario_cotizador.save()
+        planificadores = User.objects.filter(groups__name='Planificador')
+        for i in planificadores:
+            usuario_planificador = Usuario.objects.get(correo=i.email)
+            if not usuario_planificador.orden_compra:
+                usuario_planificador.orden_compra = 0
+                usuario_planificador.save()
+            usuario_planificador.orden_compra += numero_orden_compra
+            usuario_planificador.save()
         texto_correo = ""
         texto_lista_productos = ""
         texto_entrada = "{} {},\nSe adjunta información para realización de órdenes de compra: \n(Nº Cotización, nombre producto, cantidad) \n\n".format(

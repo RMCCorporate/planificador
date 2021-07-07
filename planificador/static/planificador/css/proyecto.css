@@ -124,6 +124,7 @@ body{
 
 .container .table-container .table{
     width: 100%;
+    margin: 40px auto 0;
     border-collapse: collapse;
 }
 

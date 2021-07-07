@@ -21,7 +21,8 @@ def notificaciones(request):
                 lista_notificaciones.append(i)
     lista_notificaciones.sort(key=takedate)
     lista_notificaciones.reverse()
-    return render(request, 'planificador/notificaciones.html', {'notificacion':lista_notificaciones})
+    usuario = Usuario.objects.get(correo=request.user.email)
+    return render(request, 'planificador/notificaciones.html', {'notificacion':lista_notificaciones, 'usuario':usuario})
 
 @login_required(login_url='/login')
 def index(request):

@@ -1,0 +1,87 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVA ORDEN COMPRA {% endblock%}
+{% block content %}
+
+<head>
+	<title>Crear producto</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="{{cotizacion_padre.id}}" method="POST">{% csrf_token %}
+  <div class="title">CREAR ORDEN COMPRA</div>
+  <br>
+  <form action="agregar_nuevo" method="GET">
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">CONDICIÓN DE ENTREGA</label>
+          <input type="text" name="condicion_entrega" value="{{orden_compra.condicion_entrega}}" placeholder="Plazo de entrega producto. Ej: Inmediato">
+        </div>
+        <div class="input-box">
+            <span class="details">CONDICIÓN DE PAGO</label>
+            <input type="text" name="condicion_pago" value="{{orden_compra.condiciones_pago}}" placeholder="Plazo de pago. Ej: 30 días">
+          </div>
+          <div class="input-box">
+            <span class="details">FORMA DE PAGO</label>
+            <input type="text" name="forma_pago" value="{{orden_compra.forma_pago}}" placeholder="Medio de pago. Ej: Transferencia">
+          </div>
+        <div class="input-box">
+        <span class="details">FACTURAR A:</label>
+        <select class="custom-select" id="empresa" name="empresa" required>
+            <option selected value="{{orden_compra.destino_factura.rut}}">{{orden_compra.destino_factura.nombre}}</option>
+            <option value="76021113-3">INGENIERÍA Y SERVICIOS RMC LIMITADA</option>
+            <option value="77241485-4">RMC INDUSTRIAL SPA</option>
+            <option value="77241488-9">RMC EQUIPMENTS SPA</option>
+            <option value="77289504-6">RMC CORPORATE SPA</option>
+            <option value="77077958-8">RMC LABS SPA</option>
+        </select>
+        </div>
+        <div class="input-box">
+            <span class="details">OBSERVACIONES</label>
+            <input type="text" value="{{orden_compra.observaciones}}" name="observaciones">
+          </div>
+    </div>
+    <div class="table-container">
+        
+          <div class="title_container">
+            <h1 style="font-size:20px;">PRODUCTOS</h1>
+          </div>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>ELECCIÓN</th>
+                    <th>NOMBRE</th>
+                    <th>CANTIDAD</th>
+                    <th>UNIDAD</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for fila in productos %}
+                <tr>
+                    <td data-label="ELECCIÓN">
+                        <input type="checkbox" value="{{fila.producto_asociado_cantidades.proyecto.id}}" name="id_producto">
+                    </td>
+                    <td data-label="NOMBRE">
+                        {{fila.producto_asociado_cantidades.proyecto.nombre}}
+                    </td>
+                    <td data-label="CANTIDAD"> 
+                        <input type="text" value="{{fila.producto_asociado_cantidades.cantidades}}" name="{{fila.id}}">
+                    </td>
+                    <td data-label="UNIDAD"> 
+                      {{fila.producto_asociado_cantidades.proyecto.unidad}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    <br>
+      <button class="button" type="submit">CREAR</button>
+  </form>
+  </div>
+ 
+{% endblock%}

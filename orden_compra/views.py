@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
-from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio
+from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import date, datetime
 from planificador.decorators import allowed_users
+from django.contrib.auth.models import User, Permission
 import uuid
 
 def excel_oc(id_orden_compra):
@@ -84,5 +85,26 @@ def crear_orden(request, id):
         else:
             nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura)
         nueva_orden_compra.save()
+        planificadores = User.objects.filter(groups__name='Planificador')
+        for i in planificadores:
+            usuario_planificador = Usuario.objects.get(correo=i.email)
+            if not usuario_planificador.orden_compra:
+                usuario_planificador.orden_compra = 0
+                usuario_planificador.save()
+            usuario_planificador.orden_compra -= 1
+            usuario_planificador.save()
+        usuario_cotizador = Usuario.objects.get(correo=request.user.email)
+        if not usuario_cotizador.orden_compra:
+            usuario_cotizador.orden_compra = 0
+            usuario_cotizador.save()
+        usuario_cotizador.orden_compra -= 1
+        usuario_cotizador.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(nueva_cotizacion.id))
-    
+
+def editar_orden(request, id):
+    orden_compra = Orden_compra.objects.get(id=id)
+    if request.method == "GET":
+        productos = orden_compra.cotizacion_hija.productos_proyecto_asociados.all()
+        return render(request, "orden_compra/editar_orden.html", {"orden_compra":orden_compra, "productos":productos})
+    else:
+        return redirect('/proyectos/editar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
