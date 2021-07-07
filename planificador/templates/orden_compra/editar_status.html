@@ -1,0 +1,45 @@
+{% extends "base/base2.html" %}
+{% block title %} EDITAR STATUS {% endblock%}
+{% block content %}
+
+<head>
+	<title>{{orden_compra.id}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+	<link href="{% static 'planificador/css/editar_proveedor.css' %}" rel="stylesheet">
+
+</head>
+  <form action="{{orden_compra.id}}" method="POST">{% csrf_token %}
+    <div class="container">
+      <div class="title">EDITAR STATUS - OC Nº: {{orden_compra.id}}</div>
+      <br>
+      <div class="user-details">
+        <div class="input-box">
+            <span class="details">STATUS FINANCIERO:</label>
+            <select class="custom-select" id="status_financiero" name="status_financiero" style="height: 40px; width: 100%;" required>
+                <option selected value="{{orden_compra.status_financiero}}">{{orden_compra.status_financiero}}</option>
+                <option value="CHEQUE A FECHA">CHEQUE A FECHA</option>
+                <option value="EN PROCESO">EN PROCESO</option>
+                <option value="PAGADO">PAGADO</option>
+            </select>
+            </div>
+        <div class="input-box">
+            <span class="details">STATUS DE LLEGADA:</label>
+            <select class="custom-select" id="status_llegada" name="status_llegada" style="height: 40px;" required>
+                <option selected value="{{orden_compra.status_llegada}}">{{orden_compra.status_llegada}}</option>
+                <option value="ORIGEN">ORIGEN</option>
+                <option value="TRANSPORTE">TRANSPORTE</option>
+                <option value="RECEPCIONADO">RECEPCIONADO</option>
+            </select>
+            </div>
+    
+      </div>
+        <input class="button" type="Submit" value="Guardar">
+    </div>
+
+       
+    </form>
+    
+{% endblock%}

@@ -129,3 +129,15 @@ def editar_orden(request, id):
                     producto_asociado.cantidades = cantidades
                     producto_asociado.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
+
+def editar_status(request, id):
+    orden_compra = Orden_compra.objects.get(id=id)
+    if request.method == "GET":
+        return render(request, "orden_compra/editar_status.html", {"orden_compra":orden_compra})
+    else:
+        status_financiero = request.POST["status_financiero"]
+        status_llegada = request.POST["status_llegada"]
+        orden_compra.status_financiero = status_financiero
+        orden_compra.status_llegada = status_llegada
+        orden_compra.save()
+        return redirect('/proyectos/mostrar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))

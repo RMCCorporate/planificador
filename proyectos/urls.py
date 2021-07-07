@@ -24,4 +24,5 @@ urlpatterns = [
     path('proyectos/enviar_correo/<str:id>', views.enviar_correo, name='enviar_correo'),
     path('orden_compra/crear_orden/<str:id>', orden_compra_views.crear_orden, name='crear_orden'),
     path('orden_compra/editar_orden/<str:id>', orden_compra_views.editar_orden, name='editar_orden'),
+    path('orden_compra/editar_status/<str:id>', orden_compra_views.editar_status, name='editar_status'),
 ]

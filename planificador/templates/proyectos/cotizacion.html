@@ -82,7 +82,12 @@
   </div>
   <div class="boton_container">
     <a href="{% url 'editar_orden' orden_compra.id %}">
-      <button class="button_editar">EDITAR ORDEN COMPRA</button>
+      <button class="button_editar">EDITAR</button>
+    </a>
+
+ 
+    <a href="{% url 'editar_status' orden_compra.id %}">
+      <button class="button_editar">EDITAR STATUS</button>
     </a>
   </div>
   <table class="table">
