@@ -8,12 +8,20 @@ from datetime import date, datetime
 from planificador.decorators import allowed_users
 from django.contrib.auth.models import User, Permission
 import uuid
+from openpyxl import load_workbook, Workbook
+import os
 
 def excel_oc(id_orden_compra):
-    orden_compra = Orden_compra.objects.get(id=id)
+    path = "/Users/tomas/Desktop/RMCCorporate/Proyecto pagina/RMC_Corporate/media/img/OC_FORMAT.xlsx"
+    wb = load_workbook(path)
+    print(type(wb))
+    sheet = wb.get_sheet_by_name('OC')
+    orden_compra = Orden_compra.objects.get(id=id_orden_compra)
     proveedor = orden_compra.cotizacion_hija.proveedor_asociado
     productos = orden_compra.cotizacion_hija.productos_proyecto_asociados.all()
+    cotizacion = orden_compra.cotizacion_hija
     suma_productos = 0
+    numero_inicial_excel = 13
     for producto in productos:
         if Producto_proveedor.objects.filter(proyecto=producto.producto_asociado_cantidades.proyecto, producto=proveedor).exists():
             nombre_producto =  Producto_proveedor.objects.filter(proyecto=producto.producto_asociado_cantidades.proyecto, producto=proveedor).nombre_proveedor
@@ -22,6 +30,47 @@ def excel_oc(id_orden_compra):
         cantidad = producto.producto_asociado_cantidades.cantidades
         unidad = producto.producto_asociado_cantidades.proyecto.unidad
         lista_precios = producto.producto_asociado_cantidades.proyecto.lista_precios.all()
+        precio = lista_precios.filter(nombre_cotizacion=orden_compra.cotizacion_padre.nombre)[0].valor
+        total = precio*int(cantidad)
+        suma_productos += total
+        sheet['B{}'.format(str(numero_inicial_excel))] = nombre_producto
+        sheet['C{}'.format(str(numero_inicial_excel))] = cantidad
+        sheet['D{}'.format(str(numero_inicial_excel))] = unidad
+        sheet['E{}'.format(str(numero_inicial_excel))] = precio
+        sheet['F{}'.format(str(numero_inicial_excel))] = total
+        numero_inicial_excel += 1
+    #TOTALES
+    sheet['F4'] = orden_compra.id
+    sheet['F24'] = suma_productos
+    sheet['F25'] = suma_productos*0.19
+    sheet['F26'] = suma_productos*1.19
+    #PROVEEDOR
+    sheet['B8'] = cotizacion.proveedor_asociado.nombre
+    sheet['B9'] = cotizacion.proveedor_asociado.direccion
+    sheet['B10'] = cotizacion.proveedor_asociado.contactos_asociados.all()[0].nombre
+    sheet['D8'] = date.today()
+    sheet['D9'] = cotizacion.proveedor_asociado.rut
+    sheet['D10'] = cotizacion.proveedor_asociado.contactos_asociados.all()[0].telefono
+    #CONDICIONES
+    sheet['B33'] = orden_compra.condicion_entrega
+    sheet['B34'] = orden_compra.condiciones_pago
+    sheet['B35'] = orden_compra.forma_pago
+    #EMPRESA
+    sheet['A38'] = orden_compra.destino_factura.nombre
+    sheet['A39'] = "GIRO: "+orden_compra.destino_factura.giro
+    sheet['A40'] = "Dirección: "+orden_compra.destino_factura.direccion
+    sheet['C38'] = "RUT: "+orden_compra.destino_factura.rut
+    sheet['A43'] = orden_compra.observaciones
+    wb.save(filename="{}.xlsx".format(orden_compra.id))
+    orden_compra.planilla.name = "/Users/tomas/Desktop/RMCCorporate/Proyecto pagina/RMC_Corporate/media/img/OC_FORMAT.xlsx"
+    print(" ")
+    print("AAAA")
+    print(" ")
+    print("AAAA")
+    print(orden_compra.planilla)
+    print(" ")
+    print("AAAA")
+    orden_compra.save()
 
 def crear_orden(request, id):
     if request.method == "GET":
@@ -99,6 +148,7 @@ def crear_orden(request, id):
             usuario_cotizador.save()
         usuario_cotizador.orden_compra -= 1
         usuario_cotizador.save()
+        excel_oc(nueva_orden_compra.id)
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(nueva_cotizacion.id))
 
 def editar_orden(request, id):
@@ -128,6 +178,7 @@ def editar_orden(request, id):
                 if producto_asociado.id == n:
                     producto_asociado.cantidades = cantidades
                     producto_asociado.save()
+        excel_oc(orden_compra.id)
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
 
 def editar_status(request, id):
