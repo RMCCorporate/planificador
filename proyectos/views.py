@@ -10,6 +10,7 @@ from datetime import date, datetime
 from planificador.decorators import allowed_users
 import uuid
 from django.contrib.auth.models import User, Permission
+from operator import itemgetter
 
 lista_producto_general = []
 #Funciones:
@@ -114,6 +115,7 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
             texto_correo = texto_español
         else:
             texto_correo = texto_ingles
+        #CAMBIAR A LOGISTICA
         correo_enviador = usuario.correo
         clave_enviador = clave
         #CAMBIAR A "i.correo"
@@ -784,11 +786,8 @@ def enviar_correo(request, id):
 def informar_orden_compra(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
-        varios = False
         enviar = request.POST["enviar"]
-        if enviar == "todos":
-            varios = True
-            enviar = User.objects.filter(groups__name='Cotizador')
+        cotizador = User.objects.filter(email=enviar)
         empresa = request.POST["empresa"]
         observaciones = request.POST["observaciones"]
         productos = request.POST.getlist("nombre")
@@ -800,6 +799,40 @@ def informar_orden_compra(request, id):
             aux.append(nuevo[1])
             aux.append(request.POST[nuevo[2]])
             productos_cantidades.append(aux)
+        texto_correo = ""
+        texto_lista_productos = ""
+        texto_entrada = "{} {},\nSe adjunta información para realización de órdenes de compra: \n(Nº Cotización, nombre producto, cantidad) \n\n".format(
+            cotizador[0].first_name,
+            cotizador[0].last_name
+        )
+        lista_ordenada = sorted(productos_cantidades, key=itemgetter(1))
+        for producto in lista_ordenada:
+            texto_productos = "{} - {} - {} \n".format(
+                producto[1],
+                producto[0],
+                producto[2]
+            )
+            texto_lista_productos += texto_productos
+        texto_correo += texto_entrada
+        texto_correo += texto_lista_productos
+        texto_correo += "\nObservaciones: {}\n".format(observaciones)
+        texto_correo += "Facturar a: {} \n".format(empresa)
+        #CAMBIAR A LOGISTICA
+        correo_enviador = "tcorrea@rmc.cl"
+        clave_enviador = "Tom12345"
+        #CAMBIAR A "i.correo"
+        correo_prueba = "tacorrea@uc.cl"
+        mensaje = MIMEMultipart()
+        mensaje['From'] = correo_enviador
+        mensaje['To'] = correo_prueba
+        mensaje['Subject'] = "Crear orden de compra"
+        mensaje.attach(MIMEText(texto_correo, 'plain'))
+        session = smtplib.SMTP('smtp.gmail.com', 587)
+        session.starttls()
+        session.login(correo_enviador, clave_enviador)
+        text = mensaje.as_string()
+        session.sendmail(correo_enviador, correo_prueba, text)
+        session.quit()
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
