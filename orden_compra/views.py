@@ -107,4 +107,25 @@ def editar_orden(request, id):
         productos = orden_compra.cotizacion_hija.productos_proyecto_asociados.all()
         return render(request, "orden_compra/editar_orden.html", {"orden_compra":orden_compra, "productos":productos})
     else:
-        return redirect('/proyectos/editar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
+        condicion_entrega = request.POST["condicion_entrega"]
+        condicion_pago = request.POST["condicion_pago"]
+        forma_pago = request.POST["forma_pago"]
+        empresa = request.POST["empresa"]
+        destino_factura = RMC.objects.get(rut=empresa)
+        observaciones = request.POST["observaciones"]
+        productos = request.POST.getlist("id_producto")
+        orden_compra.condicion_entrega = condicion_entrega
+        orden_compra.condiciones_pago = condicion_pago
+        orden_compra.forma_pago = forma_pago
+        orden_compra.destino_factura = destino_factura
+        orden_compra.observaciones = observaciones
+        orden_compra.save()
+        cotizacion_hija = Cotizacion.objects.get(id=orden_compra.cotizacion_hija.id)
+        for i in cotizacion_hija.productos_proyecto_asociados.all():
+            cantidades = request.POST[i.id]
+            producto_asociado =  cotizacion_hija.productos_proyecto_asociados.filter(id=i.id)[0]
+            for n in productos:
+                if producto_asociado.id == n:
+                    producto_asociado.cantidades = cantidades
+                    producto_asociado.save()
+        return redirect('/proyectos/mostrar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
