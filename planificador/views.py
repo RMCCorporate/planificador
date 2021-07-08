@@ -6,6 +6,7 @@ from planificador.decorators import allowed_users
 import openpyxl
 import uuid
 
+
 # Create your views here.
 def takedate(elem):
     return elem.fecha

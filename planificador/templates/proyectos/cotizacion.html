@@ -90,7 +90,7 @@
       <button class="button_editar">EDITAR STATUS</button>
     </a>
     {% if orden_compra.planilla %}
-      <a href="media/{{orden_compra.planilla}}" download="OC-{{orden_compra.id}}">
+      <a href="../../media/excel/{{orden_compra.id}}.xlsx" download="OC-{{orden_compra.id}}">
         <button class="button_añadir">DESCARGAR EXCEL <i class="arrowdown"></i></button></a>
     {% endif %}   
   </div>

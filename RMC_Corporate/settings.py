@@ -16,10 +16,10 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Base url to serve media files
 MEDIA_URL = '/media/'
-
+EXCEL_URL = '/excel/'
 # Path where media is stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-
+EXCEL_ROOT = os.path.join(MEDIA_ROOT, 'excel/')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 

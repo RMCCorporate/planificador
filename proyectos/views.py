@@ -11,6 +11,7 @@ from planificador.decorators import allowed_users
 import uuid
 from django.contrib.auth.models import User, Permission
 from operator import itemgetter
+from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
 
 lista_producto_general = []
 #Funciones:
@@ -734,7 +735,7 @@ def mostrar_cotizacion(request, id):
     else:
         orden_compra = False
         productos_orden_compra = False
-    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos, "orden_compra":orden_compra, "productos_orden_compra":productos_orden_compra})
+    return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos, "orden_compra":orden_compra, "productos_orden_compra":productos_orden_compra, "EXCEL_ROOT":EXCEL_ROOT})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')

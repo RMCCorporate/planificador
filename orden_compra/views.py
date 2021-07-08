@@ -9,12 +9,12 @@ from planificador.decorators import allowed_users
 from django.contrib.auth.models import User, Permission
 import uuid
 from openpyxl import load_workbook, Workbook
+from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
 import os
 
 def excel_oc(id_orden_compra):
-    path = "/Users/tomas/Desktop/RMCCorporate/Proyecto pagina/RMC_Corporate/media/img/OC_FORMAT.xlsx"
+    path = "{}/OC_FORMAT.xlsx".format(EXCEL_ROOT)
     wb = load_workbook(path)
-    print(type(wb))
     sheet = wb.get_sheet_by_name('OC')
     orden_compra = Orden_compra.objects.get(id=id_orden_compra)
     proveedor = orden_compra.cotizacion_hija.proveedor_asociado
@@ -27,7 +27,7 @@ def excel_oc(id_orden_compra):
             nombre_producto =  Producto_proveedor.objects.filter(proyecto=producto.producto_asociado_cantidades.proyecto, producto=proveedor).nombre_proveedor
         else:
             nombre_producto = producto.producto_asociado_cantidades.proyecto.nombre
-        cantidad = producto.producto_asociado_cantidades.cantidades
+        cantidad = producto.cantidades
         unidad = producto.producto_asociado_cantidades.proyecto.unidad
         lista_precios = producto.producto_asociado_cantidades.proyecto.lista_precios.all()
         precio = lista_precios.filter(nombre_cotizacion=orden_compra.cotizacion_padre.nombre)[0].valor
@@ -39,6 +39,13 @@ def excel_oc(id_orden_compra):
         sheet['E{}'.format(str(numero_inicial_excel))] = precio
         sheet['F{}'.format(str(numero_inicial_excel))] = total
         numero_inicial_excel += 1
+    for i in range(numero_inicial_excel, 23):
+        if sheet['B{}'.format(i)].value != None:
+            sheet['B{}'.format(i)] = ""
+            sheet['C{}'.format(i)] = ""
+            sheet['D{}'.format(i)] = ""
+            sheet['E{}'.format(i)] = ""
+            sheet['F{}'.format(i)] = ""
     #TOTALES
     sheet['F4'] = orden_compra.id
     sheet['F24'] = suma_productos
@@ -61,15 +68,8 @@ def excel_oc(id_orden_compra):
     sheet['A40'] = "Dirección: "+orden_compra.destino_factura.direccion
     sheet['C38'] = "RUT: "+orden_compra.destino_factura.rut
     sheet['A43'] = orden_compra.observaciones
-    wb.save(filename="{}.xlsx".format(orden_compra.id))
-    orden_compra.planilla.name = "/Users/tomas/Desktop/RMCCorporate/Proyecto pagina/RMC_Corporate/media/img/OC_FORMAT.xlsx"
-    print(" ")
-    print("AAAA")
-    print(" ")
-    print("AAAA")
-    print(orden_compra.planilla)
-    print(" ")
-    print("AAAA")
+    wb.save("{}{}.xlsx".format(EXCEL_ROOT, orden_compra.id))
+    orden_compra.planilla.name = "{}{}.xlsx".format(EXCEL_ROOT, orden_compra.id)
     orden_compra.save()
 
 def crear_orden(request, id):
