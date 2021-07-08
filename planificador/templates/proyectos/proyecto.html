@@ -20,7 +20,11 @@
     <div class="informacion_container">
       <h4>INFORMACIÓN GENERAL</h4>
     </div>
-    <br>
+    <div class="boton_container">
+      <a href="{% url 'subir_gasto' Proyecto.id %}">
+        <button class="button_editar">SUBIR GASTOS</button>
+      </a>
+    </div>
     <table class="table">
       <thead>
           <tr>

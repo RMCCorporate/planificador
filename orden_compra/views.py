@@ -72,6 +72,24 @@ def excel_oc(id_orden_compra):
     orden_compra.planilla.name = "{}{}.xlsx".format(EXCEL_ROOT, orden_compra.id)
     orden_compra.save()
 
+def subir_gasto(request, id):
+    if request.method == "POST":
+        excel_file = request.FILES["excel_file"]
+        wb = load_workbook(excel_file)
+        sheet = wb.get_sheet_by_name('FORMATO REL COMPRAS')
+        #RELACION DE GASTOS
+        numero_relacion = sheet['A1'].value.split(":")[1][1:]
+        fecha = sheet['A7'].value
+        periodo_desde = sheet['U7'].value
+        periodo_hasta = sheet['U8'].value
+        rut_solicitante = sheet['A49'].value.split(":")[1][1:]
+        rut_autorizador = sheet['H49'].value.split(":")[1][1:]
+        rut_aprobador = sheet['N49'].value.split(":")[1][1:]
+        #GASTOS GENERALES
+        return redirect('/proyectos/proyecto/{}'.format(id))
+    else:
+        return render(request, 'proyectos/subir_gasto.html')
+
 def crear_orden(request, id):
     if request.method == "GET":
         cotizacion_padre = Cotizacion.objects.get(id=id)
@@ -192,3 +210,4 @@ def editar_status(request, id):
         orden_compra.status_llegada = status_llegada
         orden_compra.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
+
