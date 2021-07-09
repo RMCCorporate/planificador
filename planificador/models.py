@@ -242,3 +242,25 @@ class Orden_compra(models.Model):
     destino_factura =  models.ForeignKey(RMC, on_delete=models.CASCADE, null=True, related_name='destino_factura')
     observaciones = models.TextField(null=True)
     planilla = models.FileField(upload_to="img", null=True, max_length=255)
+
+class Gastos_generales(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    fecha = models.DateTimeField(auto_now_add=False, null=True)
+    numero_factura = models.CharField(max_length=128, null=True)
+    factura_o_boleta = models.CharField(max_length=128, null=True)
+    razon_social = models.CharField(max_length=128, null=True)
+    detalle = models.CharField(max_length=128, null=True)
+    monto = models.IntegerField(null=True)
+
+class Relacion_gastos(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    numero_relacion = models.CharField(max_length=128, null=True)
+    fecha = models.DateTimeField(auto_now_add=False, null=True)
+    periodo_desde = models.DateTimeField(auto_now_add=False, null=True)
+    periodo_hasta = models.DateTimeField(auto_now_add=False, null=True)
+    rut_solicitante = models.CharField(max_length=128, null=True)
+    rut_autorizador = models.CharField(max_length=128, null=True)
+    rut_aprobador = models.CharField(max_length=128, null=True)
+    gastos_generales = models.ManyToManyField(Gastos_generales)
+    total_boleta = models.IntegerField(null=True)
+    total_factura = models.IntegerField(null=True)

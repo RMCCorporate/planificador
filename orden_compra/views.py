@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario
+from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario, Gastos_generales, Relacion_gastos
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from email.mime.multipart import MIMEMultipart
@@ -78,14 +78,88 @@ def subir_gasto(request, id):
         wb = load_workbook(excel_file)
         sheet = wb.get_sheet_by_name('FORMATO REL COMPRAS')
         #RELACION DE GASTOS
+        id_relacion = uuid.uuid1()
         numero_relacion = sheet['A1'].value.split(":")[1][1:]
+        if not numero_relacion:
+            numero_relacion = id_relacion
         fecha = sheet['A7'].value
+        if not fecha:
+            fecha = date.today()
         periodo_desde = sheet['U7'].value
+        if not periodo_desde:
+            periodo_desde = date.today()
         periodo_hasta = sheet['U8'].value
-        rut_solicitante = sheet['A49'].value.split(":")[1][1:]
-        rut_autorizador = sheet['H49'].value.split(":")[1][1:]
-        rut_aprobador = sheet['N49'].value.split(":")[1][1:]
+        if not periodo_hasta:
+            periodo_hasta = date.today()
+        rut_solicitante = sheet['A51'].value.split(":")[1][1:]
+        if not rut_solicitante:
+            rut_solicitante = "No hay"
+        rut_autorizador = sheet['H51'].value.split(":")[1][1:]
+        if not rut_autorizador:
+            rut_autorizador = "No hay"
+        rut_aprobador = sheet['N51'].value.split(":")[1][1:]
+        if not rut_aprobador:
+            rut_aprobador = "No hay"
+        nueva_relacion_gasto = Relacion_gastos(id=id_relacion, numero_relacion = numero_relacion, fecha=fecha, periodo_desde=periodo_desde, periodo_hasta=periodo_hasta, rut_solicitante=rut_solicitante, rut_autorizador=rut_autorizador, rut_aprobador=rut_aprobador)
+        nueva_relacion_gasto.save()
         #GASTOS GENERALES
+        numero_facturas = 19
+        for i in range(numero_facturas, 28):
+            if not sheet['A{}'.format(i)].value and not sheet['C{}'.format(i)].value and not sheet['O{}'.format(i)].value and not sheet['T{}'.format(i)].value:
+                pass
+            else:
+                fecha = sheet['A{}'.format(i)].value
+                if not fecha:
+                    fecha = periodo_hasta
+                numero_factura = sheet['C{}'.format(i)].value
+                if not numero_factura:
+                    numero_factura = "No hay"
+                razon_social = sheet['I{}'.format(i)].value
+                if not razon_social:
+                    razon_social = "No hay"
+                detalle = sheet['O{}'.format(i)].value
+                if not detalle:
+                    detalle = "No hay"
+                monto = sheet['T{}'.format(i)].value
+                if not monto:
+                    monto = 0
+                nuevo_gasto_general = Gastos_generales(id=uuid.uuid1(), fecha=fecha, numero_factura=numero_factura, factura_o_boleta="factura", razon_social=razon_social, detalle=detalle, monto=monto)
+                nuevo_gasto_general.save()
+                nueva_relacion_gasto.gastos_generales.add(nuevo_gasto_general)
+                nueva_relacion_gasto.save()
+                if not nueva_relacion_gasto.total_factura:
+                    nueva_relacion_gasto.total_factura = 0
+                nueva_relacion_gasto.total_factura += monto
+                nueva_relacion_gasto.save()
+            numero_facturas += 1
+        numero_boletas = 32
+        for i in range(numero_boletas, 41):
+            if not sheet['A{}'.format(i)].value and not sheet['C{}'.format(i)].value and not sheet['O{}'.format(i)].value and not sheet['T{}'.format(i)].value:
+                pass
+            else:
+                fecha = sheet['A{}'.format(i)].value
+                if not fecha:
+                    fecha = periodo_hasta
+                numero_factura = sheet['C{}'.format(i)].value
+                if not numero_factura:
+                    numero_factura = "No hay"
+                razon_social = sheet['I{}'.format(i)].value
+                if not razon_social:
+                    razon_social = "No hay"
+                detalle = sheet['O{}'.format(i)].value
+                if not detalle:
+                    detalle = "No hay"
+                monto = sheet['T{}'.format(i)].value
+                if not monto:
+                    monto = 0
+                nuevo_gasto_general = Gastos_generales(id=uuid.uuid1(), fecha=fecha, numero_factura=numero_factura, factura_o_boleta="boleta", razon_social=razon_social, detalle=detalle, monto=monto)
+                nuevo_gasto_general.save()
+                nueva_relacion_gasto.gastos_generales.add(nuevo_gasto_general)
+                if not nueva_relacion_gasto.total_boleta:
+                    nueva_relacion_gasto.total_boleta = 0
+                nueva_relacion_gasto.total_boleta += monto
+                nueva_relacion_gasto.save()
+            numero_boletas += 1
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         return render(request, 'proyectos/subir_gasto.html')
