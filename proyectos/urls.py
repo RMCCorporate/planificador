@@ -26,4 +26,5 @@ urlpatterns = [
     path('orden_compra/editar_orden/<str:id>', orden_compra_views.editar_orden, name='editar_orden'),
     path('orden_compra/editar_status/<str:id>', orden_compra_views.editar_status, name='editar_status'),
     path('orden_compra/subir_gasto/<str:id>', orden_compra_views.subir_gasto, name='subir_gasto'),
+    path('orden_compra/info_gasto/<str:id>', orden_compra_views.info_gasto, name='info_gasto'),
 ]

@@ -43,6 +43,28 @@ class Clase(models.Model):
     def __str__(self):
         return self.nombre
 
+class Gastos_generales(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    fecha = models.DateTimeField(auto_now_add=False, null=True)
+    numero_factura = models.CharField(max_length=128, null=True)
+    factura_o_boleta = models.CharField(max_length=128, null=True)
+    razon_social = models.CharField(max_length=128, null=True)
+    detalle = models.CharField(max_length=128, null=True)
+    monto = models.IntegerField(null=True)
+
+class Relacion_gastos(models.Model):
+    id = models.CharField(max_length=128, primary_key=True)
+    numero_relacion = models.CharField(max_length=128, null=True)
+    fecha = models.DateTimeField(auto_now_add=False, null=True)
+    periodo_desde = models.DateTimeField(auto_now_add=False, null=True)
+    periodo_hasta = models.DateTimeField(auto_now_add=False, null=True)
+    rut_solicitante = models.CharField(max_length=128, null=True)
+    rut_autorizador = models.CharField(max_length=128, null=True)
+    rut_aprobador = models.CharField(max_length=128, null=True)
+    gastos_generales = models.ManyToManyField(Gastos_generales)
+    total_boleta = models.IntegerField(null=True)
+    total_factura = models.IntegerField(null=True)
+
 class Proyecto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(
@@ -59,6 +81,7 @@ class Proyecto(models.Model):
     creador = models.CharField(max_length=128)
     tipo_cambio = models.CharField(max_length=128, null=True, default="CLP")
     valor_cambio = models.FloatField(null=True, default=1)
+    relacion_gastos = models.ManyToManyField(Relacion_gastos)
     COMPLETO = 'Completo'
     INCOMPLETO = 'Incompleto'
     ESTADO_CHOICES = [
@@ -160,6 +183,7 @@ class Producto_proyecto_cantidades(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     proyecto_asociado_cantidades = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado_cantidades')
     producto_asociado_cantidades = models.ForeignKey(Producto_proyecto, on_delete=models.CASCADE, related_name='producto_asociado_cantidades')
+    precio = models.ForeignKey(Precio, on_delete=models.CASCADE, related_name='precio', null=True)
     cantidades = models.CharField(max_length=128, null=True)
 
 class Cotizacion(models.Model):
@@ -243,24 +267,3 @@ class Orden_compra(models.Model):
     observaciones = models.TextField(null=True)
     planilla = models.FileField(upload_to="img", null=True, max_length=255)
 
-class Gastos_generales(models.Model):
-    id = models.CharField(max_length=128, primary_key=True)
-    fecha = models.DateTimeField(auto_now_add=False, null=True)
-    numero_factura = models.CharField(max_length=128, null=True)
-    factura_o_boleta = models.CharField(max_length=128, null=True)
-    razon_social = models.CharField(max_length=128, null=True)
-    detalle = models.CharField(max_length=128, null=True)
-    monto = models.IntegerField(null=True)
-
-class Relacion_gastos(models.Model):
-    id = models.CharField(max_length=128, primary_key=True)
-    numero_relacion = models.CharField(max_length=128, null=True)
-    fecha = models.DateTimeField(auto_now_add=False, null=True)
-    periodo_desde = models.DateTimeField(auto_now_add=False, null=True)
-    periodo_hasta = models.DateTimeField(auto_now_add=False, null=True)
-    rut_solicitante = models.CharField(max_length=128, null=True)
-    rut_autorizador = models.CharField(max_length=128, null=True)
-    rut_aprobador = models.CharField(max_length=128, null=True)
-    gastos_generales = models.ManyToManyField(Gastos_generales)
-    total_boleta = models.IntegerField(null=True)
-    total_factura = models.IntegerField(null=True)

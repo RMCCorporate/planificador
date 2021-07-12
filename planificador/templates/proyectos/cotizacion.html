@@ -28,19 +28,20 @@
       <h1>{{Cotizacion.nombre}}</h1>
     </div>
     <div class="boton_container">
+      {% if not orden_compra %}
       <a href="{% url 'enviar_correo' Cotizacion.id %}">
         <button class="button_editar">ENVIAR CORREO</button>
       </a>
-      {% if not orden_compra %}
+     
       <a href="{% url 'crear_orden' Cotizacion.id %}">
         <button class="button_editar">CREAR ORDEN DE COMPRA</button>
       </a>
-      {% endif %}
+      
       
         <a href="{% url 'editar_precios' Cotizacion.id %}">
           <button class="button_editar">EDITAR PRECIOS</button>
         </a>
-  
+        {% endif %}
       <a href="{% url 'eliminar_cotizacion' Cotizacion.id %}" onclick="return confirm('¿Estás seguro que quieres eliminar la cotización?')">
         <button class="button_editar">ELIMINAR</button>
     </a>
@@ -183,6 +184,8 @@
         <tr>
             <th>NOMBRE</th>
             <th>CANTIDAD</th>
+            <th>PRECIO</th>
+            <th>MONEDA</th>
             <th>ESTADO</th>
             <th>FECHA USO</th>
             <th>USUARIO MODIFICACIÓN</th>
@@ -193,6 +196,8 @@
           <tr>
               <td data-label="NOMBRE">{{fila.producto_asociado_cantidades.proyecto.nombre}}</td>
               <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
+              <td data-label="PRECIO"> {{fila.precio.valor}}</td>
+              <td data-label="MONEDA"> {{fila.precio.tipo_cambio}}</td>
               <td data-label="STATUS"> {{fila.producto_asociado_cantidades.status}}</td>
               <td data-label="FECHA USO"> {{fila.producto_asociado_cantidades.fecha_uso}}</td>
               <td data-label="USUARIO MODIFICACIÓN"> {{fila.producto_asociado_cantidades.usuario_modificacion}}</td>

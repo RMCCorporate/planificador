@@ -21,9 +21,13 @@
       <h4>INFORMACIÓN GENERAL</h4>
     </div>
     <div class="boton_container">
+      <a href="{% url 'info_gasto' Proyecto.id %}">
+        <button class="button_editar">REPORTABILIDAD GASTOS</button>
+      </a>
       <a href="{% url 'subir_gasto' Proyecto.id %}">
         <button class="button_editar">SUBIR GASTOS</button>
       </a>
+     
     </div>
     <table class="table">
       <thead>

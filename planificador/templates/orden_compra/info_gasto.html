@@ -1,0 +1,102 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{Proyecto.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>Proyecto - {{Proyecto.id}}</h1>
+</div>
+
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="title_container">
+    <h1>{{Producto.nombre}}</h1>
+  </div>
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>CÓDIGO</th>
+            <th>NOMBRE</th>
+            <th>CLASE</th>
+            <th>SUB-CLASE</th>
+            <th>UNIDAD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="CÓDIGO">{{gastos_orden_compra}}</td>
+            <td data-label="NOMBRE"> {{gastos_generales}}</td>
+            <td data-label="CLASE"> {{gasto_total}}</td>
+            <td data-label="SUB-CLASE"> {{Subclase}}</td>
+            <td data-label="UNIDAD"> {{Producto.unidad}}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>HISTORIAL PRECIOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>FECHA CREACIÓN</th>
+            <th>VALOR UNITARIO</th>
+            <th>MONEDA</th>
+            <th>PROVEEDOR</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in lista_precios %}
+        <tr>
+            <td data-label="FECHA CREACIÓN">{{fila.fecha}}</td>
+            <td data-label="VALOR UNITARIO"> $ {{fila.valor}}</td>
+            <td data-label="MONEDA">{{fila.tipo_cambio}}</td>
+            <td data-label="PROVEEDOR"> {{fila.nombre_proveedor}}</td>
+            {% endfor %}  
+        </tr>
+    </tbody>
+</table>
+</div>   
+<br>
+<br>  
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>NOMBRE PROVEEDORES</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>PROVEEDOR</th>
+            <th>NOMBRE</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% if nombre_proveedor != "" %}
+        {% for fila in nombre_proveedor %}
+          <tr>
+              <td data-label="PROVEEDOR">{{fila.producto}}</td>
+              <td data-label="NOMBRE"> {{fila.nombre_proveedor}}</td>
+              {% endfor %}  
+          </tr>
+      {% endif %}
+    </tbody>
+</table>
+</div>
+</div>
+</div>
+        </div>
+{% endblock %}
