@@ -11,6 +11,7 @@ import uuid
 from openpyxl import load_workbook, Workbook
 from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
 import os
+import json
 
 def excel_oc(id_orden_compra):
     path = "{}/OC_FORMAT.xlsx".format(EXCEL_ROOT)
@@ -290,6 +291,19 @@ def editar_status(request, id):
         orden_compra.save()
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(orden_compra.cotizacion_hija.id))
 
+def fecha_respuesta_editar_precio(cotizaciones):
+    lista = []
+    for i in cotizaciones:
+        if i.fecha_respuesta:
+            diccionario = {}
+            diferencia_respuesta_salida = i.fecha_actualizacion_precio - i.fecha_respuesta
+            if diferencia_respuesta_salida.days < 0:
+                diferencia_respuesta_salida = diferencia_respuesta_salida*-1
+            diccionario["category"] = i.nombre
+            diccionario["amount"] = diferencia_respuesta_salida.days
+            lista.append(diccionario)
+    return json.dumps(lista)
+
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
@@ -302,6 +316,7 @@ def info_gasto(request, id):
         cheque_a_fecha = 0
         en_proceso = 0
         pagado = 0
+        cotizaciones_totales = Cotizacion.objects.filter(proyecto_asociado=proyecto)
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto, orden_compra=True)
         for i in cotizaciones:
             if i.orden_compra == True:
@@ -327,7 +342,8 @@ def info_gasto(request, id):
             gastos_generales += int(i.total_boleta)
             gastos_generales += int(i.total_factura)
             iva_generales = int(i.total_factura)*0.19
+        fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero})
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP})
