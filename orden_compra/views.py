@@ -298,23 +298,17 @@ def info_gasto(request, id):
         gastos_orden_compra = 0
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto, orden_compra=True)
         for i in cotizaciones:
-            print(i.orden_compra)
             if i.orden_compra == True:
                 orden_compra = Orden_compra.objects.filter(cotizacion_hija=i)
-                print(orden_compra)
                 for n in i.productos_proyecto_asociados.all():
-                    print(n.producto_asociado_cantidades.proyecto.nombre)
-                    print(n.cantidades)
-                    print(n.precio.valor)
                     if n.precio.tipo_cambio != "CLP":
                         precio_final = int(n.precio.valor_cambio)*int(n.precio.valor)*int(n.cantidades)
                     else:
                         precio_final = int(n.precio.valor)*int(n.cantidades)
                     gastos_orden_compra += precio_final
-        print(gastos_orden_compra)
         gastos_generales = 0
         for i in proyecto.relacion_gastos.all():
             gastos_generales += int(i.total_boleta)
             gastos_generales += int(i.total_factura)
-        print(gastos_generales)
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos_generales":gastos_generales, "gastos_orden_compra":gastos_orden_compra, "gasto_total":gastos_orden_compra+gastos_generales})
+        gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos})

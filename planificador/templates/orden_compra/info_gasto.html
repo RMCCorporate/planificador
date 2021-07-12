@@ -7,7 +7,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
     <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.20.2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.17.0"></script>
 </head>
 
 <div class="title">
@@ -38,65 +41,82 @@
             <td data-label="CÓDIGO">{{gastos_orden_compra}}</td>
             <td data-label="NOMBRE"> {{gastos_generales}}</td>
             <td data-label="CLASE"> {{gasto_total}}</td>
-            <td data-label="SUB-CLASE"> {{Subclase}}</td>
-            <td data-label="UNIDAD"> {{Producto.unidad}}</td>
         </tr>
     </tbody>
 </table>
 </div>
 <br>
 <br>
-<div class="table-container">
-  <div class="informacion_container">
-    <h4>HISTORIAL PRECIOS</h4>
-  </div>
-    <table class="table2">
-    <thead>
-        <tr>
-            <th>FECHA CREACIÓN</th>
-            <th>VALOR UNITARIO</th>
-            <th>MONEDA</th>
-            <th>PROVEEDOR</th>
-        </tr>
-    </thead>
-    <tbody>
-      {% for fila in lista_precios %}
-        <tr>
-            <td data-label="FECHA CREACIÓN">{{fila.fecha}}</td>
-            <td data-label="VALOR UNITARIO"> $ {{fila.valor}}</td>
-            <td data-label="MONEDA">{{fila.tipo_cambio}}</td>
-            <td data-label="PROVEEDOR"> {{fila.nombre_proveedor}}</td>
-            {% endfor %}  
-        </tr>
-    </tbody>
-</table>
-</div>   
-<br>
-<br>  
-<div class="table-container">
-  <div class="informacion_container">
-    <h4>NOMBRE PROVEEDORES</h4>
-  </div>
-    <table class="table2">
-    <thead>
-        <tr>
-            <th>PROVEEDOR</th>
-            <th>NOMBRE</th>
-        </tr>
-    </thead>
-    <tbody>
-      {% if nombre_proveedor != "" %}
-        {% for fila in nombre_proveedor %}
-          <tr>
-              <td data-label="PROVEEDOR">{{fila.producto}}</td>
-              <td data-label="NOMBRE"> {{fila.nombre_proveedor}}</td>
-              {% endfor %}  
-          </tr>
-      {% endif %}
-    </tbody>
-</table>
-</div>
+
 </div>
 </div>
         </div>
+        <div id="visSumatoriaGastos" class="vega"></div>
+
+
+    <!-- VEGA -->
+    <!-- GASTOS GENERALES -->
+<script type="text/javascript">
+    var vegaData = {{gastos}}
+    var gastoOC = vegaData[0]
+    var gastoG = vegaData[1]
+    var gastoT = vegaData[2]
+    var visSumatoriaGastos = document.getElementById("visSumatoriaGastos")
+    var yourVlSpec = ({
+        "$schema": "https://vega.github.io/schema/vega/v4.json",
+        "width": 200,
+        "height": 200,
+        "autosize": "fit",
+
+        "data": [
+            {
+            "name": "table",
+            "values": [
+                        {"id": "Gasto orden compra", "field": gastoOC},
+                        {"id": "Gastos generales", "field": gastoG},
+            ],
+            "transform": [
+                {"type": "formula", "expr": "datum.id + ': ' + datum.field", "as": "tooltip"},
+                {
+                "type": "pie",
+                "field": "field",
+                "startAngle": 0,
+                "endAngle": 6.29,
+                "sort": true
+                }
+            ]
+            }
+        ],
+
+        "scales": [
+            {
+            "name": "color",
+            "type": "ordinal",
+            "domain": {"data": "table", "field": "id"},
+            "range": {"scheme": "category20c"}
+            }
+        ],
+
+        "marks": [
+            {
+            "type": "arc",
+            "from": {"data": "table"},
+            "encode": {
+                "enter": {
+                "fill": {"scale": "color", "field": "id"},
+                "x": {"signal": "width / 2"},
+                "y": {"signal": "height / 2"},
+                "startAngle": {"field": "startAngle"},
+                "endAngle": {"field": "endAngle"},
+                "innerRadius": {"value": 60},
+                "outerRadius": {"signal": "width / 2"},
+                "cornerRadius": {"value": 0},
+                "tooltip": {"field": "tooltip"}
+                }
+            }
+            }
+        ]
+        })
+        vegaEmbed('#visSumatoriaGastos', yourVlSpec);
+    </script>
 {% endblock %}
