@@ -296,19 +296,38 @@ def info_gasto(request, id):
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         gastos_orden_compra = 0
+        iva_orden_compra = 0
+        #STATUS FINANCIERO
+        no_pagado = 0
+        cheque_a_fecha = 0
+        en_proceso = 0
+        pagado = 0
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto, orden_compra=True)
         for i in cotizaciones:
             if i.orden_compra == True:
                 orden_compra = Orden_compra.objects.filter(cotizacion_hija=i)
+                if orden_compra[0].status_financiero:
+                    if orden_compra[0].status_financiero == "CHEQUE A FECHA":
+                        cheque_a_fecha += 1
+                    elif orden_compra[0].status_financiero == "EN PROCESO":
+                        en_proceso += 1
+                    elif orden_compra[0].status_financiero == "PAGADO":
+                        pagado += 1
+                else:
+                    no_pagado += 1
                 for n in i.productos_proyecto_asociados.all():
                     if n.precio.tipo_cambio != "CLP":
                         precio_final = int(n.precio.valor_cambio)*int(n.precio.valor)*int(n.cantidades)
                     else:
                         precio_final = int(n.precio.valor)*int(n.cantidades)
                     gastos_orden_compra += precio_final
+                    iva_orden_compra += precio_final*0.19
         gastos_generales = 0
         for i in proyecto.relacion_gastos.all():
             gastos_generales += int(i.total_boleta)
             gastos_generales += int(i.total_factura)
+            iva_generales = int(i.total_factura)*0.19
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos})
+        iva = [iva_orden_compra, iva_generales]
+        status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero})

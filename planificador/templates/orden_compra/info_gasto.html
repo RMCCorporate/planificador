@@ -26,24 +26,7 @@
   <div class="informacion_container">
     <h4>INFORMACIÓN GENERAL</h4>
   </div>
-  <table class="table">
-    <thead>
-        <tr>
-            <th>CÓDIGO</th>
-            <th>NOMBRE</th>
-            <th>CLASE</th>
-            <th>SUB-CLASE</th>
-            <th>UNIDAD</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td data-label="CÓDIGO">{{gastos_orden_compra}}</td>
-            <td data-label="NOMBRE"> {{gastos_generales}}</td>
-            <td data-label="CLASE"> {{gasto_total}}</td>
-        </tr>
-    </tbody>
-</table>
+  
 </div>
 <br>
 <br>
@@ -52,6 +35,8 @@
 </div>
         </div>
         <div id="visSumatoriaGastos" class="vega"></div>
+        <div id="visIVA" class="vega"></div>
+        <div id="visFinanciero" class="vega"></div>
 
 
     <!-- VEGA -->
@@ -67,13 +52,12 @@
         "width": 200,
         "height": 200,
         "autosize": "fit",
-
         "data": [
             {
             "name": "table",
             "values": [
                         {"id": "Gasto orden compra", "field": gastoOC},
-                        {"id": "Gastos generales", "field": gastoG},
+                        {"id": "Gastos generales", "field": gastoG}
             ],
             "transform": [
                 {"type": "formula", "expr": "datum.id + ': ' + datum.field", "as": "tooltip"},
@@ -87,7 +71,6 @@
             ]
             }
         ],
-
         "scales": [
             {
             "name": "color",
@@ -96,7 +79,6 @@
             "range": {"scheme": "category20c"}
             }
         ],
-
         "marks": [
             {
             "type": "arc",
@@ -116,7 +98,132 @@
             }
             }
         ]
-        })
+        });
         vegaEmbed('#visSumatoriaGastos', yourVlSpec);
+    </script>
+
+ <!-- IVA  -->
+ <script type="text/javascript">
+    var vegaDataIVA = {{IVA}}
+    var IVAOC = vegaDataIVA[0]
+    var IVAG = vegaDataIVA[1]
+    var visSumatoriaGastos = document.getElementById("visIVA")
+    var yourVlSpec = ({
+        "$schema": "https://vega.github.io/schema/vega/v4.json",
+        "width": 200,
+        "height": 200,
+        "autosize": "fit",
+        "data": [
+            {
+            "name": "table",
+            "values": [
+                        {"id": "IVA orden compra", "field": IVAOC},
+                        {"id": "IVA gastos generales", "field": IVAG}
+            ],
+            "transform": [
+                {"type": "formula", "expr": "datum.id + ': ' + datum.field", "as": "tooltip"},
+                {
+                "type": "pie",
+                "field": "field",
+                "startAngle": 0,
+                "endAngle": 6.29,
+                "sort": true
+                }
+            ]
+            }
+        ],
+        "scales": [
+            {
+            "name": "color",
+            "type": "ordinal",
+            "domain": {"data": "table", "field": "id"},
+            "range": {"scheme": "category20c"}
+            }
+        ],
+        "marks": [
+            {
+            "type": "arc",
+            "from": {"data": "table"},
+            "encode": {
+                "enter": {
+                "fill": {"scale": "color", "field": "id"},
+                "x": {"signal": "width / 2"},
+                "y": {"signal": "height / 2"},
+                "startAngle": {"field": "startAngle"},
+                "endAngle": {"field": "endAngle"},
+                "innerRadius": {"value": 60},
+                "outerRadius": {"signal": "width / 2"},
+                "cornerRadius": {"value": 0},
+                "tooltip": {"field": "tooltip"}
+                }
+            }
+            }
+        ]
+        });
+        vegaEmbed('#visIVA', yourVlSpec);
+    </script>
+ <!-- STATUS FINANCIERO  -->
+  <script type="text/javascript">
+    var vegaDataFinanciero = {{status_financiero}}
+    var noPagado = vegaDataFinanciero[0]
+    var chequeAFecha = vegaDataFinanciero[1]
+    var enProceso = vegaDataFinanciero[2]
+    var pagado = vegaDataFinanciero[3]
+    var visSumatoriaGastos = document.getElementById("visFinanciero")
+    var yourVlSpec = ({
+        "$schema": "https://vega.github.io/schema/vega/v4.json",
+        "width": 200,
+        "height": 200,
+        "autosize": "fit",
+        "data": [
+            {
+            "name": "table",
+            "values": [
+                        {"id": "No pagado", "field": noPagado},
+                        {"id": "Cheque a fecha", "field": chequeAFecha},
+                        {"id": "En proceso", "field": enProceso},
+                        {"id": "Pagado", "field": pagado}
+            ],
+            "transform": [
+                {"type": "formula", "expr": "datum.id + ': ' + datum.field", "as": "tooltip"},
+                {
+                "type": "pie",
+                "field": "field",
+                "startAngle": 0,
+                "endAngle": 6.29,
+                "sort": true
+                }
+            ]
+            }
+        ],
+        "scales": [
+            {
+            "name": "color",
+            "type": "ordinal",
+            "domain": {"data": "table", "field": "id"},
+            "range": {"scheme": "category20c"}
+            }
+        ],
+        "marks": [
+            {
+            "type": "arc",
+            "from": {"data": "table"},
+            "encode": {
+                "enter": {
+                "fill": {"scale": "color", "field": "id"},
+                "x": {"signal": "width / 2"},
+                "y": {"signal": "height / 2"},
+                "startAngle": {"field": "startAngle"},
+                "endAngle": {"field": "endAngle"},
+                "innerRadius": {"value": 60},
+                "outerRadius": {"signal": "width / 2"},
+                "cornerRadius": {"value": 0},
+                "tooltip": {"field": "tooltip"}
+                }
+            }
+            }
+        ]
+        });
+        vegaEmbed('#visFinanciero', yourVlSpec);
     </script>
 {% endblock %}
