@@ -332,6 +332,79 @@ def fecha_envio_orden(cotizaciones):
         lista.append(diccionario)
     return json.dumps(lista)
 
+def graficos_proveedores(cotizaciones):
+    diccionario_proveedores = {}
+    for i in cotizaciones:
+        if i.proveedor_asociado.nombre in diccionario_proveedores.keys():
+            for n in i.productos_proyecto_asociados.all():
+                if n.precio.tipo_cambio != "CLP":
+                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                else:
+                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades)
+        else:
+            contador = 0
+            for n in i.productos_proyecto_asociados.all():
+                if contador == 0:
+                    if n.precio.tipo_cambio != "CLP":
+                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    else:
+                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*int(n.cantidades)
+                else:
+                    if n.precio.tipo_cambio != "CLP":
+                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    else:
+                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades)
+                contador += 1
+    lista_proveedores = []
+    for proveedor in diccionario_proveedores.keys():
+        diccionario_aux = {}
+        diccionario_aux["category"] = proveedor
+        diccionario_aux["amount"] = diccionario_proveedores[proveedor]
+        lista_proveedores.append(diccionario_aux)
+    return json.dumps(lista_proveedores)
+
+def graficos_clase(cotizaciones):
+    diccionario_clase = {}
+    diccionario_subclase = {}
+    for i in cotizaciones:
+        for n in i.productos_proyecto_asociados.all():
+            subclase_modelo = n.producto_asociado_cantidades.proyecto.subclase_set.all()[0]
+            subclase = subclase_modelo.nombre
+            clase = subclase_modelo.clase_set.all()[0].nombre
+            if clase in diccionario_clase.keys():
+                if n.precio.tipo_cambio != "CLP":
+                    diccionario_clase[clase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                else:
+                    diccionario_clase[clase] += n.precio.valor*int(n.cantidades)
+            else:
+                if n.precio.tipo_cambio != "CLP":
+                    diccionario_clase[clase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                else:
+                    diccionario_clase[clase] = n.precio.valor*int(n.cantidades)
+            if subclase in diccionario_subclase.keys():
+                if n.precio.tipo_cambio != "CLP":
+                    diccionario_subclase[subclase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                else:
+                    diccionario_subclase[subclase] += n.precio.valor*int(n.cantidades)
+            else:
+                if n.precio.tipo_cambio != "CLP":
+                    diccionario_subclase[subclase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                else:
+                    diccionario_subclase[subclase] = n.precio.valor*int(n.cantidades)
+    lista_subclase = []
+    for subclase in diccionario_subclase.keys():
+        diccionario_aux = {}
+        diccionario_aux["category"] = subclase
+        diccionario_aux["amount"] = diccionario_subclase[subclase]
+        lista_subclase.append(diccionario_aux)
+    lista_clase = []
+    for clase in diccionario_clase.keys():
+        diccionario_aux = {}
+        diccionario_aux["category"] = clase
+        diccionario_aux["amount"] = diccionario_clase[clase]
+        lista_clase.append(diccionario_aux)
+    return [json.dumps(lista_clase), json.dumps(lista_subclase)]
+       
 
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
@@ -371,10 +444,14 @@ def info_gasto(request, id):
             gastos_generales += int(i.total_boleta)
             gastos_generales += int(i.total_factura)
             iva_generales = int(i.total_factura)*0.19
+        proveedores = graficos_proveedores(cotizaciones)
+        
+        clase = graficos_clase(cotizaciones)[0]
+        subclase = graficos_clase(cotizaciones)[1]
         fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
         fecha_FRC = fecha_respuesta_cotizacion(cotizaciones_totales)
         fecha_EO = fecha_envio_orden(cotizaciones)
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO})
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase})
