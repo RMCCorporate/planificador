@@ -187,7 +187,8 @@ def crear_orden(request, id):
         productos = request.POST.getlist("id_producto")
         cotizacion_padre = Cotizacion.objects.get(id=id_cotizacion)
         nuevo_nombre = cotizacion_padre.nombre+" - " + id_orden
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nuevo_nombre, proyecto_asociado=cotizacion_padre.proyecto_asociado, orden_compra=True, proveedor_asociado=cotizacion_padre.proveedor_asociado, usuario_modificacion=cotizacion_padre.usuario_modificacion)
+        fecha_envio = date.today()
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nuevo_nombre, proyecto_asociado=cotizacion_padre.proyecto_asociado, orden_compra=True, proveedor_asociado=cotizacion_padre.proveedor_asociado, fecha_envio = fecha_envio, usuario_modificacion=cotizacion_padre.usuario_modificacion)
         nueva_cotizacion.save()
         for i in cotizacion_padre.contacto_asociado.all():
             nueva_cotizacion.contacto_asociado.add(i)
@@ -267,6 +268,8 @@ def editar_orden(request, id):
         orden_compra.forma_pago = forma_pago
         orden_compra.destino_factura = destino_factura
         orden_compra.observaciones = observaciones
+        fecha_envio = date.today()
+        orden_compra.fecha_envio = fecha_envio
         orden_compra.save()
         cotizacion_hija = Cotizacion.objects.get(id=orden_compra.cotizacion_hija.id)
         for i in cotizacion_hija.productos_proyecto_asociados.all():
@@ -303,6 +306,32 @@ def fecha_respuesta_editar_precio(cotizaciones):
             diccionario["amount"] = diferencia_respuesta_salida.days
             lista.append(diccionario)
     return json.dumps(lista)
+
+def fecha_respuesta_cotizacion(cotizaciones):
+    lista = []
+    for i in cotizaciones:
+        if i.fecha_respuesta:
+            diccionario = {}
+            diferencia_respuesta_cotizacion = i.fecha_respuesta - i.fecha_salida
+            if diferencia_respuesta_cotizacion.days < 0:
+                diferencia_respuesta_cotizacion = diferencia_respuesta_cotizacion*-1
+            diccionario["category"] = i.nombre
+            diccionario["amount"] = diferencia_respuesta_cotizacion.days
+            lista.append(diccionario)
+    return json.dumps(lista)
+
+def fecha_envio_orden(cotizaciones):
+    lista = []
+    for i in cotizaciones:
+        diccionario = {}
+        ordenes_compra = Orden_compra.objects.filter(cotizacion_hija=i)
+        for n in ordenes_compra:
+            diferencia_respuesta_orden = n.fecha_envio - i.fecha_actualizacion_precio
+        diccionario["category"] = n.id
+        diccionario["amount"] = diferencia_respuesta_orden.days
+        lista.append(diccionario)
+    return json.dumps(lista)
+
 
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
@@ -343,7 +372,9 @@ def info_gasto(request, id):
             gastos_generales += int(i.total_factura)
             iva_generales = int(i.total_factura)*0.19
         fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
+        fecha_FRC = fecha_respuesta_cotizacion(cotizaciones_totales)
+        fecha_EO = fecha_envio_orden(cotizaciones)
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP})
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO})

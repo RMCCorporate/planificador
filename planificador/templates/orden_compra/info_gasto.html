@@ -38,6 +38,8 @@
         <div id="visIVA" class="vega"></div>
         <div id="visFinanciero" class="vega"></div>
         <div id="visFCEP" class="vega"></div>
+        <div id="visFRC" class="vega"></div>
+        <div id="visEO" class="vega"></div>
 
     <!-- VEGA -->
     <!-- GASTOS GENERALES -->
@@ -320,4 +322,194 @@
         );
                 vegaEmbed('#visFCEP', yourVlSpec);
     </script>
+
+
+ <!-- TIEMPO ENVIADA SOLICITUD A FECHA RESPUESTA -->
+ <script type="text/javascript">
+    var visSumatoriaGastos = document.getElementById("visFRC")
+    var data = JSON.parse("{{fecha_FRC|escapejs}}");
+    var yourVlSpec = ({
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "width": 400,
+        "height": 200,
+        "padding": 5,
+
+        "data": [
+            {
+            "name": "table",
+            "values": data
+            }
+        ],
+
+        "signals": [
+            {
+            "name": "tooltip",
+            "value": {},
+            "on": [
+                {"events": "rect:mouseover", "update": "datum"},
+                {"events": "rect:mouseout",  "update": "{}"}
+            ]
+            }
+        ],
+
+        "scales": [
+            {
+            "name": "xscale",
+            "type": "band",
+            "domain": {"data": "table", "field": "category"},
+            "range": "width",
+            "padding": 0.05,
+            "round": true
+            },
+            {
+            "name": "yscale",
+            "domain": {"data": "table", "field": "amount"},
+            "nice": true,
+            "range": "height"
+            }
+        ],
+
+        "axes": [
+            { "orient": "bottom", "scale": "xscale" },
+            { "orient": "left", "scale": "yscale" }
+        ],
+
+        "marks": [
+            {
+            "type": "rect",
+            "from": {"data":"table"},
+            "encode": {
+                "enter": {
+                "x": {"scale": "xscale", "field": "category"},
+                "width": {"scale": "xscale", "band": 1},
+                "y": {"scale": "yscale", "field": "amount"},
+                "y2": {"scale": "yscale", "value": 0}
+                },
+                "update": {
+                "fill": {"value": "steelblue"}
+                },
+                "hover": {
+                "fill": {"value": "red"}
+                }
+            }
+            },
+            {
+            "type": "text",
+            "encode": {
+                "enter": {
+                "align": {"value": "center"},
+                "baseline": {"value": "bottom"},
+                "fill": {"value": "#333"}
+                },
+                "update": {
+                "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
+                "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
+                "text": {"signal": "tooltip.amount"},
+                "fillOpacity": [
+                    {"test": "isNaN(tooltip.amount)", "value": 0},
+                    {"value": 1}
+                ]
+                }
+            }
+            }
+        ]
+        }
+        );
+                vegaEmbed('#visFRC', yourVlSpec);
+    </script>
+
+ <!-- TIEMPO EDITAR PRECIO A MANDAR OC -->
+ <script type="text/javascript">
+    var visSumatoriaGastos = document.getElementById("visEO")
+    var data = JSON.parse("{{fecha_EO|escapejs}}");
+    var yourVlSpec = ({
+        "$schema": "https://vega.github.io/schema/vega/v5.json",
+        "width": 400,
+        "height": 200,
+        "padding": 5,
+
+        "data": [
+            {
+            "name": "table",
+            "values": data
+            }
+        ],
+
+        "signals": [
+            {
+            "name": "tooltip",
+            "value": {},
+            "on": [
+                {"events": "rect:mouseover", "update": "datum"},
+                {"events": "rect:mouseout",  "update": "{}"}
+            ]
+            }
+        ],
+
+        "scales": [
+            {
+            "name": "xscale",
+            "type": "band",
+            "domain": {"data": "table", "field": "category"},
+            "range": "width",
+            "padding": 0.05,
+            "round": true
+            },
+            {
+            "name": "yscale",
+            "domain": {"data": "table", "field": "amount"},
+            "nice": true,
+            "range": "height"
+            }
+        ],
+
+        "axes": [
+            { "orient": "bottom", "scale": "xscale" },
+            { "orient": "left", "scale": "yscale" }
+        ],
+
+        "marks": [
+            {
+            "type": "rect",
+            "from": {"data":"table"},
+            "encode": {
+                "enter": {
+                "x": {"scale": "xscale", "field": "category"},
+                "width": {"scale": "xscale", "band": 1},
+                "y": {"scale": "yscale", "field": "amount"},
+                "y2": {"scale": "yscale", "value": 0}
+                },
+                "update": {
+                "fill": {"value": "steelblue"}
+                },
+                "hover": {
+                "fill": {"value": "red"}
+                }
+            }
+            },
+            {
+            "type": "text",
+            "encode": {
+                "enter": {
+                "align": {"value": "center"},
+                "baseline": {"value": "bottom"},
+                "fill": {"value": "#333"}
+                },
+                "update": {
+                "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
+                "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
+                "text": {"signal": "tooltip.amount"},
+                "fillOpacity": [
+                    {"test": "isNaN(tooltip.amount)", "value": 0},
+                    {"value": 1}
+                ]
+                }
+            }
+            }
+        ]
+        }
+        );
+                vegaEmbed('#visEO', yourVlSpec);
+    </script>
+
 {% endblock %}

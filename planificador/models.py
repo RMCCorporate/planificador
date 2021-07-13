@@ -266,4 +266,5 @@ class Orden_compra(models.Model):
     destino_factura =  models.ForeignKey(RMC, on_delete=models.CASCADE, null=True, related_name='destino_factura')
     observaciones = models.TextField(null=True)
     planilla = models.FileField(upload_to="img", null=True, max_length=255)
+    fecha_envio = models.DateField(auto_now=False, auto_now_add=False, null=True)
 
