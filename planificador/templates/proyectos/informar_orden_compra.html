@@ -31,7 +31,7 @@
         <div class="input-box">
             <span class="details">ENVIAR CORREO A:</label>
             <select class="custom-select" id="enviar" name="enviar" required>
-                <option value="todos">Todos los cotizadores</option>
+                <option value="todos">Seleccionar cotizador</option>
                 {% for i in cotizadores %}
                 <option value="{{i.email}}">{{i.first_name}} {{i.last_name}}</option>
                 {% endfor %}

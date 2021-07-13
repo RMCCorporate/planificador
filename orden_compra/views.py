@@ -28,7 +28,7 @@ def excel_oc(id_orden_compra):
             nombre_producto =  Producto_proveedor.objects.filter(proyecto=producto.producto_asociado_cantidades.proyecto, producto=proveedor).nombre_proveedor
         else:
             nombre_producto = producto.producto_asociado_cantidades.proyecto.nombre
-        cantidad = producto.cantidades
+        cantidad = int(producto.cantidades.split(".")[0])
         unidad = producto.producto_asociado_cantidades.proyecto.unidad
         lista_precios = producto.producto_asociado_cantidades.proyecto.lista_precios.all()
         precio = lista_precios.filter(nombre_cotizacion=orden_compra.cotizacion_padre.nombre)[0].valor
@@ -188,7 +188,7 @@ def crear_orden(request, id):
         cotizacion_padre = Cotizacion.objects.get(id=id_cotizacion)
         nuevo_nombre = cotizacion_padre.nombre+" - " + id_orden
         fecha_envio = date.today()
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nuevo_nombre, proyecto_asociado=cotizacion_padre.proyecto_asociado, orden_compra=True, proveedor_asociado=cotizacion_padre.proveedor_asociado, fecha_envio = fecha_envio, usuario_modificacion=cotizacion_padre.usuario_modificacion)
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nuevo_nombre, proyecto_asociado=cotizacion_padre.proyecto_asociado, orden_compra=True, proveedor_asociado=cotizacion_padre.proveedor_asociado, usuario_modificacion=cotizacion_padre.usuario_modificacion)
         nueva_cotizacion.save()
         for i in cotizacion_padre.contacto_asociado.all():
             nueva_cotizacion.contacto_asociado.add(i)
@@ -229,9 +229,9 @@ def crear_orden(request, id):
             nuevo_RMC.save()
             destino_factura = nuevo_RMC
         if observaciones:
-            nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura, observaciones=observaciones)
+            nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura, observaciones=observaciones, fecha_envio = fecha_envio)
         else:
-            nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura)
+            nueva_orden_compra = Orden_compra(id=id_orden, cotizacion_padre=cotizacion_padre, cotizacion_hija=nueva_cotizacion, condicion_entrega=condicion_entrega, condiciones_pago=condicion_pago, forma_pago=forma_pago, destino_factura=destino_factura, fecha_envio = fecha_envio)
         nueva_orden_compra.save()
         planificadores = User.objects.filter(groups__name='Planificador')
         for i in planificadores:
@@ -338,22 +338,22 @@ def graficos_proveedores(cotizaciones):
         if i.proveedor_asociado.nombre in diccionario_proveedores.keys():
             for n in i.productos_proyecto_asociados.all():
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades)
+                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades.split(".")[0])
         else:
             contador = 0
             for n in i.productos_proyecto_asociados.all():
                 if contador == 0:
                     if n.precio.tipo_cambio != "CLP":
-                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                     else:
-                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*int(n.cantidades)
+                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*int(n.cantidades.split(".")[0])
                 else:
                     if n.precio.tipo_cambio != "CLP":
-                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                     else:
-                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades)
+                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades.split(".")[0])
                 contador += 1
     lista_proveedores = []
     for proveedor in diccionario_proveedores.keys():
@@ -373,24 +373,24 @@ def graficos_clase(cotizaciones):
             clase = subclase_modelo.clase_set.all()[0].nombre
             if clase in diccionario_clase.keys():
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_clase[clase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    diccionario_clase[clase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_clase[clase] += n.precio.valor*int(n.cantidades)
+                    diccionario_clase[clase] += n.precio.valor*int(n.cantidades.split(".")[0])
             else:
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_clase[clase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    diccionario_clase[clase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_clase[clase] = n.precio.valor*int(n.cantidades)
+                    diccionario_clase[clase] = n.precio.valor*int(n.cantidades.split(".")[0])
             if subclase in diccionario_subclase.keys():
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_subclase[subclase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    diccionario_subclase[subclase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_subclase[subclase] += n.precio.valor*int(n.cantidades)
+                    diccionario_subclase[subclase] += n.precio.valor*int(n.cantidades.split(".")[0])
             else:
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_subclase[subclase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades)
+                    diccionario_subclase[subclase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_subclase[subclase] = n.precio.valor*int(n.cantidades)
+                    diccionario_subclase[subclase] = n.precio.valor*int(n.cantidades.split(".")[0])
     lista_subclase = []
     for subclase in diccionario_subclase.keys():
         diccionario_aux = {}
@@ -434,9 +434,9 @@ def info_gasto(request, id):
                     no_pagado += 1
                 for n in i.productos_proyecto_asociados.all():
                     if n.precio.tipo_cambio != "CLP":
-                        precio_final = int(n.precio.valor_cambio)*int(n.precio.valor)*int(n.cantidades)
+                        precio_final = int(n.precio.valor_cambio)*int(n.precio.valor)*int(n.cantidades.split(".")[0])
                     else:
-                        precio_final = int(n.precio.valor)*int(n.cantidades)
+                        precio_final = int(n.precio.valor)*int(n.cantidades.split(".")[0])
                     gastos_orden_compra += precio_final
                     iva_orden_compra += precio_final*0.19
         gastos_generales = 0
