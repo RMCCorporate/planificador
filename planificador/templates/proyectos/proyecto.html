@@ -24,6 +24,9 @@
       <a href="{% url 'info_gasto' Proyecto.id %}">
         <button class="button_editar">REPORTABILIDAD GASTOS</button>
       </a>
+      <a href="{% url 'editar_presupuesto' Proyecto.id %}">
+        <button class="button_editar">EDITAR PRESUPUESTO</button>
+      </a>
       <a href="{% url 'subir_gasto' Proyecto.id %}">
         <button class="button_editar">SUBIR GASTOS</button>
       </a>
@@ -33,7 +36,7 @@
       <thead>
           <tr>
               <th>CENTRO COSTOS</th>
-              <th>PRECIO FINAL</th>
+              <th>PRESUPUESTO FINAL</th>
               <th>ESTADO</th>
               <th>CREADOR</th>
           </tr>
@@ -41,7 +44,7 @@
       <tbody>
           <tr>
               <td data-label="CENTRO COSTOS">{{Proyecto.id}}</td>
-              <td data-label="PRECIO FINAL"> $ {{precio}} CLP</td>
+              <td data-label="PRECIO FINAL"> $ {{Proyecto.presupuesto_total}} CLP</td>
               <td data-label="ESTADO"> {{Proyecto.estado}}</td>
               <td data-label="CREADOR"> {{Proyecto.creador}}</td>
           </tr>

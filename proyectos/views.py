@@ -521,6 +521,12 @@ def crear_nuevo_producto(request):
                 producto_proyecto.cantidades = cantidades[n]
                 producto_proyecto.usuario_modificacion = usuario_modificacion
                 producto_proyecto.save()
+        subclase_producto = producto.subclase_set.all()[0]
+        if not proyecto.presupuesto_subclases.filter(subclase=subclase_producto).exists():
+            nuevo_presupuesto_subclase = Presupuesto_subclases(id=uuid.uuid1(), valor=0, subclase=subclase_producto)
+            nuevo_presupuesto_subclase.save()
+            proyecto.presupuesto_subclases.add(nuevo_presupuesto_subclase)
+            proyecto.save()
     crear_notificacion("agregar_producto_proyecto", request.user.email, "creó producto(s) en proyecto", "Producto_Proyecto", len(productos), proyecto.id, proyecto.nombre, proyecto.id)
     return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     
@@ -892,3 +898,25 @@ def informar_orden_compra(request, id):
                         precio = ""
         cotizadores = User.objects.filter(groups__name='Cotizador')
         return render(request, 'proyectos/informar_orden_compra.html', {"productos":tabla_productos_cotizados, "cotizadores":cotizadores})
+
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def editar_presupuesto(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    if request.method == "POST":
+        presupuesto_total = request.POST["presupuesto_total"]
+        proyecto.presupuesto_total = float(presupuesto_total)
+        proyecto.save()
+        presupuestos_subclases = request.POST.getlist("subclases")
+        nombre_presupuestos_subclases = request.POST.getlist("subclases_nombres")
+        for n, i in enumerate(presupuestos_subclases):
+            for x in proyecto.presupuesto_subclases.all():
+                if x.subclase.nombre == nombre_presupuestos_subclases[n]:
+                    subclase_encontrada = SubClase.objects.get(nombre=x.subclase.nombre)
+                    subclase_final = proyecto.presupuesto_subclases.filter(subclase=subclase_encontrada)[0]
+                    subclase_final.valor = float(i)
+                    subclase_final.save()
+        return redirect('/proyectos/proyecto/{}'.format(id))
+    else:
+        presupuesto_subclases = proyecto.presupuesto_subclases.all()
+        return render(request, 'proyectos/editar_presupuesto.html', {"Proyecto":proyecto, "presupuesto_subclases":presupuesto_subclases})

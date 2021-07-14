@@ -440,6 +440,7 @@ def info_gasto(request, id):
                     gastos_orden_compra += precio_final
                     iva_orden_compra += precio_final*0.19
         gastos_generales = 0
+        iva_generales = 0
         for i in proyecto.relacion_gastos.all():
             gastos_generales += int(i.total_boleta)
             gastos_generales += int(i.total_factura)
