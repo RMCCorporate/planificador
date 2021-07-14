@@ -363,7 +363,7 @@ def graficos_proveedores(cotizaciones):
         lista_proveedores.append(diccionario_aux)
     return json.dumps(lista_proveedores)
 
-def graficos_clase(cotizaciones, proyecto):
+def graficos_clase(cotizaciones, proyecto, gastos_generales):
     diccionario_clase = {}
     diccionario_subclase = {}
     for i in cotizaciones:
@@ -393,12 +393,14 @@ def graficos_clase(cotizaciones, proyecto):
                     diccionario_subclase[subclase] = n.precio.valor*int(n.cantidades.split(".")[0])
     lista_subclase = []
     lista_presupuestos = []
+    suma_costos = gastos_generales
     for subclase in diccionario_subclase.keys():
         diccionario_aux = {}
         diccionario_aux_subclase = {}
         diccionario_aux_subclase_ppto = {}
         diccionario_aux["category"] = subclase
         diccionario_aux["amount"] = diccionario_subclase[subclase]
+        suma_costos += diccionario_subclase[subclase]
         diccionario_aux_subclase_ppto["category"] = subclase
         diccionario_aux_subclase_ppto["position"] = 0
         for x in proyecto.presupuesto_subclases.all():
@@ -413,17 +415,24 @@ def graficos_clase(cotizaciones, proyecto):
         lista_presupuestos.append(diccionario_aux_subclase)
         lista_subclase.append(diccionario_aux)
     lista_clase = []
+    lista_presupuesto_total = []
+    diccionario_aux_ppto = {}
+    diccionario_aux_ppto2 = {}
+    diccionario_aux_ppto["category"] = "Presupuesto"
+    diccionario_aux_ppto["position"] = 0
+    diccionario_aux_ppto["value"] = proyecto.presupuesto_total
+    diccionario_aux_ppto2["category"] = "Presupuesto"
+    diccionario_aux_ppto2["position"] = 1
+    diccionario_aux_ppto2["value"] = suma_costos
+    lista_presupuesto_total.append(diccionario_aux_ppto2)
+    lista_presupuesto_total.append(diccionario_aux_ppto)
     for clase in diccionario_clase.keys():
         diccionario_aux = {}
         diccionario_aux["category"] = clase
         diccionario_aux["amount"] = diccionario_clase[clase]
         lista_clase.append(diccionario_aux)
-    print(lista_presupuestos)
-    return [json.dumps(lista_clase), json.dumps(lista_subclase), json.dumps(lista_presupuestos)]
+    return [json.dumps(lista_clase), json.dumps(lista_subclase), json.dumps(lista_presupuestos), json.dumps(lista_presupuesto_total)]
        
-def graficos_presupuestos(proyecto):
-    lista_presupuestos = []
-    
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
@@ -464,13 +473,15 @@ def info_gasto(request, id):
             gastos_generales += int(i.total_factura)
             iva_generales = int(i.total_factura)*0.19
         proveedores = graficos_proveedores(cotizaciones)
-        clase = graficos_clase(cotizaciones, proyecto)[0]
-        subclase = graficos_clase(cotizaciones, proyecto)[1]
-        subclases_ppto = graficos_clase(cotizaciones, proyecto)[2]
+        clase = graficos_clase(cotizaciones, proyecto, gastos_generales)[0]
+        subclase = graficos_clase(cotizaciones, proyecto, gastos_generales)[1]
+        subclases_ppto = graficos_clase(cotizaciones, proyecto, gastos_generales)[2]
+        ppto_total = graficos_clase(cotizaciones, proyecto, gastos_generales)[3]
+        print(ppto_total)
         fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
         fecha_FRC = fecha_respuesta_cotizacion(cotizaciones_totales)
         fecha_EO = fecha_envio_orden(cotizaciones)
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto})
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total})
