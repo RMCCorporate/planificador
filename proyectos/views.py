@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC, Presupuesto_subclases
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -642,7 +642,30 @@ def recibir_cantidades_planificador(request):
         productos_proyecto = proyecto.productos.all()
         return render(request, 'proyectos/eleccion_productos.html', {"Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
     else:
-        return redirect('/proyectos')
+        lista_subclases = []
+        for i in proyecto.productos.all():
+            subclase = i.subclase_set.all()[0].nombre
+            lista_subclases.append(subclase)
+            lista_subclases_final = list(dict.fromkeys(lista_subclases))
+        return render(request, 'proyectos/eleccion_presupuesto.html', {"Proyecto":proyecto, "subclases":lista_subclases_final})
+
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def eleccion_presupuesto(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    subclases = request.POST.getlist("subclases")
+    nombre_subclases = request.POST.getlist("subclases_nombres")
+    presupuesto_total = request.POST["presupuesto_total"]
+    proyecto.presupuesto_total = presupuesto_total
+    proyecto.save()
+    for n, i in enumerate(subclases):
+        modelo_subclase = SubClase.objects.get(nombre=nombre_subclases[n])
+        nuevo_presupuesto_subclase = Presupuesto_subclases(id=uuid.uuid1(), valor=i, subclase=modelo_subclase)
+        nuevo_presupuesto_subclase.save()
+        proyecto.presupuesto_subclases.add(nuevo_presupuesto_subclase)
+        proyecto.save()
+    return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
+    
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')

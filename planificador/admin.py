@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Producto, Proyecto, Proveedor, Producto_proyecto,  SubClase, Clase, Contacto, Calificacion, Calificacion_Proveedor, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Planilla, RMC, Orden_compra, Producto_proyecto_cantidades, Gastos_generales, Relacion_gastos
+from .models import Producto, Proyecto, Proveedor, Producto_proyecto,  SubClase, Clase, Contacto, Calificacion, Calificacion_Proveedor, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Planilla, RMC, Orden_compra, Producto_proyecto_cantidades, Gastos_generales, Relacion_gastos, Presupuesto_subclases
 
 admin.site.register(Precio)
 admin.site.register(Proyecto)
@@ -26,5 +26,5 @@ admin.site.register(Orden_compra)
 admin.site.register(RMC)
 admin.site.register(Gastos_generales)
 admin.site.register(Relacion_gastos)
-
+admin.site.register(Presupuesto_subclases)
 

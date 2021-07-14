@@ -65,6 +65,11 @@ class Relacion_gastos(models.Model):
     total_boleta = models.IntegerField(null=True)
     total_factura = models.IntegerField(null=True)
 
+class Presupuesto_subclases(models.Model):
+    id = models.CharField(primary_key=True, max_length=128)
+    valor = models.FloatField(null=True)
+    subclase = models.ForeignKey(SubClase, on_delete=models.CASCADE, related_name='subclase')
+
 class Proyecto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(
@@ -94,6 +99,8 @@ class Proyecto(models.Model):
         default = INCOMPLETO,
         null = True
     )
+    presupuesto_total = models.FloatField(null=True)
+    presupuesto_subclases = models.ManyToManyField(Presupuesto_subclases)
     def __str__(self):
         return self.nombre
 
