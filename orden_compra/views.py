@@ -477,7 +477,6 @@ def info_gasto(request, id):
         subclase = graficos_clase(cotizaciones, proyecto, gastos_generales)[1]
         subclases_ppto = graficos_clase(cotizaciones, proyecto, gastos_generales)[2]
         ppto_total = graficos_clase(cotizaciones, proyecto, gastos_generales)[3]
-        print(ppto_total)
         fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
         fecha_FRC = fecha_respuesta_cotizacion(cotizaciones_totales)
         fecha_EO = fecha_envio_orden(cotizaciones)
