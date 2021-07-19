@@ -8,13 +8,13 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
     <link href="{% static 'planificador/css/agregar_producto.css' %}" rel="stylesheet">
     <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 </head>
 
 
@@ -74,13 +74,41 @@
         </tr>
         {% endfor %}
     </tbody>
+    <tfoot>
+      <tr>
+          <th>#</th>
+          <th>NOMBRE</th>
+          <th>CLASE</th>
+          <th>SUBCLASE</th>
+
+      </tr>
+  </tfoot>
 </table>
 <br>
   <button class="button_añadir" type="submit">Guardar filtro</button>
 </form>
 <script>$(document).ready(function() {
   $('#example').DataTable( {
-      "pagingType": "full_numbers"
+      "pagingType": "full_numbers",
+      initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
   } );
 } );</script>
     

@@ -480,6 +480,7 @@ def agregar_producto(request, id):
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         producto = myFilter.qs
         nuevo_productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+        print(myFilter)
         return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":nuevo_productos_proyecto})
 
 @login_required(login_url='/login')
