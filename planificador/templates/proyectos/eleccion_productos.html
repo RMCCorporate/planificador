@@ -15,39 +15,6 @@
 <div class="title">
     <h1>BÚSQUEDA PRODUCTO</h1>
   </div>
-  <div class="btn">
-    <span class="fas fa-bars"></span>
-  </div>
-  <form method="get">
-    <input type="hidden" value="{{Proyecto.id}}" name="id">
-  <nav class="sidebar">
-    <div class="text">
-        MENÚ BÚSQUEDA</div>
-  <ul>
-  <li>
-            <a href="#" class="feat-btn">Clases
-              <span class="fas fa-caret-down first"></span>
-            </a>
-            <ul class="feat-show">
-                {% for i in myFilter.form.nombre_clase %}
-                <li><a href="#">{{i}}</a></li>
-                {% endfor %}
-  </li>
-  <li>
-            <a href="#" class="serv-btn">Sub-Clases
-              <span class="fas fa-caret-down second"></span>
-            </a>
-            <ul class="serv-show">
-                {% for n in myFilter.form.nombre_subclase %}
-                <li><a href="#">{{n}}</a></li>
-                {% endfor %}
-  </ul>
-  </li>
-  </ul>
-  <button type="submit" class="button-search"><i class="fa fa-search"></i></button>
-  </nav>
-    <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
-  </form>
   <div class="table-container">
     <form action="lista_productos" method="GET">
     <input type="hidden" value="{{Proyecto.id}}" name="centro_costos">
@@ -108,6 +75,14 @@
         </tr>
       {% endif %}
         {% endfor %}
+        <tfoot>
+          <tr>
+              <th>#</th>
+              <th>NOMBRE</th>
+              <th>CLASE</th>
+              <th>SUBCLASE</th>
+          </tr>
+      </tfoot>
     </tbody>
 </table>
 <br>
@@ -115,24 +90,27 @@
 </form>
 <script>$(document).ready(function() {
   $('#example').DataTable( {
-      "pagingType": "full_numbers"
+      "pagingType": "full_numbers",
+      initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
   } );
 } );</script>
-<script>
-    $('.btn').click(function(){
-        $(this).toggleClass("click");
-        $('.sidebar').toggleClass("show");
-    });
-        $('.feat-btn').click(function(){
-        $('nav ul .feat-show').toggleClass("show");
-        $('nav ul .first').toggleClass("rotate");
-        });
-        $('.serv-btn').click(function(){
-        $('nav ul .serv-show').toggleClass("show1");
-        $('nav ul .second').toggleClass("rotate");
-        });
-        $('nav ul li').click(function(){
-        $(this).addClass("active").siblings().removeClass("active");
-        });
-  </script>
+  
 {% endblock%}

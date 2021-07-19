@@ -165,7 +165,7 @@ TABLA
 */
 
 .table-container{
-    padding: 0 17%;
+    padding: 0 3%;
     margin: 30px auto 0;
 }
 
@@ -251,7 +251,6 @@ TABLA
 
 .table-container .table thead{
     background-color: #466ea5;
-    text-align:left;
 }
 .table-container .table thead tr th{
     font-size: 15px;
