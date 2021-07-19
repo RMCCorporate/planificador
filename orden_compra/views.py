@@ -435,7 +435,14 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
         diccionario_aux["category"] = clase
         diccionario_aux["amount"] = diccionario_clase[clase]
         lista_clase.append(diccionario_aux)
-    return [json.dumps(lista_clase), json.dumps(lista_subclase), json.dumps(lista_presupuestos), json.dumps(lista_presupuesto_total)]
+    porcentaje_ppto_total = 0
+    for i in lista_presupuesto_total:
+        if i["position"] == 0:
+            abajo = i["value"]
+        elif i["position"] == 1:
+            arriba = i["value"]
+    porcentaje_ppto_total = arriba*100/abajo
+    return [json.dumps(lista_clase), json.dumps(lista_subclase), json.dumps(lista_presupuestos), json.dumps(lista_presupuesto_total), porcentaje_ppto_total]
        
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
@@ -481,10 +488,11 @@ def info_gasto(request, id):
         subclase = graficos_clase(cotizaciones, proyecto, gastos_generales)[1]
         subclases_ppto = graficos_clase(cotizaciones, proyecto, gastos_generales)[2]
         ppto_total = graficos_clase(cotizaciones, proyecto, gastos_generales)[3]
+        porcentaje_ppto_total = str(graficos_clase(cotizaciones, proyecto, gastos_generales)[4])+"%"
         fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
         fecha_FRC = fecha_respuesta_cotizacion(cotizaciones_totales)
         fecha_EO = fecha_envio_orden(cotizaciones)
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total})
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total, "porcentaje_ppto_total":porcentaje_ppto_total})
