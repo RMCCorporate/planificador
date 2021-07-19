@@ -297,27 +297,29 @@ def editar_status(request, id):
 def fecha_respuesta_editar_precio(cotizaciones):
     lista = []
     for i in cotizaciones:
-        if i.fecha_respuesta:
-            diccionario = {}
-            diferencia_respuesta_salida = i.fecha_actualizacion_precio - i.fecha_respuesta
-            if diferencia_respuesta_salida.days < 0:
-                diferencia_respuesta_salida = diferencia_respuesta_salida*-1
-            diccionario["category"] = i.nombre
-            diccionario["amount"] = diferencia_respuesta_salida.days
-            lista.append(diccionario)
+        if i.orden_compra != True:
+            if i.fecha_respuesta:
+                diccionario = {}
+                diferencia_respuesta_salida = i.fecha_actualizacion_precio - i.fecha_respuesta
+                if diferencia_respuesta_salida.days < 0:
+                    diferencia_respuesta_salida = diferencia_respuesta_salida*-1
+                diccionario["category"] = i.nombre
+                diccionario["amount"] = diferencia_respuesta_salida.days
+                lista.append(diccionario)
     return json.dumps(lista)
 
 def fecha_respuesta_cotizacion(cotizaciones):
     lista = []
     for i in cotizaciones:
-        if i.fecha_respuesta:
-            diccionario = {}
-            diferencia_respuesta_cotizacion = i.fecha_respuesta - i.fecha_salida
-            if diferencia_respuesta_cotizacion.days < 0:
-                diferencia_respuesta_cotizacion = diferencia_respuesta_cotizacion*-1
-            diccionario["category"] = i.nombre
-            diccionario["amount"] = diferencia_respuesta_cotizacion.days
-            lista.append(diccionario)
+        if i.orden_compra != True:
+            if i.fecha_respuesta:
+                diccionario = {}
+                diferencia_respuesta_cotizacion = i.fecha_respuesta - i.fecha_salida
+                if diferencia_respuesta_cotizacion.days < 0:
+                    diferencia_respuesta_cotizacion = diferencia_respuesta_cotizacion*-1
+                diccionario["category"] = i.nombre
+                diccionario["amount"] = diferencia_respuesta_cotizacion.days
+                lista.append(diccionario)
     return json.dumps(lista)
 
 def fecha_envio_orden(cotizaciones):
@@ -394,6 +396,9 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
     lista_subclase = []
     lista_presupuestos = []
     suma_costos = gastos_generales
+    diccionario_ppto_subclases = {}
+    for i in proyecto.presupuesto_subclases.all():
+        diccionario_ppto_subclases[i.subclase.nombre] = i.valor 
     for subclase in diccionario_subclase.keys():
         diccionario_aux = {}
         diccionario_aux_subclase = {}
@@ -402,15 +407,14 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
         diccionario_aux["amount"] = diccionario_subclase[subclase]
         suma_costos += diccionario_subclase[subclase]
         diccionario_aux_subclase_ppto["category"] = subclase
-        diccionario_aux_subclase_ppto["position"] = 0
-        for x in proyecto.presupuesto_subclases.all():
-            if x.subclase.nombre == subclase:
-                diccionario_aux_subclase_ppto["value"] = x.valor
-            else:
-                diccionario_aux_subclase_ppto["value"] = 0
+        diccionario_aux_subclase_ppto["position"] = 1
+        if subclase in diccionario_ppto_subclases.keys():
+            diccionario_aux_subclase_ppto["value"] = diccionario_ppto_subclases[subclase]
+        else:
+            diccionario_aux_subclase_ppto["value"] = 0
         lista_presupuestos.append(diccionario_aux_subclase_ppto)
         diccionario_aux_subclase["category"] = subclase
-        diccionario_aux_subclase["position"] = 1
+        diccionario_aux_subclase["position"] = 0
         diccionario_aux_subclase["value"] = diccionario_subclase[subclase]
         lista_presupuestos.append(diccionario_aux_subclase)
         lista_subclase.append(diccionario_aux)
