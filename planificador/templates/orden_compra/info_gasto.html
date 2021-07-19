@@ -19,8 +19,9 @@
 
         </div>
         <div class="informacion_container">
-          <h4>PRESUPUESTO {{porcentaje_ppto_total}}</h4>
+          <h4>PRESUPUESTO</h4>
         </div>
+        <br>
         <div class="container_graficos">
           <div id="visppto" class="vega"></div>
           <div id="vissubclaseppto" class="vega"></div>
@@ -30,6 +31,7 @@
         <div class="informacion_container">
           <h4>ÓRDENES DE COMPRA Y GASTOS GENERALES</h4>
         </div>
+        <br>
         <div class="container_graficos">
         <div id="visSumatoriaGastos" class="vega"></div>
         <div id="visIVA" class="vega"></div>
@@ -39,6 +41,7 @@
         <div class="informacion_container">
           <h4>GASTOS DETALLADOS</h4>
         </div>
+        <br>
         <div class="container_graficos">
         <div id="visproveedores" class="vega"></div>
         <div id="visclase" class="vega"></div>
@@ -48,9 +51,11 @@
         <div class="informacion_container">
           <h4>FECHAS</h4>
         </div>
+        <br>
         <div class="container_graficos">
-        <div id="visFCEP" class="vega"></div>
+        
         <div id="visFRC" class="vega"></div>
+        <div id="visFCEP" class="vega"></div>
         <div id="visEO" class="vega"></div>
       </div>
 
@@ -65,8 +70,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v4.json",
         "width": 200,
-        "height": 200,
+        "height": 250,
         "autosize": "fit",
+        "title": {
+          "text": "DISTRIBUCIÓN GASTOS"
+          },
         "data": [
             {
             "name": "table",
@@ -126,8 +134,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v4.json",
         "width": 200,
-        "height": 200,
+        "height": 250,
         "autosize": "fit",
+        "title": {
+          "text": "IVA GASTOS"
+          },
         "data": [
             {
             "name": "table",
@@ -188,8 +199,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v4.json",
         "width": 200,
-        "height": 200,
+        "height": 250,
         "autosize": "fit",
+        "title": {
+          "text": "STATUS FINANCIERO"
+          },
         "data": [
             {
             "name": "table",
@@ -249,9 +263,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
         "width": 400,
-        "height": 200,
-        "padding": 5,
-
+        "height": 250,
+        "autosize": "fit",
+        "title": {
+          "text": "DEMORA RESPUESTA COTIZACIÓN A AGREGAR PRECIO"
+          },
         "data": [
             {
             "name": "table",
@@ -344,9 +360,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
         "width": 400,
-        "height": 200,
-        "padding": 5,
-
+        "height": 250,
+        "autosize": "fit",
+        "title": {
+          "text": "DEMORA ENVÍO A RESPUESTA COTIZACIÓN"
+          },
         "data": [
             {
             "name": "table",
@@ -438,9 +456,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
         "width": 400,
-        "height": 200,
-        "padding": 5,
-
+        "height": 250,
+        "autosize": "fit",
+        "title": {
+          "text": "DEMORA EDITAR PRECIO A ENVÍO ORDEN DE COMPRA"
+          },
         "data": [
             {
             "name": "table",
@@ -533,9 +553,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
         "width": 400,
-        "height": 200,
-        "padding": 5,
-
+        "height": 250,
+        "autosize": "fit",
+        "title": {
+          "text": "GASTOS POR PROVEEDOR"
+          },
         "data": [
             {
             "name": "table",
@@ -627,9 +649,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
         "width": 400,
-        "height": 200,
-        "padding": 5,
-
+        "height": 250,
+        "autosize": "fit",
+        "title": {
+          "text": "GASTOS POR CLASE"
+          },
         "data": [
             {
             "name": "table",
@@ -721,8 +745,11 @@
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
         "width": 400,
-        "height": 200,
-        "padding": 5,
+        "height": 250,
+        "autosize": "fit",
+        "title": {
+          "text": "GASTOS POR SUBCLASE"
+          },
 
         "data": [
             {
@@ -812,12 +839,17 @@
 <script type="text/javascript">
     var visSumatoriaGastos = document.getElementById("vissubclaseppto")
     var data = JSON.parse("{{subclases_ppto|escapejs}}");
+    var porcentaje =  JSON.parse("{{porcentaje_ppto_total|escapejs}}");
     var yourVlSpec = ({
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "A basic grouped bar chart example.",
   "width": 600,
-  "height": 240,
-  "padding": 5,
+  "height": 250,
+  "padding":45,
+  "autosize": "fit",
+  "title": {
+    "text": "PRESUPUESTO POR SUBCLASES",
+    },
 
   "data": [
     {
@@ -934,9 +966,12 @@
     var yourVlSpec = ({
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "A basic grouped bar chart example.",
-  "width": 300,
-  "height": 240,
-  "padding": 5,
+  "width": 600,
+  "height": 250,
+  "title": {
+    "text": "PRESUPUESTO TOTAL",
+    "subtitle":porcentaje + " UTILIZADO"
+    },
 
   "data": [
     {
