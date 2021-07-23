@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario, Gastos_generales, Relacion_gastos, Proyecto
+from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario, Gastos_generales, Relacion_gastos, Proyecto, Correlativo_orden_compra
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from email.mime.multipart import MIMEMultipart
@@ -178,7 +178,16 @@ def crear_orden(request, id):
         return render(request, "orden_compra/crear_orden.html", {"cotizacion_padre":cotizacion_padre, "productos":productos_proyecto})
     else:
         id_cotizacion = request.POST["id_cotizacion"]
-        id_orden = request.POST["id"]
+        date_today = date.today().year
+        if Correlativo_orden_compra.objects.filter(año=date_today).exists():
+            correlativo = Correlativo_orden_compra.objects.get(año=date_today)
+            id_orden = correlativo.numero
+            correlativo.numero = correlativo.numero + 1
+            correlativo.save()
+        else:
+            nuevo_correlativo = Correlativo_orden_compra(año=2021, numero=2100)
+            nuevo_correlativo.save()
+            id_orden = nuevo_correlativo.numero
         condicion_entrega = request.POST["condicion_entrega"]
         condicion_pago = request.POST["condicion_pago"]
         forma_pago =request.POST["forma_pago"]
@@ -186,7 +195,7 @@ def crear_orden(request, id):
         observaciones = request.POST["observaciones"]
         productos = request.POST.getlist("id_producto")
         cotizacion_padre = Cotizacion.objects.get(id=id_cotizacion)
-        nuevo_nombre = cotizacion_padre.nombre+" - " + id_orden
+        nuevo_nombre = cotizacion_padre.nombre+" - " + str(id_orden)
         fecha_envio = date.today()
         nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nuevo_nombre, proyecto_asociado=cotizacion_padre.proyecto_asociado, orden_compra=True, proveedor_asociado=cotizacion_padre.proveedor_asociado, usuario_modificacion=cotizacion_padre.usuario_modificacion)
         nueva_cotizacion.save()
@@ -328,9 +337,12 @@ def fecha_envio_orden(cotizaciones):
         diccionario = {}
         ordenes_compra = Orden_compra.objects.filter(cotizacion_hija=i)
         for n in ordenes_compra:
-            diferencia_respuesta_orden = n.fecha_envio - i.fecha_actualizacion_precio
+            if i.fecha_actualizacion_precio:
+                diferencia_respuesta_orden = (n.fecha_envio - i.fecha_actualizacion_precio).days
+            else:
+                diferencia_respuesta_orden = 0
         diccionario["category"] = n.id
-        diccionario["amount"] = diferencia_respuesta_orden.days
+        diccionario["amount"] = diferencia_respuesta_orden
         lista.append(diccionario)
     return json.dumps(lista)
 
@@ -443,7 +455,37 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
             arriba = i["value"]
     porcentaje_ppto_total = arriba*100/abajo
     return [json.dumps(lista_clase), json.dumps(lista_subclase), json.dumps(lista_presupuestos), json.dumps(lista_presupuesto_total), porcentaje_ppto_total]
-       
+
+def graficos_gastos_generales(proyecto):
+    lista_relacion_persona = []
+    lista_gastos = []
+    diccionario_relacion_persona = {}
+    diccionario_gastos_generales = {}
+    relaciones = proyecto.relacion_gastos.all()
+    for i in relaciones:
+        if i.rut_solicitante in diccionario_relacion_persona.keys():
+            diccionario_relacion_persona[i.rut_solicitante] += 1
+        else:
+            diccionario_relacion_persona[i.rut_solicitante] = 1
+        for n in i.gastos_generales.all():
+            if n.razon_social in diccionario_gastos_generales.keys():
+                diccionario_gastos_generales[n.razon_social] += n.monto
+            else:
+                diccionario_gastos_generales[n.razon_social] = n.monto
+    for persona in diccionario_relacion_persona.keys():
+        diccionario_aux = {}
+        diccionario_aux["category"] = persona
+        diccionario_aux["amount"] = diccionario_relacion_persona[persona]
+        lista_relacion_persona.append(diccionario_aux)
+    for razon_social in diccionario_gastos_generales.keys():
+        diccionario_aux = {}
+        diccionario_aux["category"] = razon_social
+        diccionario_aux["position"] = 0
+        diccionario_aux["value"] = diccionario_gastos_generales[razon_social]
+        lista_gastos.append(diccionario_aux)
+    return [json.dumps(lista_relacion_persona), json.dumps(lista_gastos)]
+
+
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
@@ -495,4 +537,6 @@ def info_gasto(request, id):
         gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total, "porcentaje_ppto_total":json.dumps(porcentaje_ppto_total)})
+        grafico_gastos_generales = graficos_gastos_generales(proyecto)[0]
+        grafico_gastos_generales2 = graficos_gastos_generales(proyecto)[1]
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total, "porcentaje_ppto_total":json.dumps(porcentaje_ppto_total), "grafico_gastos_generales":grafico_gastos_generales, "grafico_gastos_generales2":grafico_gastos_generales2})

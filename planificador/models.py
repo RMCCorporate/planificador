@@ -228,6 +228,10 @@ class Correlativo_cotizacion(models.Model):
     año = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
 
+class Correlativo_orden_compra(models.Model):
+    año = models.IntegerField(primary_key=True)
+    numero = models.IntegerField()
+
 class Correlativo_producto(models.Model):
     producto = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
