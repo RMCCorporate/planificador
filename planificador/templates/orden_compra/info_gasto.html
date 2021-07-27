@@ -26,7 +26,14 @@
           <div id="visppto" class="vega"></div>
           <div id="vissubclaseppto" class="vega"></div>
         </div>
-        
+        <div class="informacion_container">
+          <h4>GASTOS GENERALES</h4>
+        </div>
+        <br>
+        <div class="container_graficos">
+          <div id="visgrafico_gastos_generales" class="vega"></div>
+          <div id="visgrafico_gastos_generales2" class="vega"></div>
+      </div>
         <br>
         <div class="informacion_container">
           <h4>ÓRDENES DE COMPRA Y GASTOS GENERALES</h4>
@@ -41,22 +48,21 @@
         <div class="informacion_container">
           <h4>GASTOS DETALLADOS</h4>
         </div>
-        <br>
         <div class="container_graficos">
         <div id="visproveedores" class="vega"></div>
-        <div id="visclase" class="vega"></div>
-        <div id="vissubclase" class="vega"></div>
-        
       </div>
-        <br>
-        <div class="informacion_container">
-          <h4>GASTOS GENERALES</h4>
-        </div>
-        <br>
+      <br>
+      <br>
         <div class="container_graficos">
-          <div id="visgrafico_gastos_generales" class="vega"></div>
-          <div id="visgrafico_gastos_generales2" class="vega"></div>
+        <div id="visclase" class="vega"></div>
       </div>
+      <br>
+      <br>
+        <div class="container_graficos">
+        <div id="vissubclase" class="vega"></div>
+      </div>
+      
+       
         <div class="informacion_container">
           <h4>FECHAS</h4>
         </div>
@@ -64,7 +70,15 @@
         <div class="container_graficos">
         
         <div id="visFRC" class="vega"></div>
+      </div>
+      <br>
+      <br>
+        <div class="container_graficos">
         <div id="visFCEP" class="vega"></div>
+      </div>
+      <br>
+      <br>
+        <div class="container_graficos">
         <div id="visEO" class="vega"></div>
       </div>
 
@@ -271,7 +285,7 @@
     var data = JSON.parse("{{fecha_FCEP|escapejs}}");
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
-        "width": 400,
+        "width": 1200,
         "height": 250,
         "autosize": "fit",
         "title": {
@@ -361,14 +375,13 @@
                 vegaEmbed('#visFCEP', yourVlSpec);
     </script>
 
-
  <!-- TIEMPO ENVIADA SOLICITUD A FECHA RESPUESTA -->
  <script type="text/javascript">
     var visSumatoriaGastos = document.getElementById("visFRC")
     var data = JSON.parse("{{fecha_FRC|escapejs}}");
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
-        "width": 400,
+        "width": 1200,
         "height": 250,
         "autosize": "fit",
         "title": {
@@ -464,7 +477,7 @@
     var data = JSON.parse("{{fecha_EO|escapejs}}");
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
-        "width": 400,
+        "width": 1200,
         "height": 250,
         "autosize": "fit",
         "title": {
@@ -554,14 +567,13 @@
                 vegaEmbed('#visEO', yourVlSpec);
     </script>
 
-
  <!-- GRAFICO PROVEEDORES -->
  <script type="text/javascript">
     var visSumatoriaGastos = document.getElementById("visproveedores")
     var data = JSON.parse("{{proveedores|escapejs}}");
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
-        "width": 400,
+        "width": 1200,
         "height": 250,
         "autosize": "fit",
         "title": {
@@ -752,118 +764,116 @@
   var visSumatoriaGastos = document.getElementById("visgrafico_gastos_generales2")
   var data = JSON.parse("{{grafico_gastos_generales2|escapejs}}");
   var yourVlSpec = ({
-"$schema": "https://vega.github.io/schema/vega/v5.json",
-"description": "A basic grouped bar chart example.",
-"width": 600,
-"height": 250,
-"title": {
-  "text": "GASTOS GENERALES",
-  },
+    "$schema": "https://vega.github.io/schema/vega/v5.json",
+    "description": "A basic grouped bar chart example.",
+    "width": 600,
+    "height": 250,
+    "title": {
+      "text": "GASTOS GENERALES",
+      },
 
-"data": [
-  {
-    "name": "table",
-    "values": data
-  }
-],
-
-"scales": [
-  {
-    "name": "yscale",
-    "type": "band",
-    "domain": {"data": "table", "field": "category"},
-    "range": "height",
-    "padding": 0.2
-  },
-  {
-    "name": "xscale",
-    "type": "linear",
-    "domain": {"data": "table", "field": "value"},
-    "range": "width",
-    "round": true,
-    "zero": true,
-    "nice": true
-  },
-  {
-    "name": "color",
-    "type": "ordinal",
-    "domain": {"data": "table", "field": "position"},
-    "range": {"scheme": "category20"}
-  }
-],
-
-"axes": [
-  {"orient": "left", "scale": "yscale", "tickSize": 0, "labelPadding": 4, "zindex": 1},
-  {"orient": "bottom", "scale": "xscale"}
-],
-
-"marks": [
-  {
-    "type": "group",
-
-    "from": {
-      "facet": {
-        "data": "table",
-        "name": "facet",
-        "groupby": "category"
+    "data": [
+      {
+        "name": "table",
+        "values": data
       }
-    },
-
-    "encode": {
-      "enter": {
-        "y": {"scale": "yscale", "field": "category"}
-      }
-    },
-
-    "signals": [
-      {"name": "height", "update": "bandwidth('yscale')"}
     ],
-
     "scales": [
       {
-        "name": "pos",
+        "name": "yscale",
         "type": "band",
+        "domain": {"data": "table", "field": "category"},
         "range": "height",
-        "domain": {"data": "facet", "field": "position"}
+        "padding": 0.2
+      },
+      {
+        "name": "xscale",
+        "type": "linear",
+        "domain": {"data": "table", "field": "value"},
+        "range": "width",
+        "round": true,
+        "zero": true,
+        "nice": true
+      },
+      {
+        "name": "color",
+        "type": "ordinal",
+        "domain": {"data": "table", "field": "position"},
+        "range": {"scheme": "category20"}
       }
+    ],
+    "axes": [
+      {"orient": "left", "scale": "yscale", "tickSize": 0, "labelPadding": 4, "zindex": 1},
+      {"orient": "bottom", "scale": "xscale"}
     ],
 
     "marks": [
       {
-        "name": "bars",
-        "from": {"data": "facet"},
-        "type": "rect",
+        "type": "group",
+
+        "from": {
+          "facet": {
+            "data": "table",
+            "name": "facet",
+            "groupby": "category"
+          }
+        },
+
         "encode": {
           "enter": {
-            "y": {"scale": "pos", "field": "position"},
-            "height": {"scale": "pos", "band": 1},
-            "x": {"scale": "xscale", "field": "value"},
-            "x2": {"scale": "xscale", "value": 0},
-            "fill": {"scale": "color", "field": "position"}
+            "y": {"scale": "yscale", "field": "category"}
           }
-        }
-      },
-      {
-        "type": "text",
-        "from": {"data": "bars"},
-        "encode": {
-          "enter": {
-            "x": {"field": "x2", "offset": -5},
-            "y": {"field": "y", "offset": {"field": "height", "mult": 0.5}},
-            "fill": [
-              {"test": "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white"},
-              {"value": "black"}
-            ],
-            "align": {"value": "right"},
-            "baseline": {"value": "middle"},
-            "text": {"field": "datum.value"}
+        },
+
+        "signals": [
+          {"name": "height", "update": "bandwidth('yscale')"}
+        ],
+
+        "scales": [
+          {
+            "name": "pos",
+            "type": "band",
+            "range": "height",
+            "domain": {"data": "facet", "field": "position"}
           }
-        }
+        ],
+
+        "marks": [
+          {
+            "name": "bars",
+            "from": {"data": "facet"},
+            "type": "rect",
+            "encode": {
+              "enter": {
+                "y": {"scale": "pos", "field": "position"},
+                "height": {"scale": "pos", "band": 1},
+                "x": {"scale": "xscale", "field": "value"},
+                "x2": {"scale": "xscale", "value": 0},
+                "fill": {"scale": "color", "field": "position"}
+              }
+            }
+          },
+          {
+            "type": "text",
+            "from": {"data": "bars"},
+            "encode": {
+              "enter": {
+                "x": {"field": "x2", "offset": -5},
+                "y": {"field": "y", "offset": {"field": "height", "mult": 0.5}},
+                "fill": [
+                  {"test": "contrast('white', datum.fill) > contrast('black', datum.fill)", "value": "white"},
+                  {"value": "black"}
+                ],
+                "align": {"value": "right"},
+                "baseline": {"value": "middle"},
+                "text": {"field": "datum.value"}
+              }
+            }
+          }
+        ]
       }
     ]
-  }
-]
-}
+    }
       );
               vegaEmbed('#visgrafico_gastos_generales2', yourVlSpec);
   </script>
@@ -873,7 +883,7 @@
     var data = JSON.parse("{{clase|escapejs}}");
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
-        "width": 400,
+        "width": 1200,
         "height": 250,
         "autosize": "fit",
         "title": {
@@ -969,7 +979,7 @@
     var data = JSON.parse("{{subclase|escapejs}}");
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v5.json",
-        "width": 400,
+        "width": 1200,
         "height": 250,
         "autosize": "fit",
         "title": {
@@ -1068,7 +1078,7 @@
     var yourVlSpec = ({
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "A basic grouped bar chart example.",
-  "width": 600,
+  "width": 800,
   "height": 250,
   "padding":45,
   "autosize": "fit",
@@ -1191,7 +1201,7 @@
     var yourVlSpec = ({
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "A basic grouped bar chart example.",
-  "width": 600,
+  "width": 400,
   "height": 250,
   "title": {
     "text": "PRESUPUESTO TOTAL",
@@ -1204,7 +1214,6 @@
       "values": data
     }
   ],
-
   "scales": [
     {
       "name": "yscale",
@@ -1277,7 +1286,7 @@
               "height": {"scale": "pos", "band": 1},
               "x": {"scale": "xscale", "field": "value"},
               "x2": {"scale": "xscale", "value": 0},
-              "fill": {"scale": "color", "field": "position"}
+              "fill": {"scale": "color", "field": "position"},
             }
           }
         },
@@ -1294,7 +1303,12 @@
               ],
               "align": {"value": "right"},
               "baseline": {"value": "middle"},
-              "text": {"field": "datum.value"}
+              "text": {
+                "field": "datum.value",
+                "type": "linear",
+                "format": ".2f"
+                },
+              
             }
           }
         }
@@ -1305,4 +1319,14 @@
         );
                 vegaEmbed('#visppto', yourVlSpec);
     </script>
+  
+<!-- FUNCIÓN FORMATO PESOS -->
+<script type="text/javascript">
+  vega.expressionFunction('customFormatA', function(datum, params) {
+
+  return "<formatted string>";
+});
+</script>
+
+
 {% endblock %}

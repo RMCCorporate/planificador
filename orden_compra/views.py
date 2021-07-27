@@ -418,17 +418,18 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
         diccionario_aux["category"] = subclase
         diccionario_aux["amount"] = diccionario_subclase[subclase]
         suma_costos += diccionario_subclase[subclase]
+        diccionario_aux_subclase["category"] = subclase
+        diccionario_aux_subclase["position"] = 1
+        diccionario_aux_subclase["value"] = diccionario_subclase[subclase]
+        lista_presupuestos.append(diccionario_aux_subclase)
         diccionario_aux_subclase_ppto["category"] = subclase
-        diccionario_aux_subclase_ppto["position"] = 1
+        diccionario_aux_subclase_ppto["position"] = 0
         if subclase in diccionario_ppto_subclases.keys():
             diccionario_aux_subclase_ppto["value"] = diccionario_ppto_subclases[subclase]
         else:
             diccionario_aux_subclase_ppto["value"] = 0
         lista_presupuestos.append(diccionario_aux_subclase_ppto)
-        diccionario_aux_subclase["category"] = subclase
-        diccionario_aux_subclase["position"] = 0
-        diccionario_aux_subclase["value"] = diccionario_subclase[subclase]
-        lista_presupuestos.append(diccionario_aux_subclase)
+        
         lista_subclase.append(diccionario_aux)
     lista_clase = []
     lista_presupuesto_total = []
