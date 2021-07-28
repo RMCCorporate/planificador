@@ -297,7 +297,8 @@ def proyecto(request, id):
                 i.save()
     utilidad_subclase = 0
     for i in proyecto.presupuesto_subclases.all():
-        utilidad_subclase += i.valor*(1+(i.utilidad/100))
+        if i.utilidad:
+            utilidad_subclase += i.valor*(1+(i.utilidad/100))
     return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":tabla_productos, "cotizaciones":tabla_cotizaciones, "info_productos":tabla_productos_cotizados, "precio":precio_final, "rol": usuario, "utilidad_subclase":utilidad_subclase})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])

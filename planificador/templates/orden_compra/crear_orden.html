@@ -3,7 +3,7 @@
 {% block content %}
 
 <head>
-	<title>Crear producto</title>
+	<title>CREAR ORDEN DE COMPRA</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,27 +13,29 @@
 
 <div class="container">
 <form action="{{cotizacion_padre.id}}" method="POST">{% csrf_token %}
-  <div class="title">CREAR ORDEN COMPRA</div>
+  <div class="title">CREAR ORDEN DE COMPRA</div>
   <br>
   <form action="agregar_nuevo" method="GET">
     <div class="user-details">
         <div class="input-box">
           <span class="details">CONDICIÓN DE ENTREGA</label>
             <input type="hidden" value="{{cotizacion_padre.id}}" name="id_cotizacion">
-            <select class="custom-select" id="condicion_entrega" name="condicion_entrega" required>
-              <option value="INMEDIATO">INMEDIATO</option>
-          </select>
+            <input type="text" name="condicion_entrega" required>
         </div>
         <div class="input-box">
             <span class="details">CONDICIÓN DE PAGO</label>
               <select class="custom-select" id="condicion_pago" name="condicion_pago" required>
+                <option value="30 DÍAS">CONTADO</option>
                 <option value="30 DÍAS">30 DÍAS</option>
+                <option value="30 DÍAS">50% CONTADO / 50% CONTRA ENTREGA</option>
+                <option value="30 DÍAS">OTRO</option>
             </select>
           </div>
           <div class="input-box">
             <span class="details">FORMA DE PAGO</label>
               <select class="custom-select" id="forma_pago" name="forma_pago" required>
                 <option value="TRANSFERENCIA">TRANSFERENCIA</option>
+                <option value="CHEQUE">CHEQUE</option>
             </select>
           
           </div>
