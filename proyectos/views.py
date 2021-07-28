@@ -563,16 +563,16 @@ def mostrar_filtro(request):
         creador = request.user.first_name + " " + request.user.last_name
         fecha_actual = datetime.now()
         if fecha_inicio and fecha_termino:
-            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador, consolidacion=False)
             nuevo_proyecto.save()
         elif not fecha_termino and (fecha_inicio and fecha_inicio != "None"):
-            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_inicio=fecha_inicio, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador, consolidacion=False)
             nuevo_proyecto.save()
         elif (fecha_termino and fecha_termino != "None") and not fecha_inicio:
-            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, fecha_final=fecha_termino, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador, consolidacion=False)
             nuevo_proyecto.save()
         else:
-            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador)
+            nuevo_proyecto = Proyecto(id=centro_costos, nombre=nombre, precio_final=0, fecha_creacion = fecha_actual, tipo_cambio=tipo_cambio, valor_cambio=valor_cambio, creador=creador, consolidacion=False)
             nuevo_proyecto.save()
         crear_notificacion("crear_proyecto", request.user.email, "creó un proyecto", "Proyecto", 1, centro_costos, nombre, centro_costos)
         productos = Filtro_producto.objects.all()
@@ -937,4 +937,12 @@ def editar_presupuesto(request, id):
         presupuesto_subclases = proyecto.presupuesto_subclases.all()
         return render(request, 'proyectos/editar_presupuesto.html', {"Proyecto":proyecto, "presupuesto_subclases":presupuesto_subclases})
 
-        
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def consolidar_proyecto(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    proyecto.consolidacion = True
+    proyecto.save()
+    return redirect('/proyectos/proyecto/{}'.format(id))
+   
+

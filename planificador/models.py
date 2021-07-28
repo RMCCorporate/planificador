@@ -102,6 +102,7 @@ class Proyecto(models.Model):
     )
     presupuesto_total = models.FloatField(null=True)
     presupuesto_subclases = models.ManyToManyField(Presupuesto_subclases)
+    consolidacion = models.BooleanField(default=False, null=True)
     def __str__(self):
         return self.nombre
 

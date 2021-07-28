@@ -24,13 +24,17 @@
       <a href="{% url 'info_gasto' Proyecto.id %}">
         <button class="button_editar">REPORTABILIDAD GASTOS</button>
       </a>
+      {% if not Proyecto.consolidacion %}
       <a href="{% url 'editar_presupuesto' Proyecto.id %}">
         <button class="button_editar">EDITAR COSTO/ULITIDADES</button>
       </a>
       <a href="{% url 'subir_gasto' Proyecto.id %}">
         <button class="button_editar">CARGAR RENDICIONES</button>
       </a>
-     
+      <a href="{% url 'consolidar_proyecto' Proyecto.id %}">
+        <button class="button_editar">CONSOLIDAR PROYECTO</button>
+      </a>
+      {% endif %}
     </div>
     <table class="table">
       <thead>
