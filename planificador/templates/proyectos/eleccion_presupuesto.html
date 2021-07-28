@@ -8,26 +8,44 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="preconnect" href="https://fonts.gstatic.com"> 
-	<link href="{% static 'planificador/css/editar_proveedor.css' %}" rel="stylesheet">
+	<link href="{% static 'planificador/css/editar_presupuesto_planificador.css' %}" rel="stylesheet">
 
 </head>
   <form action="eleccion_presupuesto/{{Proyecto.id}}" method="POST">{% csrf_token %}
     <div class="container">
       <div class="title">PRESUPUESTO - {{Proyecto.nombre}}</div>
       <br>
-      <div class="user-details">
+     
         <div class="input-box">
             <span class="details">PRESUPUESTO TOTAL</label>
                 <input type="text" class="form-control" id="cantidad" name="presupuesto_total" pattern="^[1-9]\d*(\.\d+)?$" required>
         </div>
-        {% for i in subclases %}
-        <div class="input-box">
-            <span class="details">{{i}}</label>
-                <input type="hidden" class="form-control" name="subclases_nombres" value="{{i}}">
-                <input type="text" class="form-control" name="subclases" pattern="^[1-9]\d*(\.\d+)?$" required>
-        </div>
-        {% endfor %}
-      </div>
+        <table class="table">
+          <thead>
+              <tr>
+                  <th>SUBCLASE</th>
+                  <th>PRESUPUESTO (*)</th>
+                  <th>UTILIDAD (%) (*)</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for i in subclases %}
+              <tr>
+                  <td data-label="NOMBRE">
+                    {{i.0}}
+                  </td>
+                  <td data-label="PRESUPUESTO">
+                    <input type="hidden" class="form-control" name="subclases_nombres" value="{{i.0}}">
+                    <input type="text" class="form-control" name="subclases" pattern="^[1-9]\d*(\.\d+)?$" required>
+                  </td>
+                  <td data-label="UTILIDAD">
+                    <input type="text" class="form-control" name="utilidad" pattern="^[1-9]\d*(\.\d+)?$" value="{{i.1}}" required>
+                  </td>
+              </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+
         <input class="button" type="Submit" value="Guardar">
     </div>
 

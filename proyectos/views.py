@@ -295,7 +295,10 @@ def proyecto(request, id):
             else:
                 i.estado_tiempo = "No"
                 i.save()
-    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":tabla_productos, "cotizaciones":tabla_cotizaciones, "info_productos":tabla_productos_cotizados, "precio":precio_final, "rol": usuario})
+    utilidad_subclase = 0
+    for i in proyecto.presupuesto_subclases.all():
+        utilidad_subclase += i.valor*(1+(i.utilidad/100))
+    return render(request, "proyectos/proyecto.html", {"Proyecto":proyecto, "Productos":tabla_productos, "cotizaciones":tabla_cotizaciones, "info_productos":tabla_productos_cotizados, "precio":precio_final, "rol": usuario, "utilidad_subclase":utilidad_subclase})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
@@ -654,7 +657,17 @@ def recibir_cantidades_planificador(request):
             subclase = i.subclase_set.all()[0].nombre
             lista_subclases.append(subclase)
             lista_subclases_final = list(dict.fromkeys(lista_subclases))
-        return render(request, 'proyectos/eleccion_presupuesto.html', {"Proyecto":proyecto, "subclases":lista_subclases_final})
+        lista_con_utilidad = []
+        for i in lista_subclases_final:
+            aux = []
+            aux.append(i)
+            instancia_subclase = SubClase.objects.get(nombre=i)
+            if instancia_subclase.utilidad:
+                aux.append(instancia_subclase.utilidad)
+            else:
+                aux.append(0)
+            lista_con_utilidad.append(aux)
+        return render(request, 'proyectos/eleccion_presupuesto.html', {"Proyecto":proyecto, "subclases":lista_con_utilidad})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
@@ -663,17 +676,17 @@ def eleccion_presupuesto(request, id):
     subclases = request.POST.getlist("subclases")
     nombre_subclases = request.POST.getlist("subclases_nombres")
     presupuesto_total = request.POST["presupuesto_total"]
+    utilidad = request.POST.getlist("utilidad")
     proyecto.presupuesto_total = presupuesto_total
     proyecto.save()
     for n, i in enumerate(subclases):
         modelo_subclase = SubClase.objects.get(nombre=nombre_subclases[n])
-        nuevo_presupuesto_subclase = Presupuesto_subclases(id=uuid.uuid1(), valor=i, subclase=modelo_subclase)
+        nuevo_presupuesto_subclase = Presupuesto_subclases(id=uuid.uuid1(), valor=i, subclase=modelo_subclase, utilidad=utilidad[n])
         nuevo_presupuesto_subclase.save()
         proyecto.presupuesto_subclases.add(nuevo_presupuesto_subclase)
         proyecto.save()
     return redirect('/proyectos/proyecto/{}'.format(proyecto.id))
     
-
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def agregar_cotizacion(request, id):
@@ -909,6 +922,7 @@ def editar_presupuesto(request, id):
         proyecto.presupuesto_total = float(presupuesto_total)
         proyecto.save()
         presupuestos_subclases = request.POST.getlist("subclases")
+        utilidades = request.POST.getlist("utilidad")
         nombre_presupuestos_subclases = request.POST.getlist("subclases_nombres")
         for n, i in enumerate(presupuestos_subclases):
             for x in proyecto.presupuesto_subclases.all():
@@ -916,8 +930,11 @@ def editar_presupuesto(request, id):
                     subclase_encontrada = SubClase.objects.get(nombre=x.subclase.nombre)
                     subclase_final = proyecto.presupuesto_subclases.filter(subclase=subclase_encontrada)[0]
                     subclase_final.valor = float(i)
+                    subclase_final.utilidad = float(utilidades[n])
                     subclase_final.save()
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         presupuesto_subclases = proyecto.presupuesto_subclases.all()
         return render(request, 'proyectos/editar_presupuesto.html', {"Proyecto":proyecto, "presupuesto_subclases":presupuesto_subclases})
+
+        

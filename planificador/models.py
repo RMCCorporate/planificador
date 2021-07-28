@@ -32,7 +32,7 @@ class Producto(models.Model):
 class SubClase(models.Model):
     nombre = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(Producto)
-
+    utilidad = models.FloatField(null=True)
     def __str__(self):
         return self.nombre
 
@@ -69,6 +69,7 @@ class Presupuesto_subclases(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     valor = models.FloatField(null=True)
     subclase = models.ForeignKey(SubClase, on_delete=models.CASCADE, related_name='subclase')
+    utilidad = models.FloatField(null=True)
 
 class Proyecto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
