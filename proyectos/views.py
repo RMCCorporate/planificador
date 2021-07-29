@@ -206,7 +206,7 @@ def proyecto(request, id):
     tabla_productos = []
     for i in productos_proyecto:
         aux_tabla_productos = []
-        if i.proyecto.lista_precios:
+        if len(i.proyecto.lista_precios.all()) != 0:
             precio = list(i.proyecto.lista_precios.all()).pop()
         else:
             precio = "No"
@@ -273,15 +273,15 @@ def proyecto(request, id):
         if len(precios) != 0:
             a = list(precios).pop()
             ultimo_precio = a.valor
-        if a.valor_cambio:
-            ultimo_precio = a.valor * a.valor_cambio
-        if i.cantidades:
-            ultimo_precio = ultimo_precio*i.cantidades
-        else:
-            ultimo_precio = 0
-        if a.valor_importación:
-            ultimo_precio += a.valor_importación*a.valor_cambio
-        precio_final += ultimo_precio
+            if a.valor_cambio:
+                ultimo_precio = a.valor * a.valor_cambio
+            if i.cantidades:
+                ultimo_precio = ultimo_precio*i.cantidades
+            else:
+                ultimo_precio = 0
+            if a.valor_importación:
+                ultimo_precio += a.valor_importación*a.valor_cambio
+            precio_final += ultimo_precio
         if i.fecha_uso:
             if 10 < (i.fecha_uso - date.today()).days:
                 i.estado_tiempo = "Verde"
@@ -598,6 +598,10 @@ def guardar_datos_filtro(request):
             producto = Producto.objects.get(nombre=i)
             nuevo_producto_proyecto=Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=producto, usuario_modificacion=usuario_modificacion, estado_cotizacion="No")
             nuevo_producto_proyecto.save()
+            if producto.proveedor_interno:
+                proveedor_int = Proveedor.objects.get(nombre=producto.proveedor_interno)
+                nuevo_producto_proyecto.proveedores.add(proveedor_int)
+                nuevo_producto_proyecto.save()
             proyecto.save()
             usuario = Usuario.objects.get(correo=request.user.email)
             usuario.proyectos.add(proyecto)
@@ -957,11 +961,9 @@ def agregar_orden_interna(request, id):
         RMC = ["INGENIERÍA Y SERVICIOS RMC LIMITADA", "RMC INDUSTRIAL SPA", "RMC EQUIPMENTS SPA", "RMC CORPORATE SPA", "RMC LABS SPA"]
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
         for i in productos_proyecto:
-            print(i)
             aux = []
             booleano = False
             for n in i.proveedores.all():
-                print(n.nombre)
                 if n.nombre in RMC:
                     booleano = True
             if booleano:
@@ -969,13 +971,14 @@ def agregar_orden_interna(request, id):
                 for x in i.proveedores.all():
                     if x.nombre in RMC:
                         aux.append(x.nombre)
-                producto_proyecto_cantidades = Producto_proyecto_cantidades.objects.filter(proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=i)
-                for y in producto_proyecto_cantidades:
-                    if y.precio.nombre_proveedor == aux[1]:
-                        aux.append(y.precio)
+                for y in i.proyecto.lista_precios.all():
+                    print(y.nombre_proveedor)
+                    print(y.id)
+                    print(aux[1])
+                    if y.nombre_proveedor == aux[1]:
+                            aux.append(y)
                     else:
                         aux.append("No hay")
-        
                 lista_productos.append(aux)
         print(lista_productos)
         return render(request, 'proyectos/agregar_orden_interna.html', {"Proyecto":proyecto, "productos":lista_productos})

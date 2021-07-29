@@ -27,4 +27,3 @@ admin.site.register(RMC)
 admin.site.register(Gastos_generales)
 admin.site.register(Relacion_gastos)
 admin.site.register(Presupuesto_subclases)
-
