@@ -28,7 +28,6 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
-
 class SubClase(models.Model):
     nombre = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(Producto)

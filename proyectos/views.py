@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC, Presupuesto_subclases
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC, Presupuesto_subclases, Producto_proyecto_cantidades
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -946,4 +946,38 @@ def consolidar_proyecto(request, id):
     proyecto.save()
     return redirect('/proyectos/proyecto/{}'.format(id))
    
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def agregar_orden_interna(request, id):
+    proyecto = Proyecto.objects.get(id=id)
+    if request.method == "POST":
+        return redirect('/proyectos/proyecto/{}'.format(id))
+    else:
+        lista_productos = []
+        RMC = ["INGENIERÍA Y SERVICIOS RMC LIMITADA", "RMC INDUSTRIAL SPA", "RMC EQUIPMENTS SPA", "RMC CORPORATE SPA", "RMC LABS SPA"]
+        productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
+        for i in productos_proyecto:
+            print(i)
+            aux = []
+            booleano = False
+            for n in i.proveedores.all():
+                print(n.nombre)
+                if n.nombre in RMC:
+                    booleano = True
+            if booleano:
+                aux.append(i)
+                for x in i.proveedores.all():
+                    if x.nombre in RMC:
+                        aux.append(x.nombre)
+                producto_proyecto_cantidades = Producto_proyecto_cantidades.objects.filter(proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=i)
+                for y in producto_proyecto_cantidades:
+                    if y.precio.nombre_proveedor == aux[1]:
+                        aux.append(y.precio)
+                    else:
+                        aux.append("No hay")
+        
+                lista_productos.append(aux)
+        print(lista_productos)
+        return render(request, 'proyectos/agregar_orden_interna.html', {"Proyecto":proyecto, "productos":lista_productos})
 
+   

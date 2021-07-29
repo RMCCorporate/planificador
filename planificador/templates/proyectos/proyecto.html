@@ -174,7 +174,13 @@
     <a href="{% url 'agregar_cotizacion' Proyecto.id %}">
       <button class="button_editar">AGREGAR</button>
     </a>
+    <a href="{% url 'agregar_orden_interna' Proyecto.id %}">
+      <button class="button_editar">AGREGAR ORDEN DE COMPRA INTERNA</button>
+    </a>
   </div>
+ 
+    
+  
   {% else %}
   <br>
   {% endif %}
