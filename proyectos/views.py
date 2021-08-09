@@ -962,8 +962,6 @@ def agregar_orden_interna(request, id):
         proveedor = Proveedor.objects.get(rut=empresa)
         observaciones = request.POST["observaciones"]
         productos_escogidos = request.POST.getlist("id_producto")
-        #CREAR UNA COTIZACIÓN POR PROVEEDOR. HAY QUE SEPARAR LOS PRODUCTOS POR COTIZACIÓN HECHA.
-        #[[PROVEEDOR, [GETLIST, GETLIST, GETLIST]], [PROVEEDOR2, [GETLIST, GETLIST, GETLIST]]]
         lista_proveedor = {}
         for x in productos_escogidos:
             producto = Producto_proyecto.objects.get(id=x)
@@ -1015,4 +1013,3 @@ def agregar_orden_interna(request, id):
                 lista_productos.append(aux)
         return render(request, 'proyectos/agregar_orden_interna.html', {"Proyecto":proyecto, "productos":lista_productos})
 
-   

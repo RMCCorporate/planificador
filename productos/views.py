@@ -195,6 +195,84 @@ def nuevo_producto_planilla(request):
     else:
         return render(request, 'productos/nuevo_producto_planilla.html')
 
+def nuevo_producto_interno_planilla(request):
+    if request.method == "POST":
+        datos_fallados = []
+        booleano_fallados = False
+        excel_file = request.FILES["excel_file"]
+        wb = openpyxl.load_workbook(excel_file)
+        worksheet = wb["producto_interno"]
+        contador_creado = 0
+        creado = False
+        for row in worksheet.iter_rows():
+            row_data = list()
+            for cell in row:
+                row_data.append(str(cell.value))
+            id = row_data[0].upper()
+            nombre = row_data[1].upper()
+            unidad = row_data[2].upper()
+            proveedor = row_data[3].upper()
+            valor = row_data[4]
+            moneda = row_data[5].upper()
+            valor_moneda = row_data[6]
+            subclase = row_data[7].upper()
+            if id != "ID":
+                if id == "NONE" or nombre == "NONE":
+                    if not(id == "NONE" and nombre == "NONE"):
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append("No se ingresó ID o Nombre")
+                        datos_fallados.append(aux)
+                else:
+                    #CREAR PRODUCTO; ASOCIAR PROVEEDOR AL PRODUCTO; CREAR PRECIO Y ASOCIARLO AL PRODUCTO.
+                    fecha_actualizacion = datetime.now()
+                    if Producto.objects.filter(id=id).exists():
+                        aux = []
+                        aux.append(row_data[0])
+                        aux.append(row_data[1])
+                        aux.append("Producto con id:{} ya existe".format(id))
+                        datos_fallados.append(aux)
+                    else:
+                        if not SubClase.objects.filter(nombre=subclase).exists():
+                            if subclase != "SUBCLASE":
+                                aux = []
+                                aux.append(row_data[0])
+                                aux.append(row_data[1])
+                                aux.append("La SubClase {} no existe".format(subclase))
+                                datos_fallados.append(aux)
+                        else:
+                            nuevo_producto = Producto(id=id, nombre=nombre, fecha_actualizacion=fecha_actualizacion)
+                            if unidad != "None":
+                                nuevo_producto.unidad = unidad
+                            nuevo_producto.proveedor_interno = proveedor
+                            nuevo_producto.save()
+                            #CREAMOS UN PRECIO (PARA POBLAR BBDD)
+                            if row_data[4] != "None" and row_data[5] != "None" and row_data[6] != "None":
+                                nuevo_precio = Precio(id=uuid.uuid1(), fecha=fecha_actualizacion, valor=valor, nombre_proveedor=proveedor)
+                                nuevo_precio.save()
+                                if row_data[5] != "None":
+                                    nuevo_precio.tipo_cambio = moneda
+                                if row_data[6] != "None":
+                                    nuevo_precio.valor_cambio = valor_moneda
+                                nuevo_precio.save()
+                                nuevo_producto.lista_precios.add(nuevo_precio)
+                            contador_creado += 1
+                            creado = True
+                            sub_clase = SubClase.objects.get(nombre=subclase)
+                            sub_clase.productos.add(nuevo_producto)
+                            clase = sub_clase.clase_set.all()
+                            nuevo_filtro_producto = Filtro_producto(nombre_producto=nombre, nombre_clase=clase[0].nombre, id_producto=id, nombre_subclase=subclase)
+                            nuevo_filtro_producto.save()
+                            sub_clase.save()
+        if creado:
+            crear_notificacion("agregar_producto", request.user.email, "creó producto(s) mediante planilla", "Productos", contador_creado, " ", " ")
+        if len(datos_fallados)!=0:
+            booleano_fallados = True
+        return render(request, 'productos/resultado_planilla_productos_interno.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
+    else:
+        return render(request, 'productos/nuevo_producto_interno_planilla.html')
+
 #Agregar producto
 @login_required(login_url='/login')
 def agregar_producto(request):
