@@ -955,32 +955,64 @@ def consolidar_proyecto(request, id):
 def agregar_orden_interna(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
+        usuario_modificacion = request.user.first_name + " " + request.user.last_name
+        nombre = request.POST["nombre"]
+        condicion_pago = request.POST["condicion_pago"]
+        empresa = request.POST["empresa"]
+        proveedor = Proveedor.objects.get(rut=empresa)
+        observaciones = request.POST["observaciones"]
+        productos_escogidos = request.POST.getlist("id_producto")
+        #CREAR UNA COTIZACIÓN POR PROVEEDOR. HAY QUE SEPARAR LOS PRODUCTOS POR COTIZACIÓN HECHA.
+        #[[PROVEEDOR, [GETLIST, GETLIST, GETLIST]], [PROVEEDOR2, [GETLIST, GETLIST, GETLIST]]]
+        lista_proveedor = {}
+        for x in productos_escogidos:
+            producto = Producto_proyecto.objects.get(id=x)
+            auxiliar_proveedor = []
+            info_precio_cantidad = request.POST.getlist(x)
+            cantidad = info_precio_cantidad[1]
+            proveedor = info_precio_cantidad[0]
+            precio = info_precio_cantidad[2]
+            if proveedor not in lista_proveedor.keys():
+                lista_proveedor[proveedor] = [[producto, cantidad, precio]]
+            else:
+                lista_proveedor[proveedor].append([producto, cantidad, precio])
+        for i in lista_proveedor.keys():
+            proveedor_asociado = Proveedor.objects.get(nombre=i)
+            nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre=nombre, proyecto_asociado=proyecto, orden_compra=True, proveedor_asociado=proveedor_asociado, fecha_salida=datetime.now(), fecha_respuesta=datetime.now(), fecha_actualizacion_precio=datetime.now(), usuario_modificacion=usuario_modificacion)
+            nueva_cotizacion.save()
+            for n in lista_proveedor[i]:
+                precio_asociado = Precio(id=uuid.uuid1(), valor=n[2], fecha=datetime.now(), nombre_proveedor=i, nombre_cotizacion=nueva_cotizacion.nombre, usuario_modificacion=usuario_modificacion)
+                precio_asociado.save()
+                nuevo_producto_cantidades = Producto_proyecto_cantidades(id=uuid.uuid1(), proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=n[0], precio=precio_asociado, cantidades=n[1])
+                nuevo_producto_cantidades.save()
+                nueva_cotizacion.productos_asociados.add(n[0].proyecto)
+                nueva_cotizacion.productos_proyecto_asociados.add(nuevo_producto_cantidades)
+                nueva_cotizacion.save()
+            nombre_rmc = RMC.objects.get(rut=empresa)
+            nueva_orden_compra = Orden_compra(id=uuid.uuid1(), cotizacion_padre=nueva_cotizacion, cotizacion_hija=nueva_cotizacion, condicion_entrega="Inmediato", condiciones_pago=condicion_pago, forma_pago="Interno", destino_factura=nombre_rmc, observaciones=observaciones)
+            nueva_orden_compra.save()
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         lista_productos = []
-        RMC = ["INGENIERÍA Y SERVICIOS RMC LIMITADA", "RMC INDUSTRIAL SPA", "RMC EQUIPMENTS SPA", "RMC CORPORATE SPA", "RMC LABS SPA"]
+        nombre_RMCs = ["INGENIERÍA Y SERVICIOS RMC LIMITADA", "RMC INDUSTRIAL SPA", "RMC EQUIPMENTS SPA", "RMC CORPORATE SPA", "RMC LABS SPA"]
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
         for i in productos_proyecto:
             aux = []
             booleano = False
             for n in i.proveedores.all():
-                if n.nombre in RMC:
+                if n.nombre in nombre_RMCs:
                     booleano = True
             if booleano:
                 aux.append(i)
                 for x in i.proveedores.all():
-                    if x.nombre in RMC:
+                    if x.nombre in nombre_RMCs:
                         aux.append(x.nombre)
                 for y in i.proyecto.lista_precios.all():
-                    print(y.nombre_proveedor)
-                    print(y.id)
-                    print(aux[1])
                     if y.nombre_proveedor == aux[1]:
                             aux.append(y)
                     else:
                         aux.append("No hay")
                 lista_productos.append(aux)
-        print(lista_productos)
         return render(request, 'proyectos/agregar_orden_interna.html', {"Proyecto":proyecto, "productos":lista_productos})
 
    

@@ -17,6 +17,10 @@
   <br>
   <form action="agregar_nuevo" method="GET">
     <div class="user-details">
+      <div class="input-box">
+        <span class="details">NOMBRE OC</label>
+        <input type="text" name="nombre">
+      </div>
         <div class="input-box">
             <span class="details">CONDICIÓN DE PAGO</label>
               <select class="custom-select" id="condicion_pago" name="condicion_pago" required>
@@ -68,17 +72,17 @@
                     <td data-label="NOMBRE">
                         {{fila.0.proyecto.nombre}}
                     </td>
-                    <td data-label="NOMBRE">
-                        {{fila.1}}
+                    <td data-label="PROVEEDOR">
+                        <input type="text" value="{{fila.1}}" name="{{fila.0.id}}">
                     </td>
                     <td data-label="CANTIDAD"> 
-                        <input type="text" value="{{fila.0.cantidades}}" name="{{fila.id}}">
+                        <input type="text" value="{{fila.0.cantidades}}" name="{{fila.0.id}}">
                     </td>
                     <td data-label="UNIDAD">
                         {{fila.0.proyecto.unidad}}
                     </td>
                     <td data-label="PRECIO">
-                        <input type="text" value="{{fila.2.valor}}" name="precio">
+                        <input type="text" value="{{fila.2.valor}}" name="{{fila.0.id}}">
                     </td>
                     <td data-label="FECHA">
                        {{fila.2.fecha}}
