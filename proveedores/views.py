@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor, Usuario, Notificacion, Permisos_notificacion
+from planificador.models import Proveedor, Clase, SubClase, Contacto, Calificacion, Calificacion_Proveedor, Usuario, Notificacion, Permisos_notificacion, Producto
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
 from planificador.filters import ProveedoresFilter, Filtro_producto
@@ -78,7 +78,6 @@ def crear_notificacion(tipo, correo_usuario, accion, modelo_base_datos, numero_m
 #Mostrar proveedores
 @login_required(login_url='/login')
 def proveedores(request):
-    
     proveedores = Proveedor.objects.all()
     myFilter = ProveedoresFilter(request.GET, queryset=proveedores)
     return render(request, 'proveedores/proveedores.html', {"Proveedores":proveedores, 'len':len(proveedores), "myFilter":myFilter})
@@ -250,7 +249,10 @@ def proveedor(request, rut):
     lista_diferencia = []
     for i in range(diferencia):
         lista_diferencia.append(i)
-    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":lista_promedio, "diferencia":lista_diferencia})
+    lista_productos = []
+    for i in proveedor.productos_no.all():
+        lista_productos.append(i)
+    return render(request, "proveedores/proveedor.html", {"Proveedor":proveedor, "subclase":subclase, "contactos":contactos, "calificaciones":calificaciones, "promedio":lista_promedio, "diferencia":lista_diferencia, "productos":lista_productos})
 
 
 #Edición proveedor
@@ -315,6 +317,38 @@ def mostrar_edicion_proveedor(request, rut):
             aux.append(aux2)
             lista_clases.append(aux)
         return render(request, "proveedores/editar_proveedor.html", {"Proveedor":proveedor, "Subclases":subclase, "Contactos":contactos, "Calificaciones":calificaciones, "lista_clases":lista_clases})
+
+
+#Edición proveedor
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
+@login_required(login_url='/login')
+def agregar_productos_no_disponibles(request, rut):
+    proveedor = Proveedor.objects.get(rut=rut)
+    if request.method == "POST":
+        productos = request.POST.getlist("eliminar")
+        for i in productos:
+            producto = Producto.objects.get(id=i)
+            proveedor.productos_no.add(producto)
+            proveedor.save()
+        return redirect('/proveedores/proveedor/{}'.format(proveedor.rut))
+    else:
+        productos = []
+        subclase = proveedor.subclases_asociadas.all()
+        for i in subclase:
+            productos_de_subclase = i.productos.all()
+            for x in productos_de_subclase:
+                aux = []
+                no_existe_producto = False
+                for n in proveedor.productos_no.all():
+                    if x.id == n.id:
+                        no_existe_producto = True
+                if not no_existe_producto:
+                    aux.append(x)
+                    aux.append(i)
+                    aux.append(i.clase_set.all()[0])
+                if len(aux) != 0:
+                    productos.append(aux)
+        return render(request, "proveedores/agregar_productos_no_disponibles.html", {"Proveedor":proveedor, "productos":productos})
 
 #Eliminar proveedor
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])

@@ -1,0 +1,49 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>ELIMINAR PRODUCTO PROVEEDOR</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'planificador/css/editar_producto_proyecto.css' %}" rel="stylesheet">
+</head>
+<div class="title">
+  <h1>ELIMINAR PRODUCTO PROVEEDOR</h1>
+</div>
+<form action="{{Proyectos.id}}" method="POST">{% csrf_token %}
+  <div class="table-container">
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CLASE</th>
+            <th>SUB-CLASE</th>
+            <th>¿ELIMINAR?</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fila in productos %}
+        <tr>
+            <td data-label="NOMBRE">
+                {{fila.0.nombre}}
+            </td>
+            <td data-label="CLASE">
+                {{fila.2}}
+            </td>
+             <td data-label="FECHA USO">
+                {{fila.1}}
+            </td>
+            <td data-label="¿ELIMINAR?">
+              <input class="checkbox" type="checkbox" value="{{fila.0.id}}" name="eliminar">
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+      </table>
+      <div class="boton_container">
+        <button class="button_editar" type="submit">GUARDAR</button>
+      </div>
+    </div>
+
+</script>
+{% endblock%}

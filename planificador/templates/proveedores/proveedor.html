@@ -25,6 +25,9 @@
         <a href="{% url 'mostrar_edicion_proveedor' Proveedor.rut %}">
           <button class="button_editar">EDITAR</button>
         </a>
+        <a href="{% url 'agregar_productos_no_disponibles' Proveedor.rut %}">
+          <button class="button_editar">AGREGAR PRODUCTOS NO DISPONIBLES</button>
+        </a>
         <a href="{% url 'eliminar_proveedor' Proveedor.rut %}" onclick="return confirm('¿Estás seguro que quieres eliminar el producto?')">
           <button class="button_eliminar">ELIMINAR</button>
       </a>
@@ -91,6 +94,25 @@
           </thead>
           <tbody>
             {% for fila in subclase %}
+              <tr>
+                  <td data-label="NOMBRE">{{fila.nombre}}</td>
+                  {% endfor %}  
+              </tr>
+          </tbody>
+      </table>
+      </div>
+      <div class="table-container">
+        <div class="contactos_container">
+          <h4>PRODUCTOS NO DISPONIBLES</h4>
+        </div>
+          <table class="table2">
+          <thead>
+              <tr>
+                  <th>NOMBRE</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for fila in productos %}
               <tr>
                   <td data-label="NOMBRE">{{fila.nombre}}</td>
                   {% endfor %}  
