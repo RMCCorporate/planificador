@@ -145,6 +145,7 @@ class Proveedor(models.Model):
         null = True
     )
     direccion = models.CharField(max_length=256, null=True)
+    productos_no = models.ManyToManyField(Producto)
     def __str__(self):
         return self.nombre
 

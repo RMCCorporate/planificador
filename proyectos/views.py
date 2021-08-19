@@ -757,10 +757,15 @@ def agregar_cotizacion(request, id):
             proveedores = Proveedor.objects.filter(subclases_asociadas=producto_proyecto[0].proyecto.subclase_set.all()[0])
             for n in proveedores:
                 for contacto in n.contactos_asociados.all():
-                    aux = []          
-                    aux.append(n)
-                    aux.append(contacto)
-                    lista_proveedores.append(aux)
+                    aux = []
+                    no_existe = False
+                    for x in n.productos_no.all():
+                        if producto_proyecto[0].proyecto.id == x.id:
+                            no_existe = True
+                    if not no_existe:
+                        aux.append(n)
+                        aux.append(contacto)
+                        lista_proveedores.append(aux)
             lista_producto_proyecto.append(lista_proveedores)
             lista_productos.append(lista_producto_proyecto)
         return render(request, "proyectos/crear_cotizacion.html", {"Proyecto":proyecto, "Proveedores":lista_productos})
@@ -802,6 +807,25 @@ def editar_cotizacion(request, id):
         return redirect('/proyectos/mostrar_cotizacion/{}'.format(cotizacion.id))
     else:
         return render(request, "proyectos/editar_cotizacion.html", {"Cotizacion":cotizacion})
+
+
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
+@login_required(login_url='/login')
+def editar_disponibilidad(request, id):
+    cotizacion = Cotizacion.objects.get(id=id)
+    if request.method == "POST":
+        usuario_modificacion = request.user.first_name + " " + request.user.last_name
+        productos = request.POST.getlist("producto")
+        proveedor = cotizacion.proveedor_asociado
+        for i in productos:
+            producto = Producto.objects.get(id=i)
+            proveedor.productos_no.add(producto)
+            proveedor.save()
+        return redirect('/proyectos/mostrar_cotizacion/{}'.format(cotizacion.id))
+    else:
+        productos_asociados = cotizacion.productos_asociados.all()
+        return render(request, "proyectos/editar_disponibilidad.html", {"Cotizacion":cotizacion, "info_productos":productos_asociados})
+
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
