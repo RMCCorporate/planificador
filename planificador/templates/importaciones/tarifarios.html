@@ -34,7 +34,7 @@
     <tbody>
         {% for fila in tarifarios %}
         <tr>
-            <td data-label="ORIGEN">{{fila.origin_airport}}</td>
+            <td data-label="ORIGEN"><a href="{% url 'tarifario' fila.origin_airport %}">{{fila.origin_airport}}</a></td>
             <td data-label="REGION">{{fila.region}}</td>
             <td data-label="PAÍS">{{fila.country}}</td>
             <td data-label="PRIORIDAD">{{fila.priority}}</td>

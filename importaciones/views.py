@@ -30,7 +30,10 @@ def nueva_importacion_planilla(request):
                 #FALTA VER LOS CASOS QUE NO SON INT O ESTÁN VACÍOS!!
                 country = row_data[2]
                 origin = row_data[4]
-                origin = origin + "-" + row_data[10]
+                if row_data[10] == "Air Economy":
+                    origin = origin + "-" + "AE"
+                elif row_data[10] == "Air Priority":
+                    origin = origin + "-" + "AP"
                 if row_data[13] != "On Request":
                     origin_currency = row_data[13]
                     pickup_min = row_data[14]
@@ -129,10 +132,10 @@ def tarifarios(request):
 
 #Mostrar importaciones
 @login_required(login_url='/login')
-def tarifario(request, origin_airport):
-    tarifario = DHL.objects.get(origin_airport=origin_airport)
-    origen = Origin_charges.objects.get(origin_airport=origin_airport)
-    freight = Airfreight_charges.objects.get(origin_airport=origin_airport)
-    destino = Destination_charges.objects.get(origin_airport=origin_airport)
-    return render(request, 'importaciones/tarifarios.html', {"Tarifario":tarifario, "origen":origen, "freight":freight, "destino":destino})
+def tarifario(request, origin):
+    tarifario = DHL.objects.get(origin_airport=origin)
+    origen = Origin_charges.objects.get(origin_airport=origin)
+    freight = Airfreight_charges.objects.get(origin_airport=origin)
+    destino = Destination_charges.objects.get(origin_airport=origin)
+    return render(request, 'importaciones/tarifario.html', {"Tarifario":tarifario, "origen":origen, "freight":freight, "destino":destino})
 
