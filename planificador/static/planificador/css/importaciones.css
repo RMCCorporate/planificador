@@ -1,0 +1,205 @@
+/*
+COLORS:
+negro dentro: #60615e
+fondo: #fbfbfb
+bordes y letras de inputs: #d8d8d8
+bordes y letras boton: #a9bbd5
+azul tablas: #466ea5
+*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color:#fbfbfb;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+
+  /*
+TABLA
+*/
+
+.table-container{
+    padding: 0 17%;
+    margin: 30px auto 0;
+}
+
+.table-container .button_añadir{
+    border: solid;
+    height: 45px;
+    margin: 5px;
+    background: #fff;
+    color: #4676b8;
+    font-size: 10pt;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    text-align: center;
+    width:180px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.button_añadir:hover{
+    background-color: #fbfbfb;
+}
+
+.button_añadir:active{
+    background-color: white;
+    box-shadow: 0 5px #fbfbfb;
+    transform: translateY(2px);
+}
+.table-container .search{
+    width: 30%;
+    height: 30px;
+    position: relative;
+    background-color: #fbfbfb;
+    top: -27.5px;
+    left: 100%;
+    display: flex;
+    border-bottom:1px solid;
+}
+
+.table-container .search .busquedaproducto{
+    border: none;
+    text-align: right;
+    padding-right: 10px;
+    background-color: #fbfbfb;
+    width: 100%;
+}
+
+.table-container .search button{
+    background-color: #fbfbfb;
+    border: none;
+}
+
+.title{
+    padding: 15px;
+    border-bottom: 2px solid;
+}
+
+.title h1{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 25px;
+}
+
+.subtitle{
+  padding: 15px;
+}
+
+.subtitle h4{
+  font-family: 'Monserrat', sans-serif;
+  font-size: 15px;
+}
+
+.heading{
+    font-size: 30px;
+    margin-bottom: 40px;
+}
+
+.table-container .table{
+    width: 100%;
+    margin: 40px auto 0;
+    border-collapse: collapse;
+}
+
+.table-container .table thead{
+    background-color: #466ea5;
+    text-align:left;
+}
+.table-container .table thead tr th{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.35px;
+    color: white;
+    opacity: 1;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.table-container .table tbody tr td{
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 0.35px;
+    background-color: white;
+    opacity: 1;
+    padding: 6px 10px;
+    vertical-align: top;
+    border-bottom: 0.8184pt solid #b3b3b3;;
+}
+
+.table-container .table tbody tr td .menu ul li a{
+    display: flex;
+    align-items: center;
+    height: 40px;
+    opacity: 1;
+  }
+  
+.table-container .table tbody tr td .menu a{
+    text-align: right;
+    opacity: 1;
+}
+
+.table-container .table tbody tr td .menu a span{
+    font-size: 10px;
+    opacity: 1;
+}
+
+.table-container .table tbody tr td .menu ul li{
+    position: relative;
+    padding: 0px 0px;
+    opacity: 1.0;
+}
+
+.table-container .table tbody tr td .menu ul li .dropdown{
+    position: absolute;
+    opacity: 1;
+    top: 25px;
+    right: 0;
+    border: 1px solid black;
+    background: white;
+    padding: 10px ;
+    border-radius: 5px;
+    display: none;
+}
+
+.table-container .table tbody tr td .menu ul li .dropdown .fas{
+    margin-right: 0px;
+    opacity: 1.0;
+}
+
+.table-container .table tbody tr td .menu ul li.active .dropdown{
+    display: block;
+    opacity: 1.0;
+}
+
+
+@media (max-width:768px){
+    .table thead{
+        display: none;
+    }
+    .table, .table tbody, .table tr, .table td{
+        display: block;
+        width: 100%;
+    }
+    .table tr{
+        margin-bottom: 15px;
+    }
+    .table tbody tr td{
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    .table td:before{
+        content:attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: 600;
+        font-size: 12px;
+        text-align: left;
+    }
+}

@@ -35,6 +35,7 @@ urlpatterns = [
     path('', include('productos.urls')),
     path('', include('proveedores.urls')),
     path('', include('proyectos.urls')),
+    path('', include('importaciones.urls')),
     ]
 
 if settings.DEBUG:
