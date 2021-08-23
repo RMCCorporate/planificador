@@ -1,0 +1,58 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
+
+
+<head>
+	<title>Crear proyecto</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<link href="{% static 'planificador/css/planificador.css' %}" rel="stylesheet">
+</head>
+
+<div class="container">
+    <div class="title">PLANIFICADOR PROYECTO</div>
+    <br>
+<form action="" method="POST">{% csrf_token %}
+    <br>
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">CÓDIGO COTIZACIÓN</label>
+            <input type="text" name="codigo" placeholder="Código asignado para cotización." required>
+        </div>
+        <div class="input-box">
+          <span class="details">ORIGEN DHL</label>
+            <select class="custom-select" id="origen_DHL" name="origen_DHL" required>
+                {% for fila in lista_dhl %}
+                <option value="{{fila.origin_airport}}">{{fila.origin_airport}} | {{fila.origin.currency}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="input-box">
+          <span class="details">KILOS (*)</label>
+          <input type="text" name="kilos" placeholder="Total de kilos en la importación"  pattern="^[1-9]\d*(\.\d+)?$" required>
+        </div>
+        <div class="input-box">
+            <span class="details">VALOR MONEDA IMPORTACIÓN</label>
+            <input type="text" name="valor_moneda" placeholder="Valor aproximado a pagar a DHL"  pattern="^[1-9]\d*(\.\d+)?$" required>
+          </div>
+          <div class="input-box">
+            <span class="details">COSTO TOTAL DE PRODUCTOS</label>
+            <input type="text" name="valor_productos" placeholder="Valor aproximado a pagar a proveedor en moneda local"  pattern="^[1-9]\d*(\.\d+)?$" required>
+          </div>
+          <div class="input-box">
+            <span class="details">¿EL PRODUCTO SE FABRICÓ EN ORIGEN?</label>
+                <select class="custom-select" id="advalorem" name="advalorem" required>
+                    <option value="SI">SI</option>
+                    <option value="NO">NO</option>
+                </select>
+          </div>
+      </div>
+      <br>
+    <button class="button" type="submit">ASIGNAR PRODUCTOS</button>
+    </form>
+</div>
+
+{% endblock%}
+{% block footer %}
+{% endblock %}

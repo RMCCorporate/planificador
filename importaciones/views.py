@@ -105,8 +105,8 @@ def nueva_importacion_planilla(request):
                         doc_fee_kg = 0
                     else:
                         doc_fee_min = row_data[44]
-                        doc_fee_max = row_data[45]
-                        doc_fee_kg = row_data[46]
+                        doc_fee_max = row_data[46]
+                        doc_fee_kg = row_data[45]
                     if row_data[47] == "None":
                         desconsolidation = 0
                     else:
@@ -138,4 +138,90 @@ def tarifario(request, origin):
     freight = Airfreight_charges.objects.get(origin_airport=origin)
     destino = Destination_charges.objects.get(origin_airport=origin)
     return render(request, 'importaciones/tarifario.html', {"Tarifario":tarifario, "origen":origen, "freight":freight, "destino":destino})
+
+def calculo_flete(flete, kilos):
+    valor_flete = 0
+    if 45 > kilos and kilos*flete.freight_less_45 > flete.freight_min:
+        valor_flete += kilos*flete.freight_less_45
+    elif 45 > kilos and not kilos*flete.freight_less_45 > flete.freight_min:
+        valor_flete += kilos*flete.freight_less_45
+    elif 100 > kilos > 45 and kilos*flete.freight_45_100 > flete.freight_min:
+        valor_flete += kilos*flete.freight_45_100
+    elif 100 > kilos > 45 and not kilos*flete.freight_45_100 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif 300 > kilos > 100 and kilos*flete.freight_100_300 > flete.freight_min:
+        valor_flete += kilos*flete.freight_100_300
+    elif 300 > kilos > 100 and not kilos*flete.freight_100_300 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif 500 > kilos > 300 and kilos*flete.freight_300_500 > flete.freight_min:
+        valor_flete += kilos*flete.freight_300_500
+    elif 500 > kilos > 300 and not kilos*flete.freight_300_500 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif 1000 > kilos > 500 and kilos*flete.freight_500_1000 > flete.freight_min:
+        valor_flete += kilos*flete.freight_500_1000
+    elif 1000 > kilos > 500 and not kilos*flete.freight_500_1000 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif kilos > 1000 and kilos*flete.freight_more_1000 > flete.freight_min:
+        valor_flete += kilos*flete.freight_more_1000
+    elif kilos > 1000 and not kilos*flete.freight_more_1000 > flete.freight_min:
+        valor_flete += flete.freight_min
+    if kilos*flete.security_surcharge_kg > flete.security_surcharge_min:
+        valor_flete += kilos*flete.security_surcharge_kg
+    else:
+        valor_flete += flete.security_surcharge_min
+    if kilos*flete.cargo_screening_fee_kg > flete.cargo_screening_fee_min:
+        valor_flete += kilos*flete.cargo_screening_fee_kg
+    else:
+        valor_flete += cargo_screening_fee_min
+    if kilos*flete.fuel_surcharge_kg > flete.fuel_surcharge_min:
+        valor_flete += kilos*flete.fuel_surcharge_kg
+    else:
+        valor_flete += flete.fuel_surcharge_min
+    return valor_flete
+
+def calculo_origen(origen, kilos):
+    valor_origen = 0
+    if origen.pickup_kg*kilos > origen.pickup_min:
+        valor_origen += origen.pickup_kg*kilos
+    else:
+        valor_origen += origen.pickup_min
+    valor_origen += origen.handling + origen.customs_clearence
+    if origen.other_fees1_description:
+        valor_origen += origen.other_fees1_value_min
+    if origen.other_fees2_description:
+        if kilos*origen.other_fees2_value_kg > origen.other_fees2_value_min:
+            valor_origen += kilos*origen.other_fees2_value_kg
+        else:
+            valor_origen += origen.other_fees2_value_min
+    return valor_origen
+
+def calculo_destino(destino, kilos):
+    valor_destino = destino.terminal_handling + destino.desconsolidation
+    if destino.doc_fee_max > kilos*destino.doc_fee_kg > destino.doc_fee_min:
+        valor_destino += kilos*destino.doc_fee_kg
+    elif kilos*destino.doc_fee_kg > destino.doc_fee_max:
+        valor_destino += destino.doc_fee_max
+    elif destino.doc_fee_min > kilos*destino.doc_fee_kg:
+        valor_destino += destino.doc_fee_min
+    return valor_destino
+
+#Agregar proveedor
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
+@login_required(login_url='/login')
+def nueva_cotizacion_importacion(request):
+    if request.method == "POST":
+        codigo = request.POST["codigo"]
+        origen = request.POST["origen_DHL"]
+        kilos = float(request.POST["kilos"])
+        valor_moneda = float(request.POST["valor_moneda"])
+        advalorem = request.POST["advalorem"]
+        valor_productos = request.POST["valor_productos"]
+        dhl = DHL.objects.get(origin_airport=origen)
+        valor_flete = calculo_flete(dhl.freight, kilos)
+        valor_origen = calculo_origen(dhl.origin, kilos)
+        valor_destino = calculo_destino(dhl.destination, kilos)
+        return redirect('/importaciones')
+    else:
+        lista_dhl = DHL.objects.all()
+        return render(request, "importaciones/nueva_cotizacion_importacion.html", {"lista_dhl":lista_dhl})
 
