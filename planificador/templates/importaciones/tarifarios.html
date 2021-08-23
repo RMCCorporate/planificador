@@ -1,7 +1,7 @@
 {% extends "base/base2.html" %}
 {% block content %} 
 <head>
-	<title>IMPORTACIONES</title>
+	<title>TARIFARIOS</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,36 +16,28 @@
 </head>
 
 <div class="title">
-    <h1>IMPORTACIONES</h1>
+    <h1>TARIFARIOS</h1>
 </div>
 <div class="subtitle">
-    <h4>{{len}} importaciones</h4>
+    <h4>{{len}} tarifarios</h4>
 </div>
 <div class="table-container">
-    <a href="{% url 'tarifarios' %}">
-        <button class="button_añadir">VER TARIFARIOS DHL</button>
-    </a>
-    <a href="{% url 'nueva_importacion_planilla' %}">
-        <button class="button_añadir">CARGA TARIFARIOS DHL</button>
-    </a>
-    <br>
-    <br>
 <table class="table" id="example" class="display">
     <thead>
         <tr>
-            <th>CÓDIGO</th>
             <th>ORIGEN</th>
-
+            <th>REGION</th>
+            <th>PAÍS</th>
+            <th>PRIORIDAD</th>
         </tr>
     </thead>
     <tbody>
-        {% for fila in importaciones %}
+        {% for fila in tarifarios %}
         <tr>
-            <td data-label="CÓDIGO">{{fila.codigo}}</a></td>
-            <td data-label="NOMBRE">{{fila.origen}}</td>
-           
-            
-            
+            <td data-label="ORIGEN">{{fila.origin_airport}}</td>
+            <td data-label="REGION">{{fila.region}}</td>
+            <td data-label="PAÍS">{{fila.country}}</td>
+            <td data-label="PRIORIDAD">{{fila.priority}}</td>
         </tr>
         {% endfor %}
     </tbody>

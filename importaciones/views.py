@@ -119,3 +119,20 @@ def nueva_importacion_planilla(request):
         return redirect('/importaciones')
     else:
         return render(request, 'importaciones/nueva_importacion_planilla.html')
+
+#Mostrar importaciones
+@login_required(login_url='/login')
+def tarifarios(request):
+    tarifarios = DHL.objects.all()
+    lenght = len(tarifarios)
+    return render(request, 'importaciones/tarifarios.html', {"tarifarios":tarifarios, "len":lenght})
+
+#Mostrar importaciones
+@login_required(login_url='/login')
+def tarifario(request, origin_airport):
+    tarifario = DHL.objects.get(origin_airport=origin_airport)
+    origen = Origin_charges.objects.get(origin_airport=origin_airport)
+    freight = Airfreight_charges.objects.get(origin_airport=origin_airport)
+    destino = Destination_charges.objects.get(origin_airport=origin_airport)
+    return render(request, 'importaciones/tarifarios.html', {"Tarifario":tarifario, "origen":origen, "freight":freight, "destino":destino})
+

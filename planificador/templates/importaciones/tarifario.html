@@ -1,0 +1,154 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{Tarifario.origin_airport}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/proveedor.css' %}" rel="stylesheet">
+</head>
+
+
+    <div class="title">
+      <h1>TARIFARIO - {{Tarifario.origin_airport}}</h1>
+    </div>
+    <div class="subtitle">
+      <h4>Tarifarios | {{Tarifario.origin_airport}}</h4>
+    </div>
+    <div class="container">
+    <div class="table-container">
+      <div class="title_container">
+        <h1>{{Tarifario.origin_airport}}</h1>
+      </div>
+      <div class="informacion_container">
+        <h4>INFORMACIÓN GENERAL</h4>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+                <th>REGION</th>
+                <th>PAÍS</th>
+                <th>PRIORIDAD</th>
+                <th>AEROLÍNEA</th>
+                <th>¿VUELO DIRECTO?</th>
+                <th>TIEMPO SALIDA</th>
+                <th>TIEMPO TRÁNSITO</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="REGION">{{Tarifario.region}}</td>
+                <td data-label="PAÍS">{{Tarifario.country}}</td>
+                <td data-label="PRIORIDAD">{{Tarifario.priority}}</td>
+                <td data-label="AEROLÍNEA">{{Tarifario.airline}}</td>
+                <td data-label="¿VUELO DIRECTO?">{{Tarifario.direct_flight}}</td>
+                <td data-label="TIEMPO SALIDA">{{Tarifario.departure_days}}</td>
+                <td data-label="TIEMPO TRÁNSITO">{{Tarifario.transit_time}}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="container">
+    <div class="table-container">
+      <div class="informacion_container">
+        <h4>CARGOS ORIGEN</h4>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+                <th>MONEDA</th>
+                <th>PICKUP (MIN/KG)</th>
+                <th>MANEJO</th>
+                <th>DESPACHO DE ADUANA</th>
+                <th>OTROS CARGOS I</th>
+                <th>OTROS CARGOS I - VALOR</th>
+                <th>OTROS CARGOS II</th>
+                <th>OTROS CARGOS II VALOR (MIN/KG)</th>
+                <th>TIEMPO TRÁNSITO ORIGEN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="MONEDA">{{origen.currency}}</td>
+                <td data-label="PICKUP MIN.">{{origen.pickup_min}} / {{origen.pickup_kg}}</td>
+                <td data-label="HANDLING">{{origen.handling}}</td>
+                <td data-label="CUSTOM CLEARENCE">{{origen.customs_clearence}}</td>
+                <td data-label="OTROS CARGOS I">{{origen.other_fees1_description}}</td>
+                <td data-label="OTROS CARGOS I - VALOR">{{origen.other_fees1_value_min}}</td>
+                <td data-label="OTROS CARGOS II">{{origen.other_fees2_description}}</td>
+                <td data-label="OTROS CARGOS II - VALOR MIN.">{{origen.other_fees2_value_min}} / {{origen.other_fees2_value_kg}}</td>
+                <td data-label="TIEMPO TRÁNSITO ORIGEN">{{origen.origin_transit_time}}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="container">
+    <div class="table-container">
+      <div class="informacion_container">
+        <h4>CARGOS FLETE</h4>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+                <th>MONEDA</th>
+                <th>FLETE MIN.</th>
+                <th>MENOS DE 45KG </th>
+                <th>45-100KG</th>
+                <th>100-300KG</th>
+                <th>300-500KG</th>
+                <th>500-1000KG</th>
+                <th>MÁS DE 1000KG</th>
+                <th>CARGO COMBUSTIBLE (MIN/KG)</th>
+                <th>CARGO SEGURIDAD (MIN/KG)</th>
+                <th>CARGO PROYECCIÓN (MIN/KG)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="MONEDA">{{freight.currency}}</td>
+                <td data-label="FLETE MIN.">{{freight.freight_min}}</td>
+                <td data-label="MENOS DE 45KG ">{{freight.freight_less_45}}</td>
+                <td data-label="45-100KG">{{freight.freight_45_100}}</td>
+                <td data-label="100-300KG">{{freight.freight_100_300}}</td>
+                <td data-label="300-500KG">{{freight.freight_300_500}}</td>
+                <td data-label="500-1000KG">{{freight.freight_500_1000}}</td>
+                <td data-label="MÁS DE 1000KG">{{freight.freight_more_1000}}</td>
+                <td data-label="CARGO COMBUSTIBLE (MIN/KG)">{{freight.fuel_surcharge_min}} / {{freight.fuel_surcharge_kg}}</td>
+                <td data-label="CARGO SEGURIDAD (MIN/KG)">{{freight.security_surcharge_min}} / {{freight.security_surcharge_kg}}</td>
+                <td data-label="CARGO PROYECCIÓN (MIN/KG)">{{freight.cargo_screening_fee_min}} / {{freight.cargo_screening_fee_kg}}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+<div class="container">
+    <div class="table-container">
+      <div class="informacion_container">
+        <h4>CARGOS DESTINO</h4>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+                <th>MONEDA</th>
+                <th>MANEJO EN TERMINAL</th>
+                <th>DOCUMENTACION (MIN/KG/MAX)</th>
+                <th>DESCONSOLIDACIÓN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="MONEDA">{{destino.currency}}</td>
+                <td data-label="MANEJO EN TERMINAL">{{destino.terminal_handling}}</td>
+                <td data-label="DOCUMENTACION (MIN/KG/MAX)">{{destino.doc_fee_min}} / {{destino.doc_fee_kg}} / {{destino.doc_fee_max}}</td>
+                <td data-label="DESCONSOLIDACIÓN">{{destino.desconsolidation}}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+ 
+
+{% endblock %}
