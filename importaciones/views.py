@@ -220,6 +220,12 @@ def nueva_cotizacion_importacion(request):
         valor_flete = calculo_flete(dhl.freight, kilos)
         valor_origen = calculo_origen(dhl.origin, kilos)
         valor_destino = calculo_destino(dhl.destination, kilos)
+        if advalorem == "SI":
+            advalorem = float(valor_productos)*0.06
+        else:
+            advalorem = 0
+        nueva_importacion = Importaciones(codigo=codigo, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, costo_producto=valor_productos, fecha_emision=datetime.now())
+        nueva_importacion.save()
         return redirect('/importaciones')
     else:
         lista_dhl = DHL.objects.all()
