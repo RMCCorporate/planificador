@@ -327,13 +327,14 @@ class DHL(models.Model):
     origin_airport = models.CharField(max_length=128, primary_key=True)
     region = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
+    priority = models.CharField(max_length=128, null=True)
     origin = models.ForeignKey(Origin_charges, on_delete=models.CASCADE, null=True, related_name='origin_charges')
     freight = models.ForeignKey(Airfreight_charges, on_delete=models.CASCADE, null=True, related_name='freight_charges')
     destination = models.ForeignKey(Destination_charges, on_delete=models.CASCADE, null=True, related_name='destination_charges')
     airline = models.CharField(max_length=128, null=True)
     direct_flight = models.CharField(max_length=128, null=True)
-    departure_days = models.FloatField(null=True)
-    transit_time = models.FloatField(null=True)
+    departure_days = models.CharField(max_length=128, null=True)
+    transit_time = models.CharField(max_length=128, null=True)
 
 class Importaciones(models.Model):
     codigo = models.CharField(max_length=128, primary_key=True)
