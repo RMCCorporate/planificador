@@ -1,0 +1,81 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVA IMPORTACION {% endblock%}
+{% block content %}
+
+
+<head>
+	<title>Crear proyecto</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<link href="{% static 'planificador/css/planificador.css' %}" rel="stylesheet">
+</head>
+
+<div class="container">
+    <div class="title">NUEVA IMPORTACIÓN</div>
+<form action="" method="POST">  {% csrf_token %}
+
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">CODIGO DE IMPORTACIÓN (*)</label>
+            <input type="text" name="codigo" placeholder="Código referencial de importación" required>
+        </div>
+        <div class="input-box">
+          <span class="details">ORIGEN (*)</label>
+          <input type="text" name="origen" placeholder="Ciudad de origen importación" required>
+        </div>
+        <div class="input-box">
+          <span class="details">DIVISA (*)</label>
+          <input type="text" name="tipo_cambio" placeholder="Abreviatura del tipo de cambio. Ej: USD, EUR, CLP, etc." required>
+        </div>
+        <div class="input-box">
+          <span class="details">VALOR CAMBIO (*)</label>
+          <input type="text" name="valor_cambio" placeholder="Valor del cambio en pesos chilenos." pattern="^[1-9]\d*(\.\d+)?$" required>
+        </div>
+        <div class="input-box">
+            <span class="details">TRANSPORTE (*)</label>
+            <input type="text" name="transporte" placeholder="¿Aéreo o marítimo?" required>
+          </div>
+          <div class="input-box">
+            <span class="details">KILOS (*)</label>
+            <input type="text" name="kilos" placeholder="Total de kilos de producto" pattern="^[1-9]\d*(\.\d+)?$" required>
+          </div>
+          <div class="input-box">
+            <span class="details">VALOR FLETE (*)</label>
+            <input type="text" name="flete" placeholder="Costo de flete en moneda de origen" pattern="^[1-9]\d*(\.\d+)?$" required>
+          </div>
+          <div class="input-box">
+            <span class="details">VALOR ORIGEN (*)(**)</label>
+            <input type="text" name="origen" placeholder="Costo de origen en moneda de origen" pattern="^[1-9]\d*(\.\d+)?$" required>
+          </div>
+          <div class="input-box">
+            <span class="details">VALOR DESTINO (**)</label>
+            <input type="text" name="destino" placeholder="Costo de destino en moneda de origen">
+          </div>
+          <div class="input-box">
+            <span class="details">ADVALOREM (***)</label>
+            <input type="text" name="advalorem" placeholder="Total cargado de advalorem." value="0" required>
+          </div>
+        <div class="input-box">
+          <span class="details">FECHA EMISIÓN IMPORTACIÓN (*)</label>
+          <input type="date" name="fecha_emision" placeholder="Formato: YYYY-MM-DD" required>
+        </div>
+        <div class="input-box">
+          <span class="details">FECHA LLEGADA IMPORTACIÓN (*)</label>
+          <input type="date" name="fecha_llegada" placeholder="Formato: YYYY-MM-DD" required>
+        </div>
+        (*) Obligatorio
+        <br>
+      (**) Si no hay separación, se agrega todo el costo en valor origen.
+      <br>
+      (***) Si el producto no es de origen, se carga un 6% del total.
+        <br>
+      </div>
+      <br>
+      <input type="hidden" value="No" name="edicion">
+    <button class="button" type="submit">ASIGNAR PRODUCTOS</button>
+    </form>
+</div>
+
+{% endblock%}
+{% block footer %}
+{% endblock %}

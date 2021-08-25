@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Importaciones, DHL, Destination_charges, Airfreight_charges, Origin_charges
+from planificador.models import Importaciones, DHL, Destination_charges, Airfreight_charges, Origin_charges, Producto_proyecto_cantidades, Precio, Producto
+from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
 from planificador.filters import ProveedoresFilter, Filtro_producto
@@ -238,3 +239,92 @@ def importacion(request, importacion):
     importacion = Importaciones.objects.get(codigo=importacion)
     DHL = importacion.DHL_asociado
     return render(request, 'importaciones/importacion.html', {"Importacion":importacion,"DHL":DHL})
+
+#Agregar importacion
+@allowed_users(allowed_roles=['Admin', 'Cotizador'])
+@login_required(login_url='/login')
+def anadir_importacion(request):
+    if request.method == "POST":
+        codigo = request.POST["codigo"]
+        origen = request.POST["origen"]
+        tipo_cambio = request.POST["tipo_cambio"]
+        valor_cambio = float(request.POST["valor_cambio"])
+        transporte = request.POST["transporte"]
+        kilos = float(request.POST["kilos"])
+        flete = float(request.POST["flete"])
+        origen = float(request.POST["origen"])
+        destino = request.POST["destino"]
+        if not destino:
+            destino = 0
+        advalorem = float(request.POST["advalorem"])
+        fecha_emision = request.POST["fecha_emision"]
+        fecha_llegada = request.POST["fecha_llegada"]
+        nueva_importacion = Importaciones(codigo=codigo, origen=origen, transporte=transporte, kilos=kilos, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada)
+        nueva_importacion.save()
+        productos = Filtro_producto.objects.all()
+        productos_importacion = nueva_importacion.productos.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        return render(request, 'importaciones/eleccion_productos.html', {"Importacion":nueva_importacion, "myFilter":myFilter, "productos_importacion":productos_importacion})
+    else:
+        return render(request, "importaciones/anadir_importacion.html")
+
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def guardar_datos_filtro(request):
+    importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
+    productos_proyecto_anterior = importacion.productos.all()
+    productos_filtro = request.GET.getlist("productos")
+    booleano_repeticion = False
+    for i in productos_filtro:
+        for n in productos_proyecto_anterior:
+            if n.producto.nombre == i:
+                booleano_repeticion = True
+    for i in productos_filtro:
+        if not booleano_repeticion: 
+            producto = Producto.objects.get(nombre=i)
+            nuevo_producto_importacion = Producto_proyecto_cantidades(id=uuid.uuid1(), producto=producto)
+            nuevo_producto_importacion.save()
+            importacion.productos.add(nuevo_producto_importacion)
+    productos_proyecto = importacion.productos.all()
+    productos = Filtro_producto.objects.all()
+    for i in importacion.productos.all():
+        if productos.filter(nombre_producto=i.producto.nombre):
+            s = productos.filter(nombre_producto=i.producto.nombre)[0]
+            s.utilizado = importacion.codigo
+            s.save()
+    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+    return render(request, 'importaciones/eleccion_productos.html', {"Importacion":importacion, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
+
+#Recibir vista planificador I
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def recibir_datos_planificador(request):
+    #RESOLVER CÓMO LLEGAN LOS PRECIOS Y CANTIDADES
+    if request.method == "POST":
+        print("AAAA")
+        importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
+        cantidad = request.GET.getlist("id_producto")
+        for i in cantidad:
+            print(i)
+        print(cantidad)
+        #productos = request.GET.getlist("id_producto")
+        #print(productos)
+        #precio = request.GET.getlist("precio")
+        #print(precio)
+        """
+        for counter, i in enumerate(productos):
+            nuevo_producto = Producto.objects.get(nombre=i)
+            producto_importacion = importacion.productos.filter(producto=nuevo_producto)[0]
+            if cantidad[counter]:
+                producto_importacion.cantidades = float(cantidad[counter])
+            else:
+                producto_importacion.cantidades = 0
+            producto_importacion.save()
+        """
+        return redirect('/importaciones')
+    else:
+        importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
+        productos_repetidos = request.GET.getlist("productos_checkeados")
+        productos = list(dict.fromkeys(productos_repetidos))
+        return render(request, "importaciones/lista_productos.html", {"Importacion":importacion, "Productos":importacion.productos.all()})
+

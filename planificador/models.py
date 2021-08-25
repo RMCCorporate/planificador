@@ -192,8 +192,9 @@ class Filtro_producto(models.Model):
 
 class Producto_proyecto_cantidades(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
-    proyecto_asociado_cantidades = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado_cantidades')
-    producto_asociado_cantidades = models.ForeignKey(Producto_proyecto, on_delete=models.CASCADE, related_name='producto_asociado_cantidades')
+    proyecto_asociado_cantidades = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado_cantidades', null=True)
+    producto_asociado_cantidades = models.ForeignKey(Producto_proyecto, on_delete=models.CASCADE, related_name='producto_asociado_cantidades', null=True)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='producto', null=True)
     precio = models.ForeignKey(Precio, on_delete=models.CASCADE, related_name='precio', null=True)
     cantidades = models.CharField(max_length=128, null=True)
 
@@ -340,7 +341,7 @@ class DHL(models.Model):
 class Importaciones(models.Model):
     codigo = models.CharField(max_length=128, primary_key=True)
     origen = models.CharField(max_length=128, null=True)
-    productos = models.ManyToManyField(Producto, related_name='productos_importacion')
+    productos = models.ManyToManyField(Producto_proyecto_cantidades, related_name='productos_importacion')
     DHL_asociado = models.ForeignKey(DHL, on_delete=models.CASCADE, null=True, related_name='dhl')
     transporte = models.CharField(max_length=128, null=True)
     kilos = models.FloatField(null=True)
