@@ -1,0 +1,89 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{Importacion.codigo}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>COTIZACIÓN DHL</h1>
+</div>
+
+<div class="subtitle">
+  <h4>Importacion | {{Importacion.origen}}</h4>
+</div>
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="title_container">
+    <h1>{{Importacion.codigo}}</h1>
+  </div>
+
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>CÓDIGO</th>
+            <th>DHL</th>
+            <th>ORIGEN</th>
+            <th>TRANSPORTE</th>
+            <th>KILOS</th>
+            <th>FECHA EMISIÓN</th>
+            <th>FECHA LLEGADA</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="CÓDIGO">{{Importacion.codigo}}</td>
+            <td data-label="DHL"><a style="font-size:20px;color:#466ea5"href="{% url 'tarifario' DHL.origin_airport %}">{{DHL.origin_airport}}</a></td>
+            <td data-label="ORIGEN"> {{Importacion.nombre}}</td>
+            <td data-label="TRANSPORTE"> {{Importacion.transporte}}</td>
+            <td data-label="KILOS"> {{Importacion.kilos}}</td>
+            <td data-label="FECHA EMISIÓN"> {{Importacion.fecha_emision}}</td>
+            <td data-label="FECHA LLEGADA"> {{Importacion.fecha_llegada}}</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>INFORMACIÓN PRECIOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>MONEDA IMPORTACIÓN</th>
+            <th>VALOR ORIGEN</th>
+            <th>VALOR FLETE</th>
+            <th>VALOR DESTINO</th>
+            <th>ADVALOREM</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="MONEDA IMPORTACIÓN">{{Importacion.moneda_importacion}} - {{Importacion.valor_moneda_importacion}} CLP</td>
+            <td data-label="VALOR ORIGEN">{{Importacion.valor_origen}} - {{DHL.origin.currency}}</td>
+            <td data-label="VALOR FLETE"> {{Importacion.valor_flete}} - {{DHL.freight.currency}}</td>
+            <td data-label="VALOR DESTINO"> {{Importacion.valor_destino}} - {{DHL.destination.currency}}</td>
+            <td data-label="ADVALOREM"> {{Importacion.advalorem}}</td>
+        </tr>
+    </tbody>
+</table>
+</div>   
+<br>
+<br>  
+</div>
+</div>
+        </div>
+ 
+
+{% endblock %}

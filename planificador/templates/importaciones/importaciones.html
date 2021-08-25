@@ -45,7 +45,7 @@
     <tbody>
         {% for fila in importaciones %}
         <tr>
-            <td data-label="CÓDIGO">{{fila.codigo}}</a></td>
+            <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo}}</a></td>
             <td data-label="NOMBRE">{{fila.origen}}</td>
            
             

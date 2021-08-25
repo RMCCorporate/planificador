@@ -231,3 +231,10 @@ def nueva_cotizacion_importacion(request):
         lista_dhl = DHL.objects.all()
         return render(request, "importaciones/nueva_cotizacion_importacion.html", {"lista_dhl":lista_dhl})
 
+
+#Mostrar importaciones
+@login_required(login_url='/login')
+def importacion(request, importacion):
+    importacion = Importaciones.objects.get(codigo=importacion)
+    DHL = importacion.DHL_asociado
+    return render(request, 'importaciones/importacion.html', {"Importacion":importacion,"DHL":DHL})

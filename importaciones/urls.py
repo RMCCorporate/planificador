@@ -4,6 +4,7 @@ from importaciones import views
 
 urlpatterns = [
     path('importaciones', views.importaciones, name='importaciones'),
+    path('importaciones/importacion/<str:importacion>', views.importacion, name='importacion'),
     path('importaciones/nueva_importacion_planilla', views.nueva_importacion_planilla, name='nueva_importacion_planilla'),
     path('importaciones/tarifarios', views.tarifarios, name='tarifarios'),
     path('importaciones/tarifarios/tarifario/<str:origin>', views.tarifario, name='tarifario'),
