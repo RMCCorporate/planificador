@@ -10,6 +10,7 @@ class Precio(models.Model):
     fecha = models.DateTimeField(null=True)
     nombre_proveedor = models.CharField(max_length=128, null=True)
     nombre_cotizacion = models.CharField(max_length=128, null=True)
+    nombre_importacion = models.CharField(max_length=128, null=True)
     comentarios = models.TextField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
 

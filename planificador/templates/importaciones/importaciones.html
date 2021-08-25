@@ -34,6 +34,7 @@
    
     <br>
     <br>
+    <h3>IMPORTACIONES</h3>
 <table class="table" id="example" class="display">
     <thead>
         <tr>
@@ -45,16 +46,36 @@
     <tbody>
         {% for fila in importaciones %}
         <tr>
+            {% if not fila.DHL_asociado %}
             <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo}}</a></td>
             <td data-label="NOMBRE">{{fila.origen}}</td>
-           
-            
-            
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>
 </table>
+<br>
+<br>
+<h3>COTIZACIONES DE IMPORTACIONES</h3>
+<table class="table" id="example" class="display">
+    <thead>
+        <tr>
+            <th>CÓDIGO</th>
+            <th>ORIGEN</th>
 
+        </tr>
+    </thead>
+    <tbody>
+        {% for fila in importaciones %}
+        <tr>
+            {% if fila.DHL_asociado %}
+            <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo}}</a></td>
+            <td data-label="NOMBRE">{{fila.origen}}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
 
 {% endblock%}
