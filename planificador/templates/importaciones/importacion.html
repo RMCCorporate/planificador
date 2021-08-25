@@ -31,8 +31,11 @@
     <thead>
         <tr>
             <th>CÓDIGO</th>
+            {% if DHL %}
             <th>DHL</th>
+            {% endif %}
             <th>ORIGEN</th>
+            <th>PROVEEDOR</th>
             <th>TRANSPORTE</th>
             <th>KILOS</th>
             <th>FECHA EMISIÓN</th>
@@ -42,8 +45,12 @@
     <tbody>
         <tr>
             <td data-label="CÓDIGO">{{Importacion.codigo}}</td>
+            {% if DHL %}
             <td data-label="DHL"><a style="font-size:20px;color:#466ea5"href="{% url 'tarifario' DHL.origin_airport %}">{{DHL.origin_airport}}</a></td>
-            <td data-label="ORIGEN"> {{Importacion.nombre}}</td>
+            {% endif %}
+            
+            <td data-label="ORIGEN"> {{Importacion.origen}}</td>
+            <td data-label="PROVEEDOR"> {{Importacion.proveedor.nombre}}</td>
             <td data-label="TRANSPORTE"> {{Importacion.transporte}}</td>
             <td data-label="KILOS"> {{Importacion.kilos}}</td>
             <td data-label="FECHA EMISIÓN"> {{Importacion.fecha_emision}}</td>
@@ -71,9 +78,15 @@
     <tbody>
         <tr>
             <td data-label="MONEDA IMPORTACIÓN">{{Importacion.moneda_importacion}} - {{Importacion.valor_moneda_importacion}} CLP</td>
+            {% if DHL %}
             <td data-label="VALOR ORIGEN">{{Importacion.valor_origen}} - {{DHL.origin.currency}}</td>
             <td data-label="VALOR FLETE"> {{Importacion.valor_flete}} - {{DHL.freight.currency}}</td>
             <td data-label="VALOR DESTINO"> {{Importacion.valor_destino}} - {{DHL.destination.currency}}</td>
+            {% else %}
+            <td data-label="VALOR ORIGEN">{{Importacion.valor_origen}} - {{Importacion.moneda_importacion}}</td>
+            <td data-label="VALOR FLETE"> {{Importacion.valor_flete}} - {{Importacion.moneda_importacion}}</td>
+            <td data-label="VALOR DESTINO"> {{Importacion.valor_destino}} - USD</td>
+            {% endif %}
             <td data-label="ADVALOREM"> {{Importacion.advalorem}}</td>
         </tr>
     </tbody>
@@ -81,6 +94,32 @@
 </div>   
 <br>
 <br>  
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>INFORMACIÓN PRODUCTOS</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CANTIDAD</th>
+            <th>PRECIO UNITARIO</th>
+            <th>COSTO IMPORTACIÓN UNITARIO</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for i in productos %}
+        <tr>
+            <td data-label="NOMBRE">{{i.producto.nombre}}</td>
+            <td data-label="CANTIDAD">{{i.cantidades}} - {{i.producto.unidad}}</td>
+            <td data-label="PRECIO"> {{i.precio.valor}} - {{i.precio.tipo_cambio}}</td>
+            <td data-label="COSTO IMPORTACIÓN UNITARIO"> {{i.precio.valor_importación}} - CLP</td>
+        
+        </tr>
+    {% endfor %}
+      </tbody>
+</table>
+</div>  
 </div>
 </div>
         </div>

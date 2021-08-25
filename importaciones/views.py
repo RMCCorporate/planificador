@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from planificador.models import Importaciones, DHL, Destination_charges, Airfreight_charges, Origin_charges, Producto_proyecto_cantidades, Precio, Producto
+from planificador.models import Importaciones, DHL, Destination_charges, Airfreight_charges, Origin_charges, Producto_proyecto_cantidades, Precio, Producto, Proveedor
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from datetime import date, datetime
@@ -238,7 +238,8 @@ def nueva_cotizacion_importacion(request):
 def importacion(request, importacion):
     importacion = Importaciones.objects.get(codigo=importacion)
     DHL = importacion.DHL_asociado
-    return render(request, 'importaciones/importacion.html', {"Importacion":importacion,"DHL":DHL})
+    productos = importacion.productos.all
+    return render(request, 'importaciones/importacion.html', {"Importacion":importacion,"DHL":DHL, "productos":productos})
 
 #Agregar importacion
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -246,9 +247,10 @@ def importacion(request, importacion):
 def anadir_importacion(request):
     if request.method == "POST":
         codigo = request.POST["codigo"]
-        origen = request.POST["origen"]
+        nombre_origen = request.POST["nombre_origen"]
         tipo_cambio = request.POST["tipo_cambio"]
         valor_cambio = float(request.POST["valor_cambio"])
+        dolar = float(request.POST["dolar"])
         transporte = request.POST["transporte"]
         kilos = float(request.POST["kilos"])
         flete = float(request.POST["flete"])
@@ -256,17 +258,22 @@ def anadir_importacion(request):
         destino = request.POST["destino"]
         if not destino:
             destino = 0
+        else:
+            destino = float(destino)
         advalorem = float(request.POST["advalorem"])
         fecha_emision = request.POST["fecha_emision"]
         fecha_llegada = request.POST["fecha_llegada"]
-        nueva_importacion = Importaciones(codigo=codigo, origen=origen, transporte=transporte, kilos=kilos, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada)
+        proveedor = request.POST["proveedor"]
+        objeto_proveedor = Proveedor.objects.get(rut=proveedor)
+        nueva_importacion = Importaciones(codigo=codigo, origen=nombre_origen, transporte=transporte, proveedor=objeto_proveedor, kilos=kilos, valor_dolar=dolar, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada)
         nueva_importacion.save()
         productos = Filtro_producto.objects.all()
         productos_importacion = nueva_importacion.productos.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         return render(request, 'importaciones/eleccion_productos.html', {"Importacion":nueva_importacion, "myFilter":myFilter, "productos_importacion":productos_importacion})
     else:
-        return render(request, "importaciones/anadir_importacion.html")
+        proveedores = Proveedor.objects.all()
+        return render(request, "importaciones/anadir_importacion.html", {"proveedores":proveedores})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
@@ -301,26 +308,42 @@ def guardar_datos_filtro(request):
 def recibir_datos_planificador(request):
     #RESOLVER CÓMO LLEGAN LOS PRECIOS Y CANTIDADES
     if request.method == "POST":
-        print("AAAA")
+        usuario = request.user.first_name + " " + request.user.last_name
         importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
-        cantidad = request.GET.getlist("id_producto")
-        for i in cantidad:
-            print(i)
+        productos = request.POST.getlist("id_producto")
+        print(productos)
+        cantidad = request.POST.getlist("cantidad")
         print(cantidad)
-        #productos = request.GET.getlist("id_producto")
-        #print(productos)
-        #precio = request.GET.getlist("precio")
-        #print(precio)
-        """
+        precio = request.POST.getlist("precio")
+        suma_productos = 0
+        for n, i in enumerate(precio):
+            suma_productos += float(i)*float(cantidad[n])*importacion.valor_moneda_importacion
+        print(precio)
+        print(suma_productos)
+        lista_proporcion = []
+        for n, i in enumerate(precio):
+            lista_proporcion.append(float(i)*float(cantidad[n])*importacion.valor_moneda_importacion/suma_productos)
+        print(lista_proporcion)
+        suma = 0
+        importacion.costo_producto = suma_productos
+        importacion.save()
+        valor_importacion = importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion + importacion.valor_destino*importacion.valor_dolar
+        print(valor_importacion)
+        cantidad_productos = request.POST.getlist("numero_productos")
+        valor_importacion_proporcional = []
+        for n, i in enumerate(lista_proporcion):
+            valor_importacion_proporcional.append(i*valor_importacion/float(cantidad[n]))
+        print(valor_importacion_proporcional)
         for counter, i in enumerate(productos):
-            nuevo_producto = Producto.objects.get(nombre=i)
-            producto_importacion = importacion.productos.filter(producto=nuevo_producto)[0]
+            nuevo_producto = Producto_proyecto_cantidades.objects.get(id=i)
             if cantidad[counter]:
-                producto_importacion.cantidades = float(cantidad[counter])
+                nuevo_producto.cantidades = float(cantidad[counter])
             else:
-                producto_importacion.cantidades = 0
-            producto_importacion.save()
-        """
+                nuevo_producto.cantidades = 0
+            nuevo_precio = Precio(id=uuid.uuid1(), valor=float(precio[counter]), valor_importación=valor_importacion_proporcional[counter], tipo_cambio=importacion.moneda_importacion, valor_cambio=importacion.valor_moneda_importacion, fecha=importacion.fecha_llegada, nombre_proveedor=importacion.proveedor.nombre, nombre_importacion=importacion.codigo, usuario_modificacion=usuario)
+            nuevo_precio.save()
+            nuevo_producto.precio = nuevo_precio
+            nuevo_producto.save()
         return redirect('/importaciones')
     else:
         importacion = Importaciones.objects.get(codigo=request.GET["importacion"])

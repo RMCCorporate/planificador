@@ -21,7 +21,15 @@
         </div>
         <div class="input-box">
           <span class="details">ORIGEN (*)</label>
-          <input type="text" name="origen" placeholder="Ciudad de origen importación" required>
+          <input type="text" name="nombre_origen" placeholder="Ciudad de origen importación" required>
+        </div>
+        <div class="input-box">
+          <span class="details">PROVEEDOR (*)</label>
+              <select class="custom-select" id="proveedor" name="proveedor" required>
+                {% for i in proveedores %}
+                  <option value="{{i.rut}}">{{i.nombre}}</option>
+                {% endfor %}
+              </select>
         </div>
         <div class="input-box">
           <span class="details">DIVISA (*)</label>
@@ -30,6 +38,10 @@
         <div class="input-box">
           <span class="details">VALOR CAMBIO (*)</label>
           <input type="text" name="valor_cambio" placeholder="Valor del cambio en pesos chilenos." pattern="^[1-9]\d*(\.\d+)?$" required>
+        </div>
+        <div class="input-box">
+          <span class="details">VALOR DÓLAR (*)</label>
+          <input type="text" name="dolar" placeholder="Valor del dólar en pesos chilenos." pattern="^[1-9]\d*(\.\d+)?$" required>
         </div>
         <div class="input-box">
             <span class="details">TRANSPORTE (*)</label>
