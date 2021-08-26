@@ -1,0 +1,63 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>Añadir importacion - {{Proyecto.id}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/lista_productos.css' %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+<div class="table-container">
+  <form action="recibir_importacion" method="GET">
+    <div class="title_container">
+      <input type="hidden" value="{{Proyecto.id}}" name="centro_costos"> 
+      <h1>ELEGIR IMPORTACIÓN</h1>
+    </div>
+    <table class="table">
+      <thead>
+          <tr>
+              <th>ELECCIÓN</th>
+              <th>CÓDIGO</th>
+              <th>ORIGEN (*)</th>
+              <th>PROVEEDOR (*)</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for fila in importaciones %}
+          <tr>
+            <td data-label="ELECCIÓN">
+                <input type="radio" name="eleccion" value="{{fila.codigo}}">
+              </td>
+              <td data-label="CÓDIGO">
+                {{fila.codigo}}
+              </td>
+              <td data-label="CANTIDAD"> 
+                {{fila.origen}}
+              </td>
+              <td data-label="UNIDAD"> {{fila.proveedor.nombre}}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  <div class="boton_container">
+    <input class="button_editar" name="boton" type="submit" value="ELEGIR CANTIDADES"></input>
+  </div>
+  
+</div>
+    
+  </form>
+</div>
+</div>
+
+
+   
+
+{% endblock%}

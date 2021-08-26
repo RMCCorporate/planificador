@@ -449,6 +449,7 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
         diccionario_aux["amount"] = diccionario_clase[clase]
         lista_clase.append(diccionario_aux)
     porcentaje_ppto_total = 0
+    print(lista_presupuesto_total)
     for i in lista_presupuesto_total:
         if i["position"] == 0:
             abajo = i["value"]
@@ -501,6 +502,7 @@ def info_gasto(request, id):
         pagado = 0
         cotizaciones_totales = Cotizacion.objects.filter(proyecto_asociado=proyecto)
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto, orden_compra=True)
+        #print(cotizaciones)
         for i in cotizaciones:
             if i.orden_compra == True:
                 orden_compra = Orden_compra.objects.filter(cotizacion_hija=i)

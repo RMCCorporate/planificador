@@ -302,38 +302,27 @@ def guardar_datos_filtro(request):
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
     return render(request, 'importaciones/eleccion_productos.html', {"Importacion":importacion, "myFilter":myFilter, "productos_proyecto":productos_proyecto})
 
-#Recibir vista planificador I
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def recibir_datos_planificador(request):
-    #RESOLVER CÓMO LLEGAN LOS PRECIOS Y CANTIDADES
     if request.method == "POST":
         usuario = request.user.first_name + " " + request.user.last_name
         importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
         productos = request.POST.getlist("id_producto")
-        print(productos)
         cantidad = request.POST.getlist("cantidad")
-        print(cantidad)
         precio = request.POST.getlist("precio")
         suma_productos = 0
         for n, i in enumerate(precio):
             suma_productos += float(i)*float(cantidad[n])*importacion.valor_moneda_importacion
-        print(precio)
-        print(suma_productos)
         lista_proporcion = []
         for n, i in enumerate(precio):
             lista_proporcion.append(float(i)*float(cantidad[n])*importacion.valor_moneda_importacion/suma_productos)
-        print(lista_proporcion)
-        suma = 0
         importacion.costo_producto = suma_productos
         importacion.save()
         valor_importacion = importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion + importacion.valor_destino*importacion.valor_dolar
-        print(valor_importacion)
-        cantidad_productos = request.POST.getlist("numero_productos")
         valor_importacion_proporcional = []
         for n, i in enumerate(lista_proporcion):
             valor_importacion_proporcional.append(i*valor_importacion/float(cantidad[n]))
-        print(valor_importacion_proporcional)
         for counter, i in enumerate(productos):
             nuevo_producto = Producto_proyecto_cantidades.objects.get(id=i)
             if cantidad[counter]:

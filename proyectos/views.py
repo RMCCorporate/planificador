@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC, Presupuesto_subclases, Producto_proyecto_cantidades
+from planificador.models import Clase, SubClase, Producto, Proveedor, Contacto, Proyecto, Producto_proyecto, Precio, Filtro_producto, Cotizacion, Usuario, Producto_proveedor, Correlativo_cotizacion, Notificacion, Permisos_notificacion, Orden_compra, RMC, Presupuesto_subclases, Producto_proyecto_cantidades, Importaciones
 from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter, ProyectosFilter
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -1037,3 +1037,71 @@ def agregar_orden_interna(request, id):
                 lista_productos.append(aux)
         return render(request, 'proyectos/agregar_orden_interna.html', {"Proyecto":proyecto, "productos":lista_productos})
 
+@allowed_users(allowed_roles=['Admin', 'Planificador'])
+@login_required(login_url='/login')
+def nueva_importacion(request, id):
+    print(request.path_info)
+    if request.method == "GET":
+        if request.path_info == "/nueva_importacion/recibir_importacion":
+            id_proyecto = request.GET["centro_costos"]
+            proyecto = Proyecto.objects.get(id=id_proyecto)
+            codigo_importacion = request.GET["eleccion"]
+            importacion = Importaciones.objects.get(codigo=codigo_importacion)
+            productos = importacion.productos.all()
+            return render(request, 'proyectos/elegir_cantidades_importacion.html', {"Importacion":importacion, "Productos":productos, "Proyecto":proyecto})
+        else:
+            proyecto = Proyecto.objects.get(id=id)
+            importaciones = Importaciones.objects.all()
+            lista_importaciones = []
+            for i in importaciones:
+                if not i.DHL_asociado:
+                    lista_importaciones.append(i)
+            return render(request, 'proyectos/nueva_importacion.html', {"importaciones":lista_importaciones, "Proyecto":proyecto})
+    else:
+        usuario_modificacion = request.user.first_name + " " + request.user.last_name
+        id_proyecto = request.POST["centro_costos"]
+        id_importacion = request.POST["importacion"]
+        proyecto = Proyecto.objects.get(id=id_proyecto)
+        importacion = Importaciones.objects.get(codigo=id_importacion)
+        productos_totales = request.POST.getlist("eleccion")
+        productos_escogidos = request.POST.getlist("id_producto")
+        cantidades = request.POST.getlist("cantidad")
+        lista_con_cantidades = []
+        for n, i in enumerate(productos_totales):
+            for x in productos_escogidos:
+                if i == x:
+                    aux = []
+                    producto = Producto_proyecto_cantidades.objects.get(id=x)
+                    aux.append(producto)
+                    aux.append(cantidades[n])
+                    lista_con_cantidades.append(aux)
+        proveedor_asociado = importacion.proveedor
+        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre="Importacion"+importacion.codigo, proyecto_asociado=proyecto, orden_compra=True, proveedor_asociado=proveedor_asociado, fecha_salida=datetime.now(), fecha_respuesta=datetime.now(), fecha_actualizacion_precio=datetime.now(), usuario_modificacion=usuario_modificacion)
+        nueva_cotizacion.save()
+        for n in lista_con_cantidades:
+            precio_asociado = n[0].precio
+            if Producto_proyecto.objects.filter(producto=proyecto, proyecto=n[0].producto).exists():
+                #YA CREADO: VER QUE SE HACE AQUÍ. LA LÓGICA DIRÍA QUE SE RESTEN LAS CANTIDADES DE LOS PRODUCTOS_PROYECTOS YA EXISTENTES Y SI LLEGAN A 0, SE AÑADAN TODO NUEVO. SINO NOSE QUE WEA.
+                nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=n[0].producto)
+                nuevo_producto_proyecto.cantidades += float(n[1])
+                nuevo_producto_proyecto.usuario_modificacion = usuario_modificacion
+                nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
+                nuevo_producto_proyecto.save()
+                nuevo_producto_cantidades = Producto_proyecto_cantidades(id=uuid.uuid1(), proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto, precio=precio_asociado, cantidades=n[1])
+                nuevo_producto_cantidades.save()
+                nueva_cotizacion.productos_asociados.add(n[0].producto)
+                nueva_cotizacion.productos_proyecto_asociados.add(nuevo_producto_cantidades)
+                nueva_cotizacion.save()
+            else:
+                nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=n[0].producto, estado_cotizacion="Precio", cantidades=n[1], usuario_modificacion=usuario_modificacion)
+                nuevo_producto_proyecto.save()
+                nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
+                nuevo_producto_proyecto.save()
+                nuevo_producto_cantidades = Producto_proyecto_cantidades(id=uuid.uuid1(), proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto, precio=precio_asociado, cantidades=n[1])
+                nuevo_producto_cantidades.save()
+                nueva_cotizacion.productos_asociados.add(n[0].producto)
+                nueva_cotizacion.productos_proyecto_asociados.add(nuevo_producto_cantidades)
+                nueva_cotizacion.save()
+        nueva_orden_compra = Orden_compra(id=uuid.uuid1(), cotizacion_padre=nueva_cotizacion, cotizacion_hija=nueva_cotizacion, condicion_entrega="Inmediato", condiciones_pago="Importacion", forma_pago="Importacion", fecha_envio=datetime.now())
+        nueva_orden_compra.save()
+        return redirect('/proyectos/proyecto/{}'.format(id_proyecto))

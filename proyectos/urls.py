@@ -17,6 +17,9 @@ urlpatterns = [
     path('proyectos/editar_producto_proyecto/<str:id>', views.editar_datos_producto_proyecto, name='editar_producto_proyecto'),
     path('proyectos/agregar_cotizacion/<str:id>', views.agregar_cotizacion, name='agregar_cotizacion'),
     path('proyectos/agregar_orden_interna/<str:id>', views.agregar_orden_interna, name='agregar_orden_interna'),
+    #ver qué está pasando, pq se mete en un loop
+    path('nueva_importacion/<str:id>', views.nueva_importacion, name='nueva_importacion'),
+
     path('agregar_producto/<str:id>', views.agregar_producto, name='agregar_producto'),
     path('proyectos/crear_nuevo_producto', views.crear_nuevo_producto, name='crear_nuevo_producto'),
     path('editar_presupuesto/<str:id>', views.editar_presupuesto, name='editar_presupuesto'),
