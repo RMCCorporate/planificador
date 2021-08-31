@@ -83,11 +83,12 @@ def agregar_subclases(request):
                             clase.subclases.add(nueva_subclase)
                             clase.save()
                     else:
-                        aux = []
-                        aux.append(row_data[0])
-                        aux.append(row_data[1])
-                        aux.append("Clase no encontrada")
-                        datos_fallados.append(aux)
+                        nueva_clase = Clase(nombre=dato_clase)
+                        nueva_clase.save()
+                        nueva_subclase = SubClase(nombre=dato_subclase)
+                        nueva_subclase.save()
+                        nueva_clase.add(nueva_subclase)
+                        nueva_clase.save()
         if len(datos_fallados)!=0:
             booleano_fallados = True
         return render(request, 'planificador/resultado_planilla.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})

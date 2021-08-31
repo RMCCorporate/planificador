@@ -1040,7 +1040,6 @@ def agregar_orden_interna(request, id):
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
 def nueva_importacion(request, id):
-    print(request.path_info)
     if request.method == "GET":
         if request.path_info == "/nueva_importacion/recibir_importacion":
             id_proyecto = request.GET["centro_costos"]
