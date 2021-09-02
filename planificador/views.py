@@ -87,7 +87,7 @@ def agregar_subclases(request):
                         nueva_clase.save()
                         nueva_subclase = SubClase(nombre=dato_subclase)
                         nueva_subclase.save()
-                        nueva_clase.add(nueva_subclase)
+                        nueva_clase.subclases.add(nueva_subclase)
                         nueva_clase.save()
         if len(datos_fallados)!=0:
             booleano_fallados = True
@@ -109,7 +109,10 @@ def crear_usuario(request):
         correo = request.POST["correo"]
         contraseña = request.POST["contraseña"]
         nombre_grupo = request.POST["grupo"]
-        nuevo_usuario = User.objects.create_user(nickname, correo, contraseña)
+        if User.objects.filter(email=correo).exists:
+            nuevo_usuario = User.objects.get(email=correo)
+        else:
+            nuevo_usuario = User.objects.create_user(nickname, correo, contraseña)
         nuevo_usuario.first_name = nombre
         nuevo_usuario.last_name = apellido
         nuevo_usuario.save()

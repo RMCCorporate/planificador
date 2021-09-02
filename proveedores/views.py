@@ -163,9 +163,21 @@ def nuevo_proveedor_planilla(request):
                                 nuevo_contacto.telefono = contacto_telefono
                             nuevo_contacto.save()
                             nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
-                        calificacion_tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
-                        calificacion_precio = Calificacion.objects.get(nombre="Precio")
-                        calificacion_calidad = Calificacion.objects.get(nombre="Calidad")
+                        if Calificacion.objects.filter(nombre="Tiempo_entrega").exists():
+                            calificacion_tiempo_entrega = Calificacion.objects.get(nombre="Tiempo entrega")
+                        else:
+                            calificacion_tiempo_entrega = Calificacion(nombre="Tiempo entrega", descripción="Define el tiempo de entrega por parte del proveedor")
+                            calificacion_tiempo_entrega.save()
+                        if Calificacion.objects.filter(nombre="Precio").exists():
+                            calificacion_precio = Calificacion.objects.get(nombre="Precio")
+                        else:
+                            calificacion_precio = Calificacion(nombre="Precio", descripción="Define qué tan barato es")
+                            calificacion_precio.save()
+                        if Calificacion.objects.filter(nombre="Calidad").exists():
+                            calificacion_calidad = Calificacion.objects.get(nombre="Calidad")
+                        else:
+                            calificacion_calidad = Calificacion(nombre="Calidad", descripción="Define la calidad de los productos")
+                            calificacion_calidad.save()
                         calificacion_provedor_tiempo_entrega = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_tiempo_entrega, nota=0)
                         calificacion_provedor_tiempo_entrega.save()
                         calificacion_provedor_precio = Calificacion_Proveedor(proveedor=nuevo_proveedor, calificacion=calificacion_precio, nota=0)
