@@ -225,7 +225,7 @@ def nueva_cotizacion_importacion(request):
             advalorem = float(valor_productos)*0.06
         else:
             advalorem = 0
-        nueva_importacion = Importaciones(codigo=codigo, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, costo_producto=valor_productos, fecha_emision=datetime.now())
+        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referncial=codigo, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, costo_producto=valor_productos, fecha_emision=datetime.now())
         nueva_importacion.save()
         return redirect('/importaciones')
     else:
@@ -265,7 +265,7 @@ def anadir_importacion(request):
         fecha_llegada = request.POST["fecha_llegada"]
         proveedor = request.POST["proveedor"]
         objeto_proveedor = Proveedor.objects.get(rut=proveedor)
-        nueva_importacion = Importaciones(codigo=codigo, origen=nombre_origen, transporte=transporte, proveedor=objeto_proveedor, kilos=kilos, valor_dolar=dolar, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada)
+        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referncial=codigo, origen=nombre_origen, transporte=transporte, proveedor=objeto_proveedor, kilos=kilos, valor_dolar=dolar, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada)
         nueva_importacion.save()
         productos = Filtro_producto.objects.all()
         productos_importacion = nueva_importacion.productos.all()

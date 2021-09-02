@@ -340,6 +340,7 @@ class DHL(models.Model):
 
 class Importaciones(models.Model):
     codigo = models.CharField(max_length=128, primary_key=True)
+    codigo_referencial = models.CharField(max_length=128, null=True)
     origen = models.CharField(max_length=128, null=True)
     productos = models.ManyToManyField(Producto_proyecto_cantidades, related_name='productos_importacion')
     proveedor = models.ForeignKey(Proveedor, null=True, on_delete=models.CASCADE)

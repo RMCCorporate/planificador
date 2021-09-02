@@ -538,8 +538,10 @@ def crear_nuevo_producto(request):
 # Vista planificador I
 @login_required(login_url='/login')
 def planificador(request):
+    print("PASO POR PLANIFICADOR")
     usuario = str(request.user)
-    if usuario == "tacorrea@uc.cl" or usuario == "pcorrea" or usuario == "rcasascordero" or usuario == "vvergara":
+    print(usuario)
+    if usuario == "tacorrea@uc.cl" or usuario == "pcorrea" or usuario == "rcasascordero" or usuario == "vvergara" or usuario=="tacorrea":
         return render(request, "proyectos/planificador.html")
     else:
         return redirect('/')
