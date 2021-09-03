@@ -173,7 +173,7 @@ def calculo_flete(flete, kilos):
     if kilos*flete.cargo_screening_fee_kg > flete.cargo_screening_fee_min:
         valor_flete += kilos*flete.cargo_screening_fee_kg
     else:
-        valor_flete += cargo_screening_fee_min
+        valor_flete += flete.cargo_screening_fee_min
     if kilos*flete.fuel_surcharge_kg > flete.fuel_surcharge_min:
         valor_flete += kilos*flete.fuel_surcharge_kg
     else:
@@ -216,6 +216,7 @@ def nueva_cotizacion_importacion(request):
         kilos = float(request.POST["kilos"])
         valor_moneda = float(request.POST["valor_moneda"])
         advalorem = request.POST["advalorem"]
+        dolar = request.POST["valor_dolar"]
         valor_productos = request.POST["valor_productos"]
         dhl = DHL.objects.get(origin_airport=origen)
         valor_flete = calculo_flete(dhl.freight, kilos)
@@ -225,9 +226,12 @@ def nueva_cotizacion_importacion(request):
             advalorem = float(valor_productos)*0.06
         else:
             advalorem = 0
-        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referencial=codigo, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, costo_producto=valor_productos, fecha_emision=datetime.now())
+        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referencial=codigo, valor_dolar=dolar, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, costo_producto=valor_productos, fecha_emision=datetime.now())
         nueva_importacion.save()
-        return redirect('/importaciones')
+        productos = Filtro_producto.objects.all()
+        productos_importacion = nueva_importacion.productos.all()
+        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        return render(request, 'importaciones/eleccion_productos.html', {"Importacion":nueva_importacion, "myFilter":myFilter, "productos_importacion":productos_importacion})
     else:
         lista_dhl = DHL.objects.all()
         return render(request, "importaciones/nueva_cotizacion_importacion.html", {"lista_dhl":lista_dhl})
@@ -329,8 +333,12 @@ def recibir_datos_planificador(request):
                 nuevo_producto.cantidades = float(cantidad[counter])
             else:
                 nuevo_producto.cantidades = 0
-            nuevo_precio = Precio(id=uuid.uuid1(), valor=float(precio[counter]), valor_importación=valor_importacion_proporcional[counter], tipo_cambio=importacion.moneda_importacion, valor_cambio=importacion.valor_moneda_importacion, fecha=importacion.fecha_llegada, nombre_proveedor=importacion.proveedor.nombre, nombre_importacion=importacion.codigo, usuario_modificacion=usuario)
-            nuevo_precio.save()
+            if importacion.proveedor:
+                nuevo_precio = Precio(id=uuid.uuid1(), valor=float(precio[counter]), valor_importación=valor_importacion_proporcional[counter], tipo_cambio=importacion.moneda_importacion, valor_cambio=importacion.valor_moneda_importacion, fecha=importacion.fecha_llegada, nombre_proveedor=importacion.proveedor.nombre, nombre_importacion=importacion.codigo, usuario_modificacion=usuario)
+                nuevo_precio.save()
+            else:
+                nuevo_precio = Precio(id=uuid.uuid1(), valor=float(precio[counter]), valor_importación=valor_importacion_proporcional[counter], tipo_cambio=importacion.moneda_importacion, valor_cambio=importacion.valor_moneda_importacion, fecha=importacion.fecha_llegada,  nombre_importacion=importacion.codigo, usuario_modificacion=usuario)
+                nuevo_precio.save()
             nuevo_producto.precio = nuevo_precio
             nuevo_producto.save()
         return redirect('/importaciones')

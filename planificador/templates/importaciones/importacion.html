@@ -11,7 +11,12 @@
 </head>
 
 <div class="title">
+  {% if Importacion.DHL_asociado %}
   <h1>COTIZACIÓN DHL</h1>
+  {% else %}
+  <h1>COTIZACIÓN IMPORTACIÓN</h1>
+  {% endif %}
+
 </div>
 
 <div class="subtitle">
@@ -104,7 +109,7 @@
             <th>NOMBRE</th>
             <th>CANTIDAD</th>
             <th>PRECIO UNITARIO</th>
-            <th>COSTO IMPORTACIÓN UNITARIO</th>
+            <th>COSTO IMPORTACIÓN UNITARIO EXTRA</th>
         </tr>
     </thead>
     <tbody>
