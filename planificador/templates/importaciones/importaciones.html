@@ -50,7 +50,7 @@
         {% for fila in importaciones %}
         <tr>
             {% if not fila.DHL_asociado %}
-            <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo}}</a></td>
+            <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo_referencial}}</a></td>
             <td data-label="NOMBRE">{{fila.origen}}</td>
             {% endif %}
         </tr>
@@ -72,7 +72,7 @@
         {% for fila in importaciones %}
         <tr>
             {% if fila.DHL_asociado %}
-            <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo}}</a></td>
+            <td data-label="CÓDIGO"><a href="{% url 'importacion' fila.codigo %}">{{fila.codigo_referencial}}</a></td>
             <td data-label="NOMBRE">{{fila.origen}}</td>
             {% endif %}
         </tr>

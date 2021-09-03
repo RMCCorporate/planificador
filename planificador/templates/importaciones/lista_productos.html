@@ -38,14 +38,14 @@
                 <input type="hidden" name="id_producto" value="{{fila.id}}">
               </td>
               <td data-label="CANTIDAD"> 
-                <input type="text" class="form-control" id="cantidad" name="cantidad" pattern="^[1-9]\d*(\.\d+)?$" required>
+                <input type="text" class="form-control" id="cantidad" name="cantidad" pattern="[0-9]+([,\.][0-9]+)?" required>
                 {% if forloop.last %}
                 <input type="hidden" name="numero_productos" value="{{forloop.counter}}">
                 {% endif %}
               </td>
               <td data-label="UNIDAD"> {{fila.producto.unidad}}</td>
               <td data-label="PRECIO"> 
-                <input type="text" class="form-control" id="precio" name="precio" pattern="^[1-9]\d*(\.\d+)?$" required>
+                <input type="text" class="form-control" id="precio" name="precio" pattern="[0-9]+([,\.][0-9]+)?" required>
               </td>
           </tr>
           {% endfor %}

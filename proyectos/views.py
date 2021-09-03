@@ -1055,8 +1055,7 @@ def nueva_importacion(request, id):
             importaciones = Importaciones.objects.all()
             lista_importaciones = []
             for i in importaciones:
-                if not i.DHL_asociado:
-                    lista_importaciones.append(i)
+                lista_importaciones.append(i)
             return render(request, 'proyectos/nueva_importacion.html', {"importaciones":lista_importaciones, "Proyecto":proyecto})
     else:
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
