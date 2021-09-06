@@ -26,6 +26,7 @@
           <tr>
               <th>ELECCIÓN</th>
               <th>CÓDIGO</th>
+              <th>¿DHL O REAL?</th>
               <th>ORIGEN (*)</th>
               <th>PROVEEDOR (*)</th>
           </tr>
@@ -40,6 +41,13 @@
                 {{fila.codigo_referencial}}
               </td>
               <td data-label="CANTIDAD"> 
+                {% if fila.DHL_asociado %}
+                DHL
+                {% else %}
+                REAL
+                {% endif %}
+              </td>
+              <td data-label="ORIGEN"> 
                 {{fila.origen}}
               </td>
               <td data-label="UNIDAD"> {{fila.proveedor.nombre}}</td>

@@ -77,6 +77,8 @@
             <th>VALOR ORIGEN</th>
             <th>VALOR FLETE</th>
             <th>VALOR DESTINO</th>
+            <th>VALOR GASTOS DESPACHO</th>
+            <th>VALOR HONORARIOS</th>
             <th>ADVALOREM</th>
         </tr>
     </thead>
@@ -90,8 +92,10 @@
             {% else %}
             <td data-label="VALOR ORIGEN">{{Importacion.valor_origen}} - {{Importacion.moneda_importacion}}</td>
             <td data-label="VALOR FLETE"> {{Importacion.valor_flete}} - {{Importacion.moneda_importacion}}</td>
-            <td data-label="VALOR DESTINO"> {{Importacion.valor_destino}} - USD</td>
+            <td data-label="VALOR DESTINO"> {{Importacion.valor_destino}} - CLP</td>
             {% endif %}
+            <td data-label="VALOR GASTOS DESPACHO"> {{Importacion.gastos_despacho}} - USD</td>
+            <td data-label="VALOR HONORARIOS"> {{Importacion.honorarios}} - USD</td>
             <td data-label="ADVALOREM"> {{Importacion.advalorem}}</td>
         </tr>
     </tbody>

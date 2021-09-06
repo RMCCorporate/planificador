@@ -8,6 +8,24 @@ from planificador.filters import ProveedoresFilter, Filtro_producto
 from planificador.decorators import allowed_users
 import openpyxl
 import uuid
+import json
+import requests
+ 
+class Mindicador:
+    def __init__(self, indicador, day, month, year):
+        self.indicador = indicador
+        self.year = year
+        self.month = month
+        self.day = day
+ 
+    def InfoApi(self):
+        # En este caso hacemos la solicitud para el caso de consulta de un indicador en un año determinado
+        url = f'https://mindicador.cl/api/{self.indicador}/{self.day}-{self.month}-{self.year}'
+        response = requests.get(url)
+        data = json.loads(response.text.encode("utf-8"))
+        # Para que el json se vea ordenado, retornar pretty_json
+        pretty_json = json.dumps(data, indent=2)
+        return data
 
 #Mostrar importaciones
 @login_required(login_url='/login')
@@ -217,16 +235,18 @@ def nueva_cotizacion_importacion(request):
         valor_moneda = float(request.POST["valor_moneda"])
         advalorem = request.POST["advalorem"]
         dolar = request.POST["valor_dolar"]
-        valor_productos = request.POST["valor_productos"]
         dhl = DHL.objects.get(origin_airport=origen)
         valor_flete = calculo_flete(dhl.freight, kilos)
         valor_origen = calculo_origen(dhl.origin, kilos)
         valor_destino = calculo_destino(dhl.destination, kilos)
+        proveedor = request.POST["proveedor"]
+        objeto_proveedor = Proveedor.objects.get(rut=proveedor)
+        UF = request.POST["UF"]
         if advalorem == "SI":
-            advalorem = float(valor_productos)*0.06
+            advalorem = 1
         else:
             advalorem = 0
-        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referencial=codigo, valor_dolar=dolar, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, costo_producto=valor_productos, fecha_emision=datetime.now())
+        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referencial=codigo, valor_dolar=dolar, proveedor=objeto_proveedor, origen=dhl.origin_airport, DHL_asociado=dhl, kilos=kilos, valor_flete=valor_flete, valor_origen=valor_origen, valor_destino=valor_destino, moneda_importacion=dhl.origin.currency, valor_moneda_importacion=valor_moneda, advalorem=advalorem, fecha_emision=datetime.now(), UF=float(UF))
         nueva_importacion.save()
         productos = Filtro_producto.objects.all()
         productos_importacion = nueva_importacion.productos.all()
@@ -234,7 +254,17 @@ def nueva_cotizacion_importacion(request):
         return render(request, 'importaciones/eleccion_productos.html', {"Importacion":nueva_importacion, "myFilter":myFilter, "productos_importacion":productos_importacion})
     else:
         lista_dhl = DHL.objects.all()
-        return render(request, "importaciones/nueva_cotizacion_importacion.html", {"lista_dhl":lista_dhl})
+        proveedores = Proveedor.objects.all()
+        dia = str(datetime.today().day)
+        mes = str(datetime.today().month)
+        año = str(datetime.today().year)
+        clase_uf = Mindicador("uf", dia, mes, año)
+        uf = float(clase_uf.InfoApi()["serie"][0]["valor"])
+        clase_dolar = Mindicador("dolar", dia, mes, año)
+        dolar = float(clase_dolar.InfoApi()["serie"][0]["valor"])
+        clase_euro = Mindicador("euro", dia, mes, año)
+        euro = float(clase_euro.InfoApi()["serie"][0]["valor"])
+        return render(request, "importaciones/nueva_cotizacion_importacion.html", {"lista_dhl":lista_dhl, "proveedores":proveedores, "uf":uf, "dolar":dolar, "euro":euro,  "dia":dia, "mes":mes, "año":año})
 
 
 #Mostrar importaciones
@@ -242,7 +272,7 @@ def nueva_cotizacion_importacion(request):
 def importacion(request, importacion):
     importacion = Importaciones.objects.get(codigo=importacion)
     DHL = importacion.DHL_asociado
-    productos = importacion.productos.all
+    productos = importacion.productos.all()
     return render(request, 'importaciones/importacion.html', {"Importacion":importacion,"DHL":DHL, "productos":productos})
 
 #Agregar importacion
@@ -260,16 +290,21 @@ def anadir_importacion(request):
         flete = float(request.POST["flete"])
         origen = float(request.POST["origen"])
         destino = request.POST["destino"]
+        UF = request.POST["UF"]
         if not destino:
             destino = 0
         else:
             destino = float(destino)
-        advalorem = float(request.POST["advalorem"])
+        advalorem = request.POST["advalorem"]
+        if advalorem == "SI":
+            advalorem = 1
+        else:
+            advalorem = 0
         fecha_emision = request.POST["fecha_emision"]
         fecha_llegada = request.POST["fecha_llegada"]
         proveedor = request.POST["proveedor"]
         objeto_proveedor = Proveedor.objects.get(rut=proveedor)
-        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referencial=codigo, origen=nombre_origen, transporte=transporte, proveedor=objeto_proveedor, kilos=kilos, valor_dolar=dolar, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada)
+        nueva_importacion = Importaciones(codigo=uuid.uuid1(), codigo_referencial=codigo, origen=nombre_origen, transporte=transporte, proveedor=objeto_proveedor, kilos=kilos, valor_dolar=dolar, valor_flete=flete, valor_origen=origen, valor_destino=destino, moneda_importacion=tipo_cambio, valor_moneda_importacion=valor_cambio, advalorem=advalorem, fecha_emision=fecha_emision,fecha_llegada=fecha_llegada, UF=float(UF))
         nueva_importacion.save()
         productos = Filtro_producto.objects.all()
         productos_importacion = nueva_importacion.productos.all()
@@ -277,7 +312,16 @@ def anadir_importacion(request):
         return render(request, 'importaciones/eleccion_productos.html', {"Importacion":nueva_importacion, "myFilter":myFilter, "productos_importacion":productos_importacion})
     else:
         proveedores = Proveedor.objects.all()
-        return render(request, "importaciones/anadir_importacion.html", {"proveedores":proveedores})
+        dia = str(datetime.today().day)
+        mes = str(datetime.today().month)
+        año = str(datetime.today().year)
+        clase_uf = Mindicador("uf", dia, mes, año)
+        uf = float(clase_uf.InfoApi()["serie"][0]["valor"])
+        clase_dolar = Mindicador("dolar", dia, mes, año)
+        dolar = float(clase_dolar.InfoApi()["serie"][0]["valor"])
+        clase_euro = Mindicador("euro", dia, mes, año)
+        euro = float(clase_euro.InfoApi()["serie"][0]["valor"])
+        return render(request, "importaciones/anadir_importacion.html", {"proveedores":proveedores, "uf":uf, "dolar":dolar, "euro":euro, "dia":dia, "mes":mes, "año":año})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
 @login_required(login_url='/login')
@@ -323,10 +367,32 @@ def recibir_datos_planificador(request):
             lista_proporcion.append(float(i)*float(cantidad[n])*importacion.valor_moneda_importacion/suma_productos)
         importacion.costo_producto = suma_productos
         importacion.save()
-        valor_importacion = importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion + importacion.valor_destino*importacion.valor_dolar
+        valor_gasto_despacho =  float(importacion.UF)
+        valor_honorario = 0
+        valor_total = 0
+        for counter, i in enumerate(productos):
+            if cantidad[counter]:
+                valor_total += float(precio[counter])*importacion.valor_moneda_importacion*float(cantidad[counter])
+        CIF = valor_total+importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion
+        if importacion.advalorem == 0:
+            importacion.advalorem = CIF*0.06
+        else:
+            importacion.advalorem = 0
+        if (CIF*0.0025) > float(importacion.UF)*2:
+            valor_honorario = (valor_total+importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion)*0.0025
+        else:
+            valor_honorario = 2*float(importacion.UF)
+        importacion.gastos_despacho = valor_gasto_despacho
+        importacion.honorarios = valor_honorario
+        importacion.save()
+        if importacion.DHL_asociado:
+            valor_importacion = importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion + importacion.valor_destino*importacion.valor_dolar + importacion.gastos_despacho + importacion.honorarios
+        else:
+            valor_importacion = importacion.valor_flete*importacion.valor_moneda_importacion + importacion.valor_origen*importacion.valor_moneda_importacion + importacion.valor_destino + importacion.gastos_despacho + importacion.honorarios
         valor_importacion_proporcional = []
         for n, i in enumerate(lista_proporcion):
             valor_importacion_proporcional.append(i*valor_importacion/float(cantidad[n]))
+        valor_total = 0
         for counter, i in enumerate(productos):
             nuevo_producto = Producto_proyecto_cantidades.objects.get(id=i)
             if cantidad[counter]:
@@ -341,6 +407,9 @@ def recibir_datos_planificador(request):
                 nuevo_precio.save()
             nuevo_producto.precio = nuevo_precio
             nuevo_producto.save()
+            producto = nuevo_producto.producto
+            producto.lista_precios.add(nuevo_precio)
+            producto.save()
         return redirect('/importaciones')
     else:
         importacion = Importaciones.objects.get(codigo=request.GET["importacion"])

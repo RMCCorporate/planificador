@@ -484,7 +484,6 @@ def agregar_producto(request, id):
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         producto = myFilter.qs
         nuevo_productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-        print(myFilter)
         return render(request, 'proyectos/agregar_producto.html', {"id":id_ql, "Proyecto":proyecto, "myFilter":myFilter, "productos_proyecto":nuevo_productos_proyecto})
 
 @login_required(login_url='/login')
@@ -538,9 +537,7 @@ def crear_nuevo_producto(request):
 # Vista planificador I
 @login_required(login_url='/login')
 def planificador(request):
-    print("PASO POR PLANIFICADOR")
     usuario = str(request.user)
-    print(usuario)
     if usuario == "tacorrea@uc.cl" or usuario == "pcorrea" or usuario == "rcasascordero" or usuario == "vvergara" or usuario=="tacorrea":
         return render(request, "proyectos/planificador.html")
     else:
@@ -790,6 +787,9 @@ def mostrar_cotizacion(request, id):
     else:
         orden_compra = False
         productos_orden_compra = False
+    for i in productos_orden_compra:
+        print(i)
+    
     return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos, "orden_compra":orden_compra, "productos_orden_compra":productos_orden_compra, "EXCEL_ROOT":EXCEL_ROOT})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -810,7 +810,6 @@ def editar_cotizacion(request, id):
     else:
         return render(request, "proyectos/editar_cotizacion.html", {"Cotizacion":cotizacion})
 
-
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
 def editar_disponibilidad(request, id):
@@ -827,7 +826,6 @@ def editar_disponibilidad(request, id):
     else:
         productos_asociados = cotizacion.productos_asociados.all()
         return render(request, "proyectos/editar_disponibilidad.html", {"Cotizacion":cotizacion, "info_productos":productos_asociados})
-
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
 @login_required(login_url='/login')
@@ -1063,6 +1061,11 @@ def nueva_importacion(request, id):
         id_importacion = request.POST["importacion"]
         proyecto = Proyecto.objects.get(id=id_proyecto)
         importacion = Importaciones.objects.get(codigo=id_importacion)
+        importaciones = Importaciones.objects.filter(codigo_referencial=importacion.codigo_referencial)
+        importacion_antigua = False
+        for i in importaciones:
+            if i != importacion:
+                importacion_antigua = i
         productos_totales = request.POST.getlist("eleccion")
         productos_escogidos = request.POST.getlist("id_producto")
         cantidades = request.POST.getlist("cantidad")
@@ -1076,32 +1079,48 @@ def nueva_importacion(request, id):
                     aux.append(cantidades[n])
                     lista_con_cantidades.append(aux)
         proveedor_asociado = importacion.proveedor
-        nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre="Importacion"+importacion.codigo, proyecto_asociado=proyecto, orden_compra=True, proveedor_asociado=proveedor_asociado, fecha_salida=datetime.now(), fecha_respuesta=datetime.now(), fecha_actualizacion_precio=datetime.now(), usuario_modificacion=usuario_modificacion)
-        nueva_cotizacion.save()
+        if Cotizacion.objects.filter(nombre="Importacion{}".format(importacion.codigo_referencial)).exists():
+            nueva_cotizacion = Cotizacion.objects.get(nombre="Importacion{}".format(importacion.codigo_referencial))
+        else:
+            if proveedor_asociado:
+                nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre="Importacion"+importacion.codigo_referencial, proyecto_asociado=proyecto, orden_compra=True, proveedor_asociado=proveedor_asociado, fecha_salida=datetime.now(), fecha_respuesta=datetime.now(), fecha_actualizacion_precio=datetime.now(), usuario_modificacion=usuario_modificacion)
+            else:
+                nueva_cotizacion = Cotizacion(id=uuid.uuid1(), nombre="Importacion"+importacion.codigo_referencial, proyecto_asociado=proyecto, orden_compra=True, fecha_salida=datetime.now(), fecha_respuesta=datetime.now(), fecha_actualizacion_precio=datetime.now(), usuario_modificacion=usuario_modificacion)
+            nueva_cotizacion.save()
         for n in lista_con_cantidades:
             precio_asociado = n[0].precio
             if Producto_proyecto.objects.filter(producto=proyecto, proyecto=n[0].producto).exists():
-                #YA CREADO: VER QUE SE HACE AQUÍ. LA LÓGICA DIRÍA QUE SE RESTEN LAS CANTIDADES DE LOS PRODUCTOS_PROYECTOS YA EXISTENTES Y SI LLEGAN A 0, SE AÑADAN TODO NUEVO. SINO NOSE QUE WEA.
                 nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=n[0].producto)
-                nuevo_producto_proyecto.cantidades += float(n[1])
                 nuevo_producto_proyecto.usuario_modificacion = usuario_modificacion
-                nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
+                if proveedor_asociado:
+                    nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
                 nuevo_producto_proyecto.save()
-                nuevo_producto_cantidades = Producto_proyecto_cantidades(id=uuid.uuid1(), proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto, precio=precio_asociado, cantidades=n[1])
-                nuevo_producto_cantidades.save()
-                nueva_cotizacion.productos_asociados.add(n[0].producto)
-                nueva_cotizacion.productos_proyecto_asociados.add(nuevo_producto_cantidades)
-                nueva_cotizacion.save()
+                if importacion_antigua:
+                    for x in importacion_antigua.productos.all():
+                        if x.producto == nuevo_producto_proyecto.proyecto:
+                            producto_proyecto_cantidades_en_cotizacion = list(Producto_proyecto_cantidades.objects.filter(proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto)).pop()
+                            producto_proyecto_cantidades_en_cotizacion.precio = precio_asociado
+                            nuevo_producto_proyecto.precio = precio_asociado
+                            nuevo_producto_proyecto.save()
+                            producto_proyecto_cantidades_en_cotizacion.save()
+                else:
+                    nuevo_producto_cantidades = Producto_proyecto_cantidades(id=uuid.uuid1(), proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto, precio=precio_asociado, cantidades=nuevo_producto_proyecto.cantidades)
+                    nuevo_producto_cantidades.save()
+                    nueva_cotizacion.productos_asociados.add(n[0].producto)
+                    nueva_cotizacion.productos_proyecto_asociados.add(nuevo_producto_cantidades)
+                    nueva_cotizacion.save()
             else:
                 nuevo_producto_proyecto = Producto_proyecto(id=uuid.uuid1(), producto=proyecto, proyecto=n[0].producto, estado_cotizacion="Precio", cantidades=n[1], usuario_modificacion=usuario_modificacion)
                 nuevo_producto_proyecto.save()
-                nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
+                if proveedor_asociado:
+                    nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
                 nuevo_producto_proyecto.save()
                 nuevo_producto_cantidades = Producto_proyecto_cantidades(id=uuid.uuid1(), proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto, precio=precio_asociado, cantidades=n[1])
                 nuevo_producto_cantidades.save()
                 nueva_cotizacion.productos_asociados.add(n[0].producto)
                 nueva_cotizacion.productos_proyecto_asociados.add(nuevo_producto_cantidades)
                 nueva_cotizacion.save()
-        nueva_orden_compra = Orden_compra(id=uuid.uuid1(), cotizacion_padre=nueva_cotizacion, cotizacion_hija=nueva_cotizacion, condicion_entrega="Inmediato", condiciones_pago="Importacion", forma_pago="Importacion", fecha_envio=datetime.now())
-        nueva_orden_compra.save()
+        if not importacion_antigua:
+            nueva_orden_compra = Orden_compra(id=uuid.uuid1(), cotizacion_padre=nueva_cotizacion, cotizacion_hija=nueva_cotizacion, condicion_entrega="Inmediato", condiciones_pago="Importacion", forma_pago="Importacion", fecha_envio=datetime.now())
+            nueva_orden_compra.save()
         return redirect('/proyectos/proyecto/{}'.format(id_proyecto))

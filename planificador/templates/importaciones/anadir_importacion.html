@@ -4,7 +4,7 @@
 
 
 <head>
-	<title>Crear proyecto</title>
+	<title>CREAR IMPORTACIÓN</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<link href="{% static 'planificador/css/planificador.css' %}" rel="stylesheet">
@@ -41,7 +41,11 @@
         </div>
         <div class="input-box">
           <span class="details">VALOR DÓLAR (*)</label>
-          <input type="text" name="dolar" placeholder="Valor del dólar en pesos chilenos." pattern="^[1-9]\d*(\.\d+)?$" required>
+          <input type="text" name="dolar" value={{dolar}} pattern="^[1-9]\d*(\.\d+)?$" required>
+        </div>
+        <div class="input-box">
+          <span class="details">VALOR UF (*)</label>
+          <input type="text" name="UF" value={{uf}} pattern="^[1-9]\d*(\.\d+)?$" required>
         </div>
         <div class="input-box">
             <span class="details">TRANSPORTE (*)</label>
@@ -64,8 +68,11 @@
             <input type="text" name="destino" placeholder="Costo de destino en moneda de origen">
           </div>
           <div class="input-box">
-            <span class="details">ADVALOREM (***)</label>
-            <input type="text" name="advalorem" placeholder="Total cargado de advalorem." value="0" required>
+            <span class="details">¿EL PRODUCTO SE FABRICÓ EN ORIGEN? (***)</label>
+                <select class="custom-select" id="advalorem" name="advalorem" required>
+                    <option value="SI">SI</option>
+                    <option value="NO">NO</option>
+                </select>
           </div>
         <div class="input-box">
           <span class="details">FECHA EMISIÓN IMPORTACIÓN (*)</label>
@@ -81,6 +88,11 @@
       <br>
       (***) Si el producto no es de origen, se carga un 6% del total.
         <br>
+      (****) VALOR DÓLAR AL: {{dia}}/{{mes}}/{{año}} es: {{dolar}}
+      <br>
+       VALOR EURO AL: {{dia}}/{{mes}}/{{año}} es: {{euro}}
+      <br>
+     VALOR UF AL: {{dia}}/{{mes}}/{{año}} es: {{uf}}
       </div>
       <br>
       <input type="hidden" value="No" name="edicion">

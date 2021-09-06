@@ -4,14 +4,14 @@
 
 
 <head>
-	<title>Crear proyecto</title>
+	<title>CREAR COTIZACIÓN DHL</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<link href="{% static 'planificador/css/planificador.css' %}" rel="stylesheet">
 </head>
 
 <div class="container">
-    <div class="title">PLANIFICADOR PROYECTO</div>
+    <div class="title">COTIZACIÓN DHL</div>
     <br>
 <form action="" method="POST">{% csrf_token %}
     <br>
@@ -38,11 +38,19 @@
           </div>
           <div class="input-box">
             <span class="details">VALOR DÓLAR</label>
-            <input type="text" name="valor_dolar" placeholder="Valor aproximado a dólar"  pattern="^[1-9]\d*(\.\d+)?$" required>
+            <input type="text" name="valor_dolar" value={{dolar}}  pattern="^[1-9]\d*(\.\d+)?$" required>
           </div>
           <div class="input-box">
-            <span class="details">COSTO TOTAL DE PRODUCTOS</label>
-            <input type="text" name="valor_productos" placeholder="Valor aproximado a pagar a proveedor en moneda origen"  pattern="^[1-9]\d*(\.\d+)?$" required>
+            <span class="details">VALOR UF</label>
+            <input type="text" name="UF" value={{uf}} pattern="^[1-9]\d*(\.\d+)?$" required>
+          </div>
+          <div class="input-box">
+            <span class="details">PROVEEDOR (*)</label>
+                <select class="custom-select" id="proveedor" name="proveedor" required>
+                  {% for i in proveedores %}
+                    <option value="{{i.rut}}">{{i.nombre}}</option>
+                  {% endfor %}
+                </select>
           </div>
           <div class="input-box">
             <span class="details">¿EL PRODUCTO SE FABRICÓ EN ORIGEN?</label>
@@ -51,6 +59,10 @@
                     <option value="NO">NO</option>
                 </select>
           </div>
+          <br>
+          (*) VALOR DÓLAR AL: {{dia}}/{{mes}}/{{año}} es: {{dolar}}
+          <br> VALOR EURO AL: {{dia}}/{{mes}}/{{año}} es: {{euro}}
+           <br> VALOR UF AL: {{dia}}/{{mes}}/{{año}} es: {{uf}}
       </div>
       <br>
     <button class="button" type="submit">ASIGNAR PRODUCTOS</button>
