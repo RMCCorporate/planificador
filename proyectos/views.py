@@ -1091,6 +1091,7 @@ def nueva_importacion(request, id):
             precio_asociado = n[0].precio
             if Producto_proyecto.objects.filter(producto=proyecto, proyecto=n[0].producto).exists():
                 nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=n[0].producto)
+                nuevo_producto_proyecto.estado_cotizacion = "Precio"
                 nuevo_producto_proyecto.usuario_modificacion = usuario_modificacion
                 if proveedor_asociado:
                     nuevo_producto_proyecto.proveedores.add(proveedor_asociado)

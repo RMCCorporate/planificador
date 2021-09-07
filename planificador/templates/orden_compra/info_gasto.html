@@ -24,6 +24,8 @@
         <br>
         <div class="container_graficos">
           <div id="visppto" class="vega"></div>
+        </div>
+          <div class="container_graficos">
           <div id="vissubclaseppto" class="vega"></div>
         </div>
         <div class="informacion_container">
@@ -50,6 +52,11 @@
         </div>
         <div class="container_graficos">
         <div id="visproveedores" class="vega"></div>
+      </div>
+      <br>
+      <br>
+      <div class="container_graficos">
+        <div id="visimportaciones" class="vega"></div>
       </div>
       <br>
       <br>
@@ -89,6 +96,7 @@
     var gastoOC = vegaData[0]
     var gastoG = vegaData[1]
     var gastoT = vegaData[2]
+    var gastoI = vegaData[3]
     var visSumatoriaGastos = document.getElementById("visSumatoriaGastos")
     var yourVlSpec = ({
         "$schema": "https://vega.github.io/schema/vega/v4.json",
@@ -103,7 +111,8 @@
             "name": "table",
             "values": [
                         {"id": "Gasto orden compra", "field": gastoOC},
-                        {"id": "Gastos generales", "field": gastoG}
+                        {"id": "Gastos generales", "field": gastoG},
+                        {"id": "Gastos importación", "field": gastoI}
             ],
             "transform": [
                 {"type": "formula", "expr": "datum.id + ': ' + datum.field", "as": "tooltip"},
@@ -663,6 +672,102 @@
                 vegaEmbed('#visproveedores', yourVlSpec);
     </script>
 
+ <!-- GRAFICO IMPORTACIONES -->
+<script type="text/javascript">
+  var visSumatoriaGastos = document.getElementById("visimportaciones")
+  var data = JSON.parse("{{importaciones|escapejs}}");
+  var yourVlSpec = ({
+      "$schema": "https://vega.github.io/schema/vega/v5.json",
+      "width": 1200,
+      "height": 250,
+      "autosize": "fit",
+      "title": {
+        "text": "GASTOS POR IMPORTACIÓN"
+        },
+      "data": [
+          {
+          "name": "table",
+          "values": data
+          }
+      ],
+
+      "signals": [
+          {
+          "name": "tooltip",
+          "value": {},
+          "on": [
+              {"events": "rect:mouseover", "update": "datum"},
+              {"events": "rect:mouseout",  "update": "{}"}
+          ]
+          }
+      ],
+
+      "scales": [
+          {
+          "name": "xscale",
+          "type": "band",
+          "domain": {"data": "table", "field": "category"},
+          "range": "width",
+          "padding": 0.05,
+          "round": true
+          },
+          {
+          "name": "yscale",
+          "domain": {"data": "table", "field": "amount"},
+          "nice": true,
+          "range": "height"
+          }
+      ],
+
+      "axes": [
+          { "orient": "bottom", "scale": "xscale" },
+          { "orient": "left", "scale": "yscale" }
+      ],
+
+      "marks": [
+          {
+          "type": "rect",
+          "from": {"data":"table"},
+          "encode": {
+              "enter": {
+              "x": {"scale": "xscale", "field": "category"},
+              "width": {"scale": "xscale", "band": 1},
+              "y": {"scale": "yscale", "field": "amount"},
+              "y2": {"scale": "yscale", "value": 0}
+              },
+              "update": {
+              "fill": {"value": "steelblue"}
+              },
+              "hover": {
+              "fill": {"value": "red"}
+              }
+          }
+          },
+          {
+          "type": "text",
+          "encode": {
+              "enter": {
+              "align": {"value": "center"},
+              "baseline": {"value": "bottom"},
+              "fill": {"value": "#333"}
+              },
+              "update": {
+              "x": {"scale": "xscale", "signal": "tooltip.category", "band": 0.5},
+              "y": {"scale": "yscale", "signal": "tooltip.amount", "offset": -2},
+              "text": {"signal": "tooltip.amount"},
+              "fillOpacity": [
+                  {"test": "isNaN(tooltip.amount)", "value": 0},
+                  {"value": 1}
+              ]
+              }
+          }
+          }
+      ]
+      }
+      );
+              vegaEmbed('#visimportaciones', yourVlSpec);
+  </script>
+
  <!-- GRAFICO RELACION -->
  <script type="text/javascript">
   var visSumatoriaGastos = document.getElementById("visgrafico_gastos_generales")
@@ -1078,7 +1183,7 @@
     var yourVlSpec = ({
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "A basic grouped bar chart example.",
-  "width": 800,
+  "width": 1200,
   "height": 250,
   "padding":45,
   "autosize": "fit",
@@ -1201,7 +1306,7 @@
     var yourVlSpec = ({
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "description": "A basic grouped bar chart example.",
-  "width": 400,
+  "width": 1200,
   "height": 250,
   "title": {
     "text": "PRESUPUESTO TOTAL",

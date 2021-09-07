@@ -1,5 +1,6 @@
+from operator import imod
 from django.shortcuts import render, redirect
-from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario, Gastos_generales, Relacion_gastos, Proyecto, Correlativo_orden_compra
+from planificador.models import Orden_compra, Cotizacion, RMC, Producto_proyecto, Producto, Producto_proyecto_cantidades, Producto_proveedor, Precio, Usuario, Gastos_generales, Relacion_gastos, Proyecto, Correlativo_orden_compra, Importaciones
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from email.mime.multipart import MIMEMultipart
@@ -352,22 +353,22 @@ def graficos_proveedores(cotizaciones):
         if i.proveedor_asociado.nombre in diccionario_proveedores.keys():
             for n in i.productos_proyecto_asociados.all():
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                    diccionario_proveedores[i.proveedor_asociado.nombre] += int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
                 else:
-                    diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades.split(".")[0])
+                    diccionario_proveedores[i.proveedor_asociado.nombre] += int(n.precio.valor*int(n.cantidades.split(".")[0]))
         else:
             contador = 0
             for n in i.productos_proyecto_asociados.all():
                 if contador == 0:
                     if n.precio.tipo_cambio != "CLP":
-                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                        diccionario_proveedores[i.proveedor_asociado.nombre] = int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
                     else:
-                        diccionario_proveedores[i.proveedor_asociado.nombre] = n.precio.valor*int(n.cantidades.split(".")[0])
+                        diccionario_proveedores[i.proveedor_asociado.nombre] = int(n.precio.valor*int(n.cantidades.split(".")[0]))
                 else:
                     if n.precio.tipo_cambio != "CLP":
-                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                        diccionario_proveedores[i.proveedor_asociado.nombre] += int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
                     else:
-                        diccionario_proveedores[i.proveedor_asociado.nombre] += n.precio.valor*int(n.cantidades.split(".")[0])
+                        diccionario_proveedores[i.proveedor_asociado.nombre] += int(n.precio.valor*int(n.cantidades.split(".")[0]))
                 contador += 1
     lista_proveedores = []
     for proveedor in diccionario_proveedores.keys():
@@ -387,45 +388,53 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
             clase = subclase_modelo.clase_set.all()[0].nombre
             if clase in diccionario_clase.keys():
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_clase[clase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                    diccionario_clase[clase] += int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
                 else:
-                    diccionario_clase[clase] += n.precio.valor*int(n.cantidades.split(".")[0])
+                    diccionario_clase[clase] += int(n.precio.valor*int(n.cantidades.split(".")[0]))
             else:
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_clase[clase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                    diccionario_clase[clase] = int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
                 else:
-                    diccionario_clase[clase] = n.precio.valor*int(n.cantidades.split(".")[0])
+                    diccionario_clase[clase] = int(n.precio.valor*int(n.cantidades.split(".")[0]))
             if subclase in diccionario_subclase.keys():
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_subclase[subclase] += n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                    diccionario_subclase[subclase] += int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
+                    if n.precio.nombre_importacion:
+                        diccionario_subclase[subclase] += int(n.precio.valor_importación)*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_subclase[subclase] += n.precio.valor*int(n.cantidades.split(".")[0])
+                    diccionario_subclase[subclase] += int(n.precio.valor*int(n.cantidades.split(".")[0]))
+                    if n.precio.nombre_importacion:
+                        diccionario_subclase[subclase] += int(n.precio.valor_importación)*int(n.cantidades.split(".")[0])
             else:
                 if n.precio.tipo_cambio != "CLP":
-                    diccionario_subclase[subclase] = n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0])
+                    diccionario_subclase[subclase] = int(n.precio.valor*n.precio.valor_cambio*int(n.cantidades.split(".")[0]))
+                    if n.precio.nombre_importacion:
+                        diccionario_subclase[subclase] += int(n.precio.valor_importación)*int(n.cantidades.split(".")[0])
                 else:
-                    diccionario_subclase[subclase] = n.precio.valor*int(n.cantidades.split(".")[0])
+                    diccionario_subclase[subclase] = int(n.precio.valor*int(n.cantidades.split(".")[0]))
+                    if n.precio.nombre_importacion:
+                        diccionario_subclase[subclase] += int(n.precio.valor_importación)*int(n.cantidades.split(".")[0])
     lista_subclase = []
     lista_presupuestos = []
     suma_costos = gastos_generales
     diccionario_ppto_subclases = {}
     for i in proyecto.presupuesto_subclases.all():
-        diccionario_ppto_subclases[i.subclase.nombre] = i.valor 
+        diccionario_ppto_subclases[i.subclase.nombre] = i.valor
     for subclase in diccionario_subclase.keys():
         diccionario_aux = {}
         diccionario_aux_subclase = {}
         diccionario_aux_subclase_ppto = {}
         diccionario_aux["category"] = subclase
-        diccionario_aux["amount"] = diccionario_subclase[subclase]
+        diccionario_aux["amount"] = int(diccionario_subclase[subclase])
         suma_costos += diccionario_subclase[subclase]
         diccionario_aux_subclase["category"] = subclase
         diccionario_aux_subclase["position"] = 1
-        diccionario_aux_subclase["value"] = diccionario_subclase[subclase]
+        diccionario_aux_subclase["value"] = int(diccionario_subclase[subclase])
         lista_presupuestos.append(diccionario_aux_subclase)
         diccionario_aux_subclase_ppto["category"] = subclase
         diccionario_aux_subclase_ppto["position"] = 0
         if subclase in diccionario_ppto_subclases.keys():
-            diccionario_aux_subclase_ppto["value"] = diccionario_ppto_subclases[subclase]
+            diccionario_aux_subclase_ppto["value"] = int(diccionario_ppto_subclases[subclase])
         else:
             diccionario_aux_subclase_ppto["value"] = 0
         lista_presupuestos.append(diccionario_aux_subclase_ppto)
@@ -437,24 +446,24 @@ def graficos_clase(cotizaciones, proyecto, gastos_generales):
     diccionario_aux_ppto2 = {}
     diccionario_aux_ppto["category"] = "Presupuesto"
     diccionario_aux_ppto["position"] = 0
-    diccionario_aux_ppto["value"] = proyecto.presupuesto_total
+    diccionario_aux_ppto["value"] = int(proyecto.presupuesto_total)
     diccionario_aux_ppto2["category"] = "Presupuesto"
     diccionario_aux_ppto2["position"] = 1
-    diccionario_aux_ppto2["value"] = suma_costos
+    diccionario_aux_ppto2["value"] = int(suma_costos)
     lista_presupuesto_total.append(diccionario_aux_ppto2)
     lista_presupuesto_total.append(diccionario_aux_ppto)
     for clase in diccionario_clase.keys():
         diccionario_aux = {}
         diccionario_aux["category"] = clase
-        diccionario_aux["amount"] = diccionario_clase[clase]
+        diccionario_aux["amount"] = int(diccionario_clase[clase])
         lista_clase.append(diccionario_aux)
     porcentaje_ppto_total = 0
-    print(lista_presupuesto_total)
+    
     for i in lista_presupuesto_total:
         if i["position"] == 0:
             abajo = i["value"]
         elif i["position"] == 1:
-            arriba = i["value"]
+            arriba = int(i["value"])
     porcentaje_ppto_total = arriba*100/abajo
     return [json.dumps(lista_clase), json.dumps(lista_subclase), json.dumps(lista_presupuestos), json.dumps(lista_presupuesto_total), porcentaje_ppto_total]
 
@@ -477,16 +486,33 @@ def graficos_gastos_generales(proyecto):
     for persona in diccionario_relacion_persona.keys():
         diccionario_aux = {}
         diccionario_aux["category"] = persona
-        diccionario_aux["amount"] = diccionario_relacion_persona[persona]
+        diccionario_aux["amount"] = int(diccionario_relacion_persona[persona])
         lista_relacion_persona.append(diccionario_aux)
     for razon_social in diccionario_gastos_generales.keys():
         diccionario_aux = {}
         diccionario_aux["category"] = razon_social
         diccionario_aux["position"] = 0
-        diccionario_aux["value"] = diccionario_gastos_generales[razon_social]
+        diccionario_aux["value"] = int(diccionario_gastos_generales[razon_social])
         lista_gastos.append(diccionario_aux)
     return [json.dumps(lista_relacion_persona), json.dumps(lista_gastos)]
 
+def graficos_importacion(cotizaciones):
+    diccionario_importaciones = {}
+    for i in cotizaciones:
+        for x in i.productos_proyecto_asociados.all():
+            if x.precio.nombre_importacion:
+                importacion = Importaciones.objects.get(codigo=x.precio.nombre_importacion)
+                if importacion.codigo_referencial in diccionario_importaciones.keys():
+                    diccionario_importaciones[importacion.codigo_referencial] += float(x.precio.valor_importación)*float(x.cantidades)
+                else:
+                    diccionario_importaciones[importacion.codigo_referencial] = float(x.precio.valor_importación)*float(x.cantidades)
+    lista_importaciones = []
+    for importacion in diccionario_importaciones.keys():
+        diccionario_aux = {}
+        diccionario_aux["category"] = importacion
+        diccionario_aux["amount"] = int(diccionario_importaciones[importacion])
+        lista_importaciones.append(diccionario_aux)
+    return json.dumps(lista_importaciones)
 
 def info_gasto(request, id):
     proyecto = Proyecto.objects.get(id=id)
@@ -494,6 +520,7 @@ def info_gasto(request, id):
         return redirect('/proyectos/proyecto/{}'.format(id))
     else:
         gastos_orden_compra = 0
+        gastos_importacion = 0
         iva_orden_compra = 0
         #STATUS FINANCIERO
         no_pagado = 0
@@ -502,7 +529,6 @@ def info_gasto(request, id):
         pagado = 0
         cotizaciones_totales = Cotizacion.objects.filter(proyecto_asociado=proyecto)
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto, orden_compra=True)
-        #print(cotizaciones)
         for i in cotizaciones:
             if i.orden_compra == True:
                 orden_compra = Orden_compra.objects.filter(cotizacion_hija=i)
@@ -522,6 +548,9 @@ def info_gasto(request, id):
                         precio_final = int(n.precio.valor)*int(n.cantidades.split(".")[0])
                     gastos_orden_compra += precio_final
                     iva_orden_compra += precio_final*0.19
+            for x in i.productos_proyecto_asociados.all():
+                if x.precio.valor_importación:
+                    gastos_importacion += int(x.precio.valor_importación)*int(x.cantidades.split(".")[0])
         gastos_generales = 0
         iva_generales = 0
         for i in proyecto.relacion_gastos.all():
@@ -537,9 +566,10 @@ def info_gasto(request, id):
         fecha_FCEP = fecha_respuesta_editar_precio(cotizaciones_totales)
         fecha_FRC = fecha_respuesta_cotizacion(cotizaciones_totales)
         fecha_EO = fecha_envio_orden(cotizaciones)
-        gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales]
+        gastos = [gastos_orden_compra, gastos_generales, gastos_orden_compra+gastos_generales+gastos_importacion, gastos_importacion]
         iva = [iva_orden_compra, iva_generales]
         status_financiero = [no_pagado, cheque_a_fecha, en_proceso, pagado]
         grafico_gastos_generales = graficos_gastos_generales(proyecto)[0]
         grafico_gastos_generales2 = graficos_gastos_generales(proyecto)[1]
-        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total, "porcentaje_ppto_total":json.dumps(porcentaje_ppto_total), "grafico_gastos_generales":grafico_gastos_generales, "grafico_gastos_generales2":grafico_gastos_generales2})
+        importaciones = graficos_importacion(cotizaciones)
+        return render(request, 'orden_compra/info_gasto.html', {"Proyecto":proyecto, "gastos":gastos, "IVA":iva, "status_financiero":status_financiero, "fecha_FCEP":fecha_FCEP, "fecha_FRC":fecha_FRC, "fecha_EO":fecha_EO, "proveedores":proveedores, "clase":clase, "subclase":subclase, "subclases_ppto":subclases_ppto, "ppto_total":ppto_total, "porcentaje_ppto_total":json.dumps(porcentaje_ppto_total), "grafico_gastos_generales":grafico_gastos_generales, "grafico_gastos_generales2":grafico_gastos_generales2, "importaciones":importaciones})

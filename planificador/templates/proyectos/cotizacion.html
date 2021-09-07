@@ -111,12 +111,36 @@
     <tbody>
         <tr>
             <td data-label="ID">{{orden_compra.id}}</td>
+            {% if orden_compra.condicion_entrega %}
             <td data-label="CONDICIÓN ENTREGA"> {{orden_compra.condicion_entrega}}</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% if orden_compra.condiciones_pago %}
             <td data-label="CONDICIÓN PAGO"> {{orden_compra.condiciones_pago}}</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% if orden_compra.status_llegada %}
             <td data-label="STATUS LLEGADA">{{orden_compra.status_llegada}}</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% if orden_compra.status_financiero %}
             <td data-label="STATUS FINANCIERO">{{orden_compra.status_financiero}}</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% if orden_compra.forma_pago %}
             <td data-label="FORMA PAGO">{{orden_compra.forma_pago}}</td>
+            {% else %}
+            <td></td>
+            {% endif %}
+            {% if orden_compra.destino_factura.nombre %}
             <td data-label="DESTINO FACTURA">{{orden_compra.destino_factura.nombre}}</td>
+            {% else %}
+            <td></td>
+            {% endif %}
         </tr>
     </tbody>
 </table>
@@ -186,8 +210,7 @@
             <th>NOMBRE</th>
             <th>CANTIDAD</th>
             <th>PRECIO</th>
-            <th>PRECIO IMPORTACION (CLP)</th>
-            <th>MONEDA</th>
+            <th>PRECIO IMPORTACION UN (CLP)</th>
             <th>ESTADO</th>
             <th>FECHA USO</th>
             <th>USUARIO MODIFICACIÓN</th>
@@ -198,11 +221,14 @@
           <tr>
               <td data-label="NOMBRE">{{fila.producto_asociado_cantidades.proyecto.nombre}}</td>
               <td data-label="CANTIDAD"> {{fila.cantidades}}</td>
-              <td data-label="PRECIO"> {{fila.precio.valor}}</td>
+              <td data-label="PRECIO"> {{fila.precio.valor}} - {{fila.precio.tipo_cambio}} ({{fila.precio.valor_cambio}} CLP)</td>
               <td data-label="PRECIO IMPORTACION"> {{fila.precio.valor_importación}}</td>
-              <td data-label="MONEDA"> {{fila.precio.tipo_cambio}}</td>
               <td data-label="STATUS"> {{fila.producto_asociado_cantidades.status}}</td>
+              {% if fila.producto_asociado_cantidades.fecha_uso %}
               <td data-label="FECHA USO"> {{fila.producto_asociado_cantidades.fecha_uso}}</td>
+              {% else %}
+              <td></td>
+              {% endif %}
               <td data-label="USUARIO MODIFICACIÓN"> {{fila.producto_asociado_cantidades.usuario_modificacion}}</td>
               {% endfor %}  
           </tr>

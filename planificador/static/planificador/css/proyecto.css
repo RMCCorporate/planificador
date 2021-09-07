@@ -80,7 +80,7 @@ body{
     border-color: #4676b8;
     border-width: 0.8184pt;
     text-align: center;
-    width:12%;
+    width:250px;
     border-radius: 5px;
     margin-top:1%;
     margin-bottom:1%;
@@ -100,14 +100,13 @@ body{
 .container .table-container .boton_container .button_eliminar{
     border: solid;
     height: 35px;
-    margin: 1%;
     background: white;
     color: #4676b8;
     font-size: 10pt;
     border-color: #4676b8;
     border-width: 0.8184pt;
     text-align: center;
-    width:10%;
+    width:250px;
     border-radius: 5px;
     cursor: pointer;
 }
