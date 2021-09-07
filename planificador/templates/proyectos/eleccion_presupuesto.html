@@ -11,8 +11,9 @@
 	<link href="{% static 'planificador/css/editar_presupuesto_planificador.css' %}" rel="stylesheet">
 
 </head>
-  <form action="eleccion_presupuesto/{{Proyecto.id}}" method="POST">{% csrf_token %}
+  
     <div class="container">
+      <form action="eleccion_presupuesto/{{Proyecto.id}}" method="POST">{% csrf_token %}
       <div class="title">PRESUPUESTO - {{Proyecto.nombre}}</div>
       <br>
      

@@ -54,7 +54,6 @@ body{
     top: 80%;
     margin: 2% auto 0;
     border-collapse: collapse;
-    left: 80%;
 }
 
 .container .table-container .informacion_container{
@@ -83,6 +82,7 @@ body{
     width:20%;
     border-radius: 5px;
     cursor: pointer;
+    margin-left: 80%;
 }
 
 .button_editar:hover{
@@ -140,3 +140,4 @@ body{
     padding: 5px;
     width: 100%;
 }
+

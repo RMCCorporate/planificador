@@ -23,14 +23,17 @@ body{
     background: linear-gradient(135deg,#fbfbfb,#fbfbfb);
 }
 
+
 .container{
-    max-width: 150%;
-    width: 150%;
+    width: 60%;
     background: white;
     padding: 25px 30px;
     border-radius: 5px;
 }
 
+td {
+    text-align: center;
+  }
 
 .container form .user-details{
     display: flex;
@@ -41,6 +44,7 @@ body{
 form .user-details .input-box{
     margin: 0px 0 12px 0;
     width: 80%;
+    margin-bottom: 20px;
 }
 
 form .user-details .custom-select {
@@ -111,6 +115,7 @@ form .button{
     border-radius: 5px;
     color:#4676b8;
     cursor: pointer;
+    margin-top: 20px;
 }
 
 .button:hover{
@@ -131,6 +136,9 @@ form .button{
 .table{
     margin:auto;
     padding:20px;
+    width: 100%;
+    margin-top:20px;
+    border: 1px solid black;
 }
 @media (max-width: 584px){
     .container{
