@@ -25,16 +25,16 @@
         <br>
         {% if rol == "Admin" %}
         <a href="{% url 'crear_usuario' %}">
-            <button class="button_añadir" type="button">Añadir usuario</button>
+            <button class="button_añadir" type="button">AÑADIR USUARIO</button>
         </a>
         <a href="{% url 'crear_grupo' %}">
-            <button class="button_añadir">Añadir grupo</button>
+            <button class="button_añadir">AÑADIR GRUPO</button>
         </a>
         <a href="{% url 'crear_permisos' %}">
-            <button class="button_añadir">Añadir permisos</button>
+            <button class="button_añadir">AÑADIR PERMISOS</button>
         </a>
         <a href="{% url 'actualizar_planilla' %}">
-            <button class="button_añadir">Actualizar planilla</button>
+            <button class="button_añadir">ACTUALIZAR PLANILLA</button>
         </a>
         {% endif %}
         <a href="{% url 'agregar_subclases' %}">

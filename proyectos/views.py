@@ -787,9 +787,6 @@ def mostrar_cotizacion(request, id):
     else:
         orden_compra = False
         productos_orden_compra = False
-    for i in productos_orden_compra:
-        print(i)
-    
     return render(request, "proyectos/cotizacion.html", {"Cotizacion":cotizacion, "Productos":productos, "contactos":contactos, "orden_compra":orden_compra, "productos_orden_compra":productos_orden_compra, "EXCEL_ROOT":EXCEL_ROOT})
 
 @allowed_users(allowed_roles=['Admin', 'Cotizador'])
@@ -1035,6 +1032,7 @@ def agregar_orden_interna(request, id):
                     else:
                         aux.append("No hay")
                 lista_productos.append(aux)
+        print(lista_productos)
         return render(request, 'proyectos/agregar_orden_interna.html', {"Proyecto":proyecto, "productos":lista_productos})
 
 @allowed_users(allowed_roles=['Admin', 'Planificador'])
@@ -1089,6 +1087,7 @@ def nueva_importacion(request, id):
             nueva_cotizacion.save()
         for n in lista_con_cantidades:
             precio_asociado = n[0].precio
+            precio_asociado.nombre_cotizacion = "Importacion"+importacion.codigo_referencial
             if Producto_proyecto.objects.filter(producto=proyecto, proyecto=n[0].producto).exists():
                 nuevo_producto_proyecto = Producto_proyecto.objects.get(producto=proyecto, proyecto=n[0].producto)
                 nuevo_producto_proyecto.estado_cotizacion = "Precio"
@@ -1101,6 +1100,7 @@ def nueva_importacion(request, id):
                         if x.producto == nuevo_producto_proyecto.proyecto:
                             producto_proyecto_cantidades_en_cotizacion = list(Producto_proyecto_cantidades.objects.filter(proyecto_asociado_cantidades=proyecto, producto_asociado_cantidades=nuevo_producto_proyecto)).pop()
                             producto_proyecto_cantidades_en_cotizacion.precio = precio_asociado
+                            producto_proyecto_cantidades_en_cotizacion.precio.save()
                             nuevo_producto_proyecto.precio = precio_asociado
                             nuevo_producto_proyecto.save()
                             producto_proyecto_cantidades_en_cotizacion.save()

@@ -28,9 +28,11 @@
       <a href="{% url 'editar_presupuesto' Proyecto.id %}">
         <button class="button_editar">EDITAR COSTO/ULITIDADES</button>
       </a>
+      {% endif %}
       <a href="{% url 'subir_gasto' Proyecto.id %}">
         <button class="button_editar">CARGAR RENDICIONES</button>
       </a>
+      {% if not Proyecto.consolidacion %}
       <a href="{% url 'consolidar_proyecto' Proyecto.id %}">
         <button class="button_editar">CONSOLIDAR PROYECTO</button>
       </a>
@@ -131,7 +133,7 @@
               <td data-label="CANTIDAD"> 0</td>
             {% endif %}
             {% if fila.1 != "No" %}
-              <td data-label="ÚLTIMO PRECIO REFERENCIA">{{fila.1.valor}} - {{fila.1.nombre_proveedor}} - {{fila.1.fecha|date:'Y-m-d'}}</td>
+              <td data-label="ÚLTIMO PRECIO REFERENCIA">{{fila.1.valor}} ({{fila.1.tipo_cambio}}) - {{fila.1.nombre_proveedor}} - {{fila.1.fecha|date:'Y-m-d'}}</td>
             {% else %}
               <td data-label="ÚLTIMO PRECIO REFERENCIA">No hay precios.</td>
             {% endif %}
