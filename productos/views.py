@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 import openpyxl
 import uuid
-
+from planificador.api import api_token, get_locations
 
 UNIDAD_CHOICES = [
     ('', ''),
@@ -439,3 +439,11 @@ def eliminar_producto(request, id):
     crear_notificacion("eliminar_producto", request.user.email, "eliminó producto", "Producto", 1, producto.id, producto.nombre)
     producto.delete()
     return redirect('/productos')
+
+#Eliminar producto
+@login_required(login_url='/login')
+def mostrar_ubicaciones(request):
+    access_token = api_token()
+    locations_response = get_locations(access_token)
+    return render(request, "productos/mostrar_ubicaciones.html", {"Ubicaciones":locations_response})
+

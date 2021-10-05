@@ -1,0 +1,51 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{Producto.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>UBICACIONES</h1>
+</div>
+
+<div class="subtitle">
+  <h4>Ubicaciones</h4>
+</div>
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>CÓDIGO HILTI</th>
+            <th>CÓDIGO INTERNO</th>
+            <th>NOMBRE</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fila in Ubicaciones %}
+        <tr>
+            <td data-label="CÓDIGO HILTI">{{fila.ontrackId}}</td>
+            <td data-label="CÓDIGO INTERNO"> {{fila.locationManagerId}}</td>
+            <td data-label="NOMBRE"> {{fila.name}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+<br>
+<br>
+
+</div>
+        </div>
+
+{% endblock %}
