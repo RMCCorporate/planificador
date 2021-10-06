@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0003_producto_ultimo_proveedor'),
+        ("planificador", "0003_producto_ultimo_proveedor"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='producto',
-            name='fechas_actualizaciones_historicas',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(null=True), null=True, size=None),
+            model_name="producto",
+            name="fechas_actualizaciones_historicas",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.IntegerField(null=True), null=True, size=None
+            ),
         ),
     ]

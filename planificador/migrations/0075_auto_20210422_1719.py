@@ -6,17 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0074_correlativo_cotizacion'),
+        ("planificador", "0074_correlativo_cotizacion"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cotizacion',
-            name='contacto_asociado',
+            model_name="cotizacion",
+            name="contacto_asociado",
         ),
         migrations.AddField(
-            model_name='cotizacion',
-            name='contacto_asociado',
-            field=models.ManyToManyField(null=True, related_name='contacto_asociado', to='planificador.Contacto'),
+            model_name="cotizacion",
+            name="contacto_asociado",
+            field=models.ManyToManyField(
+                null=True, related_name="contacto_asociado", to="planificador.Contacto"
+            ),
         ),
     ]

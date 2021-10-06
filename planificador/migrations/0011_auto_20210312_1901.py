@@ -6,21 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0010_auto_20210312_1844'),
+        ("planificador", "0010_auto_20210312_1844"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='contacto',
-            name='correo',
+            model_name="contacto",
+            name="correo",
         ),
         migrations.RemoveField(
-            model_name='contacto',
-            name='id',
+            model_name="contacto",
+            name="id",
         ),
         migrations.AddField(
-            model_name='contacto',
-            name='correo_id',
-            field=models.EmailField(default='tcorrea@rmc.cl', max_length=254, primary_key=True, serialize=False),
+            model_name="contacto",
+            name="correo_id",
+            field=models.EmailField(
+                default="tcorrea@rmc.cl",
+                max_length=254,
+                primary_key=True,
+                serialize=False,
+            ),
         ),
     ]

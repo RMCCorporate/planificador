@@ -6,15 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0088_producto_proyecto_estado_tiempo'),
+        ("planificador", "0088_producto_proyecto_estado_tiempo"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Correlativo_producto',
+            name="Correlativo_producto",
             fields=[
-                ('producto', models.IntegerField(primary_key=True, serialize=False)),
-                ('numero', models.IntegerField()),
+                ("producto", models.IntegerField(primary_key=True, serialize=False)),
+                ("numero", models.IntegerField()),
             ],
         ),
     ]

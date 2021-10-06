@@ -7,51 +7,55 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0020_precio_nombre_proveedor'),
+        ("planificador", "0020_precio_nombre_proveedor"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='precio',
-            old_name='fecha_actualizacion',
-            new_name='fecha_creacion',
+            model_name="precio",
+            old_name="fecha_actualizacion",
+            new_name="fecha_creacion",
         ),
         migrations.RenameField(
-            model_name='proyecto',
-            old_name='administrador_contrato',
-            new_name='tipo_cambio',
+            model_name="proyecto",
+            old_name="administrador_contrato",
+            new_name="tipo_cambio",
         ),
         migrations.RemoveField(
-            model_name='producto',
-            name='ultimo_proveedor',
+            model_name="producto",
+            name="ultimo_proveedor",
         ),
         migrations.RemoveField(
-            model_name='producto_proyecto',
-            name='tipo_cambio',
+            model_name="producto_proyecto",
+            name="tipo_cambio",
         ),
         migrations.AddField(
-            model_name='precio',
-            name='comentarios',
+            model_name="precio",
+            name="comentarios",
             field=models.TextField(null=True),
         ),
         migrations.AddField(
-            model_name='proyecto',
-            name='valor_cambio',
+            model_name="proyecto",
+            name="valor_cambio",
             field=models.FloatField(null=True),
         ),
         migrations.AlterField(
-            model_name='producto',
-            name='fecha_actualizacion',
+            model_name="producto",
+            name="fecha_actualizacion",
             field=models.DateField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='producto_proyecto',
-            name='producto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Proyecto', to_field='id'),
+            model_name="producto_proyecto",
+            name="producto",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="planificador.Proyecto",
+                to_field="id",
+            ),
         ),
         migrations.AlterField(
-            model_name='proveedor',
-            name='clases_asociadas',
-            field=models.ManyToManyField(to='planificador.SubClase'),
+            model_name="proveedor",
+            name="clases_asociadas",
+            field=models.ManyToManyField(to="planificador.SubClase"),
         ),
     ]

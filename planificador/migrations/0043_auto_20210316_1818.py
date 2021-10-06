@@ -6,24 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0042_auto_20210316_1817'),
+        ("planificador", "0042_auto_20210316_1817"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Precio',
+            name="Precio",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('valor', models.FloatField()),
-                ('tipo_cambio', models.CharField(default='CLP', max_length=128)),
-                ('fecha', models.DateTimeField(auto_now_add=True, null=True)),
-                ('nombre_proveedor', models.CharField(max_length=128, null=True)),
-                ('comentarios', models.TextField(null=True)),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("valor", models.FloatField()),
+                ("tipo_cambio", models.CharField(default="CLP", max_length=128)),
+                ("fecha", models.DateTimeField(auto_now_add=True, null=True)),
+                ("nombre_proveedor", models.CharField(max_length=128, null=True)),
+                ("comentarios", models.TextField(null=True)),
             ],
         ),
         migrations.AddField(
-            model_name='producto',
-            name='lista_precios',
-            field=models.ManyToManyField(to='planificador.Precio'),
+            model_name="producto",
+            name="lista_precios",
+            field=models.ManyToManyField(to="planificador.Precio"),
         ),
     ]

@@ -7,18 +7,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0009_producto_lista_tipo_cambio'),
+        ("planificador", "0009_producto_lista_tipo_cambio"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='proveedor',
-            name='lista_calificaciones',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(null=True), default=list, size=None),
+            model_name="proveedor",
+            name="lista_calificaciones",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.IntegerField(null=True), default=list, size=None
+            ),
         ),
         migrations.AddField(
-            model_name='proveedor',
-            name='lista_nombre_calificaciones',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=128, null=True), default=list, size=None),
+            model_name="proveedor",
+            name="lista_nombre_calificaciones",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.CharField(max_length=128, null=True),
+                default=list,
+                size=None,
+            ),
         ),
     ]

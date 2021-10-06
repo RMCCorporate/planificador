@@ -20,24 +20,39 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.index, name="home"),
-    path('planificador/crear_usuario/', views.crear_usuario, name="crear_usuario"),
-    path('planificador/crear_grupo/', views.crear_grupo, name="crear_grupo"),
-    path('planificador/crear_permisos/', views.crear_permisos, name="crear_permisos"),
-    path('planificador/usuario/', views.usuario, name="usuario"),
-    path('planificador/nueva_subclase/', views.agregar_subclases, name="agregar_subclases"),
-    path('planificador/actualizar_planilla/', views.actualizar_planilla, name="actualizar_planilla"),
-    path('planificador/permisos_notificacion/', views.permisos_notificacion, name="permisos_notificacion"),
-    path('planificador/editar_usuario/<str:correo>', views.editar_usuario, name="editar_usuario"),
-    path('notificaciones/', views.notificaciones, name='notificaciones'),
-    path('', include('users.urls')),
-    path('', include('productos.urls')),
-    path('', include('proveedores.urls')),
-    path('', include('proyectos.urls')),
-    path('', include('importaciones.urls')),
-    ]
+    path("admin/", admin.site.urls),
+    path("", views.index, name="home"),
+    path("planificador/crear_usuario/", views.crear_usuario, name="crear_usuario"),
+    path("planificador/crear_grupo/", views.crear_grupo, name="crear_grupo"),
+    path("planificador/crear_permisos/", views.crear_permisos, name="crear_permisos"),
+    path("planificador/usuario/", views.usuario, name="usuario"),
+    path(
+        "planificador/nueva_subclase/",
+        views.agregar_subclases,
+        name="agregar_subclases",
+    ),
+    path(
+        "planificador/actualizar_planilla/",
+        views.actualizar_planilla,
+        name="actualizar_planilla",
+    ),
+    path(
+        "planificador/permisos_notificacion/",
+        views.permisos_notificacion,
+        name="permisos_notificacion",
+    ),
+    path(
+        "planificador/editar_usuario/<str:correo>",
+        views.editar_usuario,
+        name="editar_usuario",
+    ),
+    path("notificaciones/", views.notificaciones, name="notificaciones"),
+    path("", include("users.urls")),
+    path("", include("productos.urls")),
+    path("", include("proveedores.urls")),
+    path("", include("proyectos.urls")),
+    path("", include("importaciones.urls")),
+]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

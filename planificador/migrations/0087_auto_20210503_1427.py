@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0086_filtro_producto_id_producto'),
+        ("planificador", "0086_filtro_producto_id_producto"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='precio',
-            name='fecha',
+            model_name="precio",
+            name="fecha",
             field=models.DateTimeField(null=True),
         ),
         migrations.AlterField(
-            model_name='producto',
-            name='nombre',
+            model_name="producto",
+            name="nombre",
             field=models.CharField(max_length=512),
         ),
     ]

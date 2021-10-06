@@ -1,5 +1,14 @@
 from django.shortcuts import render, redirect
-from planificador.models import Producto, SubClase, Proveedor, Clase, Usuario, Permisos_notificacion, Notificacion, Planilla
+from planificador.models import (
+    Producto,
+    SubClase,
+    Proveedor,
+    Clase,
+    Usuario,
+    Permisos_notificacion,
+    Notificacion,
+    Planilla,
+)
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
 from planificador.decorators import allowed_users
@@ -11,10 +20,13 @@ import uuid
 def takedate(elem):
     return elem.fecha
 
-@login_required(login_url='/login')
+
+@login_required(login_url="/login")
 def notificaciones(request):
     lista_notificaciones = []
-    permisos_notificacion = Permisos_notificacion.objects.filter(usuarios__correo=request.user.email)
+    permisos_notificacion = Permisos_notificacion.objects.filter(
+        usuarios__correo=request.user.email
+    )
     for i in permisos_notificacion:
         notificaciones = Notificacion.objects.filter(tipo=i.nombre)
         for i in notificaciones:
@@ -23,16 +35,24 @@ def notificaciones(request):
     lista_notificaciones.sort(key=takedate)
     lista_notificaciones.reverse()
     usuario = Usuario.objects.get(correo=request.user.email)
-    return render(request, 'planificador/notificaciones.html', {'notificacion':lista_notificaciones, 'usuario':usuario})
+    return render(
+        request,
+        "planificador/notificaciones.html",
+        {"notificacion": lista_notificaciones, "usuario": usuario},
+    )
 
-@login_required(login_url='/login')
+
+@login_required(login_url="/login")
 def index(request):
     usuario = str(request.user.groups.all()[0])
     if Planilla.objects.filter(id="0").exists():
         planilla = Planilla.objects.get(id="0").planilla
     else:
         planilla = False
-    return render(request, 'planificador/index.html', {"rol":usuario, "planilla":planilla})
+    return render(
+        request, "planificador/index.html", {"rol": usuario, "planilla": planilla}
+    )
+
 
 def actualizar_planilla(request):
     if request.method == "POST":
@@ -44,9 +64,10 @@ def actualizar_planilla(request):
             nueva_planilla = Planilla.objects.get(id="0")
             nueva_planilla.planilla = excel_file
             nueva_planilla.save()
-        return redirect('/')
+        return redirect("/")
     else:
-        return render(request, 'planificador/actualizar_planilla.html')
+        return render(request, "planificador/actualizar_planilla.html")
+
 
 def agregar_subclases(request):
     if request.method == "POST":
@@ -60,7 +81,7 @@ def agregar_subclases(request):
             for cell in row:
                 row_data.append(str(cell.value))
             if row_data[0] == "None" or row_data[1] == "None":
-                if not(row_data[0] == "None" and row_data[1] == "None"):
+                if not (row_data[0] == "None" and row_data[1] == "None"):
                     aux = []
                     aux.append(row_data[0])
                     aux.append(row_data[1])
@@ -89,14 +110,19 @@ def agregar_subclases(request):
                         nueva_subclase.save()
                         nueva_clase.subclases.add(nueva_subclase)
                         nueva_clase.save()
-        if len(datos_fallados)!=0:
+        if len(datos_fallados) != 0:
             booleano_fallados = True
-        return render(request, 'planificador/resultado_planilla.html', {"Fallo":datos_fallados, "Booleano":booleano_fallados})
+        return render(
+            request,
+            "planificador/resultado_planilla.html",
+            {"Fallo": datos_fallados, "Booleano": booleano_fallados},
+        )
     else:
-        return render(request, 'planificador/nueva_subclase.html')  
+        return render(request, "planificador/nueva_subclase.html")
 
-#@allowed_users(allowed_roles=['Admin'])
-@login_required(login_url='/login')
+
+# @allowed_users(allowed_roles=['Admin'])
+@login_required(login_url="/login")
 def crear_usuario(request):
     if request.method == "POST":
         nickname = request.POST["nickname"]
@@ -119,19 +145,47 @@ def crear_usuario(request):
         grupo = Group.objects.get(name=nombre_grupo)
         nuevo_usuario.groups.add(grupo)
         nuevo_usuario.save()
-        usuario_info = Usuario(correo=correo, nickname=nickname, nombre=nombre, apellido=apellido, segundo_apellido=segundo_apellido, celular=celular, cargo=cargo, telefono=telefono, notificaciones=0)
+        usuario_info = Usuario(
+            correo=correo,
+            nickname=nickname,
+            nombre=nombre,
+            apellido=apellido,
+            segundo_apellido=segundo_apellido,
+            celular=celular,
+            cargo=cargo,
+            telefono=telefono,
+            notificaciones=0,
+        )
         usuario_info.save()
-        permisos = ["editar_precio", "editar_producto_proyecto", "eliminar_producto_proyecto", "agregar_producto_proyecto", "crear_proyecto", "crear_cotizacion","editar_fecha_respuesta_cotización", "eliminar_cotización", "enviar_correo","agregar_proveedor", "editar_proveedor", "eliminar_contacto", "eliminar_proveedor", "agregar_producto", "editar_producto", "eliminar_producto"]
+        permisos = [
+            "editar_precio",
+            "editar_producto_proyecto",
+            "eliminar_producto_proyecto",
+            "agregar_producto_proyecto",
+            "crear_proyecto",
+            "crear_cotizacion",
+            "editar_fecha_respuesta_cotización",
+            "eliminar_cotización",
+            "enviar_correo",
+            "agregar_proveedor",
+            "editar_proveedor",
+            "eliminar_contacto",
+            "eliminar_proveedor",
+            "agregar_producto",
+            "editar_producto",
+            "eliminar_producto",
+        ]
         for i in permisos:
             permiso = Permisos_notificacion.objects.get(nombre=i)
             permiso.usuarios.add(usuario_info)
             permiso.save()
-        return redirect('/')
+        return redirect("/")
     else:
-        return render(request, 'planificador/crear_usuario.html')
+        return render(request, "planificador/crear_usuario.html")
 
-#@allowed_users(allowed_roles=['Admin'])
-@login_required(login_url='/login')
+
+# @allowed_users(allowed_roles=['Admin'])
+@login_required(login_url="/login")
 def crear_grupo(request):
     if request.method == "POST":
         nombre = request.POST["nombre"]
@@ -147,21 +201,40 @@ def crear_grupo(request):
             usuario = User.objects.get(username=usuario)
             usuario.groups.add(grupo)
             usuario.save()
-        return redirect('/')
+        return redirect("/")
     else:
         usuarios = User.objects.all()
-        return render(request, 'planificador/crear_grupo.html', {'usuarios':usuarios})
+        return render(request, "planificador/crear_grupo.html", {"usuarios": usuarios})
 
-#@allowed_users(allowed_roles=['Admin'])
-@login_required(login_url='/login')
+
+# @allowed_users(allowed_roles=['Admin'])
+@login_required(login_url="/login")
 def crear_permisos(request):
-    permisos = ["editar_precio", "editar_producto_proyecto", "eliminar_producto_proyecto", "agregar_producto_proyecto", "crear_proyecto", "crear_cotizacion","editar_fecha_respuesta_cotización", "eliminar_cotización", "enviar_correo","agregar_proveedor", "editar_proveedor", "eliminar_contacto", "eliminar_proveedor", "agregar_producto", "editar_producto", "eliminar_producto"]
+    permisos = [
+        "editar_precio",
+        "editar_producto_proyecto",
+        "eliminar_producto_proyecto",
+        "agregar_producto_proyecto",
+        "crear_proyecto",
+        "crear_cotizacion",
+        "editar_fecha_respuesta_cotización",
+        "eliminar_cotización",
+        "enviar_correo",
+        "agregar_proveedor",
+        "editar_proveedor",
+        "eliminar_contacto",
+        "eliminar_proveedor",
+        "agregar_producto",
+        "editar_producto",
+        "eliminar_producto",
+    ]
     for i in permisos:
         nuevo_permiso = Permisos_notificacion(nombre=i)
         nuevo_permiso.save()
-    return redirect('/')
-  
-@login_required(login_url='/login')
+    return redirect("/")
+
+
+@login_required(login_url="/login")
 def permisos_notificacion(request):
     if request.method == "POST":
         usuario = Usuario.objects.get(correo=request.user.email)
@@ -175,7 +248,7 @@ def permisos_notificacion(request):
             permiso = Permisos_notificacion.objects.get(nombre=i)
             permiso.usuarios.add(usuario)
             permiso.save()
-        return redirect('/')
+        return redirect("/")
     else:
         permisos = Permisos_notificacion.objects.all()
         lista_con = []
@@ -215,7 +288,12 @@ def permisos_notificacion(request):
                 elif i[:3] == "eli":
                     aux.append("Eliminar producto en proyecto")
                 lista_ordenada[1].append(aux)
-            elif i[-4:] ==  "ción" or i[-4:] ==  "cion" or i[-4:] == "rreo" or i[-4:] == "ecio":
+            elif (
+                i[-4:] == "ción"
+                or i[-4:] == "cion"
+                or i[-4:] == "rreo"
+                or i[-4:] == "ecio"
+            ):
                 aux = []
                 aux.append("Si")
                 aux.append(i)
@@ -268,7 +346,12 @@ def permisos_notificacion(request):
                 elif i[:3] == "eli":
                     aux.append("Eliminar producto en proyecto")
                 lista_ordenada[1].append(aux)
-            elif i[-4:] ==  "ción" or i[-4:] ==  "cion" or i[-4:] == "rreo" or i[-4:] == "ecio":
+            elif (
+                i[-4:] == "ción"
+                or i[-4:] == "cion"
+                or i[-4:] == "rreo"
+                or i[-4:] == "ecio"
+            ):
                 aux = []
                 aux.append("No")
                 aux.append(i)
@@ -306,19 +389,35 @@ def permisos_notificacion(request):
             aux.append(i[0])
             aux.append(lista)
             lista_final.append(aux)
-            #print(lista_ordenada)
-        return render(request, 'planificador/permisos_notificacion.html', {'con':lista_con, 'sin':lista_sin, "lista_ordenada":lista_final})
-    
-@login_required(login_url='/login')
+            # print(lista_ordenada)
+        return render(
+            request,
+            "planificador/permisos_notificacion.html",
+            {"con": lista_con, "sin": lista_sin, "lista_ordenada": lista_final},
+        )
+
+
+@login_required(login_url="/login")
 def usuario(request):
     usuario = Usuario.objects.get(correo=str(request.user.email))
     lista_precios = usuario.precios.all()
     Productos = usuario.productos_proyecto.all()
     Proyectos = usuario.proyectos.all()
     cotizaciones = usuario.cotizaciones.all()
-    return render(request, 'planificador/usuario.html', {'Usuario':usuario, "lista_precios":lista_precios, "Productos":Productos, "Proyectos":Proyectos, "cotizaciones":cotizaciones})
+    return render(
+        request,
+        "planificador/usuario.html",
+        {
+            "Usuario": usuario,
+            "lista_precios": lista_precios,
+            "Productos": Productos,
+            "Proyectos": Proyectos,
+            "cotizaciones": cotizaciones,
+        },
+    )
 
-@login_required(login_url='/login')
+
+@login_required(login_url="/login")
 def editar_usuario(request, correo):
     if request.method == "POST":
         usuario = Usuario.objects.get(correo=correo)
@@ -329,7 +428,7 @@ def editar_usuario(request, correo):
         usuario.celular = request.POST["celular"]
         usuario.telefono = request.POST["telefono"]
         usuario.save()
-        return redirect('/planificador/usuario/')
+        return redirect("/planificador/usuario/")
     else:
         usuario = Usuario.objects.get(correo=str(request.user.email))
-        return render(request, 'planificador/editar_usuario.html', {'Usuario':usuario})
+        return render(request, "planificador/editar_usuario.html", {"Usuario": usuario})

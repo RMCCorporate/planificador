@@ -6,27 +6,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0076_auto_20210422_1725'),
+        ("planificador", "0076_auto_20210422_1725"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Permisos_notificacion',
+            name="Permisos_notificacion",
             fields=[
-                ('nombre', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('usuarios', models.ManyToManyField(to='planificador.Usuario')),
+                (
+                    "nombre",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("usuarios", models.ManyToManyField(to="planificador.Usuario")),
             ],
         ),
         migrations.CreateModel(
-            name='Notificacion',
+            name="Notificacion",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('tipo_notificacion', models.CharField(max_length=128, null=True)),
-                ('accion', models.CharField(max_length=128, null=True)),
-                ('modelo_base_datos', models.CharField(max_length=128, null=True)),
-                ('como', models.CharField(max_length=128, null=True)),
-                ('fecha', models.DateTimeField(auto_now_add=True, null=True)),
-                ('usuario_modificacion', models.ManyToManyField(to='planificador.Usuario')),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("tipo_notificacion", models.CharField(max_length=128, null=True)),
+                ("accion", models.CharField(max_length=128, null=True)),
+                ("modelo_base_datos", models.CharField(max_length=128, null=True)),
+                ("como", models.CharField(max_length=128, null=True)),
+                ("fecha", models.DateTimeField(auto_now_add=True, null=True)),
+                (
+                    "usuario_modificacion",
+                    models.ManyToManyField(to="planificador.Usuario"),
+                ),
             ],
         ),
     ]

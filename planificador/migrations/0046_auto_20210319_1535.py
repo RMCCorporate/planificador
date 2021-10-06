@@ -7,42 +7,58 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0045_auto_20210318_1142'),
+        ("planificador", "0045_auto_20210318_1142"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Producto_proveedor',
+            name="Producto_proveedor",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nombre_RMC', models.CharField(max_length=128)),
-                ('nombre_proveedor', models.CharField(max_length=128)),
-                ('producto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Proveedor')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nombre_RMC", models.CharField(max_length=128)),
+                ("nombre_proveedor", models.CharField(max_length=128)),
+                (
+                    "producto",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="planificador.Proveedor",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='precio',
-            name='valor_cambio',
+            model_name="precio",
+            name="valor_cambio",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='precio',
-            name='valor_importación',
+            model_name="precio",
+            name="valor_importación",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='producto',
-            name='kilos',
+            model_name="producto",
+            name="kilos",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='producto_proyecto',
-            name='cantidades',
+            model_name="producto_proyecto",
+            name="cantidades",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='producto_proveedor',
-            name='proyecto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Producto'),
+            model_name="producto_proveedor",
+            name="proyecto",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="planificador.Producto"
+            ),
         ),
     ]

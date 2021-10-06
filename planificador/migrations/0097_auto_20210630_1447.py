@@ -7,22 +7,43 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0096_auto_20210630_1444'),
+        ("planificador", "0096_auto_20210630_1444"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Producto_proyecto_cantidades',
+            name="Producto_proyecto_cantidades",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('cantidades', models.CharField(max_length=128, null=True)),
-                ('producto_asociado_cantidades', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='producto_asociado_cantidades', to='planificador.producto_proyecto')),
-                ('proyecto_asociado_cantidades', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='proyecto_asociado_cantidades', to='planificador.proyecto')),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("cantidades", models.CharField(max_length=128, null=True)),
+                (
+                    "producto_asociado_cantidades",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="producto_asociado_cantidades",
+                        to="planificador.producto_proyecto",
+                    ),
+                ),
+                (
+                    "proyecto_asociado_cantidades",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="proyecto_asociado_cantidades",
+                        to="planificador.proyecto",
+                    ),
+                ),
             ],
         ),
         migrations.AlterField(
-            model_name='cotizacion',
-            name='productos_proyecto_asociados',
-            field=models.ManyToManyField(null=True, related_name='productos_proyecto_asociados', to='planificador.Producto_proyecto_cantidades'),
+            model_name="cotizacion",
+            name="productos_proyecto_asociados",
+            field=models.ManyToManyField(
+                null=True,
+                related_name="productos_proyecto_asociados",
+                to="planificador.Producto_proyecto_cantidades",
+            ),
         ),
     ]

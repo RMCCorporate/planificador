@@ -7,17 +7,21 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0084_usuario_notificaciones'),
+        ("planificador", "0084_usuario_notificaciones"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='notificacion',
-            name='usuario_modificacion',
+            model_name="notificacion",
+            name="usuario_modificacion",
         ),
         migrations.AddField(
-            model_name='notificacion',
-            name='usuario_modificacion',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='planificador.usuario'),
+            model_name="notificacion",
+            name="usuario_modificacion",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="planificador.usuario",
+            ),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0099_delete_correlativo_orden_compra'),
+        ("planificador", "0099_delete_correlativo_orden_compra"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='usuario',
-            name='orden_compra',
+            model_name="usuario",
+            name="orden_compra",
             field=models.IntegerField(null=True),
         ),
     ]

@@ -6,15 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0089_correlativo_producto'),
+        ("planificador", "0089_correlativo_producto"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Planilla',
+            name="Planilla",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('planilla', models.FileField(upload_to='img')),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("planilla", models.FileField(upload_to="img")),
             ],
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0090_planilla'),
+        ("planificador", "0090_planilla"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='usuario',
-            name='session_key',
+            model_name="usuario",
+            name="session_key",
             field=models.CharField(max_length=100, null=True),
         ),
     ]

@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0048_auto_20210323_1502'),
+        ("planificador", "0048_auto_20210323_1502"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='proyecto',
-            name='estado',
-            field=models.CharField(choices=[('C', 'Completo'), ('I', 'Incompleto')], default='I', max_length=128, null=True),
+            model_name="proyecto",
+            name="estado",
+            field=models.CharField(
+                choices=[("C", "Completo"), ("I", "Incompleto")],
+                default="I",
+                max_length=128,
+                null=True,
+            ),
         ),
     ]

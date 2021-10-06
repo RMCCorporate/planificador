@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0082_notificacion_tipo'),
+        ("planificador", "0082_notificacion_tipo"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='notificacion',
-            name='fecha',
+            model_name="notificacion",
+            name="fecha",
             field=models.DateTimeField(null=True),
         ),
     ]

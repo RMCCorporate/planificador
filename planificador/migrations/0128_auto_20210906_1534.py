@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0127_importaciones_codigo_referencial'),
+        ("planificador", "0127_importaciones_codigo_referencial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='importaciones',
-            name='gastos_despacho',
+            model_name="importaciones",
+            name="gastos_despacho",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='importaciones',
-            name='honorarios',
+            model_name="importaciones",
+            name="honorarios",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='producto_proyecto_cantidades',
-            name='cantidades_anterior',
+            model_name="producto_proyecto_cantidades",
+            name="cantidades_anterior",
             field=models.CharField(max_length=128, null=True),
         ),
     ]

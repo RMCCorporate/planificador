@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0081_remove_notificacion_como'),
+        ("planificador", "0081_remove_notificacion_como"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='notificacion',
-            name='tipo',
+            model_name="notificacion",
+            name="tipo",
             field=models.CharField(max_length=128, null=True),
         ),
     ]

@@ -6,13 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0046_auto_20210319_1535'),
+        ("planificador", "0046_auto_20210319_1535"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='proveedor',
-            name='idioma',
-            field=models.CharField(choices=[('ESP', 'Español'), ('EN', 'Inglés')], default='ESP', max_length=128, null=True),
+            model_name="proveedor",
+            name="idioma",
+            field=models.CharField(
+                choices=[("ESP", "Español"), ("EN", "Inglés")],
+                default="ESP",
+                max_length=128,
+                null=True,
+            ),
         ),
     ]

@@ -7,13 +7,18 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0120_precio_nombre_importacion'),
+        ("planificador", "0120_precio_nombre_importacion"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='producto_proyecto_cantidades',
-            name='proyecto_asociado_cantidades',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='proyecto_asociado_cantidades', to='planificador.proyecto'),
+            model_name="producto_proyecto_cantidades",
+            name="proyecto_asociado_cantidades",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="proyecto_asociado_cantidades",
+                to="planificador.proyecto",
+            ),
         ),
     ]

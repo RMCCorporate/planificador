@@ -6,16 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0055_auto_20210330_1354'),
+        ("planificador", "0055_auto_20210330_1354"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Filtro_producto',
+            name="Filtro_producto",
             fields=[
-                ('nombre_producto', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('nombre_clase', models.CharField(max_length=128)),
-                ('nombre_subclase', models.CharField(max_length=128)),
+                (
+                    "nombre_producto",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("nombre_clase", models.CharField(max_length=128)),
+                ("nombre_subclase", models.CharField(max_length=128)),
             ],
         ),
     ]

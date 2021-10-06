@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
+
 class Precio(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     valor = models.FloatField()
@@ -14,9 +15,11 @@ class Precio(models.Model):
     comentarios = models.TextField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
 
+
 class ImagenProducto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
-    imagen = models.ImageField(upload_to='images', null=True)
+    imagen = models.ImageField(upload_to="images", null=True)
+
 
 class Producto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
@@ -24,18 +27,22 @@ class Producto(models.Model):
     lista_precios = models.ManyToManyField(Precio)
     fecha_actualizacion = models.DateTimeField(auto_now_add=True, null=True)
     unidad = models.CharField(max_length=128, null=True)
-    kilos =  models.FloatField(null=True)
+    kilos = models.FloatField(null=True)
     imagen = models.ManyToManyField(ImagenProducto)
     proveedor_interno = models.CharField(max_length=128, null=True)
+
     def __str__(self):
         return self.nombre
+
 
 class SubClase(models.Model):
     nombre = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(Producto)
     utilidad = models.FloatField(null=True)
+
     def __str__(self):
         return self.nombre
+
 
 class Clase(models.Model):
     nombre = models.CharField(primary_key=True, max_length=128)
@@ -43,6 +50,7 @@ class Clase(models.Model):
 
     def __str__(self):
         return self.nombre
+
 
 class Gastos_generales(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
@@ -52,6 +60,7 @@ class Gastos_generales(models.Model):
     razon_social = models.CharField(max_length=128, null=True)
     detalle = models.CharField(max_length=128, null=True)
     monto = models.IntegerField(null=True)
+
 
 class Relacion_gastos(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
@@ -66,19 +75,23 @@ class Relacion_gastos(models.Model):
     total_boleta = models.IntegerField(null=True)
     total_factura = models.IntegerField(null=True)
 
+
 class Presupuesto_subclases(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     valor = models.FloatField(null=True)
-    subclase = models.ForeignKey(SubClase, on_delete=models.CASCADE, related_name='subclase')
+    subclase = models.ForeignKey(
+        SubClase, on_delete=models.CASCADE, related_name="subclase"
+    )
     utilidad = models.FloatField(null=True)
+
 
 class Proyecto(models.Model):
     id = models.CharField(primary_key=True, max_length=128)
     productos = models.ManyToManyField(
-        Producto, 
-        through='Producto_proyecto',
-        through_fields=('producto', 'proyecto'),
-        )
+        Producto,
+        through="Producto_proyecto",
+        through_fields=("producto", "proyecto"),
+    )
     nombre = models.CharField(max_length=128)
     precio_final = models.FloatField(null=True)
     centro_costos = models.CharField(max_length=128, null=True)
@@ -89,23 +102,22 @@ class Proyecto(models.Model):
     tipo_cambio = models.CharField(max_length=128, null=True, default="CLP")
     valor_cambio = models.FloatField(null=True, default=1)
     relacion_gastos = models.ManyToManyField(Relacion_gastos)
-    COMPLETO = 'Completo'
-    INCOMPLETO = 'Incompleto'
+    COMPLETO = "Completo"
+    INCOMPLETO = "Incompleto"
     ESTADO_CHOICES = [
-        (COMPLETO, 'Completo'),
-        (INCOMPLETO, 'Incompleto'),
+        (COMPLETO, "Completo"),
+        (INCOMPLETO, "Incompleto"),
     ]
     estado = models.CharField(
-        max_length=128,
-        choices = ESTADO_CHOICES,
-        default = INCOMPLETO,
-        null = True
+        max_length=128, choices=ESTADO_CHOICES, default=INCOMPLETO, null=True
     )
     presupuesto_total = models.FloatField(null=True)
     presupuesto_subclases = models.ManyToManyField(Presupuesto_subclases)
     consolidacion = models.BooleanField(default=False, null=True)
+
     def __str__(self):
         return self.nombre
+
 
 class Contacto(models.Model):
     correo = models.CharField(primary_key=True, max_length=128)
@@ -115,12 +127,14 @@ class Contacto(models.Model):
     def __str__(self):
         return self.nombre
 
+
 class Calificacion(models.Model):
     nombre = models.CharField(primary_key=True, max_length=128)
     descripción = models.TextField()
 
     def __str__(self):
         return self.nombre
+
 
 class Proveedor(models.Model):
     rut = models.CharField(primary_key=True, max_length=128)
@@ -129,46 +143,46 @@ class Proveedor(models.Model):
     subclases_asociadas = models.ManyToManyField(SubClase)
     calificaciones = models.ManyToManyField(
         Calificacion,
-        through='Calificacion_Proveedor',
-        through_fields=('proveedor', 'calificacion'),
+        through="Calificacion_Proveedor",
+        through_fields=("proveedor", "calificacion"),
     )
     contactos_asociados = models.ManyToManyField(Contacto)
-    ESPANOL = 'ES'
-    INGLES = 'EN'
+    ESPANOL = "ES"
+    INGLES = "EN"
     IDIOMA_CHOICES = [
-        (ESPANOL, 'Español'),
-        (INGLES, 'Inglés'),
+        (ESPANOL, "Español"),
+        (INGLES, "Inglés"),
     ]
     idioma = models.CharField(
-        max_length=128,
-        choices = IDIOMA_CHOICES,
-        default = ESPANOL,
-        null = True
+        max_length=128, choices=IDIOMA_CHOICES, default=ESPANOL, null=True
     )
     direccion = models.CharField(max_length=256, null=True)
     productos_no = models.ManyToManyField(Producto)
+
     def __str__(self):
         return self.nombre
+
 
 class Calificacion_Proveedor(models.Model):
     proveedor = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     calificacion = models.ForeignKey(Calificacion, on_delete=models.CASCADE)
     nota = models.FloatField()
 
+
 class Producto_proyecto(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     producto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     proveedores = models.ManyToManyField(Proveedor)
-    URGENTE = 'Urgente'
-    FUTURO = 'Futuro'
+    URGENTE = "Urgente"
+    FUTURO = "Futuro"
     ESTADO_COMPRAS_CHOICES = [
-        (URGENTE,'Urgente'),
-        (FUTURO, 'Futuro'),
+        (URGENTE, "Urgente"),
+        (FUTURO, "Futuro"),
     ]
     status = models.CharField(
         max_length=128,
-        choices = ESTADO_COMPRAS_CHOICES,
+        choices=ESTADO_COMPRAS_CHOICES,
         default=FUTURO,
     )
     estado_cotizacion = models.CharField(max_length=128, null=True)
@@ -177,11 +191,13 @@ class Producto_proyecto(models.Model):
     cantidades = models.FloatField(null=True)
     usuario_modificacion = models.CharField(max_length=128, null=True)
 
+
 class Producto_proveedor(models.Model):
     producto = models.ForeignKey(Proveedor, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     nombre_RMC = models.CharField(max_length=128)
     nombre_proveedor = models.CharField(max_length=128)
+
 
 class Filtro_producto(models.Model):
     nombre_producto = models.CharField(max_length=128, primary_key=True)
@@ -190,27 +206,61 @@ class Filtro_producto(models.Model):
     nombre_subclase = models.CharField(max_length=128)
     utilizado = models.CharField(max_length=128, null=True)
 
+
 class Producto_proyecto_cantidades(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
-    proyecto_asociado_cantidades = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado_cantidades', null=True)
-    producto_asociado_cantidades = models.ForeignKey(Producto_proyecto, on_delete=models.CASCADE, related_name='producto_asociado_cantidades', null=True)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='producto', null=True)
-    precio = models.ForeignKey(Precio, on_delete=models.CASCADE, related_name='precio', null=True)
+    proyecto_asociado_cantidades = models.ForeignKey(
+        Proyecto,
+        on_delete=models.CASCADE,
+        related_name="proyecto_asociado_cantidades",
+        null=True,
+    )
+    producto_asociado_cantidades = models.ForeignKey(
+        Producto_proyecto,
+        on_delete=models.CASCADE,
+        related_name="producto_asociado_cantidades",
+        null=True,
+    )
+    producto = models.ForeignKey(
+        Producto, on_delete=models.CASCADE, related_name="producto", null=True
+    )
+    precio = models.ForeignKey(
+        Precio, on_delete=models.CASCADE, related_name="precio", null=True
+    )
     cantidades = models.CharField(max_length=128, null=True)
+
 
 class Cotizacion(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     nombre = models.CharField(max_length=128, null=True)
-    proyecto_asociado = models.ForeignKey(Proyecto, on_delete=models.CASCADE, related_name='proyecto_asociado')
-    productos_asociados = models.ManyToManyField(Producto, related_name='productos_asociados')
-    productos_proyecto_asociados = models.ManyToManyField(Producto_proyecto_cantidades, related_name='productos_proyecto_asociados', null=True)
+    proyecto_asociado = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, related_name="proyecto_asociado"
+    )
+    productos_asociados = models.ManyToManyField(
+        Producto, related_name="productos_asociados"
+    )
+    productos_proyecto_asociados = models.ManyToManyField(
+        Producto_proyecto_cantidades,
+        related_name="productos_proyecto_asociados",
+        null=True,
+    )
     orden_compra = models.BooleanField(null=True)
-    proveedor_asociado = models.ForeignKey(Proveedor, on_delete=models.CASCADE, related_name='proveedor_asociado', null=True)
-    contacto_asociado = models.ManyToManyField(Contacto, related_name='contacto_asociado')
+    proveedor_asociado = models.ForeignKey(
+        Proveedor,
+        on_delete=models.CASCADE,
+        related_name="proveedor_asociado",
+        null=True,
+    )
+    contacto_asociado = models.ManyToManyField(
+        Contacto, related_name="contacto_asociado"
+    )
     fecha_salida = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_respuesta = models.DateField(auto_now=False, auto_now_add=False, null=True)
-    fecha_actualizacion_precio = models.DateField(auto_now=False, auto_now_add=False, null=True)
+    fecha_actualizacion_precio = models.DateField(
+        auto_now=False, auto_now_add=False, null=True
+    )
     usuario_modificacion = models.CharField(max_length=128, null=True)
+
 
 class Usuario(models.Model):
     correo = models.CharField(max_length=128, primary_key=True)
@@ -229,26 +279,33 @@ class Usuario(models.Model):
     orden_compra = models.IntegerField(null=True)
     session_key = models.CharField(max_length=100, null=True)
 
+
 class Correlativo_cotizacion(models.Model):
     año = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
+
 
 class Correlativo_orden_compra(models.Model):
     año = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
 
+
 class Correlativo_producto(models.Model):
     producto = models.IntegerField(primary_key=True)
     numero = models.IntegerField()
+
 
 class Permisos_notificacion(models.Model):
     nombre = models.CharField(max_length=128, primary_key=True)
     usuarios = models.ManyToManyField(Usuario)
 
+
 class Notificacion(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     tipo = models.CharField(max_length=128, null=True)
-    usuario_modificacion =  models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True)
+    usuario_modificacion = models.ForeignKey(
+        Usuario, on_delete=models.CASCADE, null=True
+    )
     accion = models.CharField(max_length=128, null=True)
     modelo_base_datos = models.CharField(max_length=128, null=True)
     numero_modificado = models.IntegerField(null=True)
@@ -256,13 +313,15 @@ class Notificacion(models.Model):
     nombre = models.CharField(max_length=128, null=True)
     id_proyecto = models.CharField(max_length=128, null=True)
     fecha = models.DateTimeField(auto_now_add=False, null=True)
-    
+
     def __str__(self):
         return self.tipo
-    
+
+
 class Planilla(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     planilla = models.FileField(upload_to="img")
+
 
 class RMC(models.Model):
     rut = models.CharField(max_length=128, primary_key=True)
@@ -270,19 +329,27 @@ class RMC(models.Model):
     giro = models.CharField(max_length=128, null=True)
     direccion = models.CharField(max_length=128, null=True)
 
+
 class Orden_compra(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
-    cotizacion_padre = models.ForeignKey(Cotizacion, on_delete=models.CASCADE, null=True, related_name='cotizacion_padre')
-    cotizacion_hija =  models.ForeignKey(Cotizacion, on_delete=models.CASCADE, null=True, related_name='cotizacion_hija')
+    cotizacion_padre = models.ForeignKey(
+        Cotizacion, on_delete=models.CASCADE, null=True, related_name="cotizacion_padre"
+    )
+    cotizacion_hija = models.ForeignKey(
+        Cotizacion, on_delete=models.CASCADE, null=True, related_name="cotizacion_hija"
+    )
     condicion_entrega = models.CharField(max_length=128, null=True)
     condiciones_pago = models.CharField(max_length=128, null=True)
     status_llegada = models.CharField(max_length=128, null=True)
     status_financiero = models.CharField(max_length=128, null=True)
     forma_pago = models.CharField(max_length=128, null=True)
-    destino_factura =  models.ForeignKey(RMC, on_delete=models.CASCADE, null=True, related_name='destino_factura')
+    destino_factura = models.ForeignKey(
+        RMC, on_delete=models.CASCADE, null=True, related_name="destino_factura"
+    )
     observaciones = models.TextField(null=True)
     planilla = models.FileField(upload_to="img", null=True, max_length=255)
     fecha_envio = models.DateField(auto_now=False, auto_now_add=False, null=True)
+
 
 class Origin_charges(models.Model):
     origin_airport = models.CharField(max_length=128, primary_key=True)
@@ -298,6 +365,7 @@ class Origin_charges(models.Model):
     other_fees2_value_min = models.FloatField(null=True)
     other_fees2_value_kg = models.FloatField(null=True)
     origin_transit_time = models.FloatField(null=True)
+
 
 class Airfreight_charges(models.Model):
     origin_airport = models.CharField(max_length=128, primary_key=True)
@@ -316,6 +384,7 @@ class Airfreight_charges(models.Model):
     cargo_screening_fee_min = models.FloatField(null=True)
     cargo_screening_fee_kg = models.FloatField(null=True)
 
+
 class Destination_charges(models.Model):
     origin_airport = models.CharField(max_length=128, primary_key=True)
     currency = models.CharField(max_length=128, null=True)
@@ -325,26 +394,47 @@ class Destination_charges(models.Model):
     doc_fee_kg = models.FloatField(null=True)
     desconsolidation = models.FloatField(null=True)
 
+
 class DHL(models.Model):
     origin_airport = models.CharField(max_length=128, primary_key=True)
     region = models.CharField(max_length=128, null=True)
     country = models.CharField(max_length=128, null=True)
     priority = models.CharField(max_length=128, null=True)
-    origin = models.ForeignKey(Origin_charges, on_delete=models.CASCADE, null=True, related_name='origin_charges')
-    freight = models.ForeignKey(Airfreight_charges, on_delete=models.CASCADE, null=True, related_name='freight_charges')
-    destination = models.ForeignKey(Destination_charges, on_delete=models.CASCADE, null=True, related_name='destination_charges')
+    origin = models.ForeignKey(
+        Origin_charges,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="origin_charges",
+    )
+    freight = models.ForeignKey(
+        Airfreight_charges,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="freight_charges",
+    )
+    destination = models.ForeignKey(
+        Destination_charges,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="destination_charges",
+    )
     airline = models.CharField(max_length=128, null=True)
     direct_flight = models.CharField(max_length=128, null=True)
     departure_days = models.CharField(max_length=128, null=True)
     transit_time = models.CharField(max_length=128, null=True)
 
+
 class Importaciones(models.Model):
     codigo = models.CharField(max_length=128, primary_key=True)
     codigo_referencial = models.CharField(max_length=128, null=True)
     origen = models.CharField(max_length=128, null=True)
-    productos = models.ManyToManyField(Producto_proyecto_cantidades, related_name='productos_importacion')
+    productos = models.ManyToManyField(
+        Producto_proyecto_cantidades, related_name="productos_importacion"
+    )
     proveedor = models.ForeignKey(Proveedor, null=True, on_delete=models.CASCADE)
-    DHL_asociado = models.ForeignKey(DHL, on_delete=models.CASCADE, null=True, related_name='dhl')
+    DHL_asociado = models.ForeignKey(
+        DHL, on_delete=models.CASCADE, null=True, related_name="dhl"
+    )
     transporte = models.CharField(max_length=128, null=True)
     kilos = models.FloatField(null=True)
     valor_flete = models.FloatField(null=True)

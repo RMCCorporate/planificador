@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0030_remove_proyecto_centro_costos'),
+        ("planificador", "0030_remove_proyecto_centro_costos"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='clase',
-            name='subclases',
-            field=models.ManyToManyField(null=True, to='planificador.SubClase'),
+            model_name="clase",
+            name="subclases",
+            field=models.ManyToManyField(null=True, to="planificador.SubClase"),
         ),
         migrations.AlterField(
-            model_name='producto',
-            name='lista_precios',
-            field=models.ManyToManyField(null=True, to='planificador.Precio'),
+            model_name="producto",
+            name="lista_precios",
+            field=models.ManyToManyField(null=True, to="planificador.Precio"),
         ),
         migrations.AlterField(
-            model_name='subclase',
-            name='productos',
-            field=models.ManyToManyField(null=True, to='planificador.Producto'),
+            model_name="subclase",
+            name="productos",
+            field=models.ManyToManyField(null=True, to="planificador.Producto"),
         ),
     ]

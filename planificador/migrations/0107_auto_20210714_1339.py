@@ -7,26 +7,36 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0106_orden_compra_fecha_envio'),
+        ("planificador", "0106_orden_compra_fecha_envio"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='proyecto',
-            name='presupuesto_total',
+            model_name="proyecto",
+            name="presupuesto_total",
             field=models.FloatField(null=True),
         ),
         migrations.CreateModel(
-            name='Presupuesto_subclases',
+            name="Presupuesto_subclases",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('valor', models.FloatField(null=True)),
-                ('subclase', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='subclase', to='planificador.subclase')),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("valor", models.FloatField(null=True)),
+                (
+                    "subclase",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subclase",
+                        to="planificador.subclase",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='proyecto',
-            name='presupuesto_subclases',
-            field=models.ManyToManyField(to='planificador.Presupuesto_subclases'),
+            model_name="proyecto",
+            name="presupuesto_subclases",
+            field=models.ManyToManyField(to="planificador.Presupuesto_subclases"),
         ),
     ]

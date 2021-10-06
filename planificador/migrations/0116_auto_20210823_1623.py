@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0115_auto_20210823_1400'),
+        ("planificador", "0115_auto_20210823_1400"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='dhl',
-            name='departure_days',
+            model_name="dhl",
+            name="departure_days",
             field=models.CharField(max_length=128, null=True),
         ),
         migrations.AlterField(
-            model_name='dhl',
-            name='transit_time',
+            model_name="dhl",
+            name="transit_time",
             field=models.CharField(max_length=128, null=True),
         ),
     ]

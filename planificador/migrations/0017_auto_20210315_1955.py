@@ -7,114 +7,145 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0016_auto_20210315_1634'),
+        ("planificador", "0016_auto_20210315_1634"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Calificacion',
+            name="Calificacion",
             fields=[
-                ('nombre', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('descripción', models.TextField()),
+                (
+                    "nombre",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("descripción", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='Calificacion_Proveedor',
+            name="Calificacion_Proveedor",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('nota', models.FloatField()),
-                ('calificacion', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Calificacion')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("nota", models.FloatField()),
+                (
+                    "calificacion",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="planificador.Calificacion",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Clase',
+            name="Clase",
             fields=[
-                ('nombre', models.CharField(max_length=128, primary_key=True, serialize=False)),
+                (
+                    "nombre",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Contacto',
+            name="Contacto",
             fields=[
-                ('correo', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('telefono', models.CharField(max_length=128, null=True)),
-                ('nombre', models.CharField(max_length=128, null=True)),
+                (
+                    "correo",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("telefono", models.CharField(max_length=128, null=True)),
+                ("nombre", models.CharField(max_length=128, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='SubClase',
+            name="SubClase",
             fields=[
-                ('nombre', models.CharField(max_length=128, primary_key=True, serialize=False)),
+                (
+                    "nombre",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
             ],
         ),
         migrations.RemoveField(
-            model_name='producto',
-            name='clase',
+            model_name="producto",
+            name="clase",
         ),
         migrations.RemoveField(
-            model_name='producto',
-            name='lista_proveedores',
+            model_name="producto",
+            name="lista_proveedores",
         ),
         migrations.RemoveField(
-            model_name='producto',
-            name='lista_tipo_cambio',
+            model_name="producto",
+            name="lista_tipo_cambio",
         ),
         migrations.RemoveField(
-            model_name='producto',
-            name='subclase',
+            model_name="producto",
+            name="subclase",
         ),
         migrations.RemoveField(
-            model_name='proveedor',
-            name='clases',
+            model_name="proveedor",
+            name="clases",
         ),
         migrations.RemoveField(
-            model_name='proveedor',
-            name='lista_calificaciones',
+            model_name="proveedor",
+            name="lista_calificaciones",
         ),
         migrations.RemoveField(
-            model_name='proveedor',
-            name='lista_contactos',
+            model_name="proveedor",
+            name="lista_contactos",
         ),
         migrations.RemoveField(
-            model_name='proveedor',
-            name='lista_nombre_calificaciones',
+            model_name="proveedor",
+            name="lista_nombre_calificaciones",
         ),
         migrations.RemoveField(
-            model_name='proveedor',
-            name='subclases',
+            model_name="proveedor",
+            name="subclases",
         ),
         migrations.AddField(
-            model_name='producto_proyecto',
-            name='tipo_cambio',
+            model_name="producto_proyecto",
+            name="tipo_cambio",
             field=models.CharField(max_length=128, null=True),
         ),
         migrations.AddField(
-            model_name='subclase',
-            name='productos',
-            field=models.ManyToManyField(to='planificador.Producto'),
+            model_name="subclase",
+            name="productos",
+            field=models.ManyToManyField(to="planificador.Producto"),
         ),
         migrations.AddField(
-            model_name='clase',
-            name='subclases',
-            field=models.ManyToManyField(to='planificador.SubClase'),
+            model_name="clase",
+            name="subclases",
+            field=models.ManyToManyField(to="planificador.SubClase"),
         ),
         migrations.AddField(
-            model_name='calificacion_proveedor',
-            name='proveedor',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Proveedor'),
+            model_name="calificacion_proveedor",
+            name="proveedor",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="planificador.Proveedor"
+            ),
         ),
         migrations.AddField(
-            model_name='proveedor',
-            name='calificaciones',
-            field=models.ManyToManyField(through='planificador.Calificacion_Proveedor', to='planificador.Calificacion'),
+            model_name="proveedor",
+            name="calificaciones",
+            field=models.ManyToManyField(
+                through="planificador.Calificacion_Proveedor",
+                to="planificador.Calificacion",
+            ),
         ),
         migrations.AddField(
-            model_name='proveedor',
-            name='clases_asociadas',
-            field=models.ManyToManyField(to='planificador.Clase'),
+            model_name="proveedor",
+            name="clases_asociadas",
+            field=models.ManyToManyField(to="planificador.Clase"),
         ),
         migrations.AddField(
-            model_name='proveedor',
-            name='contactos_asociados',
-            field=models.ManyToManyField(to='planificador.Contacto'),
+            model_name="proveedor",
+            name="contactos_asociados",
+            field=models.ManyToManyField(to="planificador.Contacto"),
         ),
     ]

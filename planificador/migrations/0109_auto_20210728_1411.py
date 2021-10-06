@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0108_correlativo_orden_compra'),
+        ("planificador", "0108_correlativo_orden_compra"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='presupuesto_subclases',
-            name='utilidad',
+            model_name="presupuesto_subclases",
+            name="utilidad",
             field=models.FloatField(null=True),
         ),
         migrations.AddField(
-            model_name='subclase',
-            name='utilidad',
+            model_name="subclase",
+            name="utilidad",
             field=models.FloatField(null=True),
         ),
     ]

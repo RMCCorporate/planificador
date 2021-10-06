@@ -7,9 +7,7 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0039_auto_20210316_1806'),
+        ("planificador", "0039_auto_20210316_1806"),
     ]
 
-    operations = [
-        
-    ]
+    operations = []

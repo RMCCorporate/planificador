@@ -6,24 +6,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0092_usuario_nickname'),
+        ("planificador", "0092_usuario_nickname"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='ImagenProducto',
+            name="ImagenProducto",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('imagen', models.ImageField(null=True, upload_to='images')),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("imagen", models.ImageField(null=True, upload_to="images")),
             ],
         ),
         migrations.RemoveField(
-            model_name='producto',
-            name='imagen',
+            model_name="producto",
+            name="imagen",
         ),
         migrations.AddField(
-            model_name='producto',
-            name='imagen',
-            field=models.ManyToManyField(to='planificador.ImagenProducto'),
+            model_name="producto",
+            name="imagen",
+            field=models.ManyToManyField(to="planificador.ImagenProducto"),
         ),
     ]

@@ -9,73 +9,132 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Contacto',
+            name="Contacto",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('nombre', models.CharField(max_length=128, null=True)),
-                ('correo', models.EmailField(max_length=254, null=True)),
-                ('telefono', models.CharField(max_length=128, null=True)),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("nombre", models.CharField(max_length=128, null=True)),
+                ("correo", models.EmailField(max_length=254, null=True)),
+                ("telefono", models.CharField(max_length=128, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Producto',
+            name="Producto",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('nombre', models.CharField(max_length=128)),
-                ('lista_precios', django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(null=True), size=None)),
-                ('fecha_actualizacion', models.DateField(null=True)),
-                ('clase', models.CharField(max_length=128)),
-                ('subclase', models.CharField(max_length=128)),
-                ('unidad', models.CharField(max_length=128, null=True)),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("nombre", models.CharField(max_length=128)),
+                (
+                    "lista_precios",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.IntegerField(null=True), size=None
+                    ),
+                ),
+                ("fecha_actualizacion", models.DateField(null=True)),
+                ("clase", models.CharField(max_length=128)),
+                ("subclase", models.CharField(max_length=128)),
+                ("unidad", models.CharField(max_length=128, null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Producto_proyecto',
+            name="Producto_proyecto",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('UR', 'Urgente'), ('TR', 'Transporte'), ('BO', 'Bodega'), ('FU', 'Futuro')], default='FU', max_length=2)),
-                ('fecha_uso', models.DateField(null=True)),
-                ('usuario_modificacion', models.CharField(max_length=128, null=True)),
-                ('producto', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Producto')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("UR", "Urgente"),
+                            ("TR", "Transporte"),
+                            ("BO", "Bodega"),
+                            ("FU", "Futuro"),
+                        ],
+                        default="FU",
+                        max_length=2,
+                    ),
+                ),
+                ("fecha_uso", models.DateField(null=True)),
+                ("usuario_modificacion", models.CharField(max_length=128, null=True)),
+                (
+                    "producto",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="planificador.Producto",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Proveedor',
+            name="Proveedor",
             fields=[
-                ('rut', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('nombre', models.CharField(max_length=128)),
-                ('razon_social', models.CharField(max_length=128, null=True)),
-                ('clases', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=128, null=True), size=None)),
-                ('subclases', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=128, null=True), size=None)),
+                (
+                    "rut",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("nombre", models.CharField(max_length=128)),
+                ("razon_social", models.CharField(max_length=128, null=True)),
+                (
+                    "clases",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=128, null=True),
+                        size=None,
+                    ),
+                ),
+                (
+                    "subclases",
+                    django.contrib.postgres.fields.ArrayField(
+                        base_field=models.CharField(max_length=128, null=True),
+                        size=None,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Proyecto',
+            name="Proyecto",
             fields=[
-                ('id', models.CharField(max_length=128, primary_key=True, serialize=False)),
-                ('nombre', models.CharField(max_length=128)),
-                ('precio_final', models.FloatField(null=True)),
-                ('fecha_creacion', models.DateField(auto_now_add=True)),
-                ('fecha_inicio', models.DateField(null=True)),
-                ('fecha_final', models.DateField(null=True)),
-                ('administrador_contrato', models.CharField(max_length=128, null=True)),
-                ('creador', models.CharField(max_length=128)),
-                ('productos', models.ManyToManyField(through='planificador.Producto_proyecto', to='planificador.Producto')),
+                (
+                    "id",
+                    models.CharField(max_length=128, primary_key=True, serialize=False),
+                ),
+                ("nombre", models.CharField(max_length=128)),
+                ("precio_final", models.FloatField(null=True)),
+                ("fecha_creacion", models.DateField(auto_now_add=True)),
+                ("fecha_inicio", models.DateField(null=True)),
+                ("fecha_final", models.DateField(null=True)),
+                ("administrador_contrato", models.CharField(max_length=128, null=True)),
+                ("creador", models.CharField(max_length=128)),
+                (
+                    "productos",
+                    models.ManyToManyField(
+                        through="planificador.Producto_proyecto",
+                        to="planificador.Producto",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='producto_proyecto',
-            name='proyecto',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='planificador.Proyecto'),
+            model_name="producto_proyecto",
+            name="proyecto",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="planificador.Proyecto"
+            ),
         ),
         migrations.AddField(
-            model_name='contacto',
-            name='proveedor',
-            field=models.ManyToManyField(to='planificador.Proveedor'),
+            model_name="contacto",
+            name="proveedor",
+            field=models.ManyToManyField(to="planificador.Proveedor"),
         ),
     ]

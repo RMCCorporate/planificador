@@ -7,13 +7,17 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0125_importaciones_valor_dolar'),
+        ("planificador", "0125_importaciones_valor_dolar"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='importaciones',
-            name='proveedor',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='planificador.proveedor'),
+            model_name="importaciones",
+            name="proveedor",
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="planificador.proveedor",
+            ),
         ),
     ]

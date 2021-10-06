@@ -7,20 +7,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('planificador', '0013_auto_20210312_1914'),
+        ("planificador", "0013_auto_20210312_1914"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='contacto',
-            name='proveedor',
+            model_name="contacto",
+            name="proveedor",
         ),
         migrations.AddField(
-            model_name='proveedor',
-            name='lista_contactos',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.IntegerField(null=True), default=list, size=None),
+            model_name="proveedor",
+            name="lista_contactos",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.IntegerField(null=True), default=list, size=None
+            ),
         ),
         migrations.DeleteModel(
-            name='Contacto',
+            name="Contacto",
         ),
     ]
