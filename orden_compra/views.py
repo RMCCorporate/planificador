@@ -28,6 +28,7 @@ from openpyxl import load_workbook, Workbook
 from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
 import os
 import json
+from django.contrib.auth import get_user_model
 
 
 def excel_oc(id_orden_compra):
@@ -377,15 +378,15 @@ def crear_orden(request, id):
                 fecha_envio=fecha_envio,
             )
         nueva_orden_compra.save()
-        planificadores = User.objects.filter(groups__name="Planificador")
+        planificadores = get_user_model().objects.filter(groups__name="Planificador")
         for i in planificadores:
-            usuario_planificador = User.objects.get(correo=i.email)
+            usuario_planificador = get_user_model().objects.get(correo=i.email)
             if not usuario_planificador.orden_compra:
                 usuario_planificador.orden_compra = 0
                 usuario_planificador.save()
             usuario_planificador.orden_compra -= 1
             usuario_planificador.save()
-        usuario_cotizador = User.objects.get(correo=request.user.email)
+        usuario_cotizador = get_user_model().objects.get(correo=request.user.email)
         if not usuario_cotizador.orden_compra:
             usuario_cotizador.orden_compra = 0
             usuario_cotizador.save()

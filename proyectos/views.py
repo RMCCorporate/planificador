@@ -38,6 +38,7 @@ import uuid
 from django.contrib.auth.models import User, Permission
 from operator import itemgetter
 from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
+from django.contrib.auth import get_user_model
 
 lista_producto_general = []
 # Funciones:
@@ -195,7 +196,7 @@ def crear_notificacion(
     id_proyecto,
 ):
     hora_actual = datetime.now()
-    usuario = User.objects.get(correo=correo_usuario)
+    usuario = get_user_model().objects.get(correo=correo_usuario)
     permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
     notificacion = Notificacion(
         id=uuid.uuid1(),
@@ -440,7 +441,7 @@ def editar_precios(request, id):
             precio.save()
             cotizacion.fecha_actualizacion_precio = datetime.now()
             cotizacion.save()
-            usuario = User.objects.get(correo=request.user.email)
+            usuario = get_user_model().objects.get(correo=request.user.email)
             usuario.precios.add(precio)
             usuario.save()
             producto_proyecto.estado_cotizacion = "Precio"
@@ -515,7 +516,7 @@ def editar_datos_producto_proyecto(request, id):
                 producto_proyecto.fecha_uso = fecha_uso[n]
             producto_proyecto.usuario_modificacion = usuario_modificacion
             producto_proyecto.save()
-            usuario = User.objects.get(correo=request.user.email)
+            usuario = get_user_model().objects.get(correo=request.user.email)
             usuario.productos_proyecto.add(producto_proyecto)
             usuario.save()
         crear_notificacion(
@@ -537,7 +538,7 @@ def editar_datos_producto_proyecto(request, id):
                         if n.nombre == producto_eliminar.proyecto.nombre:
                             i.productos_asociados.remove(n)
                 producto_eliminar.delete()
-                usuario = User.objects.get(correo=request.user.email)
+                usuario = get_user_model().objects.get(correo=request.user.email)
                 usuario.productos_proyecto.remove(producto_eliminar)
             crear_notificacion(
                 "eliminar_producto_proyecto",
@@ -707,7 +708,7 @@ def crear_nuevo_producto(request):
                     estado_cotizacion="No",
                 )
                 nuevo_producto_proyecto.save()
-                usuario = User.objects.get(correo=request.user.email)
+                usuario = get_user_model().objects.get(correo=request.user.email)
                 usuario.productos_proyecto.add(nuevo_producto_proyecto)
                 usuario.save()
             else:
@@ -733,7 +734,7 @@ def crear_nuevo_producto(request):
                     estado_cotizacion="No",
                 )
                 nuevo_producto_proyecto.save()
-                usuario = User.objects.get(correo=request.user.email)
+                usuario = get_user_model().objects.get(correo=request.user.email)
                 usuario.productos_proyecto.add(nuevo_producto_proyecto)
                 usuario.save()
             else:
@@ -906,7 +907,7 @@ def guardar_datos_filtro(request):
                 nuevo_producto_proyecto.proveedores.add(proveedor_int)
                 nuevo_producto_proyecto.save()
             proyecto.save()
-            usuario = User.objects.get(correo=request.user.email)
+            usuario = get_user_model().objects.get(correo=request.user.email)
             usuario.proyectos.add(proyecto)
             usuario.save()
     productos_proyecto = proyecto.productos.all()
@@ -971,7 +972,7 @@ def recibir_cantidades_planificador(request):
         else:
             producto_proyecto.cantidades = 0
         producto_proyecto.save()
-        usuario = User.objects.get(correo=request.user.email)
+        usuario = get_user_model().objects.get(correo=request.user.email)
         usuario.productos_proyecto.add(producto_proyecto)
         usuario.save()
     if boton == "GUARDAR Y CONTINUAR":
@@ -1074,7 +1075,7 @@ def agregar_cotizacion(request, id):
                 usuario_modificacion=usuario_modificacion,
             )
             nueva_cotizacion.save()
-            usuario = User.objects.get(correo=str(request.user.email))
+            usuario = get_user_model().objects.get(correo=str(request.user.email))
             usuario.cotizaciones.add(nueva_cotizacion)
             usuario.save()
             for id in diccionario_proveedores[nombre_proveedor][1]:
@@ -1188,7 +1189,7 @@ def editar_cotizacion(request, id):
         cotizacion.usuario_modificacion = usuario_modificacion
         cotizacion.fecha_respuesta = request.POST["fecha_respuesta"]
         cotizacion.save()
-        usuario = User.objects.get(correo=request.user.email)
+        usuario = get_user_model().objects.get(correo=request.user.email)
         usuario.cotizaciones.add(cotizacion)
         usuario.save()
         crear_notificacion(
@@ -1257,7 +1258,7 @@ def enviar_correo(request, id):
         subject = request.POST["subject"]
         texto_extra = request.POST["texto"]
         clave = request.POST["clave"]
-        usuario = User.objects.get(correo=request.user.email)
+        usuario = get_user_model().objects.get(correo=request.user.email)
         crear_correo(usuario, cotizacion, texto_extra, clave, subject)
         cotizacion.fecha_salida = datetime.now()
         cotizacion.save()
@@ -1287,7 +1288,7 @@ def informar_orden_compra(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
         enviar = request.POST["enviar"]
-        cotizador = User.objects.filter(email=enviar)
+        cotizador = get_user_model().objects.filter(email=enviar)
         empresa = request.POST["empresa"]
         observaciones = request.POST["observaciones"]
         productos = request.POST.getlist("nombre")
@@ -1302,15 +1303,15 @@ def informar_orden_compra(request, id):
             aux.append(request.POST[nuevo[2]])
             productos_cantidades.append(aux)
         numero_orden_compra = len(list(dict.fromkeys(cantidad_orden_compra)))
-        usuario_cotizador = User.objects.get(correo=enviar)
+        usuario_cotizador = get_user_model().objects.get(correo=enviar)
         if not usuario_cotizador.orden_compra:
             usuario_cotizador.orden_compra = 0
             usuario_cotizador.save()
         usuario_cotizador.orden_compra += numero_orden_compra
         usuario_cotizador.save()
-        planificadores = User.objects.filter(groups__name="Planificador")
+        planificadores = get_user_model().objects.filter(groups__name="Planificador")
         for i in planificadores:
-            usuario_planificador = User.objects.get(correo=i.email)
+            usuario_planificador = get_user_model().objects.get(correo=i.email)
             if not usuario_planificador.orden_compra:
                 usuario_planificador.orden_compra = 0
                 usuario_planificador.save()
@@ -1375,7 +1376,7 @@ def informar_orden_compra(request, id):
                         tabla_productos_cotizados.append(aux_tabla_productos_cotizados)
                     else:
                         precio = ""
-        cotizadores = User.objects.filter(groups__name="Cotizador")
+        cotizadores = get_user_model().objects.filter(groups__name="Cotizador")
         return render(
             request,
             "proyectos/informar_orden_compra.html",

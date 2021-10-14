@@ -26,6 +26,7 @@ from django import forms
 import openpyxl
 import uuid
 from planificador.api import api_token, get_locations
+from django.contrib.auth import get_user_model
 
 UNIDAD_CHOICES = [
     ("", ""),
@@ -73,7 +74,7 @@ def crear_notificacion(
     nombre,
 ):
     hora_actual = datetime.now()
-    usuario = User.objects.get(correo=correo_usuario)
+    usuario = get_user_model().objects.get(correo=correo_usuario)
     permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
     notificacion = Notificacion(
         id=uuid.uuid1(),

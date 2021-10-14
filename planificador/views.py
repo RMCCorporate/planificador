@@ -191,12 +191,12 @@ def crear_grupo(request):
         if not Group.objects.filter(name=str(nombre)).exists():
             nuevo_grupo = Group.objects.create(name=nombre)
             nuevo_grupo.save()
-            usuario = User.objects.get(username=usuario)
+            usuario = get_user_model().objects.get(username=usuario)
             usuario.groups.add(nuevo_grupo)
             usuario.save()
         else:
             grupo = Group.objects.get(name=nombre)
-            usuario = User.objects.get(username=usuario)
+            usuario = get_user_model().objects.get(username=usuario)
             usuario.groups.add(grupo)
             usuario.save()
         return redirect("/")
@@ -235,7 +235,7 @@ def crear_permisos(request):
 @login_required(login_url="/login")
 def permisos_notificacion(request):
     if request.method == "POST":
-        usuario = User.objects.get(correo=request.user.email)
+        usuario = get_user_model().objects.get(correo=request.user.email)
         todos_los_permisos = Permisos_notificacion.objects.all()
         for n in todos_los_permisos:
             for j in n.usuarios.all():
@@ -397,7 +397,7 @@ def permisos_notificacion(request):
 
 @login_required(login_url="/login")
 def usuario(request):
-    usuario = User.objects.get(correo=str(request.user.email))
+    usuario = get_user_model().objects.get(correo=str(request.user.email))
     lista_precios = usuario.precios.all()
     Productos = usuario.productos_proyecto.all()
     Proyectos = usuario.proyectos.all()
@@ -418,7 +418,7 @@ def usuario(request):
 @login_required(login_url="/login")
 def editar_usuario(request, correo):
     if request.method == "POST":
-        usuario = User.objects.get(correo=correo)
+        usuario = get_user_model().objects.get(correo=correo)
         usuario.nombre = request.POST["nombre"]
         usuario.apellido = request.POST["apellido"]
         usuario.segundo_apellido = request.POST["segundo_apellido"]
@@ -428,5 +428,5 @@ def editar_usuario(request, correo):
         usuario.save()
         return redirect("/planificador/usuario/")
     else:
-        usuario = User.objects.get(correo=str(request.user.email))
+        usuario = get_user_model().objects.get(correo=str(request.user.email))
         return render(request, "planificador/editar_usuario.html", {"Usuario": usuario})
