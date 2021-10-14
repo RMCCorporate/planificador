@@ -1,5 +1,29 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, \
+    PermissionsMixin
+from django.conf import settings
+
+
+class UserManager(BaseUserManager):
+
+    def create_user(self, correo, password=None, **extra_fields):
+        """Creates and saves a new user"""
+        if not correo:
+            raise ValueError('Users must have an email address')
+        user = self.model(correo=self.normalize_email(correo), **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+
+        return user
+
+    def create_superuser(self, correo, password):
+        """Creates and saves a new super user"""
+        user = self.create_user(correo, password)
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+
+        return user
 
 
 class Precio(models.Model):
@@ -262,8 +286,9 @@ class Cotizacion(models.Model):
     usuario_modificacion = models.CharField(max_length=128, null=True)
 
 
-class Usuario(models.Model):
-    correo = models.CharField(max_length=128, primary_key=True)
+class User(AbstractBaseUser, PermissionsMixin):
+    """Modelo de usuario"""
+    correo = models.CharField(max_length=128, unique=True)
     nickname = models.CharField(max_length=128, null=True)
     nombre = models.CharField(max_length=128, null=True)
     apellido = models.CharField(max_length=128, null=True)
@@ -278,6 +303,12 @@ class Usuario(models.Model):
     notificaciones = models.IntegerField(null=True)
     orden_compra = models.IntegerField(null=True)
     session_key = models.CharField(max_length=100, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=True)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'correo'
 
 
 class Correlativo_cotizacion(models.Model):
@@ -297,14 +328,15 @@ class Correlativo_producto(models.Model):
 
 class Permisos_notificacion(models.Model):
     nombre = models.CharField(max_length=128, primary_key=True)
-    usuarios = models.ManyToManyField(Usuario)
+    usuarios = models.ManyToManyField(User)
 
 
 class Notificacion(models.Model):
     id = models.CharField(max_length=128, primary_key=True)
     tipo = models.CharField(max_length=128, null=True)
     usuario_modificacion = models.ForeignKey(
-        Usuario, on_delete=models.CASCADE, null=True
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
     )
     accion = models.CharField(max_length=128, null=True)
     modelo_base_datos = models.CharField(max_length=128, null=True)

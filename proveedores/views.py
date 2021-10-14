@@ -7,7 +7,7 @@ from planificador.models import (
     Contacto,
     Calificacion,
     Calificacion_Proveedor,
-    Usuario,
+    User,
     Notificacion,
     Permisos_notificacion,
     Producto,
@@ -47,7 +47,7 @@ def crear_notificacion(
     nombre,
 ):
     hora_actual = datetime.now()
-    usuario = Usuario.objects.get(correo=correo_usuario)
+    usuario = User.objects.get(correo=correo_usuario)
     permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
     notificacion = Notificacion(
         id=uuid.uuid1(),

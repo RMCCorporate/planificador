@@ -4,7 +4,7 @@ from planificador.models import (
     SubClase,
     Proveedor,
     Clase,
-    Usuario,
+    User,
     Permisos_notificacion,
     Notificacion,
     Planilla,
@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 from planificador.decorators import allowed_users
 import openpyxl
 import uuid
+from django.contrib.auth import get_user_model
 
 
 # Create your views here.
@@ -34,7 +35,7 @@ def notificaciones(request):
                 lista_notificaciones.append(i)
     lista_notificaciones.sort(key=takedate)
     lista_notificaciones.reverse()
-    usuario = Usuario.objects.get(correo=request.user.email)
+    usuario = get_user_model().objects.get(correo=request.user.email)
     return render(
         request,
         "planificador/notificaciones.html",
@@ -44,7 +45,10 @@ def notificaciones(request):
 
 @login_required(login_url="/login")
 def index(request):
-    usuario = str(request.user.groups.all()[0])
+    if request.user.groups.all():
+        usuario = str(request.user.groups.all()[0])
+    else:
+        usuario = "Admin"
     if Planilla.objects.filter(id="0").exists():
         planilla = Planilla.objects.get(id="0").planilla
     else:
@@ -135,28 +139,22 @@ def crear_usuario(request):
         correo = request.POST["correo"]
         contraseña = request.POST["contraseña"]
         nombre_grupo = request.POST["grupo"]
-        if User.objects.filter(email=correo).exists:
-            nuevo_usuario = User.objects.get(email=correo)
+        if get_user_model().objects.filter(correo=correo).exists:
+            nuevo_usuario = get_user_model().objects.get(correo=correo)
         else:
-            nuevo_usuario = User.objects.create_user(nickname, correo, contraseña)
-        nuevo_usuario.first_name = nombre
-        nuevo_usuario.last_name = apellido
+            nuevo_usuario = get_user_model().objects.create_user(correo, contraseña)
+        nuevo_usuario.nombre = nombre
+        nuevo_usuario.nickname = nickname
+        nuevo_usuario.apellido = apellido
+        nuevo_usuario.segundo_apellido = segundo_apellido
+        nuevo_usuario.celular = celular
+        nuevo_usuario.cargo = cargo
+        nuevo_usuario.telefono = telefono
+        nuevo_usuario.notificaciones = 0
         nuevo_usuario.save()
         grupo = Group.objects.get(name=nombre_grupo)
         nuevo_usuario.groups.add(grupo)
         nuevo_usuario.save()
-        usuario_info = Usuario(
-            correo=correo,
-            nickname=nickname,
-            nombre=nombre,
-            apellido=apellido,
-            segundo_apellido=segundo_apellido,
-            celular=celular,
-            cargo=cargo,
-            telefono=telefono,
-            notificaciones=0,
-        )
-        usuario_info.save()
         permisos = [
             "editar_precio",
             "editar_producto_proyecto",
@@ -177,7 +175,7 @@ def crear_usuario(request):
         ]
         for i in permisos:
             permiso = Permisos_notificacion.objects.get(nombre=i)
-            permiso.usuarios.add(usuario_info)
+            permiso.usuarios.add(nuevo_usuario)
             permiso.save()
         return redirect("/")
     else:
@@ -203,7 +201,7 @@ def crear_grupo(request):
             usuario.save()
         return redirect("/")
     else:
-        usuarios = User.objects.all()
+        usuarios = get_user_model().objects.all()
         return render(request, "planificador/crear_grupo.html", {"usuarios": usuarios})
 
 
@@ -237,7 +235,7 @@ def crear_permisos(request):
 @login_required(login_url="/login")
 def permisos_notificacion(request):
     if request.method == "POST":
-        usuario = Usuario.objects.get(correo=request.user.email)
+        usuario = User.objects.get(correo=request.user.email)
         todos_los_permisos = Permisos_notificacion.objects.all()
         for n in todos_los_permisos:
             for j in n.usuarios.all():
@@ -399,7 +397,7 @@ def permisos_notificacion(request):
 
 @login_required(login_url="/login")
 def usuario(request):
-    usuario = Usuario.objects.get(correo=str(request.user.email))
+    usuario = User.objects.get(correo=str(request.user.email))
     lista_precios = usuario.precios.all()
     Productos = usuario.productos_proyecto.all()
     Proyectos = usuario.proyectos.all()
@@ -420,7 +418,7 @@ def usuario(request):
 @login_required(login_url="/login")
 def editar_usuario(request, correo):
     if request.method == "POST":
-        usuario = Usuario.objects.get(correo=correo)
+        usuario = User.objects.get(correo=correo)
         usuario.nombre = request.POST["nombre"]
         usuario.apellido = request.POST["apellido"]
         usuario.segundo_apellido = request.POST["segundo_apellido"]
@@ -430,5 +428,5 @@ def editar_usuario(request, correo):
         usuario.save()
         return redirect("/planificador/usuario/")
     else:
-        usuario = Usuario.objects.get(correo=str(request.user.email))
+        usuario = User.objects.get(correo=str(request.user.email))
         return render(request, "planificador/editar_usuario.html", {"Usuario": usuario})

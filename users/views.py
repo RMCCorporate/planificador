@@ -6,7 +6,7 @@ from django.contrib.auth import login as do_login
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
-from planificador.models import Usuario
+from planificador.models import User
 
 # Create your views here.
 def welcome(request):
@@ -31,7 +31,7 @@ def login(request):
             password = form.cleaned_data["password"]
             # Verificamos las credenciales del usuario
             user = authenticate(username=username, password=password)
-            usuario = Usuario.objects.get(nickname=str(user))
+            usuario = User.objects.get(nickname=str(user))
             # Si existe un usuario con ese nombre y contraseña
             if user is not None:
                 # Hacemos el login manualmente
@@ -63,7 +63,7 @@ def login(request):
 
 def logout(request):
     # Redireccionamos a la portada
-    usuario = Usuario.objects.get(nickname=str(request.user))
+    usuario = User.objects.get(nickname=str(request.user))
     usuario.session_key = None
     usuario.save()
     do_logout(request)

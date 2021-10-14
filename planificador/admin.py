@@ -14,7 +14,7 @@ from .models import (
     Precio,
     Filtro_producto,
     Cotizacion,
-    Usuario,
+    User,
     Producto_proveedor,
     Correlativo_cotizacion,
     Notificacion,
@@ -46,7 +46,7 @@ admin.site.register(Calificacion_Proveedor)
 admin.site.register(Filtro_producto)
 admin.site.register(Cotizacion)
 admin.site.register(Correlativo_cotizacion)
-admin.site.register(Usuario)
+admin.site.register(User)
 admin.site.register(Producto_proveedor)
 admin.site.register(Notificacion)
 admin.site.register(Permisos_notificacion)

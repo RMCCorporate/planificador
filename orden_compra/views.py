@@ -9,7 +9,7 @@ from planificador.models import (
     Producto_proyecto_cantidades,
     Producto_proveedor,
     Precio,
-    Usuario,
+    User,
     Gastos_generales,
     Relacion_gastos,
     Proyecto,
@@ -379,13 +379,13 @@ def crear_orden(request, id):
         nueva_orden_compra.save()
         planificadores = User.objects.filter(groups__name="Planificador")
         for i in planificadores:
-            usuario_planificador = Usuario.objects.get(correo=i.email)
+            usuario_planificador = User.objects.get(correo=i.email)
             if not usuario_planificador.orden_compra:
                 usuario_planificador.orden_compra = 0
                 usuario_planificador.save()
             usuario_planificador.orden_compra -= 1
             usuario_planificador.save()
-        usuario_cotizador = Usuario.objects.get(correo=request.user.email)
+        usuario_cotizador = User.objects.get(correo=request.user.email)
         if not usuario_cotizador.orden_compra:
             usuario_cotizador.orden_compra = 0
             usuario_cotizador.save()
