@@ -1,0 +1,105 @@
+/*
+COLORS:
+negro dentro: #60615e
+fondo: #fbfbfb
+bordes y letras de inputs: #d8d8d8
+bordes y letras boton: #a9bbd5
+*/
+
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    background-color: #f2f2f2;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #f2f2f2;
+    padding:20px;
+}
+
+.loginbox{
+    width: 458px;
+    height: 312.5119px;
+    background: #fff;
+    color: #60615e;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    padding:20px 47.8066px;
+    border-radius: 5px;
+}
+
+.avatar{
+    width: 214px;
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  
+}
+
+h1{
+    margin:0;
+    font-family: 'Montserrat', sans-serif;
+    color:#575855;
+    text-align: center;
+    font-size: 27pt;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+ 
+}
+
+.loginbox h2{
+    margin:0;
+    font-family: 'Montserrat', sans-serif;
+    color:#575855;
+    text-align: center;
+    font-size: 20pt;
+}
+
+.loginbox p{
+    margin:0px;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 12pt;
+}
+
+.loginbox input{
+    width:360.75px;
+    height: 31px;
+    margin-bottom: 20px;
+    align-self:center;
+    
+}
+
+.loginbox input[type="text"], input[type="password"]
+{
+    border: solid;
+    background: transparent;
+    border-color: #b3b3b3;
+    border-width: 0.8184pt;
+    height: 31px;
+    color: #575855;
+    font-size: 11pt;
+    border-radius: 5px;
+    padding:10px;
+}
+
+.loginbox input[type="submit"]
+{
+    border: solid;
+    height: 31px;
+    background: #fff;
+    color: #4676b8;
+    font-size: 11pt;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    text-align: center;
+    width:124px;
+    position: absolute;
+    transform: translate(95%, 20%);
+    border-radius: 5px;
+}

@@ -1,0 +1,344 @@
+/*
+COLORS:
+negro dentro: #60615e
+fondo: #fbfbfb
+bordes y letras de inputs: #d8d8d8
+bordes y letras boton: #a9bbd5
+azul tablas: #466ea5
+*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color:#fbfbfb;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+/*
+SIDEBAR MENU
+*/
+
+.btn{
+  position: absolute;
+  top: 200px;
+  left: 45px;
+  height: 45px;
+  width: 45px;
+  text-align: center;
+  background: #fbfbfb;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: left 0.4s ease;
+}
+.btn.click{
+  left: 260px;
+}
+.btn span{
+  color: black;
+  font-size: 28px;
+  line-height: 45px;
+}
+.btn.click span:before{
+  content: '\f00d';
+}
+.sidebar{
+  position: fixed;
+  width: 250px;
+  height: 100%;
+  left: -250px;
+  background: #60615e;
+  transition: left 0.4s ease;
+}
+.sidebar.show{
+  left: 0px;
+}
+.sidebar .text{
+  color: #1e1e1e;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 65px;
+  text-align: center;
+  background: #fbfbfb;
+  letter-spacing: 1px;
+}
+nav ul{
+  background: #fbfbfb;
+  height: 100%;
+  width: 100%;
+  list-style: none;
+}
+nav ul li{
+  line-height: 60px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+nav ul li:last-child{
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+nav ul li a{
+  position: relative;
+  color: #1e1e1e;
+  text-decoration: none;
+  font-size: 18px;
+  padding-left: 40px;
+  font-weight: 500;
+  display: block;
+  width: 100%;
+  border-left: 3px solid transparent;
+}
+
+nav ul li.active a{
+  color: #466ea5;
+  background: #fbfbfb;
+  border-left-color: #466ea5;
+}
+
+nav ul li a:hover{
+  background: #fbfbfb;
+}
+nav ul ul{
+  position: static;
+  display: none;
+}
+nav ul .feat-show.show{
+  display: block;
+}
+
+nav ul .serv-show.show1{
+    display: block;
+  }
+
+nav ul ul li{
+  line-height: 42px;
+  border-top: none;
+}
+nav ul ul li a{
+  font-size: 14px;
+  color: #1e1e1e;
+  padding-left: 5px;
+}
+nav ul li.active ul li a{
+  color: #1e1e1e;
+  background: #fbfbfb;
+  border-left-color: transparent;
+}
+nav ul ul li a:hover{
+  color: #466ea5!important;
+  background: #fbfbfb!important;
+}
+nav ul li a span{
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 22px;
+  transition: transform 0.4s;
+}
+nav ul li a span.rotate{
+  transform: translateY(-50%) rotate(-180deg);
+}
+
+.content{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    color: #202020;
+    z-index: -1;
+    text-align: center;
+  }
+  .content .header{
+    font-size: 45px;
+    font-weight: 600;
+  }
+  .content p{
+    font-size: 30px;
+    font-weight: 500;
+  }
+
+  /*
+TABLA
+*/
+
+.table-container{
+    padding: 0 17%;
+    margin: 30px auto 0;
+}
+
+.table-container .button_añadir{
+    border: solid;
+    height: 45px;
+    margin: 5px;
+    background: #fff;
+    color: #4676b8;
+    font-size: 10pt;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    text-align: center;
+    width:180px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .button_añadir:hover{
+      background-color: #fbfbfb;
+  }
+  
+  .button_añadir:active{
+      background-color: white;
+      box-shadow: 0 5px #fbfbfb;
+      transform: translateY(2px);
+  }
+.table-container .search{
+    width: 30%;
+    height: 30px;
+    position: relative;
+    background-color: #fbfbfb;
+    top: -27.5px;
+    left: 70%;
+    display: flex;
+    border-bottom:1px solid;
+}
+
+.table-container .search .busquedaproducto{
+    border: none;
+    text-align: right;
+    padding-right: 10px;
+    background-color: #fbfbfb;
+    width: 100%;
+}
+
+.table-container .search button{
+    background-color: #fbfbfb;
+    border: none;
+}
+
+.title{
+    padding: 15px;
+    border-bottom: 2px solid;
+}
+
+.title h1{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 25px;
+}
+
+.subtitle{
+  padding: 15px;
+}
+
+.subtitle h4{
+  font-family: 'Monserrat', sans-serif;
+  font-size: 15px;
+}
+
+.heading{
+    font-size: 30px;
+    margin-bottom: 40px;
+}
+
+.table-container .table{
+    width: 100%;
+    margin: 40px auto 0;
+    border-collapse: collapse;
+}
+
+.table-container .table thead{
+    background-color: #466ea5;
+    text-align:left;
+}
+.table-container .table thead tr th{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.35px;
+    color: white;
+    opacity: 1;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.table-container .table tbody tr td{
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 0.35px;
+    background-color: white;
+    opacity: 1;
+    padding: 6px 10px;
+    vertical-align: top;
+    border-bottom: 0.8184pt solid #b3b3b3;;
+}
+
+.table-container .table tbody tr td .menu ul li a{
+    display: flex;
+    align-items: center;
+    height: 40px;
+    opacity: 1;
+  }
+  
+.table-container .table tbody tr td .menu a{
+    text-align: right;
+    opacity: 1;
+}
+
+.table-container .table tbody tr td .menu a span{
+    font-size: 10px;
+    opacity: 1;
+}
+
+.table-container .table tbody tr td .menu ul li{
+    position: relative;
+    padding: 0px 0px;
+    opacity: 1.0;
+}
+
+.table-container .table tbody tr td .menu ul li .dropdown{
+    position: absolute;
+    opacity: 1;
+    top: 25px;
+    right: 0;
+    border: 1px solid black;
+    background: white;
+    padding: 10px ;
+    border-radius: 5px;
+    display: none;
+}
+
+.table-container .table tbody tr td .menu ul li .dropdown .fas{
+    margin-right: 0px;
+    opacity: 1.0;
+}
+
+.table-container .table tbody tr td .menu ul li.active .dropdown{
+    display: block;
+    opacity: 1.0;
+}
+
+@media (max-width:768px){
+    .table thead{
+        display: none;
+    }
+    .table, .table tbody, .table tr, .table td{
+        display: block;
+        width: 100%;
+    }
+    .table tr{
+        margin-bottom: 15px;
+    }
+    .table tbody tr td{
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    .table td:before{
+        content:attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        padding-left: 15px;
+        font-weight: 600;
+        font-size: 12px;
+        text-align: left;
+    }
+}

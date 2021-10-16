@@ -1,0 +1,191 @@
+/*
+COLORS:
+negro dentro: #60615e
+fondo: #fbfbfb
+bordes y letras de inputs: #d8d8d8
+bordes y letras boton: #a9bbd5
+azul tablas: #466ea5
+*/
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color:#fbfbfb;
+    font-family: 'Monserrat', sans-serif;
+}
+
+.title{
+    padding: 5px;
+    border-bottom: 2px solid;
+}
+
+.title h1{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 25px;
+}
+
+.subtitle{
+  padding: 5px;
+}
+
+.subtitle h4{
+  font-family: 'Monserrat', sans-serif;
+  font-size: 15px;
+}
+
+.container{
+    display: flex;
+}
+
+form .user-details .input-box{
+    margin: 0px 0 12px 0;
+    width: 70%;
+    padding-left: 20%;
+}
+
+form .user-details .custom-select {
+    position: relative;
+    font-family: 'Roboto Condensed', sans-serif;
+}
+  
+  
+.user-details .input-box .details{
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0px;
+}
+
+.user-details .input-box input{
+    height: 35px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border:solid;
+    border-color: #b3b3b3;
+    border-width: 0.8184pt;
+    padding-left: 15px;
+}
+
+.user-details .input-box .custom-select{
+    height: 35px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border:solid;
+    border-color: #b3b3b3;
+    border-width: 0.8184pt;
+    padding-left: 15px;
+}
+
+.user-details .input-box input:focus,
+.user-details .input-box input:valid{
+    border-color:#b3b3b3;
+}
+
+@media screen and (max-width:1024px){
+    .container{flex-direction:column}
+    .imagen_container{
+        max-width: 350px;
+        margin: 15px auto 20px auto;
+    }
+}
+
+.container .table-container{
+    width: 100%;
+    padding-left: 20%;
+}
+
+.container .imagen_container {
+    flex:1 1 200px;
+  }
+
+.container .imagen_container .imagen{
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100%;
+}
+
+.data-container{
+    flex:2 1 600px;
+}
+
+.container .table-container .title_container{
+    padding: 0px;
+}
+
+.container .table-container .informacion_container{
+    position: relative;
+    width: 100%;
+    top: 0%;
+    border-bottom: 2px solid;
+}
+
+.container .table-container .informacion_container h4{
+    font-family: 'Monserrat', sans-serif;
+    font-size: 15px;
+}
+
+
+.container .table-container  .button_editar{
+    border: solid;
+    height: 25px;
+    margin: 0;
+    background: white;
+    color: #4676b8;
+    font-size: 10pt;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    text-align: center;
+    width:10%;
+    border-radius: 5px;
+}
+
+.container .table-container .button_eliminar{
+    border: solid;
+    height: 25px;
+    margin: 1%;
+    background: white;
+    color: #4676b8;
+    font-size: 10pt;
+    border-color: #4676b8;
+    border-width: 0.8184pt;
+    text-align: center;
+    width:10%;
+    border-radius: 5px;
+}
+
+.container .table-container .table{
+    width: 100%;
+    margin: 5px auto 0;
+    border-collapse: collapse;
+}
+
+.container .table-container .table thead{
+    background-color: white;
+    text-align:left;
+}
+.container .table-container .table thead tr th{
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.35px;
+    color: black;
+    opacity: 1;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.container .table-container .table tbody tr td{
+    font-size: 12px;
+    font-weight: normal;
+    letter-spacing: 0.35px;
+    background-color: white;
+    opacity: 1;
+    padding: 6px 10px;
+    vertical-align: top;
+    border-bottom: 0.8184pt solid #b3b3b3;;
+}
+
