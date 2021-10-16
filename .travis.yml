@@ -3,4 +3,4 @@ python:
   - "3.6"
 
 script:
-  - python3 manage.py wait_for_db && python manage.py test && flake8
+  - python3 manage.py test && flake8
