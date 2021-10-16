@@ -1,19 +1,14 @@
 from django.shortcuts import render, redirect
 from planificador.models import (
-    Producto,
     SubClase,
-    Proveedor,
     Clase,
-    User,
     Permisos_notificacion,
     Notificacion,
     Planilla,
 )
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
-from planificador.decorators import allowed_users
 import openpyxl
-import uuid
 from django.contrib.auth import get_user_model
 
 

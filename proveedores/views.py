@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from planificador.models import (
     Proveedor,
     Clase,
@@ -7,18 +6,21 @@ from planificador.models import (
     Contacto,
     Calificacion,
     Calificacion_Proveedor,
-    User,
     Notificacion,
     Permisos_notificacion,
     Producto,
 )
 from django.contrib.auth.decorators import login_required
-from datetime import date, datetime
-from planificador.filters import ProveedoresFilter, Filtro_producto
+from datetime import datetime
+from planificador.filters import ProveedoresFilter
 from planificador.decorators import allowed_users
 import openpyxl
 import uuid
 from django.contrib.auth import get_user_model
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+
 
 # FUNCIONES
 def mostrar_clases():

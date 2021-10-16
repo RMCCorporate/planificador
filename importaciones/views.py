@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from planificador.models import (
     Importaciones,
     DHL,
@@ -12,14 +11,11 @@ from planificador.models import (
     Proveedor,
 )
 from planificador.filters import (
-    ProductoFilter,
-    SubclaseFilter,
     Filtro_productoFilter,
-    ProyectosFilter,
 )
 from django.contrib.auth.decorators import login_required
-from datetime import date, datetime
-from planificador.filters import ProveedoresFilter, Filtro_producto
+from datetime import datetime
+from planificador.filters import Filtro_producto
 from planificador.decorators import allowed_users
 import openpyxl
 import uuid
@@ -40,7 +36,7 @@ class Mindicador:
         response = requests.get(url)
         data = json.loads(response.text.encode("utf-8"))
         # Para que el json se vea ordenado, retornar pretty_json
-        pretty_json = json.dumps(data, indent=2)
+        # pretty_json = json.dumps(data, indent=2)
         return data
 
 

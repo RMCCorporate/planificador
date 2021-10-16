@@ -4,12 +4,10 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as do_login
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.sessions.models import Session
-from planificador.models import User
 from django.contrib.auth import get_user_model
 
-# Create your views here.
+
 def welcome(request):
     if request.user.is_authenticated:
         return render(request, "login/welcome.html")

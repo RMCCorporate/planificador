@@ -1,4 +1,3 @@
-from django.http import response
 import requests
 from requests.auth import HTTPBasicAuth
 

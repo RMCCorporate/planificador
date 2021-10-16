@@ -1,5 +1,4 @@
 from django.urls import path
-from django.contrib import admin
 from proyectos import views
 from orden_compra import views as orden_compra_views
 

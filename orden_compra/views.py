@@ -1,32 +1,21 @@
-from operator import imod
 from django.shortcuts import render, redirect
 from planificador.models import (
     Orden_compra,
     Cotizacion,
     RMC,
     Producto_proyecto,
-    Producto,
     Producto_proyecto_cantidades,
     Producto_proveedor,
-    Precio,
-    User,
     Gastos_generales,
     Relacion_gastos,
     Proyecto,
     Correlativo_orden_compra,
     Importaciones,
 )
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from datetime import date, datetime
-from planificador.decorators import allowed_users
-from django.contrib.auth.models import User, Permission
+from datetime import date
 import uuid
-from openpyxl import load_workbook, Workbook
-from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
-import os
+from openpyxl import load_workbook
+from RMC_Corporate.settings import EXCEL_ROOT
 import json
 from django.contrib.auth import get_user_model
 
@@ -68,7 +57,7 @@ def excel_oc(id_orden_compra):
         sheet["F{}".format(str(numero_inicial_excel))] = total
         numero_inicial_excel += 1
     for i in range(numero_inicial_excel, 23):
-        if sheet["B{}".format(i)].value != None:
+        if sheet["B{}".format(i)].value is not None:
             sheet["B{}".format(i)] = ""
             sheet["C{}".format(i)] = ""
             sheet["D{}".format(i)] = ""
@@ -457,7 +446,7 @@ def editar_status(request, id):
 def fecha_respuesta_editar_precio(cotizaciones):
     lista = []
     for i in cotizaciones:
-        if i.orden_compra != True:
+        if i.orden_compra is not True:
             if i.fecha_respuesta:
                 diccionario = {}
                 diferencia_respuesta_salida = (
@@ -474,7 +463,7 @@ def fecha_respuesta_editar_precio(cotizaciones):
 def fecha_respuesta_cotizacion(cotizaciones):
     lista = []
     for i in cotizaciones:
-        if i.orden_compra != True:
+        if i.orden_compra is not True:
             if i.fecha_respuesta:
                 diccionario = {}
                 diferencia_respuesta_cotizacion = i.fecha_respuesta - i.fecha_salida
@@ -761,7 +750,7 @@ def info_gasto(request, id):
             proyecto_asociado=proyecto, orden_compra=True
         )
         for i in cotizaciones:
-            if i.orden_compra == True:
+            if i.orden_compra is True:
                 orden_compra = Orden_compra.objects.filter(cotizacion_hija=i)
                 if orden_compra[0].status_financiero:
                     if orden_compra[0].status_financiero == "CHEQUE A FECHA":

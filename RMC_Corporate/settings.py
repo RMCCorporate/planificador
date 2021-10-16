@@ -47,9 +47,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'drf_yasg',
-    'rest_framework',
-    'rest_framework.authtoken',
+    "drf_yasg",
+    "rest_framework",
+    "rest_framework.authtoken",
     "planificador",
     "users",
     "productos",
@@ -139,8 +139,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     )
 }
 
@@ -164,4 +164,4 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = "static"
 
-AUTH_USER_MODEL = 'planificador.User'
+AUTH_USER_MODEL = "planificador.User"

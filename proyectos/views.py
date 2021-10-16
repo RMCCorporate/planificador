@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from planificador.models import (
-    Clase,
     SubClase,
     Producto,
     Proveedor,
@@ -10,7 +9,6 @@ from planificador.models import (
     Precio,
     Filtro_producto,
     Cotizacion,
-    User,
     Producto_proveedor,
     Correlativo_cotizacion,
     Notificacion,
@@ -22,26 +20,25 @@ from planificador.models import (
     Importaciones,
 )
 from planificador.filters import (
-    ProductoFilter,
-    SubclaseFilter,
     Filtro_productoFilter,
     ProyectosFilter,
 )
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import date, datetime
 from planificador.decorators import allowed_users
 import uuid
-from django.contrib.auth.models import User, Permission
 from operator import itemgetter
-from RMC_Corporate.settings import BASE_DIR, MEDIA_ROOT, MEDIA_URL, EXCEL_ROOT
+from RMC_Corporate.settings import EXCEL_ROOT
 from django.contrib.auth import get_user_model
+
 
 lista_producto_general = []
 # Funciones:
+
+
 def clases_lista_productos(clase):
     sub_clase_general = []
     for i in clase:
@@ -154,7 +151,7 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
                 i.nombre, texto_lista_productos, texto_extra
             )
         )
-        texto_ingles = "Dear {}, \nA quote is requested for: \n {} \nRegards.".format(
+        texto_ingles = "Dear {}, \nA quote is requested for: \n{} \n{}\nRegards.".format(
             i.nombre, texto_lista_productos, texto_extra
         )
         if cotizacion.proveedor_asociado.idioma == "ESP":
@@ -1152,16 +1149,6 @@ def mostrar_cotizacion(request, id):
     if cotizacion.orden_compra:
         orden_compra = Orden_compra.objects.get(cotizacion_hija=cotizacion)
         productos_orden_compra = cotizacion.productos_proyecto_asociados.all()
-        for producto in orden_compra.cotizacion_hija.productos_proyecto_asociados.all():
-            lista_precio = (
-                producto.producto_asociado_cantidades.proyecto.lista_precios.all()
-            )
-            if lista_precio.filter(
-                nombre_cotizacion=orden_compra.cotizacion_hija.nombre
-            ).exists():
-                filtro = lista_precio.filter(
-                    nombre_cotizacion=orden_compra.cotizacion_hija.nombre
-                )
     else:
         orden_compra = False
         productos_orden_compra = False
@@ -1214,7 +1201,6 @@ def editar_cotizacion(request, id):
 def editar_disponibilidad(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     if request.method == "POST":
-        usuario_modificacion = request.user.first_name + " " + request.user.last_name
         productos = request.POST.getlist("producto")
         proveedor = cotizacion.proveedor_asociado
         for i in productos:
@@ -1439,7 +1425,6 @@ def agregar_orden_interna(request, id):
         lista_proveedor = {}
         for x in productos_escogidos:
             producto = Producto_proyecto.objects.get(id=x)
-            auxiliar_proveedor = []
             info_precio_cantidad = request.POST.getlist(x)
             cantidad = info_precio_cantidad[1]
             proveedor = info_precio_cantidad[0]

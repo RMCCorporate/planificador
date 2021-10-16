@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from planificador.models import (
     Producto,
     Clase,
@@ -10,17 +9,14 @@ from planificador.models import (
     Proveedor,
     Notificacion,
     Permisos_notificacion,
-    User,
     Correlativo_producto,
     ImagenProducto,
 )
-from planificador.filters import ProductoFilter, SubclaseFilter, Filtro_productoFilter
-from datetime import date, datetime
-from django.core.files import File
+from planificador.filters import Filtro_productoFilter
+from datetime import datetime
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from django.core.files.temp import NamedTemporaryFile
 from django.contrib.auth.decorators import login_required
 from django import forms
 import openpyxl
