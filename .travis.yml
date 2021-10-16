@@ -8,5 +8,7 @@ env:
 install:
   - pip install -r requirements.txt
 
+before-script: source ~/eb-ve/bin/activate
+
 script:
   - python3 manage.py test && flake8
