@@ -21,7 +21,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
 
-
 # FUNCIONES
 def mostrar_clases():
     clases = Clase.objects.all()
