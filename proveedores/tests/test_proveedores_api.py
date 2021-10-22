@@ -12,22 +12,24 @@ from proveedores.api.serializers import ProveedorSerializer
 
 PROVEEDORES_URL = reverse('proveedores:proveedores-list')
 
+
 def sample_proveedor(rut, **params):
     """Create and return a sample proveedor"""
     defaults = {
-        'nombre':"Test name 1",
-        "razon_social":"Test razón social",
-        "direccion":"Adress Test",
+        'nombre': "Test name 1",
+        "razon_social": "Test razón social",
+        "direccion": "Adress Test",
     }
     defaults.update(params)
 
     return Proveedor.objects.create(rut=rut, **defaults)
 
+
 def sample_contacto(correo, **params):
     """Create a sample contacto"""
     defaults = {
-        'telefono':"+56912345678",
-        "nombre":"Contacto Test",
+        'telefono': "+56912345678",
+        "nombre": "Contacto Test",
     }
     defaults.update(params)
 
@@ -41,11 +43,10 @@ class PublicProveedoresApiTests(TestCase):
         self.client = APIClient()
 
     def test_login_required(self):
-        """Test that login is required for retrieving proveedores"""
+        """Test that login is not required for retrieving proveedores"""
         res = self.client.get(PROVEEDORES_URL)
 
-        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
-
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
 
 
 class PrivateProveedoresApiTests(TestCase):
@@ -75,9 +76,9 @@ class PrivateProveedoresApiTests(TestCase):
         """Test creating recipe"""
         payload = {
             'rut': 'sampleRut',
-            'nombre':"Test name 1",
-            "razon_social":"Test razón social",
-            "direccion":"Adress Test",
+            'nombre': "Test name 1",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
         }
         res = self.client.post(PROVEEDORES_URL, payload)
 
@@ -91,10 +92,10 @@ class PrivateProveedoresApiTests(TestCase):
         contacto1 = sample_contacto(correo="contacto1@gmail.com")
         contacto2 = sample_contacto(correo="contacto2@gmail.com")
         payload = {
-            'rut':"Rut prueba",
-            'nombre':"Test name 1",
-            "razon_social":"Test razón social",
-            "direccion":"Adress Test",
+            'rut': "Rut prueba",
+            'nombre': "Test name 1",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
             'contactos_asociados': [contacto1, contacto2]
         }
         res = self.client.post(PROVEEDORES_URL, payload)
