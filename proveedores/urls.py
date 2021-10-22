@@ -1,10 +1,12 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
 
 from proveedores import views
+from proveedores.api.router import router_proveedores
 
+app_name = 'proveedores'
 
 urlpatterns = [
+    path('', include(router_proveedores.urls)),
     path("proveedores", views.proveedores, name="proveedores"),
     path("proveedores/nuevo", views.agregar_proveedor, name="nuevo"),
     path(
