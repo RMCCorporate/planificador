@@ -3,7 +3,6 @@ from django.urls import path, include
 from proveedores import views
 from proveedores.api.router import router_proveedores
 
-app_name = 'proveedores'
 
 urlpatterns = [
     path('', include(router_proveedores.urls)),
