@@ -61,22 +61,35 @@ class ProveedorSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-
     def update(self, instance, validated_data):
-        if validated_data["contactos_asociados"][0]:
-            if Contacto.objects.filter(correo=validated_data["contactos_asociados"][0]["correo"]).exists():
-                contacto = Contacto.objects.get(correo=validated_data["contactos_asociados"][0]["correo"])
-                instance.contactos_asociados.add(contacto)
-                instance.save()
-            else:
-                nuevo_contacto = Contacto(
-                    correo=validated_data["contactos_asociados"][0]["correo"],
-                    telefono=validated_data["contactos_asociados"][0]["telefono"],
-                    nombre=validated_data["contactos_asociados"][0]["nombre"], 
-                    )
-                nuevo_contacto.save()
-                instance.contactos_asociados.add(nuevo_contacto)
-                instance.save()
+        instance.save()
+        if "contactos_asociados" in validated_data.keys():
+            if validated_data["contactos_asociados"][0]:
+                if Contacto.objects.filter(correo=validated_data["contactos_asociados"][0]["correo"]).exists():
+                    contacto = Contacto.objects.get(correo=validated_data["contactos_asociados"][0]["correo"])
+                    instance.contactos_asociados.add(contacto)
+                    instance.save()
+                else:
+                    nuevo_contacto = Contacto(
+                        correo=validated_data["contactos_asociados"][0]["correo"],
+                        telefono=validated_data["contactos_asociados"][0]["telefono"],
+                        nombre=validated_data["contactos_asociados"][0]["nombre"])
+                    nuevo_contacto.save()
+                    instance.contactos_asociados.add(nuevo_contacto)
+                    instance.save()
+        if "calificaciones" in validated_data.keys():
+            if validated_data["calificaciones"][0]:
+                if Calificacion.objects.filter(nombre=validated_data["calificaciones"][0]["nombre"]).exists():
+                    calificacion = Calificacion.objects.get(nombre=validated_data["calificaciones"][0]["nombre"])
+                    instance.calificaciones.add(calificacion)
+                    instance.save()
+                else:
+                    nueva_calificacion = Calificacion(
+                        nombre=validated_data["calificaciones"][0]["correo"],
+                        descripción=validated_data["calificaciones"][0]["descripción"])
+                    nueva_calificacion.save()
+                    instance.calificaciones.add(nueva_calificacion)
+                    instance.save()
         return instance
 
 
