@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, validators
 
 from planificador.models import Proveedor, RMC, Contacto, Calificacion
 
@@ -23,11 +23,11 @@ class ProveedorSerializer(serializers.ModelSerializer):
     """Serializer for Proveedor objects"""
     contactos_asociados = serializers.PrimaryKeyRelatedField(
         many=True,
-        queryset=Contacto.objects.all() 
+        read_only = True
     )
     calificaciones = serializers.PrimaryKeyRelatedField(
         many=True,
-        queryset=Calificacion.objects.all() 
+        read_only = True
     )
 
     class Meta:

@@ -163,3 +163,16 @@ class PrivateProveedoresApiTests(TestCase):
         res = self.client.post(PROVEEDORES_URL, payload)
 
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_put_proveedor(self):
+        """Test put proveedor"""
+        proveedor = sample_proveedor("sample_rut")
+        payload = {
+            'rut': 'sampleRut',
+            'nombre': "Test name 2",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
+        }
+        res = self.client.put(PROVEEDORES_URL, payload)
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertNotEqual(res.data["nombre"], proveedor.nombre)

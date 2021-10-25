@@ -1,9 +1,27 @@
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 
-from planificador.models import Proveedor, RMC
+from planificador.models import Proveedor, RMC, Contacto, Calificacion
 from proveedores.api.serializers import ProveedorSerializer, RMCSerializer
 from proveedores.api.permissions import IsAdminOrReadOnly
+
+
+class ContactoApiViewSet(ModelViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = RMCSerializer
+    queryset = Contacto.objects.all()
+    lookup_field = 'correo'
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['nombre']
+
+
+class CalificacionApiViewSet(ModelViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = RMCSerializer
+    queryset = Calificacion.objects.all()
+    lookup_field = 'nombre'
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['nombre']
 
 
 class ProveedorApiViewSet(ModelViewSet):
