@@ -5,7 +5,7 @@ from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from planificador.models import Proveedor, Contacto
+from planificador.models import Proveedor, Contacto, Calificacion, Producto
 
 from proveedores.api.serializers import ProveedorSerializer
 
@@ -34,6 +34,29 @@ def sample_contacto(correo, **params):
     defaults.update(params)
 
     return Contacto.objects.create(correo=correo, **defaults)
+
+
+def sample_calificacion(nombre, **params):
+    """Create a sample contacto"""
+    defaults = {
+        'descripción': "Calificación de prueba",
+    }
+    defaults.update(params)
+
+    return Calificacion.objects.create(nombre=nombre, **defaults)
+
+
+def sample_producto(id, **params):
+    """Create a sample producto"""
+    defaults = {
+        'nombre': "Producto prueba",
+        'unidad': "Unidad de prueba",
+        'kilos': 10,
+        'proveedor_interno': "Proveedor de prueba",
+    }
+    defaults.update(params)
+
+    return Producto.objects.create(id=id, **defaults)
 
 
 class PublicProveedoresApiTests(TestCase):
@@ -97,6 +120,45 @@ class PrivateProveedoresApiTests(TestCase):
             "razon_social": "Test razón social",
             "direccion": "Adress Test",
             'contactos_asociados': [contacto1, contacto2]
+        }
+        res = self.client.post(PROVEEDORES_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_proveedor_with_contactos_and_calificaciones(self):
+        """Test creating proveedor con contactos and calificaciones"""
+        contacto1 = sample_contacto(correo="contacto1@gmail.com")
+        contacto2 = sample_contacto(correo="contacto2@gmail.com")
+        calificacion1 = sample_calificacion(nombre="Calificacion 1")
+        calificacion2 = sample_calificacion(nombre="Calificacion 2")
+        payload = {
+            'rut': "Rut prueba",
+            'nombre': "Test name 1",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
+            'contactos_asociados': [contacto1, contacto2],
+            'calificaciones': [calificacion1, calificacion2]
+        }
+        res = self.client.post(PROVEEDORES_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+
+    def test_create_proveedor_with_contactos_and_calificaciones_products(self):
+        """Test creating proveedor con contactos and calificaciones"""
+        contacto1 = sample_contacto(correo="contacto1@gmail.com")
+        contacto2 = sample_contacto(correo="contacto2@gmail.com")
+        calificacion1 = sample_calificacion(nombre="Calificacion 1")
+        calificacion2 = sample_calificacion(nombre="Calificacion 2")
+        producto1 = sample_producto(id="1")
+        producto2 = sample_producto(id="2")
+        payload = {
+            'rut': "Rut prueba",
+            'nombre': "Test name 1",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
+            'contactos_asociados': [contacto1, contacto2],
+            'calificaciones': [calificacion1, calificacion2],
+            'productos_no': [producto1, producto2]
         }
         res = self.client.post(PROVEEDORES_URL, payload)
 

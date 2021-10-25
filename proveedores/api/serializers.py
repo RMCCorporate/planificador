@@ -9,7 +9,6 @@ class ProveedorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proveedor
         fields = ('rut', 'nombre', 'razon_social', 'idioma', 'direccion')
-        read_only_fields = ('subclases_asociadas', 'calificaciones')
 
 
 class RMCSerializer(serializers.ModelSerializer):
