@@ -44,6 +44,10 @@ class ProveedorSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def patch(self, validated_data):
+        instance = self.Meta.model(**validated_data)
+        instance.save()
+        return instance
 
 class RMCSerializer(serializers.ModelSerializer):
     """Serializer for RMC objects"""
