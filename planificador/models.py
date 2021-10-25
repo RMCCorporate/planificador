@@ -171,8 +171,9 @@ class Proveedor(models.Model):
         Calificacion,
         through="Calificacion_Proveedor",
         through_fields=("proveedor", "calificacion"),
+        null=True
     )
-    contactos_asociados = models.ManyToManyField(Contacto)
+    contactos_asociados = models.ManyToManyField(Contacto, null=True)
     ESPANOL = "ES"
     INGLES = "EN"
     IDIOMA_CHOICES = [
@@ -183,7 +184,7 @@ class Proveedor(models.Model):
         max_length=128, choices=IDIOMA_CHOICES, default=ESPANOL, null=True
     )
     direccion = models.CharField(max_length=256, null=True)
-    productos_no = models.ManyToManyField(Producto)
+    productos_no = models.ManyToManyField(Producto, null=True)
 
     def __str__(self):
         return self.nombre
@@ -278,7 +279,7 @@ class Cotizacion(models.Model):
         null=True,
     )
     contacto_asociado = models.ManyToManyField(
-        Contacto, related_name="contacto_asociado"
+        Contacto, related_name="contacto_asociado", null=True
     )
     fecha_salida = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_respuesta = models.DateField(auto_now=False, auto_now_add=False, null=True)

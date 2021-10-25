@@ -96,7 +96,7 @@ class PrivateProveedoresApiTests(TestCase):
         self.assertEqual(res.data, serializer.data)
 
     def test_create_proveedor(self):
-        """Test creating recipe"""
+        """Test creating proveedor"""
         payload = {
             'rut': 'sampleRut',
             'nombre': "Test name 1",
@@ -166,13 +166,50 @@ class PrivateProveedoresApiTests(TestCase):
 
     def test_put_proveedor(self):
         """Test put proveedor"""
-        proveedor = sample_proveedor("sample_rut")
+        payload = {
+            'rut': 'sampleRut',
+            'nombre': "Test name 1",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
+        }
+        res1 = self.client.post(PROVEEDORES_URL, payload)
         payload = {
             'rut': 'sampleRut',
             'nombre': "Test name 2",
             "razon_social": "Test razón social",
             "direccion": "Adress Test",
         }
-        res = self.client.put(PROVEEDORES_URL, payload)
-        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-        self.assertNotEqual(res.data["nombre"], proveedor.nombre)
+        res = self.client.put("{}{}/".format(PROVEEDORES_URL, payload["rut"]), payload)
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data["nombre"], res1.data["nombre"])
+
+    def test_patch_proveedor_with_contacto(self):
+        """Test put proveedor"""
+        payload = {
+            'rut': 'sampleRut',
+            'nombre': "Test name 1",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
+        }
+        
+        res1 = self.client.post(PROVEEDORES_URL, payload)
+        print(res1)
+        payload = {
+            'rut': 'sampleRut',
+            'nombre': "Test name 2",
+            "razon_social": "Test razón social",
+            "direccion": "Adress Test",
+            "contactos_asociados":
+            {
+                "correo":"sample@sample.cl",
+                'telefono': "+56912345678",
+                "nombre": "Contacto Test",
+            }    
+        }
+        res = self.client.patch("{}{}/".format(PROVEEDORES_URL, payload["rut"]), payload)
+        print(res)
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data["contactos_asociados"][0]["correo"], "sample@sample.cl")
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(res.data["nombre"], res1.data["nombre"])
