@@ -31,25 +31,90 @@ class Mindicador:
         self.day = day
 
     def InfoApi(self):
-        # En este caso hacemos la solicitud para el caso de consulta de un indicador en un año determinado
         url = f"https://mindicador.cl/api/{self.indicador}/{self.day}-{self.month}-{self.year}"
         response = requests.get(url)
         data = json.loads(response.text.encode("utf-8"))
-        # Para que el json se vea ordenado, retornar pretty_json
-        # pretty_json = json.dumps(data, indent=2)
         return data
 
 
-# Mostrar importaciones
+def calculo_flete(flete, kilos):
+    valor_flete = 0
+    if 45 > kilos and kilos * flete.freight_less_45 > flete.freight_min:
+        valor_flete += kilos * flete.freight_less_45
+    elif 45 > kilos and not kilos * flete.freight_less_45 > flete.freight_min:
+        valor_flete += kilos * flete.freight_less_45
+    elif 100 > kilos > 45 and kilos * flete.freight_45_100 > flete.freight_min:
+        valor_flete += kilos * flete.freight_45_100
+    elif 100 > kilos > 45 and not kilos * flete.freight_45_100 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif 300 > kilos > 100 and kilos * flete.freight_100_300 > flete.freight_min:
+        valor_flete += kilos * flete.freight_100_300
+    elif 300 > kilos > 100 and not kilos * flete.freight_100_300 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif 500 > kilos > 300 and kilos * flete.freight_300_500 > flete.freight_min:
+        valor_flete += kilos * flete.freight_300_500
+    elif 500 > kilos > 300 and not kilos * flete.freight_300_500 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif 1000 > kilos > 500 and kilos * flete.freight_500_1000 > flete.freight_min:
+        valor_flete += kilos * flete.freight_500_1000
+    elif 1000 > kilos > 500 and not kilos * flete.freight_500_1000 > flete.freight_min:
+        valor_flete += flete.freight_min
+    elif kilos > 1000 and kilos * flete.freight_more_1000 > flete.freight_min:
+        valor_flete += kilos * flete.freight_more_1000
+    elif kilos > 1000 and not kilos * flete.freight_more_1000 > flete.freight_min:
+        valor_flete += flete.freight_min
+    if kilos * flete.security_surcharge_kg > flete.security_surcharge_min:
+        valor_flete += kilos * flete.security_surcharge_kg
+    else:
+        valor_flete += flete.security_surcharge_min
+    if kilos * flete.cargo_screening_fee_kg > flete.cargo_screening_fee_min:
+        valor_flete += kilos * flete.cargo_screening_fee_kg
+    else:
+        valor_flete += flete.cargo_screening_fee_min
+    if kilos * flete.fuel_surcharge_kg > flete.fuel_surcharge_min:
+        valor_flete += kilos * flete.fuel_surcharge_kg
+    else:
+        valor_flete += flete.fuel_surcharge_min
+    return valor_flete
+
+
+def calculo_origen(origen, kilos):
+    valor_origen = 0
+    if origen.pickup_kg * kilos > origen.pickup_min:
+        valor_origen += origen.pickup_kg * kilos
+    else:
+        valor_origen += origen.pickup_min
+    valor_origen += origen.handling + origen.customs_clearence
+    if origen.other_fees1_description:
+        valor_origen += origen.other_fees1_value_min
+    if origen.other_fees2_description:
+        if kilos * origen.other_fees2_value_kg > origen.other_fees2_value_min:
+            valor_origen += kilos * origen.other_fees2_value_kg
+        else:
+            valor_origen += origen.other_fees2_value_min
+    return valor_origen
+
+
+def calculo_destino(destino, kilos):
+    valor_destino = destino.terminal_handling + destino.desconsolidation
+    if destino.doc_fee_max > kilos * destino.doc_fee_kg > destino.doc_fee_min:
+        valor_destino += kilos * destino.doc_fee_kg
+    elif kilos * destino.doc_fee_kg > destino.doc_fee_max:
+        valor_destino += destino.doc_fee_max
+    elif destino.doc_fee_min > kilos * destino.doc_fee_kg:
+        valor_destino += destino.doc_fee_min
+    return valor_destino
+
+
 @login_required(login_url="/login")
 def importaciones(request):
     importaciones = Importaciones.objects.all()
     lenght = len(importaciones)
-    return render(
-        request,
-        "importaciones/importaciones.html",
-        {"importaciones": importaciones, "len": lenght},
-    )
+    payload = {
+        "importaciones": importaciones,
+        "len": lenght
+    }
+    return render(request, "importaciones/importaciones.html", payload)
 
 
 def nueva_importacion_planilla(request):
@@ -67,7 +132,6 @@ def nueva_importacion_planilla(request):
                 and region != "Origin"
                 and region != "Region\n(enter AP, AM, EURO, MEA)"
             ):
-                # FALTA VER LOS CASOS QUE NO SON INT O ESTÁN VACÍOS!!
                 country = row_data[2]
                 origin = row_data[4]
                 if row_data[10] == "Air Economy":
@@ -86,8 +150,6 @@ def nueva_importacion_planilla(request):
                     else:
                         other_fees1_description = row_data[18]
                         other_fees1_value_min = row_data[19]
-                    # VER SI EXISTE OTHER FEES VALUE KG EN EL FINAL
-                    # other_fees1_value_kg = row_data[15]
                     if row_data[20] == "None":
                         other_fees2_description = "No hay"
                         other_fees2_value_min = 0
@@ -210,158 +272,71 @@ def nueva_importacion_planilla(request):
         return render(request, "importaciones/nueva_importacion_planilla.html")
 
 
-# Mostrar importaciones
 @login_required(login_url="/login")
 def tarifarios(request):
     tarifarios = DHL.objects.all()
     lenght = len(tarifarios)
-    return render(
-        request,
-        "importaciones/tarifarios.html",
-        {"tarifarios": tarifarios, "len": lenght},
-    )
+    payload = {
+        "tarifarios": tarifarios,
+        "len": lenght
+    }
+    return render(request, "importaciones/tarifarios.html", payload)
 
 
-# Mostrar importaciones
 @login_required(login_url="/login")
 def tarifario(request, origin):
     tarifario = DHL.objects.get(origin_airport=origin)
     origen = Origin_charges.objects.get(origin_airport=origin)
     freight = Airfreight_charges.objects.get(origin_airport=origin)
     destino = Destination_charges.objects.get(origin_airport=origin)
-    return render(
-        request,
-        "importaciones/tarifario.html",
-        {
-            "Tarifario": tarifario,
-            "origen": origen,
-            "freight": freight,
-            "destino": destino,
-        },
-    )
+    payload = {
+        "Tarifario": tarifario,
+        "origen": origen,
+        "freight": freight,
+        "destino": destino,
+    }
+    return render(request, "importaciones/tarifario.html", payload)
 
 
-def calculo_flete(flete, kilos):
-    valor_flete = 0
-    if 45 > kilos and kilos * flete.freight_less_45 > flete.freight_min:
-        valor_flete += kilos * flete.freight_less_45
-    elif 45 > kilos and not kilos * flete.freight_less_45 > flete.freight_min:
-        valor_flete += kilos * flete.freight_less_45
-    elif 100 > kilos > 45 and kilos * flete.freight_45_100 > flete.freight_min:
-        valor_flete += kilos * flete.freight_45_100
-    elif 100 > kilos > 45 and not kilos * flete.freight_45_100 > flete.freight_min:
-        valor_flete += flete.freight_min
-    elif 300 > kilos > 100 and kilos * flete.freight_100_300 > flete.freight_min:
-        valor_flete += kilos * flete.freight_100_300
-    elif 300 > kilos > 100 and not kilos * flete.freight_100_300 > flete.freight_min:
-        valor_flete += flete.freight_min
-    elif 500 > kilos > 300 and kilos * flete.freight_300_500 > flete.freight_min:
-        valor_flete += kilos * flete.freight_300_500
-    elif 500 > kilos > 300 and not kilos * flete.freight_300_500 > flete.freight_min:
-        valor_flete += flete.freight_min
-    elif 1000 > kilos > 500 and kilos * flete.freight_500_1000 > flete.freight_min:
-        valor_flete += kilos * flete.freight_500_1000
-    elif 1000 > kilos > 500 and not kilos * flete.freight_500_1000 > flete.freight_min:
-        valor_flete += flete.freight_min
-    elif kilos > 1000 and kilos * flete.freight_more_1000 > flete.freight_min:
-        valor_flete += kilos * flete.freight_more_1000
-    elif kilos > 1000 and not kilos * flete.freight_more_1000 > flete.freight_min:
-        valor_flete += flete.freight_min
-    if kilos * flete.security_surcharge_kg > flete.security_surcharge_min:
-        valor_flete += kilos * flete.security_surcharge_kg
-    else:
-        valor_flete += flete.security_surcharge_min
-    if kilos * flete.cargo_screening_fee_kg > flete.cargo_screening_fee_min:
-        valor_flete += kilos * flete.cargo_screening_fee_kg
-    else:
-        valor_flete += flete.cargo_screening_fee_min
-    if kilos * flete.fuel_surcharge_kg > flete.fuel_surcharge_min:
-        valor_flete += kilos * flete.fuel_surcharge_kg
-    else:
-        valor_flete += flete.fuel_surcharge_min
-    return valor_flete
-
-
-def calculo_origen(origen, kilos):
-    valor_origen = 0
-    if origen.pickup_kg * kilos > origen.pickup_min:
-        valor_origen += origen.pickup_kg * kilos
-    else:
-        valor_origen += origen.pickup_min
-    valor_origen += origen.handling + origen.customs_clearence
-    if origen.other_fees1_description:
-        valor_origen += origen.other_fees1_value_min
-    if origen.other_fees2_description:
-        if kilos * origen.other_fees2_value_kg > origen.other_fees2_value_min:
-            valor_origen += kilos * origen.other_fees2_value_kg
-        else:
-            valor_origen += origen.other_fees2_value_min
-    return valor_origen
-
-
-def calculo_destino(destino, kilos):
-    valor_destino = destino.terminal_handling + destino.desconsolidation
-    if destino.doc_fee_max > kilos * destino.doc_fee_kg > destino.doc_fee_min:
-        valor_destino += kilos * destino.doc_fee_kg
-    elif kilos * destino.doc_fee_kg > destino.doc_fee_max:
-        valor_destino += destino.doc_fee_max
-    elif destino.doc_fee_min > kilos * destino.doc_fee_kg:
-        valor_destino += destino.doc_fee_min
-    return valor_destino
-
-
-# Agregar proveedor
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
 @login_required(login_url="/login")
 def nueva_cotizacion_importacion(request):
     if request.method == "POST":
-        codigo = request.POST["codigo"]
-        origen = request.POST["origen_DHL"]
-        kilos = float(request.POST["kilos"])
-        valor_moneda = float(request.POST["valor_moneda"])
+        post = request.POST
         advalorem = request.POST["advalorem"]
-        dolar = request.POST["valor_dolar"]
-        dhl = DHL.objects.get(origin_airport=origen)
-        valor_flete = calculo_flete(dhl.freight, kilos)
-        valor_origen = calculo_origen(dhl.origin, kilos)
-        valor_destino = calculo_destino(dhl.destination, kilos)
-        proveedor = request.POST["proveedor"]
-        objeto_proveedor = Proveedor.objects.get(rut=proveedor)
-        UF = request.POST["UF"]
-        if advalorem == "SI":
-            advalorem = 1
-        else:
-            advalorem = 0
+        dhl = DHL.objects.get(origin_airport=post["origen_DHL"])
+        valor_flete = calculo_flete(dhl.freight, float(post["kilos"]))
+        valor_origen = calculo_origen(dhl.origin, float(post["kilos"]))
+        valor_destino = calculo_destino(dhl.destination, float(post["kilos"]))
+        objeto_proveedor = Proveedor.objects.get(rut=post["proveedor"])
+        advalorem = (1 if advalorem == "SI" else 0)
         nueva_importacion = Importaciones(
             codigo=uuid.uuid1(),
-            codigo_referencial=codigo,
-            valor_dolar=dolar,
+            codigo_referencial=post["codigo"],
+            valor_dolar=post["valor_dolar"],
             proveedor=objeto_proveedor,
             origen=dhl.origin_airport,
             DHL_asociado=dhl,
-            kilos=kilos,
+            kilos=float(post["kilos"]),
             valor_flete=valor_flete,
             valor_origen=valor_origen,
             valor_destino=valor_destino,
             moneda_importacion=dhl.origin.currency,
-            valor_moneda_importacion=valor_moneda,
+            valor_moneda_importacion=float(post["valor_moneda"]),
             advalorem=advalorem,
             fecha_emision=datetime.now(),
-            UF=float(UF),
+            UF=float(post["UF"]),
         )
         nueva_importacion.save()
         productos = Filtro_producto.objects.all()
         productos_importacion = nueva_importacion.productos.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-        return render(
-            request,
-            "importaciones/eleccion_productos.html",
-            {
-                "Importacion": nueva_importacion,
-                "myFilter": myFilter,
-                "productos_importacion": productos_importacion,
-            },
-        )
+        payload = {
+            "Importacion": nueva_importacion,
+            "myFilter": myFilter,
+            "productos_importacion": productos_importacion,
+        }
+        return render(request, "importaciones/eleccion_productos.html", payload)
     else:
         lista_dhl = DHL.objects.all()
         proveedores = Proveedor.objects.all()
@@ -374,95 +349,69 @@ def nueva_cotizacion_importacion(request):
         dolar = float(clase_dolar.InfoApi()["serie"][0]["valor"])
         clase_euro = Mindicador("euro", dia, mes, año)
         euro = float(clase_euro.InfoApi()["serie"][0]["valor"])
-        return render(
-            request,
-            "importaciones/nueva_cotizacion_importacion.html",
-            {
-                "lista_dhl": lista_dhl,
-                "proveedores": proveedores,
-                "uf": uf,
-                "dolar": dolar,
-                "euro": euro,
-                "dia": dia,
-                "mes": mes,
-                "año": año,
-            },
-        )
+        payload = {
+            "lista_dhl": lista_dhl,
+            "proveedores": proveedores,
+            "uf": uf,
+            "dolar": dolar,
+            "euro": euro,
+            "dia": dia,
+            "mes": mes,
+            "año": año,
+        }
+        return render(request, "importaciones/nueva_cotizacion_importacion.html", payload)
 
 
-# Mostrar importaciones
 @login_required(login_url="/login")
 def importacion(request, importacion):
     importacion = Importaciones.objects.get(codigo=importacion)
     DHL = importacion.DHL_asociado
     productos = importacion.productos.all()
-    return render(
-        request,
-        "importaciones/importacion.html",
-        {"Importacion": importacion, "DHL": DHL, "productos": productos},
-    )
+    payload = {
+        "Importacion": importacion,
+        "DHL": DHL,
+        "productos": productos
+    }
+    return render(request, "importaciones/importacion.html", payload)
 
 
-# Agregar importacion
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
 @login_required(login_url="/login")
 def anadir_importacion(request):
     if request.method == "POST":
-        codigo = request.POST["codigo"]
-        nombre_origen = request.POST["nombre_origen"]
-        tipo_cambio = request.POST["tipo_cambio"]
-        valor_cambio = float(request.POST["valor_cambio"])
-        dolar = float(request.POST["dolar"])
-        transporte = request.POST["transporte"]
-        kilos = float(request.POST["kilos"])
-        flete = float(request.POST["flete"])
-        origen = float(request.POST["origen"])
-        destino = request.POST["destino"]
-        UF = request.POST["UF"]
-        if not destino:
-            destino = 0
-        else:
-            destino = float(destino)
-        advalorem = request.POST["advalorem"]
-        if advalorem == "SI":
-            advalorem = 1
-        else:
-            advalorem = 0
-        fecha_emision = request.POST["fecha_emision"]
-        fecha_llegada = request.POST["fecha_llegada"]
-        proveedor = request.POST["proveedor"]
+        post = request.POST
+        destino = (0 if not post["destino"] else float(post["destino"]))
+        advalorem = (1 if post["advalorem"] == "SI" else 0)
+        proveedor = post["proveedor"]
         objeto_proveedor = Proveedor.objects.get(rut=proveedor)
         nueva_importacion = Importaciones(
             codigo=uuid.uuid1(),
-            codigo_referencial=codigo,
-            origen=nombre_origen,
-            transporte=transporte,
+            codigo_referencial=post["codigo"],
+            origen=post["nombre_origen"],
+            transporte=post["transporte"],
             proveedor=objeto_proveedor,
-            kilos=kilos,
-            valor_dolar=dolar,
-            valor_flete=flete,
-            valor_origen=origen,
+            kilos=float(post["kilos"]),
+            valor_dolar=float(post["dolar"]),
+            valor_flete=float(post["flete"]),
+            valor_origen=float(post["origen"]),
             valor_destino=destino,
-            moneda_importacion=tipo_cambio,
-            valor_moneda_importacion=valor_cambio,
+            moneda_importacion=post["tipo_cambio"],
+            valor_moneda_importacion=float(post["valor_cambio"]),
             advalorem=advalorem,
-            fecha_emision=fecha_emision,
-            fecha_llegada=fecha_llegada,
-            UF=float(UF),
+            fecha_emision=post["fecha_emision"],
+            fecha_llegada=post["fecha_llegada"],
+            UF=float(post["UF"]),
         )
         nueva_importacion.save()
         productos = Filtro_producto.objects.all()
         productos_importacion = nueva_importacion.productos.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-        return render(
-            request,
-            "importaciones/eleccion_productos.html",
-            {
-                "Importacion": nueva_importacion,
-                "myFilter": myFilter,
-                "productos_importacion": productos_importacion,
-            },
-        )
+        payload = {
+            "Importacion": nueva_importacion,
+            "myFilter": myFilter,
+            "productos_importacion": productos_importacion,
+        }
+        return render(request, "importaciones/eleccion_productos.html", payload)
     else:
         proveedores = Proveedor.objects.all()
         dia = str(datetime.today().day)
@@ -474,34 +423,27 @@ def anadir_importacion(request):
         dolar = float(clase_dolar.InfoApi()["serie"][0]["valor"])
         clase_euro = Mindicador("euro", dia, mes, año)
         euro = float(clase_euro.InfoApi()["serie"][0]["valor"])
-        return render(
-            request,
-            "importaciones/anadir_importacion.html",
-            {
-                "proveedores": proveedores,
-                "uf": uf,
-                "dolar": dolar,
-                "euro": euro,
-                "dia": dia,
-                "mes": mes,
-                "año": año,
-            },
-        )
+        payload = {
+            "proveedores": proveedores,
+            "uf": uf,
+            "dolar": dolar,
+            "euro": euro,
+            "dia": dia,
+            "mes": mes,
+            "año": año,
+        }
+        return render(request, "importaciones/anadir_importacion.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def guardar_datos_filtro(request):
-    importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
+    get = request.GET
+    importacion = Importaciones.objects.get(codigo=get["importacion"])
     productos_proyecto_anterior = importacion.productos.all()
-    productos_filtro = request.GET.getlist("productos")
-    booleano_repeticion = False
+    productos_filtro = get.getlist("productos")
     for i in productos_filtro:
-        for n in productos_proyecto_anterior:
-            if n.producto.nombre == i:
-                booleano_repeticion = True
-    for i in productos_filtro:
-        if not booleano_repeticion:
+        if not productos_proyecto_anterior.filter(producto__nombre=i).exists():
             producto = Producto.objects.get(nombre=i)
             nuevo_producto_importacion = Producto_proyecto_cantidades(
                 id=uuid.uuid1(), producto=producto
@@ -510,32 +452,30 @@ def guardar_datos_filtro(request):
             importacion.productos.add(nuevo_producto_importacion)
     productos_proyecto = importacion.productos.all()
     productos = Filtro_producto.objects.all()
-    for i in importacion.productos.all():
+    for i in productos_proyecto:
         if productos.filter(nombre_producto=i.producto.nombre):
             s = productos.filter(nombre_producto=i.producto.nombre)[0]
             s.utilizado = importacion.codigo
             s.save()
-    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    return render(
-        request,
-        "importaciones/eleccion_productos.html",
-        {
-            "Importacion": importacion,
-            "myFilter": myFilter,
-            "productos_proyecto": productos_proyecto,
-        },
-    )
+    myFilter = Filtro_productoFilter(get, queryset=productos)
+    payload = {
+        "Importacion": importacion,
+        "myFilter": myFilter,
+        "productos_proyecto": productos_proyecto,
+    }
+    return render(request, "importaciones/eleccion_productos.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def recibir_datos_planificador(request):
     if request.method == "POST":
+        post = request.POST
         usuario = request.user.first_name + " " + request.user.last_name
         importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
-        productos = request.POST.getlist("id_producto")
-        cantidad = request.POST.getlist("cantidad")
-        precio = request.POST.getlist("precio")
+        productos = post.getlist("id_producto")
+        cantidad = post.getlist("cantidad")
+        precio = post.getlist("precio")
         suma_productos = 0
         for n, i in enumerate(precio):
             suma_productos += (
@@ -644,8 +584,5 @@ def recibir_datos_planificador(request):
         importacion = Importaciones.objects.get(codigo=request.GET["importacion"])
         productos_repetidos = request.GET.getlist("productos_checkeados")
         productos = list(dict.fromkeys(productos_repetidos))
-        return render(
-            request,
-            "importaciones/lista_productos.html",
-            {"Importacion": importacion, "Productos": importacion.productos.all()},
-        )
+        payload = {"Importacion": importacion, "Productos": importacion.productos.all()}
+        return render(request, "importaciones/lista_productos.html", payload)

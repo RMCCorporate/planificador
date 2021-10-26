@@ -257,7 +257,7 @@ def nuevo_producto_planilla(request):
         if creado:
             crear_notificacion(
                 "agregar_producto",
-                request.user.email,
+                request.user.correo,
                 "creó producto(s) mediante planilla",
                 "Productos",
                 contador_creado,
@@ -366,7 +366,7 @@ def nuevo_producto_interno_planilla(request):
         if creado:
             crear_notificacion(
                 "agregar_producto",
-                request.user.email,
+                request.user.correo,
                 "creó producto(s) mediante planilla",
                 "Productos",
                 contador_creado,
@@ -443,7 +443,7 @@ def recibir_datos_producto(request):
     nuevo_filtro_producto.save()
     crear_notificacion(
         "agregar_producto",
-        request.user.email,
+        request.user.correo,
         "creó producto",
         "Productos",
         1,
@@ -576,7 +576,7 @@ def nuevo_proveedor_producto(request):
         if creado:
             crear_notificacion(
                 "agregar_proveedor_producto",
-                request.user.email,
+                request.user.correo,
                 "creó nombre proveedor de producto(s) mediante planilla",
                 "Proveedor_producto",
                 contador_creado,
@@ -612,7 +612,7 @@ def mostrar_edicion_producto(request, id):
         producto.save()
         crear_notificacion(
             "editar_producto",
-            request.user.email,
+            request.user.correo,
             "editó información producto",
             "Producto",
             1,
@@ -637,7 +637,7 @@ def eliminar_producto(request, id):
     filtro.delete()
     crear_notificacion(
         "eliminar_producto",
-        request.user.email,
+        request.user.correo,
         "eliminó producto",
         "Producto",
         1,

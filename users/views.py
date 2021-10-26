@@ -30,7 +30,7 @@ def login(request):
             password = form.cleaned_data["password"]
             # Verificamos las credenciales del usuario
             user = authenticate(username=username, password=password)
-            usuario = get_user_model().objects.get(nickname=str(user))
+            usuario = get_user_model().objects.get(correo=str(user))
             # Si existe un usuario con ese nombre y contraseña
             if user is not None:
                 # Hacemos el login manualmente

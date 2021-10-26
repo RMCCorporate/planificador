@@ -134,7 +134,8 @@ def crear_usuario(request):
         correo = request.POST["correo"]
         contraseña = request.POST["contraseña"]
         nombre_grupo = request.POST["grupo"]
-        if get_user_model().objects.filter(correo=correo).exists:
+        print(correo)
+        if get_user_model().objects.filter(correo=correo).exists():
             nuevo_usuario = get_user_model().objects.get(correo=correo)
         else:
             nuevo_usuario = get_user_model().objects.create_user(correo, contraseña)
@@ -392,7 +393,7 @@ def permisos_notificacion(request):
 
 @login_required(login_url="/login")
 def usuario(request):
-    usuario = get_user_model().objects.get(correo=str(request.user.email))
+    usuario = get_user_model().objects.get(correo=str(request.user.correo))
     lista_precios = usuario.precios.all()
     Productos = usuario.productos_proyecto.all()
     Proyectos = usuario.proyectos.all()
