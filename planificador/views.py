@@ -12,45 +12,31 @@ import openpyxl
 from django.contrib.auth import get_user_model
 
 
-# Create your views here.
 def takedate(elem):
     return elem.fecha
 
 
 @login_required(login_url="/login")
 def notificaciones(request):
-    lista_notificaciones = []
     permisos_notificacion = Permisos_notificacion.objects.filter(
-        usuarios__correo=request.user.email
+        usuarios__correo=request.user.correo
     )
     for i in permisos_notificacion:
         notificaciones = Notificacion.objects.filter(tipo=i.nombre)
-        for i in notificaciones:
-            if i:
-                lista_notificaciones.append(i)
+        lista_notificaciones = [i for i in notificaciones if i]
     lista_notificaciones.sort(key=takedate)
     lista_notificaciones.reverse()
-    usuario = get_user_model().objects.get(correo=request.user.email)
-    return render(
-        request,
-        "planificador/notificaciones.html",
-        {"notificacion": lista_notificaciones, "usuario": usuario},
-    )
+    usuario = get_user_model().objects.get(correo=request.user.correo)
+    payload = {"notificacion": lista_notificaciones, "usuario": usuario}
+    return render(request, "planificador/notificaciones.html", payload)
 
 
 @login_required(login_url="/login")
 def index(request):
-    if request.user.groups.all():
-        usuario = str(request.user.groups.all()[0])
-    else:
-        usuario = "Admin"
-    if Planilla.objects.filter(id="0").exists():
-        planilla = Planilla.objects.get(id="0").planilla
-    else:
-        planilla = False
-    return render(
-        request, "planificador/index.html", {"rol": usuario, "planilla": planilla}
-    )
+    usuario = str(request.user.groups.all()[0]) if request.user.groups.all() else "Admin"
+    planilla = Planilla.objects.get(id="0").planilla if Planilla.objects.filter(id="0").exists() else False
+    payload = {"rol": usuario, "planilla": planilla}
+    return render(request, "planificador/index.html", payload)
 
 
 def actualizar_planilla(request):
@@ -81,10 +67,7 @@ def agregar_subclases(request):
                 row_data.append(str(cell.value))
             if row_data[0] == "None" or row_data[1] == "None":
                 if not (row_data[0] == "None" and row_data[1] == "None"):
-                    aux = []
-                    aux.append(row_data[0])
-                    aux.append(row_data[1])
-                    aux.append("No se ingresó Subclase o Clase")
+                    aux = [row_data[0], row_data[1], "No se ingresó Subclase o Clase"]
                     datos_fallados.append(aux)
             else:
                 dato_subclase = row_data[0].upper()
@@ -111,11 +94,8 @@ def agregar_subclases(request):
                         nueva_clase.save()
         if len(datos_fallados) != 0:
             booleano_fallados = True
-        return render(
-            request,
-            "planificador/resultado_planilla.html",
-            {"Fallo": datos_fallados, "Booleano": booleano_fallados},
-        )
+        payload = {"Fallo": datos_fallados, "Booleano": booleano_fallados}
+        return render(request, "planificador/resultado_planilla.html", payload)
     else:
         return render(request, "planificador/nueva_subclase.html")
 
@@ -124,31 +104,21 @@ def agregar_subclases(request):
 @login_required(login_url="/login")
 def crear_usuario(request):
     if request.method == "POST":
-        nickname = request.POST["nickname"]
-        nombre = request.POST["nombre"]
-        apellido = request.POST["apellido"]
-        segundo_apellido = request.POST["segundo_apellido"]
-        cargo = request.POST["cargo"]
-        celular = request.POST["celular"]
-        telefono = request.POST["telefono"]
-        correo = request.POST["correo"]
-        contraseña = request.POST["contraseña"]
-        nombre_grupo = request.POST["grupo"]
-        print(correo)
-        if get_user_model().objects.filter(correo=correo).exists():
-            nuevo_usuario = get_user_model().objects.get(correo=correo)
+        post = request.POST
+        if get_user_model().objects.filter(correo=post["correo"]).exists():
+            nuevo_usuario = get_user_model().objects.get(correo=post["correo"])
         else:
-            nuevo_usuario = get_user_model().objects.create_user(correo, contraseña)
-        nuevo_usuario.nombre = nombre
-        nuevo_usuario.nickname = nickname
-        nuevo_usuario.apellido = apellido
-        nuevo_usuario.segundo_apellido = segundo_apellido
-        nuevo_usuario.celular = celular
-        nuevo_usuario.cargo = cargo
-        nuevo_usuario.telefono = telefono
+            nuevo_usuario = get_user_model().objects.create_user(post["correo"], post["contraseña"])
+        nuevo_usuario.nombre = post["nombre"]
+        nuevo_usuario.nickname = post["nickname"]
+        nuevo_usuario.apellido = post["apellido"]
+        nuevo_usuario.segundo_apellido = post["segundo_apellido"]
+        nuevo_usuario.celular = post["celular"]
+        nuevo_usuario.cargo = post["cargo"]
+        nuevo_usuario.telefono = post["telefono"]
         nuevo_usuario.notificaciones = 0
         nuevo_usuario.save()
-        grupo = Group.objects.get(name=nombre_grupo)
+        grupo = Group.objects.get(name=post["grupo"])
         nuevo_usuario.groups.add(grupo)
         nuevo_usuario.save()
         permisos = [
@@ -231,7 +201,7 @@ def crear_permisos(request):
 @login_required(login_url="/login")
 def permisos_notificacion(request):
     if request.method == "POST":
-        usuario = get_user_model().objects.get(correo=request.user.email)
+        usuario = get_user_model().objects.get(correo=request.user.correo)
         todos_los_permisos = Permisos_notificacion.objects.all()
         for n in todos_los_permisos:
             for j in n.usuarios.all():
@@ -250,7 +220,7 @@ def permisos_notificacion(request):
         for i in permisos:
             con = False
             for x in i.usuarios.all():
-                if x.correo == request.user.email:
+                if x.correo == request.user.correo:
                     con = True
             if con:
                 lista_con.append(i.nombre)
@@ -259,9 +229,7 @@ def permisos_notificacion(request):
         lista_ordenada = [["PRODUCTO"], ["PROYECTO"], ["COTIZACIÓN"], ["PROVEEDOR"]]
         for i in lista_con:
             if i[-4:] == "ucto":
-                aux = []
-                aux.append("Si")
-                aux.append(i)
+                aux = ["Si", i]
                 if i[:3] == "agr":
                     aux.append("Agregar")
                 elif i[:3] == "edi":
@@ -270,9 +238,7 @@ def permisos_notificacion(request):
                     aux.append("Eliminar")
                 lista_ordenada[0].append(aux)
             elif i[-4:] == "ecto":
-                aux = []
-                aux.append("Si")
-                aux.append(i)
+                aux = ["Si", i]
                 if i[:3] == "cre":
                     aux.append("Crear proyecto")
                 elif i[:3] == "agr":
@@ -288,9 +254,7 @@ def permisos_notificacion(request):
                 or i[-4:] == "rreo"
                 or i[-4:] == "ecio"
             ):
-                aux = []
-                aux.append("Si")
-                aux.append(i)
+                aux = ["Si", i]
                 if i[:3] == "cre":
                     aux.append("Crear cotización")
                 elif i[:3] == "env":
@@ -303,9 +267,7 @@ def permisos_notificacion(request):
                     aux.append("Eliminar cotización de proyecto")
                 lista_ordenada[2].append(aux)
             elif i[-4:] == "edor" or i[-4:] == "acto":
-                aux = []
-                aux.append("Si")
-                aux.append(i)
+                aux = ["Si", i]
                 if i[:3] == "agr":
                     aux.append("Agregar")
                 elif i[:3] == "edi":
@@ -317,9 +279,7 @@ def permisos_notificacion(request):
                 lista_ordenada[3].append(aux)
         for i in lista_sin:
             if i[-4:] == "ucto":
-                aux = []
-                aux.append("No")
-                aux.append(i)
+                aux = ["No", i]
                 if i[:3] == "agr":
                     aux.append("Agregar")
                 elif i[:3] == "edi":
@@ -328,9 +288,7 @@ def permisos_notificacion(request):
                     aux.append("Eliminar")
                 lista_ordenada[0].append(aux)
             elif i[-4:] == "ecto":
-                aux = []
-                aux.append("No")
-                aux.append(i)
+                aux = ["No", i]
                 if i[:3] == "cre":
                     aux.append("Crear proyecto")
                 elif i[:3] == "agr":
@@ -346,9 +304,7 @@ def permisos_notificacion(request):
                 or i[-4:] == "rreo"
                 or i[-4:] == "ecio"
             ):
-                aux = []
-                aux.append("No")
-                aux.append(i)
+                aux = ["No", i]
                 if i[:3] == "cre":
                     aux.append("Crear cotización")
                 elif i[:3] == "env":
@@ -361,9 +317,7 @@ def permisos_notificacion(request):
                     aux.append("Eliminar cotización de proyecto")
                 lista_ordenada[2].append(aux)
             elif i[-4:] == "edor" or i[-4:] == "acto":
-                aux = []
-                aux.append("No")
-                aux.append(i)
+                aux = ["No", i]
                 if i[:3] == "agr":
                     aux.append("Agregar")
                 elif i[:3] == "edi":
@@ -375,20 +329,10 @@ def permisos_notificacion(request):
                 lista_ordenada[3].append(aux)
         lista_final = []
         for i in lista_ordenada:
-            lista = []
-            for x in i:
-                if type(x) == list:
-                    lista.append(x)
-            aux = []
-            aux.append(i[0])
-            aux.append(lista)
-            lista_final.append(aux)
-            # print(lista_ordenada)
-        return render(
-            request,
-            "planificador/permisos_notificacion.html",
-            {"con": lista_con, "sin": lista_sin, "lista_ordenada": lista_final},
-        )
+            lista = [x for x in i if type(x) == list]
+            lista_final.append([i[0], lista])
+        payload = {"con": lista_con, "sin": lista_sin, "lista_ordenada": lista_final}
+        return render(request, "planificador/permisos_notificacion.html", payload)
 
 
 @login_required(login_url="/login")
@@ -398,31 +342,30 @@ def usuario(request):
     Productos = usuario.productos_proyecto.all()
     Proyectos = usuario.proyectos.all()
     cotizaciones = usuario.cotizaciones.all()
-    return render(
-        request,
-        "planificador/usuario.html",
-        {
-            "Usuario": usuario,
-            "lista_precios": lista_precios,
-            "Productos": Productos,
-            "Proyectos": Proyectos,
-            "cotizaciones": cotizaciones,
-        },
-    )
+    payload = {
+        "Usuario": usuario,
+        "lista_precios": lista_precios,
+        "Productos": Productos,
+        "Proyectos": Proyectos,
+        "cotizaciones": cotizaciones,
+    }
+    return render(request, "planificador/usuario.html", payload)
 
 
 @login_required(login_url="/login")
 def editar_usuario(request, correo):
     if request.method == "POST":
+        post = request.POST
         usuario = get_user_model().objects.get(correo=correo)
-        usuario.nombre = request.POST["nombre"]
-        usuario.apellido = request.POST["apellido"]
-        usuario.segundo_apellido = request.POST["segundo_apellido"]
-        usuario.cargo = request.POST["cargo"]
-        usuario.celular = request.POST["celular"]
-        usuario.telefono = request.POST["telefono"]
+        usuario.nombre = post["nombre"]
+        usuario.apellido = post["apellido"]
+        usuario.segundo_apellido = post["segundo_apellido"]
+        usuario.cargo = post["cargo"]
+        usuario.celular = post["celular"]
+        usuario.telefono = post["telefono"]
         usuario.save()
         return redirect("/planificador/usuario/")
     else:
-        usuario = get_user_model().objects.get(correo=str(request.user.email))
-        return render(request, "planificador/editar_usuario.html", {"Usuario": usuario})
+        usuario = get_user_model().objects.get(correo=str(request.user.correo))
+        payload = {"Usuario": usuario}
+        return render(request, "planificador/editar_usuario.html", payload)
