@@ -6,22 +6,13 @@ from planificador.models import (
     Contacto,
     Calificacion,
     Calificacion_Proveedor,
-    Notificacion,
-    Permisos_notificacion,
     Producto,
 )
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
 from planificador.filters import ProveedoresFilter
 from planificador.decorators import allowed_users
 import openpyxl
-import uuid
-from django.contrib.auth import get_user_model
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import smtplib
-
-# FUNCIONES
+from planificador.notificaciones import crear_notificacion
 
 
 def mostrar_clases():
@@ -41,83 +32,13 @@ def mostrar_clases():
     return [nombres, clase1, clase2, clase3, subclases]
 
 
-def crear_notificacion(
-    tipo,
-    correo_usuario,
-    accion,
-    modelo_base_datos,
-    numero_modificado,
-    id_modelo,
-    nombre,
-):
-    hora_actual = datetime.now()
-    usuario = get_user_model().objects.get(correo=correo_usuario)
-    permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
-    notificacion = Notificacion(
-        id=uuid.uuid1(),
-        tipo=tipo,
-        accion=accion,
-        modelo_base_datos=modelo_base_datos,
-        numero_modificado=numero_modificado,
-        id_modelo=id_modelo,
-        nombre=nombre,
-        fecha=hora_actual,
-    )
-    notificacion.save()
-    notificacion.usuario_modificacion = usuario
-    notificacion.save()
-    for i in permiso_notificacion.usuarios.all():
-        i.notificaciones += 1
-        i.save()
-        if not notificacion.id_proyecto:
-            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
-                i.nombre,
-                i.apellido,
-                notificacion.usuario_modificacion.nombre,
-                notificacion.usuario_modificacion.apellido,
-                notificacion.accion,
-                notificacion.id_modelo,
-                notificacion.nombre,
-                notificacion.fecha,
-            )
-        else:
-            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} en el proyecto {} {} con fecha {}".format(
-                i.nombre,
-                i.apellido,
-                notificacion.usuario_modificacion.nombre,
-                notificacion.usuario_modificacion.apellido,
-                notificacion.accion,
-                notificacion.id_proyecto,
-                notificacion.nombre,
-                notificacion.fecha,
-            )
-        correo_enviador = "logistica@rmc.cl"
-        clave_enviador = "RMC.1234"
-        # CAMBIAR A i.correo
-        correo_prueba = "tacorreahucke@gmail.com"
-        mensaje = MIMEMultipart()
-        mensaje["From"] = correo_enviador
-        mensaje["To"] = correo_prueba
-        mensaje["Subject"] = "NOTIFICACIÓN {}".format(notificacion.tipo)
-        mensaje.attach(MIMEText(texto_correo, "plain"))
-        session = smtplib.SMTP("smtp.gmail.com", 587)
-        session.starttls()
-        session.login(correo_enviador, clave_enviador)
-        text = mensaje.as_string()
-        session.sendmail(correo_enviador, correo_prueba, text)
-        session.quit()
-
-
 # Mostrar proveedores
 @login_required(login_url="/login")
 def proveedores(request):
     proveedores = Proveedor.objects.all()
     myFilter = ProveedoresFilter(request.GET, queryset=proveedores)
-    return render(
-        request,
-        "proveedores/proveedores.html",
-        {"Proveedores": proveedores, "len": len(proveedores), "myFilter": myFilter},
-    )
+    payload = {"Proveedores": proveedores, "len": len(proveedores), "myFilter": myFilter}
+    return render(request, "proveedores/proveedores.html", payload)
 
 
 def nuevo_proveedor_planilla(request):
@@ -156,26 +77,16 @@ def nuevo_proveedor_planilla(request):
                     and contacto_telefono == "NONE"
                     and direccion == "NONE"
                 ):
-                    aux = []
-                    aux.append(rut)
-                    aux.append(nombre)
-                    aux.append(row_data[3])
-                    aux.append(contacto_correo)
-                    aux.append("No se ingresó RUT, nombre proveedor o correo contacto")
-                    datos_fallados.append(aux)
+                    datos_fallados.append([rut, nombre, row_data[3], contacto_correo,
+                                          "No se ingresó RUT, nombre proveedor o correo contacto"])
             else:
                 if rut != "RUT":
                     if (
                         Contacto.objects.filter(correo=contacto_correo).exists()
                         or Proveedor.objects.filter(rut=rut).exists()
                     ):
-                        aux = []
-                        aux.append(rut)
-                        aux.append(nombre)
-                        aux.append(row_data[3])
-                        aux.append(contacto_correo)
-                        aux.append("El proveedor o correo del contacto ya existe")
-                        datos_fallados.append(aux)
+                        datos_fallados.append([rut, nombre, row_data[3], contacto_correo,
+                                              "El proveedor o correo del contacto ya existe"])
                     else:
                         nuevo_proveedor = Proveedor(rut=rut, nombre=nombre)
                         if row_data[2] != "None":
@@ -190,15 +101,8 @@ def nuevo_proveedor_planilla(request):
                             ):
                                 nuevo_proveedor.idioma = idioma
                             else:
-                                aux = []
-                                aux.append(rut)
-                                aux.append(nombre)
-                                aux.append(row_data[3])
-                                aux.append(contacto_correo)
-                                aux.append(
-                                    "El idioma tiene que ser 'ES', 'ESPAÑOL', 'EN', 'INGLÉS"
-                                )
-                                datos_fallados.append(aux)
+                                datos_fallados.append([rut, nombre, row_data[3], contacto_correo,
+                                                      "El idioma tiene que ser 'ES', 'ESPAÑOL', 'EN', 'INGLÉS"])
                         if direccion != "NONE":
                             nuevo_proveedor.direccion = direccion
                         nuevo_proveedor.save()
@@ -210,13 +114,8 @@ def nuevo_proveedor_planilla(request):
                                 dato_subclase = SubClase.objects.get(nombre=subclase)
                                 nuevo_proveedor.subclases_asociadas.add(dato_subclase)
                             else:
-                                aux = []
-                                aux.append(rut)
-                                aux.append(nombre)
-                                aux.append(i)
-                                aux.append(contacto_correo)
-                                aux.append("No existe la subclase {}".format(i))
-                                datos_fallados.append(aux)
+                                datos_fallados.append([rut, nombre, i, contacto_correo,
+                                                      "No existe la subclase {}".format(i)])
                         if contacto_correo != "none":
                             nuevo_contacto = Contacto(correo=contacto_correo)
                             if contacto_nombre != "NONE":
@@ -289,11 +188,8 @@ def nuevo_proveedor_planilla(request):
             )
         if len(datos_fallados) != 0:
             booleano_fallados = True
-        return render(
-            request,
-            "proveedores/resultado_planilla_proveedores.html",
-            {"Fallo": datos_fallados, "Booleano": booleano_fallados},
-        )
+        payload = {"Fallo": datos_fallados, "Booleano": booleano_fallados}
+        return render(request, "proveedores/resultado_planilla_proveedores.html", payload)
     else:
         return render(request, "proveedores/nuevo_proveedor_planilla.html")
 
@@ -302,41 +198,24 @@ def nuevo_proveedor_planilla(request):
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
 @login_required(login_url="/login")
 def agregar_proveedor(request):
-    lista_clases = []
     clases = Clase.objects.all()
-    for i in clases:
-        aux = []
-        aux.append(i)
-        aux2 = []
-        for n in i.subclases.all():
-            aux2.append(n)
-        aux.append(aux2)
-        lista_clases.append(aux)
-    return render(
-        request, "proveedores/crear_proveedor.html", {"lista_clases": lista_clases}
-    )
+    lista_clases = [(i, [n for n in i.subclases.all()]) for i in clases]
+    payload = {"lista_clases": lista_clases}
+    return render(request, "proveedores/crear_proveedor.html", payload)
 
 
 @login_required(login_url="/login")
 def recibir_datos_proveedor(request):
-    rut = str(request.GET["rut"])
-    nombre = request.GET["nombre"]
-    razon_social = request.GET["razon_social"]
-    subclase = request.GET.getlist("subclase")
-    # Contactos
-    nombre_contacto = request.GET["nombre_contacto"]
-    correo = request.GET["correo"]
-    telefono = request.GET["telefono"]
-    direccion = request.GET["direccion"]
-    nuevo_contacto = Contacto(correo=correo, telefono=telefono, nombre=nombre_contacto)
+    get = request.get
+    nombre_contacto = get["nombre_contacto"]
+    nuevo_contacto = Contacto(correo=get["correo"], telefono=get["telefono"], nombre=nombre_contacto)
     nuevo_contacto.save()
-    # Agregar proveedor
     nuevo_proveedor = Proveedor(
-        rut=rut, nombre=nombre, razon_social=razon_social, direccion=direccion
+        rut=str(get["rut"]), nombre=get["nombre"], razon_social=get["razon_social"], direccion=get["direccion"]
     )
     nuevo_proveedor.save()
     nuevo_proveedor.contactos_asociados.add(nuevo_contacto)
-    for i in subclase:
+    for i in get.getlist("subclase"):
         subclase = SubClase.objects.get(nombre=i)
         nuevo_proveedor.subclases_asociadas.add(subclase)
     precio = Calificacion.objects.get(nombre="Precio")
@@ -363,7 +242,7 @@ def recibir_datos_proveedor(request):
         nuevo_proveedor.rut,
         nuevo_proveedor.nombre,
     )
-    return redirect("/proveedores/proveedor/{}".format(rut))
+    return redirect("/proveedores/proveedor/{}".format(str(get["rut"])))
 
 
 # Vista proveedor
@@ -379,28 +258,19 @@ def proveedor(request, rut):
         suma_total += i.nota
     promedio = round(suma_total / len(calificaciones))
     diferencia = 5 - promedio
-    lista_promedio = []
-    for x in range(promedio):
-        lista_promedio.append(x)
-    lista_diferencia = []
-    for i in range(diferencia):
-        lista_diferencia.append(i)
-    lista_productos = []
-    for i in proveedor.productos_no.all():
-        lista_productos.append(i)
-    return render(
-        request,
-        "proveedores/proveedor.html",
-        {
-            "Proveedor": proveedor,
-            "subclase": subclase,
-            "contactos": contactos,
-            "calificaciones": calificaciones,
-            "promedio": lista_promedio,
-            "diferencia": lista_diferencia,
-            "productos": lista_productos,
-        },
-    )
+    lista_promedio = [x for x in range(promedio)]
+    lista_diferencia = [i for i in range(diferencia)]
+    lista_productos = [i for i in proveedor.productos_no.all()]
+    payload = {
+        "Proveedor": proveedor,
+        "subclase": subclase,
+        "contactos": contactos,
+        "calificaciones": calificaciones,
+        "promedio": lista_promedio,
+        "diferencia": lista_diferencia,
+        "productos": lista_productos,
+    }
+    return render(request, "proveedores/proveedor.html", payload)
 
 
 # Edición proveedor
@@ -409,42 +279,37 @@ def proveedor(request, rut):
 def mostrar_edicion_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     if request.method == "POST":
-        subclase = request.POST.getlist("subclase")
-        # CONTACTO
-        contacto = str(request.POST["contacto"])
-        correo = request.POST["correo"]
-        telefono = request.POST["telefono"]
-        if correo != "":
-            if Contacto.objects.filter(correo=correo).exists():
-                nuevo_contacto = Contacto.objects.get(correo=correo)
-                nuevo_contacto.nombre = contacto
-                nuevo_contacto.telefono = telefono
+        post = request.POST
+        if post["correo"] != "":
+            if Contacto.objects.filter(correo=post["correo"]).exists():
+                nuevo_contacto = Contacto.objects.get(correo=post["correo"])
+                nuevo_contacto.nombre = str(post["contacto"])
+                nuevo_contacto.telefono = post["telefono"]
                 nuevo_contacto.save()
             else:
                 nuevo_contacto = Contacto(
-                    correo=correo, telefono=telefono, nombre=contacto
+                    correo=post["correo"], telefono=post["telefono"], nombre=str(post["contacto"])
                 )
                 nuevo_contacto.save()
-        # CALIFICACIONES
         calificaciones_precio = Calificacion_Proveedor.objects.filter(
             proveedor=rut, calificacion="Precio"
         )[0]
         calificaciones_precio.nota = (
-            calificaciones_precio.nota + float(request.POST["Precio"])
+            calificaciones_precio.nota + float(post["Precio"])
         ) / 2
         calificaciones_precio.save()
         calificaciones_tiempo_entrega = Calificacion_Proveedor.objects.filter(
             proveedor=rut, calificacion="Tiempo entrega"
         )[0]
         calificaciones_tiempo_entrega.nota = (
-            calificaciones_tiempo_entrega.nota + float(request.POST["Tiempo"])
+            calificaciones_tiempo_entrega.nota + float(post["Tiempo"])
         ) / 2
         calificaciones_tiempo_entrega.save()
         calificaciones_calidad = Calificacion_Proveedor.objects.filter(
             proveedor=rut, calificacion="Calidad"
         )[0]
         calificaciones_calidad.nota = (
-            calificaciones_calidad.nota + float(request.POST["Calidad"])
+            calificaciones_calidad.nota + float(post["Calidad"])
         ) / 2
         calificaciones_calidad.save()
         crear_notificacion(
@@ -456,15 +321,14 @@ def mostrar_edicion_proveedor(request, rut):
             proveedor.rut,
             proveedor.nombre,
         )
-        # GUARDAMOS NUEVO CONTACTO
         proveedor.save()
-        if subclase != []:
-            for i in subclase:
+        if post.getlist("subclase") != []:
+            for i in post.getlist("subclase"):
                 subclase_agregar = SubClase.objects.get(nombre=i)
                 proveedor.subclases_asociadas.add(subclase_agregar)
-        if correo != "":
+        if post["correo"] != "":
             proveedor.contactos_asociados.add(nuevo_contacto)
-        eliminar = request.POST.getlist("eliminar")
+        eliminar = post.getlist("eliminar")
         for i in eliminar:
             if i != "No":
                 contacto_eliminar = Contacto.objects.get(correo=i)
@@ -478,7 +342,6 @@ def mostrar_edicion_proveedor(request, rut):
                     contacto_eliminar.nombre,
                 )
                 contacto_eliminar.delete()
-
         return redirect("/proveedores/proveedor/{}".format(proveedor.rut))
     else:
         subclase = proveedor.subclases_asociadas.all()
@@ -486,25 +349,15 @@ def mostrar_edicion_proveedor(request, rut):
         calificaciones = Calificacion_Proveedor.objects.filter(proveedor=rut)
         lista_clases = []
         clases = Clase.objects.all()
-        for i in clases:
-            aux = []
-            aux.append(i)
-            aux2 = []
-            for n in i.subclases.all():
-                aux2.append(n)
-            aux.append(aux2)
-            lista_clases.append(aux)
-        return render(
-            request,
-            "proveedores/editar_proveedor.html",
-            {
-                "Proveedor": proveedor,
-                "Subclases": subclase,
-                "Contactos": contactos,
-                "Calificaciones": calificaciones,
-                "lista_clases": lista_clases,
-            },
-        )
+        lista_clases = [(i, [n for n in i.subclases.all()]) for i in clases]
+        payload = {
+            "Proveedor": proveedor,
+            "Subclases": subclase,
+            "Contactos": contactos,
+            "Calificaciones": calificaciones,
+            "lista_clases": lista_clases,
+        }
+        return render(request, "proveedores/editar_proveedor.html", payload)
 
 
 # Edición proveedor
@@ -531,19 +384,12 @@ def agregar_productos_no_disponibles(request, rut):
                     if x.id == n.id:
                         no_existe_producto = True
                 if not no_existe_producto:
-                    aux.append(x)
-                    aux.append(i)
-                    aux.append(i.clase_set.all()[0])
-                if len(aux) != 0:
+                    aux = [x, i, i.clase_set.all()[0]]
                     productos.append(aux)
-        return render(
-            request,
-            "proveedores/agregar_productos_no_disponibles.html",
-            {"Proveedor": proveedor, "productos": productos},
-        )
+        payload = {"Proveedor": proveedor, "productos": productos}
+        return render(request, "proveedores/agregar_productos_no_disponibles.html", payload)
 
 
-# Eliminar proveedor
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
 @login_required(login_url="/login")
 def eliminar_proveedor(request, rut):

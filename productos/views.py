@@ -7,22 +7,18 @@ from planificador.models import (
     Filtro_producto,
     Producto_proveedor,
     Proveedor,
-    Notificacion,
-    Permisos_notificacion,
     Correlativo_producto,
     ImagenProducto,
 )
 from planificador.filters import Filtro_productoFilter
 from datetime import datetime
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+
 from django.contrib.auth.decorators import login_required
 from django import forms
 import openpyxl
 import uuid
 from planificador.api import api_token, get_locations
-from django.contrib.auth import get_user_model
+from planificador.notificaciones import crear_notificacion
 
 UNIDAD_CHOICES = [
     ("", ""),
@@ -38,8 +34,6 @@ UNIDAD_CHOICES = [
 
 
 class ImageForm(forms.ModelForm):
-    """Form for the image model"""
-
     unidad = forms.CharField(
         required=False,
         widget=forms.Select(attrs={"class": "custom-select"}, choices=UNIDAD_CHOICES),
@@ -60,96 +54,24 @@ def isfloat(value):
         return False
 
 
-def crear_notificacion(
-    tipo,
-    correo_usuario,
-    accion,
-    modelo_base_datos,
-    numero_modificado,
-    id_modelo,
-    nombre,
-):
-    hora_actual = datetime.now()
-    usuario = get_user_model().objects.get(correo=correo_usuario)
-    permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
-    notificacion = Notificacion(
-        id=uuid.uuid1(),
-        tipo=tipo,
-        accion=accion,
-        usuario_modificacion=usuario,
-        modelo_base_datos=modelo_base_datos,
-        numero_modificado=numero_modificado,
-        id_modelo=id_modelo,
-        nombre=nombre,
-        fecha=hora_actual,
-    )
-    notificacion.save()
-    for i in permiso_notificacion.usuarios.all():
-        i.notificaciones += 1
-        i.save()
-        if not notificacion.id_proyecto:
-            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
-                i.nombre,
-                i.apellido,
-                notificacion.usuario_modificacion.nombre,
-                notificacion.usuario_modificacion.apellido,
-                notificacion.accion,
-                notificacion.id_modelo,
-                notificacion.nombre,
-                notificacion.fecha,
-            )
-        else:
-            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} en el proyecto {} {} con fecha {}".format(
-                i.nombre,
-                i.apellido,
-                notificacion.usuario_modificacion.nombre,
-                notificacion.usuario_modificacion.apellido,
-                notificacion.accion,
-                notificacion.id_proyecto,
-                notificacion.nombre,
-                notificacion.fecha,
-            )
-        correo_enviador = "logistica@rmc.cl"
-        clave_enviador = "RMC.1234"
-        # CAMBIAR A i.correo
-        correo_prueba = "tacorreahucke@gmail.com"
-        mensaje = MIMEMultipart()
-        mensaje["From"] = correo_enviador
-        mensaje["To"] = correo_prueba
-        mensaje["Subject"] = "NOTIFICACIÓN {}".format(notificacion.tipo)
-        mensaje.attach(MIMEText(texto_correo, "plain"))
-        session = smtplib.SMTP("smtp.gmail.com", 587)
-        session.starttls()
-        session.login(correo_enviador, clave_enviador)
-        text = mensaje.as_string()
-        session.sendmail(correo_enviador, correo_prueba, text)
-        session.quit()
-
-
 # Mostrar productos
 @login_required(login_url="/login")
 def productos(request):
     productos = Producto.objects.all()
     lista_productos = []
     for i in productos:
-        aux = []
         subclase = i.subclase_set.all()[0]
         clase = subclase.clase_set.all()[0]
-        aux.append(i)
-        aux.append(subclase)
-        aux.append(clase)
-        lista_productos.append(aux)
+        lista_productos.append([i, subclase, clase])
     productos = Filtro_producto.objects.all()
     myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    return render(
-        request,
-        "productos/productos.html",
-        {
-            "Productos": lista_productos,
-            "myFilter": myFilter,
-            "len": len(lista_productos),
-        },
-    )
+    payload = {
+        "Productos": lista_productos,
+        "myFilter": myFilter,
+        "len": len(lista_productos),
+    }
+    print("0" * 2)
+    return render(request, "productos/productos.html", payload)
 
 
 def nuevo_producto_planilla(request):
@@ -305,7 +227,6 @@ def nuevo_producto_interno_planilla(request):
                         aux.append("No se ingresó ID o Nombre")
                         datos_fallados.append(aux)
                 else:
-                    # CREAR PRODUCTO; ASOCIAR PROVEEDOR AL PRODUCTO; CREAR PRECIO Y ASOCIARLO AL PRODUCTO.
                     fecha_actualizacion = datetime.now()
                     if Producto.objects.filter(id=id).exists():
                         aux = []
@@ -331,7 +252,6 @@ def nuevo_producto_interno_planilla(request):
                                 nuevo_producto.unidad = unidad
                             nuevo_producto.proveedor_interno = proveedor
                             nuevo_producto.save()
-                            # CREAMOS UN PRECIO (PARA POBLAR BBDD)
                             if (
                                 row_data[4] != "None"
                                 and row_data[5] != "None"
@@ -387,29 +307,15 @@ def nuevo_producto_interno_planilla(request):
 # Agregar producto
 @login_required(login_url="/login")
 def agregar_producto(request):
-    lista_clases = []
     clases = Clase.objects.all()
     subclases = SubClase.objects.all()
-    for i in clases:
-        aux = []
-        aux.append(i)
-        aux2 = []
-        for n in i.subclases.all():
-            aux2.append(n)
-        aux.append(aux2)
-        lista_clases.append(aux)
-    return render(
-        request,
-        "productos/crear_producto.html",
-        {"Clases": clases, "Subclases": subclases, "lista_clases": lista_clases},
-    )
+    lista_clases = [[i, [n for n in i.subclases.all()]] for i in clases]
+    payload = {"Clases": clases, "Subclases": subclases, "lista_clases": lista_clases}
+    return render(request, "productos/crear_producto.html", payload)
 
 
 def recibir_datos_producto(request):
-    nombre = request.GET["nombre"]
-    sub_clase = request.GET["subclase"]
-    unidad = request.GET["unidad"]
-    kilos = request.GET["peso"]
+    get = request.GET
     if Correlativo_producto.objects.filter(producto=0).exists():
         correlativo = Correlativo_producto.objects.get(producto=0)
         correlativo.numero += 1
@@ -417,25 +323,25 @@ def recibir_datos_producto(request):
     else:
         correlativo = Correlativo_producto(producto=0, numero=9000000)
         correlativo.save()
-    if kilos and (unidad != "ELEGIR UNIDAD" and unidad):
+    if get["peso"] and (get["unidad"] != "ELEGIR UNIDAD" and get["unidad"]):
         nuevo_producto = Producto(
-            id=correlativo.numero, nombre=nombre, unidad=unidad, kilos=kilos
+            id=correlativo.numero, nombre=get["nombre"], unidad=get["unidad"], kilos=get["peso"]
         )
         nuevo_producto.save()
-    elif kilos and (unidad == "ELEGIR UNIDAD"):
-        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre, kilos=kilos)
+    elif get["peso"] and (get["unidad"] == "ELEGIR UNIDAD"):
+        nuevo_producto = Producto(id=correlativo.numero, nombre=get["nombre"], kilos=get["peso"])
         nuevo_producto.save()
-    elif (unidad != "ELEGIR UNIDAD") and not kilos:
-        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre, unidad=unidad)
+    elif (get["unidad"] != "ELEGIR UNIDAD") and not get["peso"]:
+        nuevo_producto = Producto(id=correlativo.numero, nombre=get["nombre"], unidad=get["unidad"])
         nuevo_producto.save()
     else:
-        nuevo_producto = Producto(id=correlativo.numero, nombre=nombre)
+        nuevo_producto = Producto(id=correlativo.numero, nombre=get["nombre"])
         nuevo_producto.save()
-    subclase = SubClase.objects.get(nombre=sub_clase)
+    subclase = SubClase.objects.get(nombre=get["subclase"])
     subclase.productos.add(nuevo_producto)
     clase = subclase.clase_set.all()
     nuevo_filtro_producto = Filtro_producto(
-        nombre_producto=nombre,
+        nombre_producto=get["nombre"],
         nombre_clase=clase[0].nombre,
         id_producto=correlativo.numero,
         nombre_subclase=subclase.nombre,
@@ -466,18 +372,15 @@ def producto(request, id):
         nombre_proveedor = Producto_proveedor.objects.filter(proyecto=producto)
     else:
         nombre_proveedor = ""
-    return render(
-        request,
-        "productos/producto.html",
-        {
-            "Producto": producto,
-            "lista_precios": a,
-            "Subclase": sub_clase,
-            "Clase": clase,
-            "nombre_proveedor": nombre_proveedor,
-            "imagenes": imagenes,
-        },
-    )
+    payload = {
+        "Producto": producto,
+        "lista_precios": a,
+        "Subclase": sub_clase,
+        "Clase": clase,
+        "nombre_proveedor": nombre_proveedor,
+        "imagenes": imagenes,
+    }
+    return render(request, "productos/producto.html", payload)
 
 
 @login_required(login_url="/login")
@@ -508,39 +411,20 @@ def nuevo_proveedor_producto(request):
                         and proveedor == "NONE"
                         and nombre_producto_proveedor == "NONE"
                     ):
-                        aux = []
-                        aux.append(row_data[0])
-                        aux.append(row_data[1])
-                        aux.append(row_data[2])
-                        aux.append(
-                            "No se ingresó o nombre producto RMC o nombre del proveedor o nombre del producto para proveedor"
-                        )
-                        datos_fallados.append(aux)
+                        datos_fallados.append([row_data[0], row_data[1], row_data[2],
+                                              "No se ingresó o nombre producto RMC o nombre del proveedor o nombre del producto para proveedor"])
                 else:
                     if not Producto_proveedor.objects.filter(
                         nombre_RMC=nombre_producto,
                         nombre_proveedor=nombre_producto_proveedor,
                     ).exists():
                         if not Producto.objects.filter(nombre=nombre_producto).exists():
-                            aux = []
-                            aux.append(row_data[0])
-                            aux.append(row_data[1])
-                            aux.append(row_data[2])
-                            aux.append(
-                                "Producto con nombre:{} no existe".format(
-                                    nombre_producto
-                                )
-                            )
-                            datos_fallados.append(aux)
+                            datos_fallados.append([row_data[0], row_data[1], row_data[2],
+                                                  "Producto con nombre:{} no existe".format(
+                                                  nombre_producto)])
                         elif not Proveedor.objects.filter(nombre=proveedor).exists():
-                            aux = []
-                            aux.append(row_data[0])
-                            aux.append(row_data[1])
-                            aux.append(row_data[2])
-                            aux.append(
-                                "Proveedor con nombre:{} no existe".format(proveedor)
-                            )
-                            datos_fallados.append(aux)
+                            datos_fallados.append([row_data[0], row_data[1], row_data[2],
+                                                  "Proveedor con nombre:{} no existe".format(proveedor)])
                         else:
                             proveedor_ingreso = Proveedor.objects.get(nombre=proveedor)
                             producto = Producto.objects.get(nombre=nombre_producto)
@@ -567,12 +451,7 @@ def nuevo_proveedor_producto(request):
                                 creado = True
                                 contador_creado += 1
                     else:
-                        aux = []
-                        aux.append(row_data[0])
-                        aux.append(row_data[1])
-                        aux.append(row_data[2])
-                        aux.append("Ya existe el mismo nombre en relación")
-                        datos_fallados.append(aux)
+                        datos_fallados.append(row_data[0], row_data[1], row_data[2], "Ya existe el mismo nombre en relación")
         if creado:
             crear_notificacion(
                 "agregar_proveedor_producto",
@@ -585,11 +464,8 @@ def nuevo_proveedor_producto(request):
             )
         if len(datos_fallados) != 0:
             booleano_fallados = True
-        return render(
-            request,
-            "productos/resultado_planilla_proveedor_productos.html",
-            {"Fallo": datos_fallados, "Booleano": booleano_fallados},
-        )
+        payload = {"Fallo": datos_fallados, "Booleano": booleano_fallados}
+        return render(request, "productos/resultado_planilla_proveedor_productos.html", payload)
     else:
         return render(request, "productos/nuevo_proveedor_producto.html")
 
@@ -599,15 +475,14 @@ def nuevo_proveedor_producto(request):
 def mostrar_edicion_producto(request, id):
     producto = Producto.objects.get(id=id)
     if request.method == "POST":
-        unidad = request.POST["unidad"]
-        kilos = request.POST["kilos"]
+        post = request.POST
         imagen = request.FILES["imagen"]
         if imagen:
             nueva_imagen = ImagenProducto(id=uuid.uuid1(), imagen=imagen)
             nueva_imagen.save()
-        producto.unidad = unidad
-        if kilos:
-            producto.kilos = kilos
+        producto.unidad = post["unidad"]
+        if post["kilos"]:
+            producto.kilos = post["kilos"]
         producto.imagen.add(nueva_imagen)
         producto.save()
         crear_notificacion(
@@ -622,11 +497,8 @@ def mostrar_edicion_producto(request, id):
         return redirect("/productos/producto/{}".format(producto.id))
     else:
         subclases = SubClase.objects.all()
-        return render(
-            request,
-            "productos/editar_producto.html",
-            {"Producto": producto, "Subclases": subclases},
-        )
+        payload = {"Producto": producto, "Subclases": subclases}
+        return render(request, "productos/editar_producto.html", payload)
 
 
 # Eliminar producto
@@ -653,8 +525,5 @@ def eliminar_producto(request, id):
 def mostrar_ubicaciones(request):
     access_token = api_token()
     locations_response = get_locations(access_token)
-    return render(
-        request,
-        "productos/mostrar_ubicaciones.html",
-        {"Ubicaciones": locations_response},
-    )
+    payload = {"Ubicaciones": locations_response}
+    return render(request, "productos/mostrar_ubicaciones.html", payload)

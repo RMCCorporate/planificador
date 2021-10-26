@@ -11,8 +11,6 @@ from planificador.models import (
     Cotizacion,
     Producto_proveedor,
     Correlativo_cotizacion,
-    Notificacion,
-    Permisos_notificacion,
     Orden_compra,
     RMC,
     Presupuesto_subclases,
@@ -33,10 +31,10 @@ import uuid
 from operator import itemgetter
 from RMC_Corporate.settings import EXCEL_ROOT
 from django.contrib.auth import get_user_model
+from planificador.notificaciones import texto_en_html, crear_notificacion
 
 
 lista_producto_general = []
-# Funciones:
 
 
 def clases_lista_productos(clase):
@@ -53,85 +51,10 @@ def clases_lista_productos(clase):
 
 
 def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
-    texto_html = """<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'/>
-<style>@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,400;1,300&display=swap');</style>
-<td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">--</td>
-<table style=" margin:0; padding:0 5px 0 0;">
-	<tr>
-    <!--Columna Logo-->
-		<td style=" margin:0; padding:0; vertical-align:top;">
-			<a href='http://www.rmc.cl' title="RMC Engineering Solutions" style="border:none; text-decoration:none;">
-        <img moz-do-not-send="true" src="http://rmc.cl/signature_img/rmc_engineering.png" alt="" style="border:none; width:59px; height:59px; display:block;">
-      </a>
-		</td>
-    <!--Columna Info + Representacion-->
-		<td style="margin:0; padding:0;">
-      <table cellspacing='0' cellpadding='0' border-spacing='0' style="padding:0; margin:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; font-size:12px; mso-line-height-rule:exactly; line-height:11px; color: rgb(33, 33, 33); border-collapse:collapse; -webkit-text-size-adjust:none;">
-				<!--Fila Nombre-->
-				<tr style="margin:0;padding:0;">
-          <td style="margin:0;padding:2px 0 0 0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
-            <strong>
-              <a href="mailto:{}" style="border:none; text-decoration:none; color: rgb(33, 33, 33);"><span style="color: rgb(33, 33, 33);">{}</span></a>
-            </strong>
-          </td>
-        </tr>
-        <tr style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">
-          <td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">&nbsp;</td>
-        </tr>
-				<!--Fila cargo-->
-        <tr style="margin:0; padding:0;">
-          <td style="margin:0; padding:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
-            <span style="color: rgb(33, 33, 33);"><i>{} - RMC Corporate</i></span>
-          </td>
-        </tr>
-        <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
-          <td style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">&nbsp;</td>
-        </tr>
-				<!--Fila Direccion-->
-        <tr style="margin:0;padding:0;">
-          <td style="margin:0;padding:0;font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
-            <span style="color: rgb(33, 33, 33);"><i>Las Cinerarias #550 - Concón</i></span>
-          </td>
-        </tr>
-        <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
-          <td style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">&nbsp;</td>
-        </tr>
-				<!--Fila Telefono-->
-        <tr style="margin:0; padding:0;">
-          <td style="margin:0; padding:0; font-family: 'Roboto Condensed', Helvetica, Arial, sans-serif; white-space:nowrap;">
-            <span style="color: rgb(33, 33, 33);"><i>C. {} - T.{}</i></span>
-          </td>
-        </tr>
-        <tr style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">
-          <td style="height:3px; max-height:3px; font-size:4px; mso-line-height-rule:exactly; line-height:3px;">&nbsp;</td>
-        </tr>
-				<!--Fila representantes-->
-        <tr style="margin:0; padding:0;">
-          <td style="margin:0; padding:0; vertical-align:middle;">
-              <img moz-do-not-send="true" src="http://rmc.cl/signature_img/empresas_rep.png" alt="" style="border:none; width:280px; display:block;">
-      		</td>
-        </tr>
-      </table>
-    </td>
-  </tr>
-</table>
-<td style="height:5px; max-height:5px; font-size:4px; mso-line-height-rule:exactly; line-height:4px;">&nbsp;</td>
-""".format(
-        usuario.correo,
-        usuario.nombre
-        + " "
-        + usuario.apellido
-        + " "
-        + usuario.segundo_apellido[0].upper()
-        + ".",
-        usuario.cargo,
-        usuario.celular,
-        usuario.telefono,
-    )
+    texto_html = texto_en_html(usuario)
     texto_correo = ""
     texto_lista_productos = ""
     for i in cotizacion.productos_asociados.all():
-        # ACA AGREGAR LO DE LOS NOMBRE DE PRODUCTOS
         producto_proyecto = Producto_proyecto.objects.get(
             producto=cotizacion.proyecto_asociado, proyecto=i
         )
@@ -182,87 +105,12 @@ def crear_correo(usuario, cotizacion, texto_extra, clave, subject):
         producto_proyecto.estado_cotizacion = "Enviada"
 
 
-def crear_notificacion(
-    tipo,
-    correo_usuario,
-    accion,
-    modelo_base_datos,
-    numero_modificado,
-    id_modelo,
-    nombre,
-    id_proyecto,
-):
-    hora_actual = datetime.now()
-    usuario = get_user_model().objects.get(correo=correo_usuario)
-    permiso_notificacion = Permisos_notificacion.objects.get(nombre=tipo)
-    notificacion = Notificacion(
-        id=uuid.uuid1(),
-        tipo=tipo,
-        accion=accion,
-        modelo_base_datos=modelo_base_datos,
-        numero_modificado=numero_modificado,
-        id_modelo=id_modelo,
-        nombre=nombre,
-        id_proyecto=id_proyecto,
-        fecha=hora_actual,
-    )
-    notificacion.save()
-    notificacion.usuario_modificacion = usuario
-    notificacion.save()
-    for i in permiso_notificacion.usuarios.all():
-        i.notificaciones += 1
-        i.save()
-        if not notificacion.id_proyecto:
-            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} con detalle {} {} con fecha {}".format(
-                i.nombre,
-                i.apellido,
-                notificacion.usuario_modificacion.nombre,
-                notificacion.usuario_modificacion.apellido,
-                notificacion.accion,
-                notificacion.id_modelo,
-                notificacion.nombre,
-                notificacion.fecha,
-            )
-        else:
-            texto_correo = "NOTIFICACIÓN: \nEstimado {} {}: \nEl usuario: {} {}, {} en el proyecto {} {} con fecha {}".format(
-                i.nombre,
-                i.apellido,
-                notificacion.usuario_modificacion.nombre,
-                notificacion.usuario_modificacion.apellido,
-                notificacion.accion,
-                notificacion.id_proyecto,
-                notificacion.nombre,
-                notificacion.fecha,
-            )
-        # CAMBIAR A SUPPLY
-        correo_enviador = "logistica@rmc.cl"
-        clave_enviador = "RMC.1234"
-        # CAMBIAR A i.correo
-        correo_prueba = "tacorreahucke@gmail.com"
-        mensaje = MIMEMultipart()
-        mensaje["From"] = correo_enviador
-        mensaje["To"] = correo_prueba
-        mensaje["Subject"] = "NOTIFICACIÓN {}".format(notificacion.tipo)
-        mensaje.attach(MIMEText(texto_correo, "plain"))
-        session = smtplib.SMTP("smtp.gmail.com", 587)
-        session.starttls()
-        session.login(correo_enviador, clave_enviador)
-        text = mensaje.as_string()
-        session.sendmail(correo_enviador, correo_prueba, text)
-        session.quit()
-
-
-# Vista proyectos
 @login_required(login_url="/login")
 def proyectos(request):
     proyectos = Proyecto.objects.all()
-    lenght = len(proyectos)
     myFilter = ProyectosFilter(request.GET, queryset=proyectos)
-    return render(
-        request,
-        "proyectos/proyectos.html",
-        {"Proyectos": proyectos, "len": lenght, "myFilter": myFilter},
-    )
+    payload = {"Proyectos": proyectos, "len": len(proyectos), "myFilter": myFilter}
+    return render(request, "proyectos/proyectos.html", payload)
 
 
 @login_required(login_url="/login")
@@ -275,26 +123,12 @@ def proyecto(request, id):
     lista_productos_precio = []
     tabla_productos = []
     for i in productos_proyecto:
-        aux_tabla_productos = []
-        if len(i.proyecto.lista_precios.all()) != 0:
-            precio = list(i.proyecto.lista_precios.all()).pop()
-        else:
-            precio = "No"
-        aux_tabla_productos.append(i)
-        aux_tabla_productos.append(precio)
-        tabla_productos.append(aux_tabla_productos)
+        precio = list(i.proyecto.lista_precios.all()).pop() if len(i.proyecto.lista_precios.all()) != 0 else "No"
+        tabla_productos.append([i, precio])
     tabla_cotizaciones = []
     tabla_productos_cotizados = []
     for i in cotizaciones:
-        aux_tabla_cotizaciones = []
-        aux_tabla_cotizaciones_producto_proyecto = []
-        aux_demoras = []
-        aux_tabla_cotizaciones.append(i)
         for producto in i.productos_asociados.all():
-            aux_tabla_productos_cotizados = []
-            aux_tabla_cotizaciones_producto_proyecto.append(
-                Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)
-            )
             if producto.lista_precios:
                 precios = producto.lista_precios.all()
                 if precios.filter(
@@ -307,12 +141,9 @@ def proyecto(request, id):
                             nombre_proveedor=i.proveedor_asociado.nombre,
                         )
                     ).pop()
-                    aux_tabla_productos_cotizados.append(producto)
-                    aux_tabla_productos_cotizados.append(precio)
-                    tabla_productos_cotizados.append(aux_tabla_productos_cotizados)
+                    tabla_productos_cotizados.append([producto, precio])
                 else:
                     precio = ""
-        aux_tabla_cotizaciones.append(aux_tabla_cotizaciones_producto_proyecto)
         estado = ""
         if i.fecha_respuesta:
             demora_respuesta = i.fecha_respuesta - i.fecha_salida
@@ -335,11 +166,8 @@ def proyecto(request, id):
             demora_precio = i.fecha_actualizacion_precio - i.fecha_respuesta
         else:
             demora_precio = ""
-        aux_demoras.append(demora_respuesta)
-        aux_demoras.append(demora_precio)
-        aux_demoras.append(estado)
-        aux_tabla_cotizaciones.append(aux_demoras)
-        tabla_cotizaciones.append(aux_tabla_cotizaciones)
+        tabla_cotizaciones.append(i, [Producto_proyecto.objects.get(proyecto=producto, producto=proyecto)],
+                                  [demora_respuesta, demora_precio, estado])
     lista_precio = list(dict.fromkeys(lista_productos_precio))
     if len(lista_precio) == len(productos_proyecto):
         proyecto.estado = "Completo"
@@ -347,7 +175,6 @@ def proyecto(request, id):
     else:
         proyecto.estado = "Incompleto"
         proyecto.save()
-    # PRECIOS
     for i in productos_proyecto:
         precios = i.proyecto.lista_precios.all()
         if len(precios) != 0:
@@ -355,10 +182,7 @@ def proyecto(request, id):
             ultimo_precio = a.valor
             if a.valor_cambio:
                 ultimo_precio = a.valor * a.valor_cambio
-            if i.cantidades:
-                ultimo_precio = ultimo_precio * i.cantidades
-            else:
-                ultimo_precio = 0
+            ultimo_precio = ultimo_precio * i.cantidades if i.cantidades else 0
             if a.valor_importación:
                 ultimo_precio += a.valor_importación * a.valor_cambio
             precio_final += ultimo_precio
@@ -379,54 +203,37 @@ def proyecto(request, id):
     for i in proyecto.presupuesto_subclases.all():
         if i.utilidad:
             utilidad_subclase += i.valor * (1 + (i.utilidad / 100))
-    return render(
-        request,
-        "proyectos/proyecto.html",
-        {
-            "Proyecto": proyecto,
-            "Productos": tabla_productos,
-            "cotizaciones": tabla_cotizaciones,
-            "info_productos": tabla_productos_cotizados,
-            "precio": precio_final,
-            "rol": usuario,
-            "utilidad_subclase": utilidad_subclase,
-        },
-    )
+    payload = {
+        "Proyecto": proyecto,
+        "Productos": tabla_productos,
+        "cotizaciones": tabla_cotizaciones,
+        "info_productos": tabla_productos_cotizados,
+        "precio": precio_final,
+        "rol": usuario,
+        "utilidad_subclase": utilidad_subclase,
+    }
+    return render(request, "proyectos/proyecto.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
 @login_required(login_url="/login")
 def editar_precios(request, id):
     if request.method == "POST":
+        post = request.POST
         cotizacion = Cotizacion.objects.get(id=id)
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
-        id_productos = request.POST.getlist("id_producto")
-        valor = request.POST.getlist("valor")
-        valor_importacion = request.POST.getlist("valor_importacion")
-        tipo_cambio = request.POST.getlist("tipo_cambio")
-        valor_cambio = request.POST.getlist("valor_cambio")
-        fecha = request.POST.getlist("fecha")
         fecha_actual = date.today()
-        for n, producto in enumerate(id_productos):
+        for n, producto in enumerate(post.getlist("id_producto")):
             producto = Producto.objects.get(id=producto)
             producto_proyecto = Producto_proyecto.objects.get(
                 producto=cotizacion.proyecto_asociado, proyecto=producto
             )
-            if not valor_importacion[n]:
-                nuevo_valor_importacion = 0
-            else:
-                nuevo_valor_importacion = valor_importacion[n]
-            if not tipo_cambio[n]:
-                nuevo_tipo_cambio = "CLP"
-            else:
-                nuevo_tipo_cambio = tipo_cambio[n]
-            if not valor_cambio[n]:
-                nuevo_valor_cambio = 1
-            else:
-                nuevo_valor_cambio = valor_cambio[n]
+            nuevo_valor_importacion = 0 if not post.getlist("valor_importacion")[n] else post.getlist("valor_importacion")[n]
+            nuevo_tipo_cambio = "CLP" if not post.getlist("tipo_cambio")[n] else post.getlist("tipo_cambio")[n]
+            nuevo_valor_cambio = 1 if not post.getlist("tipo_cambio")[n] else post.getlist("tipo_cambio")[n]
             precio = Precio(
                 id=uuid.uuid1(),
-                valor=valor[n],
+                valor=post.getlist("valor")[n],
                 valor_importación=nuevo_valor_importacion,
                 fecha=fecha_actual,
                 tipo_cambio=nuevo_tipo_cambio,
@@ -447,7 +254,7 @@ def editar_precios(request, id):
             producto.save()
             producto_proyecto.estado_cotizacion = "Precio"
             producto_proyecto.save()
-        for i in fecha:
+        for i in post.getlist("fecha"):
             cotizacion.fecha_respuesta = i
             cotizacion.save()
         crear_notificacion(
@@ -455,10 +262,9 @@ def editar_precios(request, id):
             request.user.email,
             "editó precio",
             "Precio y Cotización",
-            len(id_productos),
+            len(post.getlist("id_producto")),
             cotizacion.proyecto_asociado.id,
             cotizacion.proyecto_asociado.nombre,
-            cotizacion.proyecto_asociado.id,
         )
         return redirect(
             "/proyectos/proyecto/{}".format(cotizacion.proyecto_asociado.id)
@@ -478,39 +284,33 @@ def editar_precios(request, id):
             else:
                 auxiliar_lista_productos.append([])
             lista_productos.append(auxiliar_lista_productos)
-        return render(
-            request,
-            "proyectos/editar_precio.html",
-            {"info_productos": lista_productos, "Cotizacion": cotizacion},
-        )
+        payload = {"info_productos": lista_productos, "Cotizacion": cotizacion}
+        return render(request, "proyectos/editar_precio.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def editar_datos_producto_proyecto(request, id):
     if request.method == "POST":
+        post = request.POST
         proyecto = Proyecto.objects.get(id=id)
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
         cotizaciones = Cotizacion.objects.filter(proyecto_asociado=proyecto)
-        nombre = request.POST.getlist("nombre")
-        id = request.POST.getlist("id")
-        cantidades = request.POST.getlist("cantidades")
-        fecha_uso = request.POST.getlist("fecha_uso")
         status = []
-        for i in id:
-            if request.POST[str(i)] != "no_hay":
-                status.append(request.POST[str(i)])
+        for i in post.getlist("id"):
+            if post[str(i)] != "no_hay":
+                status.append(post[str(i)])
             else:
                 status.append(" ")
-        for n, i in enumerate(nombre):
+        for n, i in enumerate(post.getlist("nombre")):
             producto = Producto.objects.get(nombre=i)
             producto_proyecto = Producto_proyecto.objects.get(
                 producto=proyecto, proyecto=producto
             )
-            producto_proyecto.cantidades = float(cantidades[n])
+            producto_proyecto.cantidades = float(post.getlist("cantidades")[n])
             producto_proyecto.status = status[n]
-            if fecha_uso[n] != "None" and fecha_uso[n] != "":
-                producto_proyecto.fecha_uso = fecha_uso[n]
+            if post.getlist("fecha_uso")[n] != "None" and post.getlist("fecha_uso")[n] != "":
+                producto_proyecto.fecha_uso = post.getlist("fecha_uso")[n]
             producto_proyecto.usuario_modificacion = usuario_modificacion
             producto_proyecto.save()
             usuario = get_user_model().objects.get(correo=request.user.email)
@@ -521,12 +321,11 @@ def editar_datos_producto_proyecto(request, id):
             request.user.email,
             "editó información de producto proyecto",
             "Producto_proyecto",
-            len(nombre),
+            len(post.getlist("nombre")),
             proyecto.id,
             proyecto.nombre,
-            proyecto.id,
         )
-        eliminar = request.POST.getlist("eliminar")
+        eliminar = post.getlist("eliminar")
         if eliminar:
             for i in eliminar:
                 producto_eliminar = Producto_proyecto.objects.get(id=i)
@@ -545,7 +344,6 @@ def editar_datos_producto_proyecto(request, id):
                 len(eliminar),
                 proyecto.id,
                 proyecto.nombre,
-                proyecto.id,
             )
         return redirect("/proyectos/proyecto/{}".format(proyecto.id))
     else:
@@ -553,19 +351,13 @@ def editar_datos_producto_proyecto(request, id):
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
         lista_info_productos = []
         for i in productos_proyecto:
-            lista_aux = []
             producto = Producto.objects.get(nombre=i.proyecto)
             ultimo_precio = list(producto.lista_precios.all())
             if len(ultimo_precio) != 0:
                 ultimo_precio = ultimo_precio.pop()
-            lista_aux.append(i)
-            lista_aux.append(ultimo_precio)
-            lista_info_productos.append(lista_aux)
-        return render(
-            request,
-            "proyectos/editar_producto_proyecto.html",
-            {"info_productos": lista_info_productos},
-        )
+            lista_info_productos.append([i, ultimo_precio])
+        payload = {"info_productos": lista_info_productos}
+        return render(request, "proyectos/editar_producto_proyecto.html", payload)
 
 
 @login_required(login_url="/login")
@@ -585,9 +377,10 @@ def editar_fechas(request, id):
 def agregar_producto(request, id):
     if request.method == "GET":
         if request.path_info == "/agregar_producto/lista_productos_agregar":
-            id = request.GET["id"]
+            get = request.GET
+            id = get["id"]
             instancia_proyecto = Proyecto.objects.get(id=id)
-            productos = request.GET.getlist("productos_checkeados")
+            productos = get.getlist("productos_checkeados")
             lista_productos = []
             if productos:
                 for i in productos:
@@ -609,45 +402,38 @@ def agregar_producto(request, id):
                     proveedores = Proveedor.objects.filter(
                         subclases_asociadas=sub_clase
                     )
-                return render(
-                    request,
-                    "proyectos/crear_producto_proyecto.html",
-                    {
-                        "Proyecto": instancia_proyecto,
-                        "Producto": lista_productos,
-                        "Proveedores": proveedores,
-                    },
-                )
+                payload = {"Proyecto": instancia_proyecto,
+                           "Producto": lista_productos,
+                           "Proveedores": proveedores}
+                return render(request, "proyectos/crear_producto_proyecto.html", payload)
             else:
                 error = "No se ingresó ningún producto."
                 return render(request, "error_general.html", {"error": error})
         else:
+            get = request.GET
             if id == "guardar_datos_filtro_agregar_proyecto":
-                id = request.GET["id"]
+                id = get["id"]
             proyecto = Proyecto.objects.get(id=id)
             nuevo_productos_proyecto = Producto_proyecto.objects.filter(
                 producto=proyecto
             )
             productos = Filtro_producto.objects.all()
-            myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+            myFilter = Filtro_productoFilter(get, queryset=productos)
             lista_productos = []
-            return render(
-                request,
-                "proyectos/agregar_producto.html",
-                {
-                    "id": id,
-                    "Proyecto": proyecto,
-                    "myFilter": myFilter,
-                    "productos_proyecto": nuevo_productos_proyecto,
-                },
-            )
+            payload = {
+                "id": id,
+                "Proyecto": proyecto,
+                "myFilter": myFilter,
+                "productos_proyecto": nuevo_productos_proyecto,
+            }
+            return render(request, "proyectos/agregar_producto.html", payload)
     elif request.method == "POST":
-        productos_filtro = request.POST.getlist("producto")
+        get = request.GET
+        post = request.POST
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
-        id_ql = request.POST["id"]
-        proyecto = Proyecto.objects.get(id=id_ql)
+        proyecto = Proyecto.objects.get(id=post["id"])
         productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-        for i in productos_filtro:
+        for i in post.getlist("producto"):
             booleano_repeticion = False
             for n in productos_proyecto:
                 if n.proyecto.nombre == i:
@@ -663,85 +449,55 @@ def agregar_producto(request, id):
                 )
                 nuevo_producto_proyecto.save()
         productos = Filtro_producto.objects.all()
-        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
+        myFilter = Filtro_productoFilter(get, queryset=productos)
         producto = myFilter.qs
         nuevo_productos_proyecto = Producto_proyecto.objects.filter(producto=proyecto)
-        return render(
-            request,
-            "proyectos/agregar_producto.html",
-            {
-                "id": id_ql,
-                "Proyecto": proyecto,
-                "myFilter": myFilter,
-                "productos_proyecto": nuevo_productos_proyecto,
-            },
-        )
+        payload = {"id": post["id"],
+                   "Proyecto": proyecto,
+                   "myFilter": myFilter,
+                   "productos_proyecto": nuevo_productos_proyecto
+                   }
+        return render(request, "proyectos/agregar_producto.html", payload)
 
 
 @login_required(login_url="/login")
 def crear_nuevo_producto(request):
     usuario_modificacion = request.user.first_name + " " + request.user.last_name
-    proyecto = Proyecto.objects.get(id=request.POST["id_proyecto"])
-    productos = request.POST.getlist("id_producto")
-    fechas_uso = request.POST.getlist("fecha_uso")
-    cantidades = request.POST.getlist("cantidades")
-    for n, i in enumerate(productos):
-        status = request.POST[i]
+    post = request.POST
+    proyecto = Proyecto.objects.get(id=post["id_proyecto"])
+    cantidades = post.getlist("cantidades")
+    for n, i in enumerate(post.getlist("id_producto")):
+        status = post[i]
         producto = Producto.objects.get(id=i)
-        if cantidades[n] == "":
-            cantidades[n] = 0
-        if fechas_uso[n] != "":
-            if not Producto_proyecto.objects.filter(
-                producto=proyecto, proyecto=producto
-            ).exists():
-                nuevo_producto_proyecto = Producto_proyecto(
-                    id=uuid.uuid1(),
-                    producto=proyecto,
-                    proyecto=producto,
-                    status=status,
-                    fecha_uso=fechas_uso[n],
-                    cantidades=cantidades[n],
-                    usuario_modificacion=usuario_modificacion,
-                    estado_cotizacion="No",
-                )
-                nuevo_producto_proyecto.save()
-                usuario = get_user_model().objects.get(correo=request.user.email)
-                usuario.productos_proyecto.add(nuevo_producto_proyecto)
-                usuario.save()
-            else:
-                producto_proyecto = Producto_proyecto.objects.get(
-                    producto=proyecto, proyecto=producto
-                )
-                producto_proyecto.status = status
-                producto_proyecto.fecha_uso = fechas_uso[n]
-                producto_proyecto.cantidades = cantidades[n]
-                producto_proyecto.usuario_modificacion = usuario_modificacion
-                producto_proyecto.save()
+        cantidades[n] = 0 if cantidades[n] == "" else cantidades[n]
+        if not Producto_proyecto.objects.filter(
+            producto=proyecto, proyecto=producto
+        ).exists():
+            nuevo_producto_proyecto = Producto_proyecto(
+                id=uuid.uuid1(),
+                producto=proyecto,
+                proyecto=producto,
+                status=status,
+                fecha_uso=post.getlist("fecha_uso")[n],
+                cantidades=cantidades[n],
+                usuario_modificacion=usuario_modificacion,
+                estado_cotizacion="No",
+            )
+            nuevo_producto_proyecto.save()
+            usuario = get_user_model().objects.get(correo=request.user.email)
+            usuario.productos_proyecto.add(nuevo_producto_proyecto)
+            usuario.save()
         else:
-            if not Producto_proyecto.objects.filter(
+            producto_proyecto = Producto_proyecto.objects.get(
                 producto=proyecto, proyecto=producto
-            ).exists():
-                nuevo_producto_proyecto = Producto_proyecto(
-                    id=uuid.uuid1(),
-                    producto=proyecto,
-                    proyecto=producto,
-                    status=status,
-                    cantidades=cantidades[n],
-                    usuario_modificacion=usuario_modificacion,
-                    estado_cotizacion="No",
-                )
-                nuevo_producto_proyecto.save()
-                usuario = get_user_model().objects.get(correo=request.user.email)
-                usuario.productos_proyecto.add(nuevo_producto_proyecto)
-                usuario.save()
-            else:
-                producto_proyecto = Producto_proyecto.objects.get(
-                    producto=proyecto, proyecto=producto
-                )
-                producto_proyecto.status = status
-                producto_proyecto.cantidades = cantidades[n]
-                producto_proyecto.usuario_modificacion = usuario_modificacion
-                producto_proyecto.save()
+            )
+            producto_proyecto.status = status
+            producto_proyecto.fecha_uso = post.getlist("fecha_uso")[n]
+            producto_proyecto.cantidades = cantidades[n]
+            producto_proyecto.usuario_modificacion = usuario_modificacion
+            producto_proyecto.save()
+        if post.getlist("fecha_uso")[n] != "":
+            producto_proyecto.fecha_uso = post.getlist("fecha_uso")[n]
         subclase_producto = producto.subclase_set.all()[0]
         if not proyecto.presupuesto_subclases.filter(
             subclase=subclase_producto
@@ -757,15 +513,13 @@ def crear_nuevo_producto(request):
         request.user.email,
         "creó producto(s) en proyecto",
         "Producto_Proyecto",
-        len(productos),
+        len(post.getlist("id_producto")),
         proyecto.id,
         proyecto.nombre,
-        proyecto.id,
     )
     return redirect("/proyectos/proyecto/{}".format(proyecto.id))
 
 
-# Vista planificador I
 @login_required(login_url="/login")
 def planificador(request):
     usuario = str(request.user)
@@ -784,111 +538,59 @@ def planificador(request):
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def mostrar_filtro(request):
-    centro_costos = request.GET["centro_costos"]
-    nombre = request.GET["nombre"]
-    tipo_cambio = request.GET["tipo_cambio"]
-    valor_cambio = request.GET["valor_cambio"]
-    edicion = request.GET["edicion"]
-    if edicion == "No" and Proyecto.objects.filter(id=centro_costos).exists():
+    get = request.GET
+    centro_costos = get["centro_costos"]
+    if get["edicion"] == "No" and Proyecto.objects.filter(id=centro_costos).exists():
         return render(request, "proyectos/planificador.html", {"error": "ERROR"})
     else:
-        if not valor_cambio:
-            valor_cambio = 0
-        if not tipo_cambio:
-            tipo_cambio = "CLP"
-        fecha_inicio = request.GET["fecha_inicio"]
-        fecha_termino = request.GET["fecha_termino"]
+        valor_cambio = 0 if not get["valor_cambio"] else get["valor_cambio"]
+        tipo_cambio = "CLP" if not get["tipo_cambio"] else get["tipo_cambio"]
         creador = request.user.first_name + " " + request.user.last_name
         fecha_actual = datetime.now()
-        if fecha_inicio and fecha_termino:
-            nuevo_proyecto = Proyecto(
-                id=centro_costos,
-                nombre=nombre,
-                precio_final=0,
-                fecha_creacion=fecha_actual,
-                fecha_inicio=fecha_inicio,
-                fecha_final=fecha_termino,
-                tipo_cambio=tipo_cambio,
-                valor_cambio=valor_cambio,
-                creador=creador,
-                consolidacion=False,
-            )
-            nuevo_proyecto.save()
-        elif not fecha_termino and (fecha_inicio and fecha_inicio != "None"):
-            nuevo_proyecto = Proyecto(
-                id=centro_costos,
-                nombre=nombre,
-                precio_final=0,
-                fecha_creacion=fecha_actual,
-                fecha_inicio=fecha_inicio,
-                tipo_cambio=tipo_cambio,
-                valor_cambio=valor_cambio,
-                creador=creador,
-                consolidacion=False,
-            )
-            nuevo_proyecto.save()
-        elif (fecha_termino and fecha_termino != "None") and not fecha_inicio:
-            nuevo_proyecto = Proyecto(
-                id=centro_costos,
-                nombre=nombre,
-                precio_final=0,
-                fecha_creacion=fecha_actual,
-                fecha_final=fecha_termino,
-                tipo_cambio=tipo_cambio,
-                valor_cambio=valor_cambio,
-                creador=creador,
-                consolidacion=False,
-            )
-            nuevo_proyecto.save()
-        else:
-            nuevo_proyecto = Proyecto(
-                id=centro_costos,
-                nombre=nombre,
-                precio_final=0,
-                fecha_creacion=fecha_actual,
-                tipo_cambio=tipo_cambio,
-                valor_cambio=valor_cambio,
-                creador=creador,
-                consolidacion=False,
-            )
-            nuevo_proyecto.save()
+        nuevo_proyecto = Proyecto(id=get["centro_costos"],
+                                  nombre=get["nombre"],
+                                  precio_final=0,
+                                  fecha_creacion=fecha_actual,
+                                  tipo_cambio=tipo_cambio,
+                                  valor_cambio=valor_cambio,
+                                  creador=creador,
+                                  consolidacion=False)
+        nuevo_proyecto.save()
+        if get["fecha_inicio"]:
+            nuevo_proyecto.fecha_inicio = get["fecha_inicio"]
+        if get["fecha_termino"]:
+            nuevo_proyecto.fecha_final = get["fecha_termino"]
+        nuevo_proyecto.save()
         crear_notificacion(
             "crear_proyecto",
             request.user.email,
             "creó un proyecto",
             "Proyecto",
             1,
-            centro_costos,
-            nombre,
-            centro_costos,
+            get["centro_costos"],
+            get["nombre"],
         )
         productos = Filtro_producto.objects.all()
         productos_proyecto = nuevo_proyecto.productos.all()
-        myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-        return render(
-            request,
-            "proyectos/eleccion_productos.html",
-            {
-                "Proyecto": nuevo_proyecto,
-                "myFilter": myFilter,
-                "productos_proyecto": productos_proyecto,
-            },
-        )
+        myFilter = Filtro_productoFilter(get, queryset=productos)
+        payload = {
+            "Proyecto": nuevo_proyecto,
+            "myFilter": myFilter,
+            "productos_proyecto": productos_proyecto,
+        }
+        return render(request, "proyectos/eleccion_productos.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def guardar_datos_filtro(request):
+    get = request.GET
     usuario_modificacion = request.user.first_name + " " + request.user.last_name
-    proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
+    proyecto = Proyecto.objects.get(id=get["centro_costos"])
     productos_proyecto_anterior = proyecto.productos.all()
-    productos_filtro = request.GET.getlist("productos")
-    booleano_repeticion = False
-    for i in productos_filtro:
-        for n in productos_proyecto_anterior:
-            if n.nombre == i:
-                booleano_repeticion = True
-    for i in productos_filtro:
+    for i in get.getlist("productos"):
+        booleano_repeticion = True if productos_proyecto_anterior.filter(producto__nombre=i).exists() else False
+    for i in get.getlist("productos"):
         if not booleano_repeticion:
             producto = Producto.objects.get(nombre=i)
             nuevo_producto_proyecto = Producto_proyecto(
@@ -914,25 +616,19 @@ def guardar_datos_filtro(request):
             s = productos.filter(nombre_producto=i)[0]
             s.utilizado = proyecto.id
             s.save()
-    myFilter = Filtro_productoFilter(request.GET, queryset=productos)
-    return render(
-        request,
-        "proyectos/eleccion_productos.html",
-        {
-            "Proyecto": proyecto,
-            "myFilter": myFilter,
-            "productos_proyecto": productos_proyecto,
-        },
-    )
+    myFilter = Filtro_productoFilter(get, queryset=productos)
+    payload = {"Proyecto": proyecto,
+               "myFilter": myFilter,
+               "productos_proyecto": productos_proyecto}
+    return render(request, "proyectos/eleccion_productos.html", payload)
 
 
-# Recibir vista planificador I
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def recibir_datos_planificador(request):
+    get = request.GET
     proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
-    productos_repetidos = request.GET.getlist("productos_checkeados")
-    productos = list(dict.fromkeys(productos_repetidos))
+    productos = list(dict.fromkeys(get.getlist("productos_checkeados")))
     lista_subclases_productos = []
     for producto in productos:
         lista_aux_producto = []
@@ -945,11 +641,8 @@ def recibir_datos_planificador(request):
                 )[0]
             )
         lista_subclases_productos.append(lista_aux_producto)
-    return render(
-        request,
-        "proyectos/lista_productos.html",
-        {"Proyecto": proyecto, "Productos": lista_subclases_productos},
-    )
+    payload = {"Proyecto": proyecto, "Productos": lista_subclases_productos}
+    return render(request, "proyectos/lista_productos.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
@@ -976,52 +669,32 @@ def recibir_cantidades_planificador(request):
         productos = Filtro_producto.objects.all()
         myFilter = Filtro_productoFilter(request.GET, queryset=productos)
         productos_proyecto = proyecto.productos.all()
-        return render(
-            request,
-            "proyectos/eleccion_productos.html",
-            {
-                "Proyecto": proyecto,
-                "myFilter": myFilter,
-                "productos_proyecto": productos_proyecto,
-            },
-        )
+        payload = {"Proyecto": proyecto,
+                   "myFilter": myFilter,
+                   "productos_proyecto": productos_proyecto}
+        return render(request, "proyectos/eleccion_productos.html", payload)
     else:
-        lista_subclases = []
         for i in proyecto.productos.all():
             subclase = i.subclase_set.all()[0].nombre
-            lista_subclases.append(subclase)
-            lista_subclases_final = list(dict.fromkeys(lista_subclases))
-        lista_con_utilidad = []
+            lista_subclases_final = list(dict.fromkeys([subclase]))
         for i in lista_subclases_final:
-            aux = []
-            aux.append(i)
             instancia_subclase = SubClase.objects.get(nombre=i)
-            if instancia_subclase.utilidad:
-                aux.append(instancia_subclase.utilidad)
-            else:
-                aux.append(0)
-            lista_con_utilidad.append(aux)
-        return render(
-            request,
-            "proyectos/eleccion_presupuesto.html",
-            {"Proyecto": proyecto, "subclases": lista_con_utilidad},
-        )
+            lista_con_utilidad = [i, instancia_subclase.utilidad] if instancia_subclase.utilidad else [i, 0]
+        payload = {"Proyecto": proyecto, "subclases": lista_con_utilidad}
+        return render(request, "proyectos/eleccion_presupuesto.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def eleccion_presupuesto(request, id):
+    post = request.POST
     proyecto = Proyecto.objects.get(id=id)
-    subclases = request.POST.getlist("subclases")
-    nombre_subclases = request.POST.getlist("subclases_nombres")
-    presupuesto_total = request.POST["presupuesto_total"]
-    utilidad = request.POST.getlist("utilidad")
-    proyecto.presupuesto_total = presupuesto_total
+    proyecto.presupuesto_total = post["presupuesto_total"]
     proyecto.save()
-    for n, i in enumerate(subclases):
-        modelo_subclase = SubClase.objects.get(nombre=nombre_subclases[n])
+    for n, i in enumerate(post.getlist("subclases")):
+        modelo_subclase = SubClase.objects.get(nombre=post.getlist("subclases_nombres")[n])
         nuevo_presupuesto_subclase = Presupuesto_subclases(
-            id=uuid.uuid1(), valor=i, subclase=modelo_subclase, utilidad=utilidad[n]
+            id=uuid.uuid1(), valor=i, subclase=modelo_subclase, utilidad=post.getlist("utilidad")[n]
         )
         nuevo_presupuesto_subclase.save()
         proyecto.presupuesto_subclases.add(nuevo_presupuesto_subclase)
@@ -1033,12 +706,11 @@ def eleccion_presupuesto(request, id):
 @login_required(login_url="/login")
 def agregar_cotizacion(request, id):
     if request.method == "POST":
+        post = request.POST
         proyecto_asociado = Proyecto.objects.get(id=id)
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
-        nombre = request.POST["nombre"]
-        info_productos = request.POST.getlist("contacto")
         diccionario_proveedores = {}
-        for i in info_productos:
+        for i in post.getlist("contacto"):
             producto, proveedor, contacto = i.split("**")
             if proveedor not in diccionario_proveedores.keys():
                 diccionario_proveedores[proveedor] = [[contacto], [producto]]
@@ -1053,14 +725,7 @@ def agregar_cotizacion(request, id):
         else:
             correlativo = Correlativo_cotizacion(año=año_hoy, numero=0)
             correlativo.save()
-        if len(str(correlativo.numero)) == 1:
-            nombre_con_correlativo = nombre + " - " + "000" + str(correlativo.numero)
-        elif len(str(correlativo.numero)) == 2:
-            nombre_con_correlativo = nombre + " - " + "00" + str(correlativo.numero)
-        elif len(str(correlativo.numero)) == 3:
-            nombre_con_correlativo = nombre + " - " + "0" + str(correlativo.numero)
-        elif len(str(correlativo.numero)) == 4:
-            nombre_con_correlativo = nombre + " - " + str(correlativo.numero)
+        nombre_con_correlativo = post["nombre"] + " - " + "0" * (4 - len(str(correlativo.numero))) + str(correlativo.numero)
         for nombre_proveedor in diccionario_proveedores:
             proveedor = Proveedor.objects.get(nombre=nombre_proveedor)
             nueva_cotizacion = Cotizacion(
@@ -1099,7 +764,6 @@ def agregar_cotizacion(request, id):
             1,
             nueva_cotizacion.id,
             nueva_cotizacion.nombre,
-            proyecto_asociado.id,
         )
         return redirect("/proyectos/proyecto/{}".format(proyecto_asociado.id))
     else:
@@ -1118,52 +782,32 @@ def agregar_cotizacion(request, id):
             )
             for n in proveedores:
                 for contacto in n.contactos_asociados.all():
-                    aux = []
-                    no_existe = False
-                    for x in n.productos_no.all():
-                        if producto_proyecto[0].proyecto.id == x.id:
-                            no_existe = True
+                    no_existe = True if n.productos_no.all().filter(id=producto_proyecto[0].proyecto.id).exists() else False
                     if not no_existe:
-                        aux.append(n)
-                        aux.append(contacto)
-                        lista_proveedores.append(aux)
+                        lista_proveedores.append([n, contacto])
             lista_producto_proyecto.append(lista_proveedores)
             lista_productos.append(lista_producto_proyecto)
-        return render(
-            request,
-            "proyectos/crear_cotizacion.html",
-            {"Proyecto": proyecto, "Proveedores": lista_productos},
-        )
+        payload = {"Proyecto": proyecto, "Proveedores": lista_productos}
+        return render(request, "proyectos/crear_cotizacion.html", payload)
 
 
 @login_required(login_url="/login")
 def mostrar_cotizacion(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
-    productos = []
-    for i in cotizacion.productos_asociados.all():
-        producto_proyecto = Producto_proyecto.objects.get(
-            producto=cotizacion.proyecto_asociado, proyecto=i
-        )
-        productos.append(producto_proyecto)
+    productos = [Producto_proyecto.objects.get(producto=cotizacion.proyecto_asociado, proyecto=i)
+                 for i in cotizacion.productos_asociados.all()]
     contactos = cotizacion.contacto_asociado.all()
-    if cotizacion.orden_compra:
-        orden_compra = Orden_compra.objects.get(cotizacion_hija=cotizacion)
-        productos_orden_compra = cotizacion.productos_proyecto_asociados.all()
-    else:
-        orden_compra = False
-        productos_orden_compra = False
-    return render(
-        request,
-        "proyectos/cotizacion.html",
-        {
-            "Cotizacion": cotizacion,
-            "Productos": productos,
-            "contactos": contactos,
-            "orden_compra": orden_compra,
-            "productos_orden_compra": productos_orden_compra,
-            "EXCEL_ROOT": EXCEL_ROOT,
-        },
-    )
+    orden_compra = Orden_compra.objects.get(cotizacion_hija=cotizacion) if cotizacion.orden_compra else False
+    productos_orden_compra = cotizacion.productos_proyecto_asociados.all() if cotizacion.orden_compra else False
+    payload = {
+        "Cotizacion": cotizacion,
+        "Productos": productos,
+        "contactos": contactos,
+        "orden_compra": orden_compra,
+        "productos_orden_compra": productos_orden_compra,
+        "EXCEL_ROOT": EXCEL_ROOT,
+    }
+    return render(request, "proyectos/cotizacion.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
@@ -1187,7 +831,6 @@ def editar_cotizacion(request, id):
             1,
             cotizacion.id,
             cotizacion.nombre,
-            cotizacion.proyecto_asociado.id,
         )
         return redirect("/proyectos/mostrar_cotizacion/{}".format(cotizacion.id))
     else:
@@ -1201,20 +844,16 @@ def editar_cotizacion(request, id):
 def editar_disponibilidad(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     if request.method == "POST":
-        productos = request.POST.getlist("producto")
         proveedor = cotizacion.proveedor_asociado
-        for i in productos:
+        for i in request.POST.getlist("producto"):
             producto = Producto.objects.get(id=i)
             proveedor.productos_no.add(producto)
             proveedor.save()
         return redirect("/proyectos/mostrar_cotizacion/{}".format(cotizacion.id))
     else:
         productos_asociados = cotizacion.productos_asociados.all()
-        return render(
-            request,
-            "proyectos/editar_disponibilidad.html",
-            {"Cotizacion": cotizacion, "info_productos": productos_asociados},
-        )
+        payload = {"Cotizacion": cotizacion, "info_productos": productos_asociados}
+        return render(request, "proyectos/editar_disponibilidad.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Cotizador"])
@@ -1230,7 +869,6 @@ def eliminar_cotizacion(request, id):
         1,
         cotizacion.id,
         cotizacion.nombre,
-        cotizacion.proyecto_asociado.id,
     )
     cotizacion.delete()
     return redirect("/proyectos/proyecto/{}".format(proyecto))
@@ -1241,11 +879,9 @@ def enviar_correo(request, id):
     cotizacion = Cotizacion.objects.get(id=id)
     proyecto = cotizacion.proyecto_asociado.id
     if request.method == "POST":
-        subject = request.POST["subject"]
-        texto_extra = request.POST["texto"]
-        clave = request.POST["clave"]
+        post = request.POST
         usuario = get_user_model().objects.get(correo=request.user.email)
-        crear_correo(usuario, cotizacion, texto_extra, clave, subject)
+        crear_correo(usuario, cotizacion, request.POST["texto"], post["clave"], post["subject"])
         cotizacion.fecha_salida = datetime.now()
         cotizacion.save()
         crear_notificacion(
@@ -1256,16 +892,12 @@ def enviar_correo(request, id):
             1,
             cotizacion.id,
             cotizacion.nombre,
-            cotizacion.proyecto_asociado.id,
         )
         return redirect("/proyectos/proyecto/{}".format(proyecto))
     else:
         contacto = cotizacion.contacto_asociado.all()
-        return render(
-            request,
-            "proyectos/enviar_correo.html",
-            {"Cotizacion": cotizacion, "contactos": contacto},
-        )
+        payload = {"Cotizacion": cotizacion, "contactos": contacto}
+        return render(request, "proyectos/enviar_correo.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
@@ -1273,23 +905,16 @@ def enviar_correo(request, id):
 def informar_orden_compra(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
-        enviar = request.POST["enviar"]
-        cotizador = get_user_model().objects.filter(email=enviar)
-        empresa = request.POST["empresa"]
-        observaciones = request.POST["observaciones"]
-        productos = request.POST.getlist("nombre")
+        post = request.POST
+        cotizador = get_user_model().objects.filter(email=post["enviar"])
         productos_cantidades = []
         cantidad_orden_compra = []
-        for i in productos:
-            aux = []
+        for i in post.getlist("nombre"):
             nuevo = i.split("*")
-            aux.append(nuevo[0])
-            aux.append(nuevo[1])
             cantidad_orden_compra.append(nuevo[1])
-            aux.append(request.POST[nuevo[2]])
-            productos_cantidades.append(aux)
+            productos_cantidades.append([nuevo[0], nuevo[1], post[nuevo[2]]])
         numero_orden_compra = len(list(dict.fromkeys(cantidad_orden_compra)))
-        usuario_cotizador = get_user_model().objects.get(correo=enviar)
+        usuario_cotizador = get_user_model().objects.get(correo=post["enviar"])
         if not usuario_cotizador.orden_compra:
             usuario_cotizador.orden_compra = 0
             usuario_cotizador.save()
@@ -1316,8 +941,8 @@ def informar_orden_compra(request, id):
             texto_lista_productos += texto_productos
         texto_correo += texto_entrada
         texto_correo += texto_lista_productos
-        texto_correo += "\nObservaciones: {}\n".format(observaciones)
-        texto_correo += "Facturar a: {} \n".format(empresa)
+        texto_correo += "\nObservaciones: {}\n".format(post["observaciones"])
+        texto_correo += "Facturar a: {} \n".format(post["empresa"])
         # CAMBIAR A LOGISTICA
         correo_enviador = "tcorrea@rmc.cl"
         clave_enviador = "Tom12345"
@@ -1340,34 +965,18 @@ def informar_orden_compra(request, id):
         tabla_productos_cotizados = []
         for i in cotizaciones:
             for producto in i.productos_asociados.all():
-                aux_tabla_productos_cotizados = []
                 if producto.lista_precios:
                     precios = producto.lista_precios.all()
-                    if precios.filter(
-                        nombre_cotizacion=i.nombre,
-                        nombre_proveedor=i.proveedor_asociado.nombre,
-                    ).exists():
-                        precio = list(
-                            precios.filter(
-                                nombre_cotizacion=i.nombre,
-                                nombre_proveedor=i.proveedor_asociado.nombre,
-                            )
-                        ).pop()
-                        aux_tabla_productos_cotizados.append(
-                            Producto_proyecto.objects.get(
-                                proyecto=producto, producto=proyecto
-                            )
-                        )
-                        aux_tabla_productos_cotizados.append(precio)
-                        tabla_productos_cotizados.append(aux_tabla_productos_cotizados)
+                    if precios.filter(nombre_cotizacion=i.nombre,
+                                      nombre_proveedor=i.proveedor_asociado.nombre).exists():
+                        precio = list(precios.filter(nombre_cotizacion=i.nombre,
+                                                     nombre_proveedor=i.proveedor_asociado.nombre)).pop()
+                        tabla_productos_cotizados.append([Producto_proyecto.objects.get(proyecto=producto, producto=proyecto), precio])
                     else:
                         precio = ""
         cotizadores = get_user_model().objects.filter(groups__name="Cotizador")
-        return render(
-            request,
-            "proyectos/informar_orden_compra.html",
-            {"productos": tabla_productos_cotizados, "cotizadores": cotizadores},
-        )
+        payload = {"productos": tabla_productos_cotizados, "cotizadores": cotizadores}
+        return render(request, "proyectos/informar_orden_compra.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
@@ -1375,30 +984,24 @@ def informar_orden_compra(request, id):
 def editar_presupuesto(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
-        presupuesto_total = request.POST["presupuesto_total"]
-        proyecto.presupuesto_total = float(presupuesto_total)
+        post = request.POST
+        proyecto.presupuesto_total = float(post["presupuesto_total"])
         proyecto.save()
-        presupuestos_subclases = request.POST.getlist("subclases")
-        utilidades = request.POST.getlist("utilidad")
-        nombre_presupuestos_subclases = request.POST.getlist("subclases_nombres")
-        for n, i in enumerate(presupuestos_subclases):
+        for n, i in enumerate(post.getlist("subclases")):
             for x in proyecto.presupuesto_subclases.all():
-                if x.subclase.nombre == nombre_presupuestos_subclases[n]:
+                if x.subclase.nombre == post.getlist("subclases_nombres")[n]:
                     subclase_encontrada = SubClase.objects.get(nombre=x.subclase.nombre)
                     subclase_final = proyecto.presupuesto_subclases.filter(
                         subclase=subclase_encontrada
                     )[0]
                     subclase_final.valor = float(i)
-                    subclase_final.utilidad = float(utilidades[n])
+                    subclase_final.utilidad = float(post.getlist("utilidad")[n])
                     subclase_final.save()
         return redirect("/proyectos/proyecto/{}".format(id))
     else:
         presupuesto_subclases = proyecto.presupuesto_subclases.all()
-        return render(
-            request,
-            "proyectos/editar_presupuesto.html",
-            {"Proyecto": proyecto, "presupuesto_subclases": presupuesto_subclases},
-        )
+        payload = {"Proyecto": proyecto, "presupuesto_subclases": presupuesto_subclases}
+        return render(request, "proyectos/editar_presupuesto.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
@@ -1415,29 +1018,22 @@ def consolidar_proyecto(request, id):
 def agregar_orden_interna(request, id):
     proyecto = Proyecto.objects.get(id=id)
     if request.method == "POST":
+        post = request.POST
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
-        nombre = request.POST["nombre"]
-        condicion_pago = request.POST["condicion_pago"]
-        empresa = request.POST["empresa"]
-        proveedor = Proveedor.objects.get(rut=empresa)
-        observaciones = request.POST["observaciones"]
-        productos_escogidos = request.POST.getlist("id_producto")
+        proveedor = Proveedor.objects.get(rut=post["empresa"])
         lista_proveedor = {}
-        for x in productos_escogidos:
+        for x in post.getlist("id_producto"):
             producto = Producto_proyecto.objects.get(id=x)
-            info_precio_cantidad = request.POST.getlist(x)
-            cantidad = info_precio_cantidad[1]
-            proveedor = info_precio_cantidad[0]
-            precio = info_precio_cantidad[2]
+            info_precio_cantidad = post.getlist(x)
             if proveedor not in lista_proveedor.keys():
-                lista_proveedor[proveedor] = [[producto, cantidad, precio]]
+                lista_proveedor[info_precio_cantidad[0]] = [[producto, info_precio_cantidad[1], info_precio_cantidad[2]]]
             else:
-                lista_proveedor[proveedor].append([producto, cantidad, precio])
+                lista_proveedor[info_precio_cantidad[0]].append([producto, info_precio_cantidad[1], info_precio_cantidad[2]])
         for i in lista_proveedor.keys():
             proveedor_asociado = Proveedor.objects.get(nombre=i)
             nueva_cotizacion = Cotizacion(
                 id=uuid.uuid1(),
-                nombre=nombre,
+                nombre=post["nombre"],
                 proyecto_asociado=proyecto,
                 orden_compra=True,
                 proveedor_asociado=proveedor_asociado,
@@ -1470,16 +1066,16 @@ def agregar_orden_interna(request, id):
                     nuevo_producto_cantidades
                 )
                 nueva_cotizacion.save()
-            nombre_rmc = RMC.objects.get(rut=empresa)
+            nombre_rmc = RMC.objects.get(rut=post["empresa"])
             nueva_orden_compra = Orden_compra(
                 id=uuid.uuid1(),
                 cotizacion_padre=nueva_cotizacion,
                 cotizacion_hija=nueva_cotizacion,
                 condicion_entrega="Inmediato",
-                condiciones_pago=condicion_pago,
+                condiciones_pago=post["condicion_pago"],
                 forma_pago="Interno",
                 destino_factura=nombre_rmc,
-                observaciones=observaciones,
+                observaciones=post["observaciones"],
             )
             nueva_orden_compra.save()
         return redirect("/proyectos/proyecto/{}".format(id))
@@ -1510,12 +1106,8 @@ def agregar_orden_interna(request, id):
                     else:
                         aux.append("No hay")
                 lista_productos.append(aux)
-        print(lista_productos)
-        return render(
-            request,
-            "proyectos/agregar_orden_interna.html",
-            {"Proyecto": proyecto, "productos": lista_productos},
-        )
+        payload = {"Proyecto": proyecto, "productos": lista_productos}
+        return render(request, "proyectos/agregar_orden_interna.html", payload)
 
 
 @allowed_users(allowed_roles=["Admin", "Planificador"])
@@ -1523,37 +1115,26 @@ def agregar_orden_interna(request, id):
 def nueva_importacion(request, id):
     if request.method == "GET":
         if request.path_info == "/nueva_importacion/recibir_importacion":
-            id_proyecto = request.GET["centro_costos"]
-            proyecto = Proyecto.objects.get(id=id_proyecto)
-            codigo_importacion = request.GET["eleccion"]
-            importacion = Importaciones.objects.get(codigo=codigo_importacion)
+            proyecto = Proyecto.objects.get(id=request.GET["centro_costos"])
+            importacion = Importaciones.objects.get(codigo=request.GET["eleccion"])
             productos = importacion.productos.all()
-            return render(
-                request,
-                "proyectos/elegir_cantidades_importacion.html",
-                {
-                    "Importacion": importacion,
-                    "Productos": productos,
-                    "Proyecto": proyecto,
-                },
-            )
+            payload = {
+                "Importacion": importacion,
+                "Productos": productos,
+                "Proyecto": proyecto,
+            }
+            return render(request, "proyectos/elegir_cantidades_importacion.html", payload)
         else:
             proyecto = Proyecto.objects.get(id=id)
             importaciones = Importaciones.objects.all()
-            lista_importaciones = []
-            for i in importaciones:
-                lista_importaciones.append(i)
-            return render(
-                request,
-                "proyectos/nueva_importacion.html",
-                {"importaciones": lista_importaciones, "Proyecto": proyecto},
-            )
+            lista_importaciones = [i for i in importaciones]
+            payload = {"importaciones": lista_importaciones, "Proyecto": proyecto}
+            return render(request, "proyectos/nueva_importacion.html", payload)
     else:
+        post = request.POST
         usuario_modificacion = request.user.first_name + " " + request.user.last_name
-        id_proyecto = request.POST["centro_costos"]
-        id_importacion = request.POST["importacion"]
-        proyecto = Proyecto.objects.get(id=id_proyecto)
-        importacion = Importaciones.objects.get(codigo=id_importacion)
+        proyecto = Proyecto.objects.get(id=post["centro_costos"])
+        importacion = Importaciones.objects.get(codigo=post["importacion"])
         importaciones = Importaciones.objects.filter(
             codigo_referencial=importacion.codigo_referencial
         )
@@ -1561,19 +1142,12 @@ def nueva_importacion(request, id):
         for i in importaciones:
             if i != importacion:
                 importacion_antigua = i
-        productos_totales = request.POST.getlist("eleccion")
-        productos_escogidos = request.POST.getlist("id_producto")
-        cantidades = request.POST.getlist("cantidad")
         lista_con_cantidades = []
-        for n, i in enumerate(productos_totales):
-            for x in productos_escogidos:
+        for n, i in enumerate(post.getlist("eleccion")):
+            for x in post.getlist("id_producto"):
                 if i == x:
-                    aux = []
                     producto = Producto_proyecto_cantidades.objects.get(id=x)
-                    aux.append(producto)
-                    aux.append(cantidades[n])
-                    lista_con_cantidades.append(aux)
-        proveedor_asociado = importacion.proveedor
+                    lista_con_cantidades.append([producto, post.getlist("cantidad")[n]])
         if Cotizacion.objects.filter(
             nombre="Importacion{}".format(importacion.codigo_referencial)
         ).exists():
@@ -1581,30 +1155,18 @@ def nueva_importacion(request, id):
                 nombre="Importacion{}".format(importacion.codigo_referencial)
             )
         else:
-            if proveedor_asociado:
-                nueva_cotizacion = Cotizacion(
-                    id=uuid.uuid1(),
-                    nombre="Importacion" + importacion.codigo_referencial,
-                    proyecto_asociado=proyecto,
-                    orden_compra=True,
-                    proveedor_asociado=proveedor_asociado,
-                    fecha_salida=datetime.now(),
-                    fecha_respuesta=datetime.now(),
-                    fecha_actualizacion_precio=datetime.now(),
-                    usuario_modificacion=usuario_modificacion,
-                )
-            else:
-                nueva_cotizacion = Cotizacion(
-                    id=uuid.uuid1(),
-                    nombre="Importacion" + importacion.codigo_referencial,
-                    proyecto_asociado=proyecto,
-                    orden_compra=True,
-                    fecha_salida=datetime.now(),
-                    fecha_respuesta=datetime.now(),
-                    fecha_actualizacion_precio=datetime.now(),
-                    usuario_modificacion=usuario_modificacion,
-                )
+            nueva_cotizacion = Cotizacion(id=uuid.uuid1(),
+                                          nombre="Importacion" + importacion.codigo_referencial,
+                                          proyecto_asociado=proyecto,
+                                          orden_compra=True,
+                                          fecha_salida=datetime.now(),
+                                          fecha_respuesta=datetime.now(),
+                                          fecha_actualizacion_precio=datetime.now(),
+                                          usuario_modificacion=usuario_modificacion,
+                                          )
             nueva_cotizacion.save()
+            if importacion.proveedor:
+                nueva_cotizacion.proveedor_asociado = importacion.proveedor
         for n in lista_con_cantidades:
             precio_asociado = n[0].precio
             precio_asociado.nombre_cotizacion = (
@@ -1618,8 +1180,8 @@ def nueva_importacion(request, id):
                 )
                 nuevo_producto_proyecto.estado_cotizacion = "Precio"
                 nuevo_producto_proyecto.usuario_modificacion = usuario_modificacion
-                if proveedor_asociado:
-                    nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
+                if importacion.proveedor:
+                    nuevo_producto_proyecto.proveedores.add(importacion.proveedor)
                 nuevo_producto_proyecto.save()
                 if importacion_antigua:
                     for x in importacion_antigua.productos.all():
@@ -1661,8 +1223,8 @@ def nueva_importacion(request, id):
                     usuario_modificacion=usuario_modificacion,
                 )
                 nuevo_producto_proyecto.save()
-                if proveedor_asociado:
-                    nuevo_producto_proyecto.proveedores.add(proveedor_asociado)
+                if importacion.proveedor:
+                    nuevo_producto_proyecto.proveedores.add(importacion.proveedor)
                 nuevo_producto_proyecto.save()
                 nuevo_producto_cantidades = Producto_proyecto_cantidades(
                     id=uuid.uuid1(),
@@ -1688,4 +1250,4 @@ def nueva_importacion(request, id):
                 fecha_envio=datetime.now(),
             )
             nueva_orden_compra.save()
-        return redirect("/proyectos/proyecto/{}".format(id_proyecto))
+        return redirect("/proyectos/proyecto/{}".format(post["importacion"]))
