@@ -254,9 +254,10 @@ def proveedor(request, rut):
     calificaciones = Calificacion_Proveedor.objects.filter(proveedor=rut)
     promedio = 0
     suma_total = 0
-    for i in calificaciones:
-        suma_total += i.nota
-    promedio = round(suma_total / len(calificaciones))
+    if calificaciones:
+        for i in calificaciones:
+            suma_total += i.nota
+        promedio = round(suma_total / len(calificaciones))
     diferencia = 5 - promedio
     lista_promedio = [x for x in range(promedio)]
     lista_diferencia = [i for i in range(diferencia)]

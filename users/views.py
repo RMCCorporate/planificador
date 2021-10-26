@@ -48,7 +48,7 @@ def login(request):
 
 
 def logout(request):
-    usuario = get_user_model().objects.get(nickname=str(request.user))
+    usuario = get_user_model().objects.get(correo=str(request.user))
     usuario.session_key = None
     usuario.save()
     do_logout(request)
