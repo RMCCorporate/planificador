@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from planificador.models import Proveedor, RMC, Contacto, Calificacion
 from proveedores.api.serializers import ProveedorSerializer, RMCSerializer
-from proveedores.api.permissions import IsAdminOrReadOnly
+from proveedores.api.permissions import IsAdminOrReadOnly, IsAuthenticatedNoDelete, IsAuthenticatedNoEdit, IsAuthenticatedNoRead
 
 
 class ContactoApiViewSet(ModelViewSet):
@@ -25,7 +25,7 @@ class CalificacionApiViewSet(ModelViewSet):
 
 
 class ProveedorApiViewSet(ModelViewSet):
-    permission_classes = [IsAdminOrReadOnly]
+    permission_classes = [IsAuthenticatedNoDelete, IsAuthenticatedNoEdit, IsAuthenticatedNoRead]
     serializer_class = ProveedorSerializer
     queryset = Proveedor.objects.all()
     lookup_field = 'rut'
