@@ -28,12 +28,14 @@ class ProveedorApiViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedNoDelete, IsAuthenticatedNoEdit, IsAuthenticatedNoRead]
     serializer_class = ProveedorSerializer
     queryset = Proveedor.objects.all()
+    http_method_names = ['get', 'patch', 'post'] 
     lookup_field = 'rut'
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['nombre']
 
 
 class RMCApiViewSet(ModelViewSet):
+    swagger_schema = None
     permission_classes = [IsAdminOrReadOnly]
     serializer_class = RMCSerializer
     queryset = RMC.objects.all()
