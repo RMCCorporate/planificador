@@ -290,8 +290,6 @@ class Cotizacion(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Modelo de usuario"""
-
     correo = models.CharField(max_length=128, unique=True)
     nickname = models.CharField(max_length=128, null=True)
     nombre = models.CharField(max_length=128, null=True)

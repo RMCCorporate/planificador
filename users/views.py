@@ -6,6 +6,7 @@ from django.contrib.auth import login as do_login
 from django.contrib import messages
 from django.contrib.sessions.models import Session
 from django.contrib.auth import get_user_model
+from planificador.models import Importaciones
 
 
 def welcome(request):
@@ -21,6 +22,7 @@ def register(request):
 def login(request):
     form = AuthenticationForm()
     if request.method == "POST":
+        print(request.POST)
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
@@ -37,7 +39,6 @@ def login(request):
                         pass
                     else:
                         s.delete()
-
                 do_login(request, user)
                 usuario.session_key = request.session.session_key
                 usuario.save()

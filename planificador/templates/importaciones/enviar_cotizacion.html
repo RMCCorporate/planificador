@@ -1,0 +1,42 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO PROVEEDOR {% endblock%}
+{% block content %}
+
+
+<head>
+	<title>CREAR COTIZACIÓN DHL</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<link href="{% static 'planificador/css/planificador.css' %}" rel="stylesheet">
+</head>
+
+<div class="container">
+    <div class="title">COTIZACIÓN DHL</div>
+    <br>
+<form action="" method="POST">{% csrf_token %}
+    <br>
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">CÓDIGO COTIZACIÓN</label>
+            <input type="text" name="codigo" placeholder="Código asignado para cotización." required>
+        </div>
+        <div class="input-box">
+          <span class="details">ORIGEN IMPORTACIÓN</label>
+          <input type="text" name="origen" placeholder="Dirección del proveedor + zip code" required>
+        </div>
+          <div class="input-box">
+            <span class="details">¿ES CARGA PELIGROSA?</label>
+                <select class="custom-select" id="peligrosa" name="peligrosa" required>
+                    <option value="SI">SI</option>
+                    <option value="NO">NO</option>
+                </select>
+          </div>
+      </div>
+      <br>
+    <button class="button" type="submit">ELECCIÓN DOCUMENTOS</button>
+    </form>
+</div>
+
+{% endblock%}
+{% block footer %}
+{% endblock %}

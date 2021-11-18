@@ -586,3 +586,15 @@ def recibir_datos_planificador(request):
         productos = list(dict.fromkeys(productos_repetidos))
         payload = {"Importacion": importacion, "Productos": importacion.productos.all()}
         return render(request, "importaciones/lista_productos.html", payload)
+
+@login_required(login_url="/login")
+def enviar_cotización(request):
+    if request.method == "POST":
+        direccion = request.POST["origen"]
+        codigo = request.POST["codigo"]
+        carga_peligrosa = request.POST["peligrosa"]
+        if carga_peligrosa == "SI":
+            #DA LA OPCIÓN DE SUBIR 2 DOCUMENTOS MÁS.
+            pass
+    else:
+        return render(request, "importaciones/enviar_cotizacion.html")
