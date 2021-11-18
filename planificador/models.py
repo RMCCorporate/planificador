@@ -487,6 +487,7 @@ class Importaciones(models.Model):
 
 class Cotizacion_DHL(models.Model):
     codigo = models.CharField(max_length=128, primary_key=True)
+    direccion = models.CharField(max_length=128, null=True)
     carga_peligrosa = models.CharField(max_length=128, null=True)
     invoice = models.FileField(upload_to="img", null=True, max_length=255)
     info = models.FileField(upload_to="img", null=True, max_length=255)

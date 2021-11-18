@@ -22,7 +22,13 @@ import openpyxl
 import uuid
 import json
 import requests
-
+import smtplib
+import os
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
+from django.contrib.auth import get_user_model
 
 class Mindicador:
     def __init__(self, indicador, day, month, year):
@@ -610,12 +616,42 @@ def enviar_correo(request):
         imo = request.POST["IMO"]
         invoice = request.FILES["invoice"]
         info = request.FILES["info"]
-        nueva_cotizacion_importacion = Cotizacion_DHL(codigo=codigo, direccion=direccion, imo=imo, invoice=invoice, info=info)
+        usuario_modificacion = get_user_model().objects.get(correo=request.user.correo)
+        nueva_cotizacion_importacion = Cotizacion_DHL(codigo=codigo, direccion=direccion, carga_peligrosa=imo, invoice=invoice, info=info, usuario_modificacion=usuario_modificacion)
         nueva_cotizacion_importacion.save()
-        if imo:
+        if imo != "False":
             dgd = request.FILES["dgd"]
             msds = request.FILES["msds"]
             nueva_cotizacion_importacion.dgd = dgd
             nueva_cotizacion_importacion.msds = msds
             nueva_cotizacion_importacion.save()
+        correo_enviador = "logistica@rmc.cl"
+        clave_enviador = "RMC.1234"
+        # CAMBIAR A CORREO DE GREETEL
+        correo_prueba = "tacorreahucke@gmail.com"
+        correo_actual = request.user.correo
+        toaddrs = [correo_prueba] + [correo_actual]
+        mensaje = MIMEMultipart()
+        mensaje["From"] = correo_enviador
+        mensaje["To"] = correo_prueba
+        mensaje["Subject"] = "Cotización importación"
+        texto_correo = "Estimada Greetel: \nQueríamos consultar por una cotización de importación desde: \n-{} \nSe adjunta word con información de la carga, PDF con Invoice y MSDS y DGD (si la carga es peligrosa) \nMuchas gracias, saludos.".format(nueva_cotizacion_importacion.direccion)
+        files = [nueva_cotizacion_importacion.invoice.path, nueva_cotizacion_importacion.info.path]
+        mensaje.attach(MIMEText(texto_correo, "plain"))
+        if nueva_cotizacion_importacion.carga_peligrosa != "False":
+            files.append(nueva_cotizacion_importacion.dgd.path)
+            files.append(nueva_cotizacion_importacion.msds.path)
+        for file in files:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(open(file, 'rb').read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 'attachment; filename="%s"'
+                        % os.path.basename(file))
+            mensaje.attach(part)
+        session = smtplib.SMTP("smtp.gmail.com", 587)
+        session.starttls()
+        session.login(correo_enviador, clave_enviador)
+        text = mensaje.as_string()
+        session.sendmail(correo_enviador, toaddrs, text)
+        session.quit()
         return redirect('/')
