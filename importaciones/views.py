@@ -9,6 +9,7 @@ from planificador.models import (
     Precio,
     Producto,
     Proveedor,
+    Cotizacion_DHL,
 )
 from planificador.filters import (
     Filtro_productoFilter,
@@ -593,8 +594,28 @@ def enviar_cotización(request):
         direccion = request.POST["origen"]
         codigo = request.POST["codigo"]
         carga_peligrosa = request.POST["peligrosa"]
+        IMO = False
         if carga_peligrosa == "SI":
-            #DA LA OPCIÓN DE SUBIR 2 DOCUMENTOS MÁS.
-            pass
+            IMO = True
+        payload = {"IMO": IMO, "direccion":direccion, "codigo":codigo}
+        return render(request, 'importaciones/enviar_documentos.html', payload)
     else:
         return render(request, "importaciones/enviar_cotizacion.html")
+
+@login_required(login_url="/login")
+def enviar_correo(request):
+    if request.method == "POST":
+        codigo = request.POST["codigo"]
+        direccion = request.POST["direccion"]
+        imo = request.POST["IMO"]
+        invoice = request.FILES["invoice"]
+        info = request.FILES["info"]
+        nueva_cotizacion_importacion = Cotizacion_DHL(codigo=codigo, direccion=direccion, imo=imo, invoice=invoice, info=info)
+        nueva_cotizacion_importacion.save()
+        if imo:
+            dgd = request.FILES["dgd"]
+            msds = request.FILES["msds"]
+            nueva_cotizacion_importacion.dgd = dgd
+            nueva_cotizacion_importacion.msds = msds
+            nueva_cotizacion_importacion.save()
+        return redirect('/')

@@ -44,4 +44,9 @@ urlpatterns = [
         views.enviar_cotización,
         name="enviar_cotizacion",
     ),
+    path(
+        "importaciones/enviar_correo",
+        views.enviar_correo,
+        name="enviar_correo",
+    ),
 ]

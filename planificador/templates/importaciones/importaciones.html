@@ -22,19 +22,23 @@
     <h4>{{len}} importaciones</h4>
 </div>
 <div class="table-container">
-    <a href="{% url 'nueva_cotizacion_importacion' %}">
+    <!---
+        <a href="{% url 'nueva_cotizacion_importacion' %}">
         <button class="button_añadir">CREAR COTIZACIÓN IMPORTACIÓN</button>
+        </a>
+        <a href="{% url 'anadir_importacion' %}">
+            <button class="button_añadir">AÑADIR IMPORTACIÓN HECHA</button>
+        </a>
+        <a href="{% url 'tarifarios' %}">
+            <button class="button_añadir">VER TARIFARIOS DHL</button>
+        </a>
+        <a href="{% url 'nueva_importacion_planilla' %}">
+            <button class="button_añadir">CARGA TARIFARIOS DHL</button>
+        </a>
+    -->
+    <a href="{% url 'enviar_cotizacion' %}">
+        <button class="button_añadir">CREAR COTIZACIÓN DHL</button>
     </a>
-    <a href="{% url 'anadir_importacion' %}">
-        <button class="button_añadir">AÑADIR IMPORTACIÓN HECHA</button>
-    </a>
-    <a href="{% url 'tarifarios' %}">
-        <button class="button_añadir">VER TARIFARIOS DHL</button>
-    </a>
-    <a href="{% url 'nueva_importacion_planilla' %}">
-        <button class="button_añadir">CARGA TARIFARIOS DHL</button>
-    </a>
-   
     <br>
     <br>
     <h3>IMPORTACIONES</h3>

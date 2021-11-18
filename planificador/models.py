@@ -484,3 +484,15 @@ class Importaciones(models.Model):
     costo_producto = models.FloatField(null=True)
     fecha_emision = models.DateField(auto_now=False, auto_now_add=False, null=True)
     fecha_llegada = models.DateField(auto_now=False, auto_now_add=False, null=True)
+
+class Cotizacion_DHL(models.Model):
+    codigo = models.CharField(max_length=128, primary_key=True)
+    carga_peligrosa = models.CharField(max_length=128, null=True)
+    invoice = models.FileField(upload_to="img", null=True, max_length=255)
+    info = models.FileField(upload_to="img", null=True, max_length=255)
+    dgd = models.FileField(upload_to="img", null=True, max_length=255)
+    msds = models.FileField(upload_to="img", null=True, max_length=255)
+    usuario_modificacion = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
