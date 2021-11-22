@@ -116,12 +116,23 @@ def calculo_destino(destino, kilos):
 @login_required(login_url="/login")
 def importaciones(request):
     importaciones = Importaciones.objects.all()
+    cotizaciones_dhl = Cotizacion_DHL.objects.all()
     lenght = len(importaciones)
     payload = {
         "importaciones": importaciones,
+        "dhl": cotizaciones_dhl,
         "len": lenght
     }
     return render(request, "importaciones/importaciones.html", payload)
+
+
+@login_required(login_url="/login")
+def cotizacion_dhl(request, codigo):
+    cotizaciones_dhl = Cotizacion_DHL.objects.get(codigo=codigo)
+    payload = {
+        "DHL": cotizaciones_dhl,
+    }
+    return render(request, "importaciones/cotizacion_dhl.html", payload)
 
 
 def nueva_importacion_planilla(request):

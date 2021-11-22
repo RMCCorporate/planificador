@@ -24,6 +24,11 @@ urlpatterns = [
         name="importacion",
     ),
     path(
+        "importaciones/cotizacion_dhl/<str:codigo>",
+        views.cotizacion_dhl,
+        name="cotizacion_dhl",
+    ),
+    path(
         "importaciones/nueva_importacion_planilla",
         views.nueva_importacion_planilla,
         name="nueva_importacion_planilla",

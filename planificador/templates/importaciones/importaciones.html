@@ -81,6 +81,10 @@
             {% endif %}
         </tr>
         {% endfor %}
+        {% for x in dhl %}
+            <td data-label="CÓDIGO"><a href="{% url 'cotizacion_dhl' x.codigo %}">{{x.codigo}}</a></td>
+            <td data-label="NOMBRE">{{x.direccion}}</td>
+        {% endfor %}
     </tbody>
 </table>
 </div>
