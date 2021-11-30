@@ -15,7 +15,7 @@ from planificador.filters import (
     Filtro_productoFilter,
 )
 from django.contrib.auth.decorators import login_required
-from datetime import datetime
+from datetime import date, datetime
 from planificador.filters import Filtro_producto
 from planificador.decorators import allowed_users
 import openpyxl
@@ -117,10 +117,37 @@ def calculo_destino(destino, kilos):
 def importaciones(request):
     importaciones = Importaciones.objects.all()
     cotizaciones_dhl = Cotizacion_DHL.objects.all()
+    lista_cotizaciones_con_tiempo = []
+    hoy = datetime.today()
+    for i in cotizaciones_dhl:
+        aux = [] 
+        aux.append(i)
+        if i.fecha_salida:
+            determ_salida = hoy.day - i.fecha_salida.day
+            if determ_salida <= 7:
+                aux.append("Verde")
+            if 7 < determ_salida < 30:
+                aux.append("Amarillo")
+            else:
+                aux.append("Rojo")
+        else:
+            aux.append("No hay")
+        if i.fecha_llegada:
+            fecha_demora = i.fecha_llegada.day - i.fecha_salida.day
+            determ_llegada = i.fecha_llegada.day - hoy.day
+            if determ_llegada <= 7:
+                aux.append("Rojo")
+            if 7 < determ_llegada > int(fecha_demora/3):
+                aux.append("Amarillo")
+            else:
+                aux.append("Verde")
+        else:
+            aux.append("No hay")
+        lista_cotizaciones_con_tiempo.append(aux)
     lenght = len(importaciones)
     payload = {
         "importaciones": importaciones,
-        "dhl": cotizaciones_dhl,
+        "dhl": lista_cotizaciones_con_tiempo,
         "len": lenght
     }
     return render(request, "importaciones/importaciones.html", payload)

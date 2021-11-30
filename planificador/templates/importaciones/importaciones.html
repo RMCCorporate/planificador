@@ -84,11 +84,27 @@
         </tr>
         {% endfor %}
         {% for x in dhl %}
-            <td data-label="CÓDIGO"><a href="{% url 'cotizacion_dhl' x.codigo %}">{{x.codigo}}</a></td>
-            <td data-label="NOMBRE">{{x.direccion}}</td>
-            <td data-label="FECHA ENVIADA">{{x.fecha_enviada}}</td>
-            <td data-label="FECHA SALIDA">{{x.fecha_salida}}</td>
-            <td data-label="FECHA LLEGADA">{{x.fecha_llegada}}</td>
+            <td data-label="CÓDIGO"><a href="{% url 'cotizacion_dhl' x.0.codigo %}">{{x.0.codigo}}</a></td>
+            <td data-label="NOMBRE">{{x.0.direccion}}</td>
+            <td data-label="FECHA ENVIADA">{{x.0.fecha_enviada}}</td>
+            {% if x.1 == "Rojo" %}
+                <td style="color:red" data-label="FECHA SALIDA">{{x.0.fecha_salida}}</td>
+            {% elif x.1 == "Amarillo" %}
+                <td style="color:yellowgreen" data-label="FECHA SALIDA">{{x.0.fecha_salida}}</td>
+            {% elif x.1 == "Verde" %}
+                <td style="color:green" data-label="FECHA SALIDA">{{x.0.fecha_salida}}</td>
+            {% elif x.1 == "No hay" %}
+                <td data-label="FECHA SALIDA">No se ha agregado.</td>
+            {% endif %}
+            {% if x.2 == "Rojo" %}
+                <td style="color:red" data-label="FECHA LLEGADA">{{x.0.fecha_llegada}}</td>
+            {% elif x.2 == "Amarillo" %}
+                <td style="color:yellowgreen" data-label="FECHA LLEGADA">{{x.0.fecha_llegada}}</td>
+            {% elif x.2 == "Verde" %}
+                <td style="color:green" data-label="FECHA LLEGADA">{{x.0.fecha_llegada}}</td>
+            {% elif x.2 == "No hay" %}
+                <td data-label="FECHA LLEGADA">No se ha agregado.</td>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
