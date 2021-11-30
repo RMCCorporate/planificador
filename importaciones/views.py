@@ -134,6 +134,23 @@ def cotizacion_dhl(request, codigo):
     }
     return render(request, "importaciones/cotizacion_dhl.html", payload)
 
+@login_required(login_url="/login")
+def editar_fechas(request, codigo):
+    if request.method == "GET":
+        cotizaciones_dhl = Cotizacion_DHL.objects.get(codigo=codigo)
+        payload = {
+            "DHL": cotizaciones_dhl,
+        }
+        return render(request, "importaciones/editar_fechas.html", payload)
+    else:
+        codigo = request.POST["codigo"]
+        DHL = Cotizacion_DHL.objects.get(codigo=codigo)
+        fecha_salida = request.POST["fecha_salida"]
+        fecha_llegada = request.POST["fecha_llegada"]
+        DHL.fecha_salida = fecha_salida
+        DHL.fecha_llegada = fecha_llegada
+        DHL.save()
+        return redirect('/importaciones/cotizacion_dhl/{}'.format(codigo))
 
 def nueva_importacion_planilla(request):
     if request.method == "POST":
@@ -628,7 +645,8 @@ def enviar_correo(request):
         invoice = request.FILES["invoice"]
         info = request.FILES["info"]
         usuario_modificacion = get_user_model().objects.get(correo=request.user.correo)
-        nueva_cotizacion_importacion = Cotizacion_DHL(codigo=codigo, direccion=direccion, carga_peligrosa=imo, invoice=invoice, info=info, usuario_modificacion=usuario_modificacion)
+        fecha_actual = datetime.now()
+        nueva_cotizacion_importacion = Cotizacion_DHL(codigo=codigo, direccion=direccion, carga_peligrosa=imo, invoice=invoice, info=info, fecha_enviada=fecha_actual, usuario_modificacion=usuario_modificacion)
         nueva_cotizacion_importacion.save()
         if imo != "False":
             dgd = request.FILES["dgd"]

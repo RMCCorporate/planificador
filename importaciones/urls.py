@@ -24,6 +24,11 @@ urlpatterns = [
         name="importacion",
     ),
     path(
+        "importaciones/editar_fechas/<str:codigo>",
+        views.editar_fechas,
+        name="editar_fechas",
+    ),
+    path(
         "importaciones/cotizacion_dhl/<str:codigo>",
         views.cotizacion_dhl,
         name="cotizacion_dhl",

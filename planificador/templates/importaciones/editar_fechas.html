@@ -1,0 +1,48 @@
+{% extends "base/base2.html" %}
+{% block title %} EDITAR IMPORTACION - {{DHL.codigo} {% endblock%}
+{% block content %}
+
+<head>
+	<title>EDITAR IMPORTACION - {{DHL.codigo}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/editar_producto.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+  <div class="title">EDITAR - {{DHL.codigo}}</div>
+  <br>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="user-details">
+        <div class="input-box">
+            <input type="hidden" name="codigo" value={{DHL.codigo}}>
+            <span class="details">FECHA SALIDA</label>
+              {% if DHL.fecha_salida %}
+              <input type="date" name="fecha_salida" value={{DHL.fecha_salida}}>
+              {% else %}
+              <input type="date" name="fecha_salida">
+              {% endif %}
+          </div>
+        <div class="input-box">
+          <span class="details">FECHA LLEGADA</label>
+            {% if DHL.fecha_llegada %}
+            <input type="date" name="fecha_llegada" value={{DHL.fecha_llegada}}>
+            {% else %}
+            <input type="date" name="fecha_llegada">
+            {% endif %}
+        </div>
+            </div>
+    <br>
+      <button class="button" type="submit">ACTUALIZAR FECHAS</button>
+  </form>
+  </div>
+
+    
+{% endblock%}
