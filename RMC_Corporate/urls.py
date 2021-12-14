@@ -57,6 +57,7 @@ urlpatterns = [
     path("", include("productos.urls")),
     path("", include("proveedores.urls")),
     path("", include("proyectos.urls")),
+    path("", include("calculo.urls")),
     path("", include("importaciones.urls")),
     path("token/", include("users.api.router")),
     path(
