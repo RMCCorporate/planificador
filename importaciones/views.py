@@ -112,9 +112,38 @@ def calculo_destino(destino, kilos):
         valor_destino += destino.doc_fee_min
     return valor_destino
 
+def calculo_parentesis(formula, lista):
+    if "(" not in formula:
+        return lista
+    else:
+        if len(lista) == 0:
+            lista.append(formula)
+        parentesis = formula[formula.find("(")+1:formula.rfind(")")]
+        lista.append(parentesis)
+        return calculo_parentesis(parentesis, lista)
 
 @login_required(login_url="/login")
 def importaciones(request):
+    print(int(2.5)+1)
+    formula = "2*H+W*(int(L/S)+1)+D"
+    uno = formula.split("(")
+    dos = formula.split(")")
+   
+    print(formula)
+    print(" ")
+    parentesis = formula[formula.find("(")+1:formula.rfind(")")]
+    print(calculo_parentesis(formula, []))
+    dentro_parentesis = parentesis[parentesis.find("(")+1:parentesis.rfind(")")]
+    ultimo = dentro_parentesis[dentro_parentesis.find("(")+1:dentro_parentesis.rfind(")")]
+    if "(L/S)" in parentesis:
+        print("AAAA")
+        a = parentesis.replace("(L/S)", "3")
+        #print(a)
+    else:
+        print("BBBB")
+    last = ultimo[ultimo.find("(")+1:ultimo.rfind(")")]
+    print(last)
+    lista_string = [formula]
     importaciones = Importaciones.objects.all()
     cotizaciones_dhl = Cotizacion_DHL.objects.all()
     lista_cotizaciones_con_tiempo = []

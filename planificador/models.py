@@ -500,3 +500,12 @@ class Cotizacion_DHL(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
+
+class Calculo(models.Model):
+    nombre = models.Ccodigo = models.CharField(max_length=128, primary_key=True)
+    formula = models.CharField(max_length=128, null=True)
+    entero = models.BooleanField(default=False)
+    valor = models.FloatField(null=True)
+    producto_calculo = models.ForeignKey(
+        Producto, on_delete=models.CASCADE, related_name="producto_calculo", null=True
+    )
