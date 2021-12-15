@@ -524,3 +524,32 @@ class Restricciones(models.Model):
     operador =  models.CharField(max_length=128, null=True)
     cantidad = models.FloatField(null=True)
 
+class ControlRiesgo(models.Model):
+    nombre = models.CharField(max_length=128, primary_key=True)
+    categoria = models.CharField(max_length=128, null=True)
+    calculos = models.ManyToManyField(
+        Calculo, related_name="calculos"
+    )
+    restricciones = models.ManyToManyField(
+        Restricciones, related_name="restricciones"
+    )
+
+class Instalaciones(models.Model):
+    nombre = models.CharField(max_length=128, primary_key=True)
+    atributos = models.ManyToManyField(
+        Atributo, related_name="atributos"
+    )
+    control_riesgo = models.ManyToManyField(
+        ControlRiesgo, related_name="controlriesgo"
+    )
+
+class InstalacionProyecto(models.Model):
+    nombre = models.CharField(max_length=128, primary_key=True)
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, related_name="proyecto", null=True
+    )
+    codigo = models.CharField(max_length=128, null=True)
+    productos_asociados = models.ManyToManyField(
+        Producto_proyecto_cantidades, related_name="productos_proyecto"
+    )
+    fecha_creacion = models.DateField(auto_now=False, auto_now_add=False, null=True)

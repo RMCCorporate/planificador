@@ -55,4 +55,5 @@ def calculos(request):
     formulas = calculo_parentesis(formula, [])
     lista_string = [formula]
     lista_atributos = lista_abreviaciones(formula)
+    
     return render(request, "calculos/calculos.html")
