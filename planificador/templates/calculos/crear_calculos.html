@@ -1,0 +1,41 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO ATRIBUTO {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR CÁLCULO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="crear_atributo" method="POST">{% csrf_token %}
+  <div class="title">CREAR CÁLCULO</div>
+  <br>
+  <form action="agregar_nuevo" method="GET">
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+            <input type="text" name="nombre" required>
+        </div>
+        <div class="input-box">
+            <span class="details">FÓRMULA</label>
+              <input type="text" name="formula" required>
+          </div>
+          <div class="input-box">
+            <span class="details">¿ES ENTERO?</label>
+                <select class="custom-select" id="entero" name="entero" required>
+                    <option value="no">No</option>
+                    <option value="si">Sí</option>
+                </select>
+          </div>
+      </div>
+    <br>
+      <button class="button" type="submit">ELEGIR PRODUCTOS</button>
+  </form>
+  </div>
+ 
+{% endblock%}

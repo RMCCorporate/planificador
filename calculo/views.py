@@ -70,3 +70,10 @@ def crear_atributo(request):
     else:
         return render(request, "calculos/crear_atributo.html")
 
+@login_required(login_url="/login")
+def crear_calculo(request):
+    if request.method == "POST":
+        return redirect("/calculos")
+    else:
+        return render(request, "calculos/crear_calculo.html")
+

@@ -506,8 +506,8 @@ class Calculo(models.Model):
     formula = models.CharField(max_length=128, null=True)
     entero = models.BooleanField(default=False)
     valor = models.FloatField(null=True)
-    producto_calculo = models.ForeignKey(
-        Producto, on_delete=models.CASCADE, related_name="producto_calculo", null=True
+    producto_calculo = models.ManyToManyField(
+        Producto, related_name="producto_calculo"
     )
 
 class Atributo(models.Model):
