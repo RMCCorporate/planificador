@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.shortcuts import render, redirect
 from planificador.models import (
+    Atributo,
     Calculo,
     Precio,
     Producto,
@@ -57,3 +58,15 @@ def calculos(request):
     lista_atributos = lista_abreviaciones(formula)
     
     return render(request, "calculos/calculos.html")
+
+@login_required(login_url="/login")
+def crear_atributo(request):
+    if request.method == "POST":
+        nuevo_atributo = Atributo(nombre=request.POST["nombre"], 
+                                    abreviacion=request.POST["abreviacion"], 
+                                    unidad=request.POST["unidad"])
+        nuevo_atributo.save()
+        return redirect("/calculos")
+    else:
+        return render(request, "calculos/crear_atributo.html")
+

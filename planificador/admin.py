@@ -32,6 +32,12 @@ from .models import (
     Airfreight_charges,
     Origin_charges,
     Cotizacion_DHL,
+    Calculo,
+    Atributo,
+    Restricciones,
+    ControlRiesgo,
+    Instalaciones,
+    InstalacionProyecto
 )
 
 admin.site.register(Precio)
@@ -63,4 +69,9 @@ admin.site.register(Origin_charges)
 admin.site.register(Destination_charges)
 admin.site.register(DHL)
 admin.site.register(Importaciones)
-admin.site.register(Cotizacion_DHL)
+admin.site.register(Calculo)
+admin.site.register(Atributo)
+admin.site.register(Restricciones)
+admin.site.register(ControlRiesgo)
+admin.site.register(Instalaciones)
+admin.site.register(InstalacionProyecto)

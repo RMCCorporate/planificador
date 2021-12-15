@@ -1,0 +1,38 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO ATRIBUTO {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR ATRIBUTO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="crear_atributo" method="POST">{% csrf_token %}
+  <div class="title">CREAR ATRIBUTO</div>
+  <br>
+  <form action="agregar_nuevo" method="GET">
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+            <input type="text" name="nombre" required>
+        </div>
+        <div class="input-box">
+            <span class="details">ABREVIACIÓN</label>
+              <input type="text" name="abreviacion" required>
+          </div>
+          <div class="input-box">
+            <span class="details">UNIDAD</label>
+              <input type="text" name="unidad" required>
+          </div>
+      </div>
+    <br>
+      <button class="button" type="submit">CREAR</button>
+  </form>
+  </div>
+ 
+{% endblock%}
