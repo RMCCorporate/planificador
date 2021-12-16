@@ -1,0 +1,115 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>AGREGAR PRODUCTOS</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'planificador/css/eleccion_productos.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+</head>
+
+
+<div class="title">
+    <h1>BÚSQUEDA PRODUCTO</h1>
+  </div>
+  <div class="table-container">
+    <form action="lista_productos" method="GET">
+    <input type="hidden" value="{{Calculo.nombre}}" name="nombre">
+    {% for i in productos_calculo %}
+        <input type="hidden" name="productos" value="{{i.nombre}}">
+    {% endfor %}
+      <input type="hidden" value="{{Proyecto.id}}" name="id">
+      <div class="informacion_container">
+        <h4>PRODUCTOS PROYECTO</h4>
+      </div>
+      <table class="table">
+        <thead>
+            <tr>
+              <th># </th>
+                <th>NOMBRE</th>
+            </tr>
+        </thead>
+        <tbody>
+          {% for fila in productos_calculo %}
+            <tr>
+                <td data-label="#"><input type=checkbox name="productos_checkeados" value="{{fila.nombre}}" checked></td>
+                <td data-label="NOMBRE"> {{fila.nombre}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+      <button class="button_añadir" type="submit">ASIGNAR CANTIDADES</button>
+
+    </form>
+    <br>
+    <br>
+<form action="guardar_filtro" method="GET">
+    <input type="hidden" value="{{Calculo.nombre}}" name="nombre">
+    <div class="informacion_container">
+      <h4>BÚSQUEDA PRODUCTOS</h4>
+    </div>
+    <br>
+  <br>
+  <table class="table" id="example" class="display">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>NOMBRE</th>
+            <th>CLASE</th>
+            <th>SUBCLASE</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for fila in myFilter.qs %}
+      {% if fila.utilizado != Calculo.nombre or not fila.utilizado %}
+        <tr>
+            <td data-label="#"><input type=checkbox name="productos" value="{{fila.nombre_producto}}"></td>
+            <td data-label="NOMBRE"> {{fila.nombre_producto}}</td>
+            <td data-label="CLASE"> {{fila.nombre_clase}}</td>
+            <td data-label="SUBCLASE"> {{fila.nombre_subclase}}</td>
+        </tr>
+      {% endif %}
+        {% endfor %}
+        <tfoot>
+          <tr>
+              <th>#</th>
+              <th>NOMBRE</th>
+              <th>CLASE</th>
+              <th>SUBCLASE</th>
+          </tr>
+      </tfoot>
+    </tbody>
+</table>
+<br>
+  <button class="button_añadir" type="submit">GUARDAR</button>
+</form>
+<script>$(document).ready(function() {
+  $('#example').DataTable( {
+      "pagingType": "full_numbers",
+      initComplete: function () {
+            this.api().columns().every( function () {
+                var column = this;
+                var select = $('<select><option value=""></option></select>')
+                    .appendTo( $(column.footer()).empty() )
+                    .on( 'change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex(
+                            $(this).val()
+                        );
+                        column
+                            .search( val ? '^'+val+'$' : '', true, false )
+                            .draw();
+                    } );
+ 
+                column.data().unique().sort().each( function ( d, j ) {
+                    select.append( '<option value="'+d+'">'+d+'</option>' )
+                } );
+            } );
+        }
+  } );
+} );</script>
+  
+{% endblock%}

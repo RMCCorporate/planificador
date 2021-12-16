@@ -72,8 +72,63 @@ def crear_atributo(request):
 
 @login_required(login_url="/login")
 def crear_calculo(request):
-    if request.method == "POST":
-        return redirect("/calculos")
+    usuario = str(request.user)
+    if (
+        usuario == "tacorrea@uc.cl"
+        or usuario == "pcorrea"
+        or usuario == "rcasascordero"
+        or usuario == "vvergara"
+        or usuario == "tacorrea"
+    ):
+        return render(request, "calculos/crear_calculos.html")
     else:
-        return render(request, "calculos/crear_calculo.html")
+        return redirect("/")
 
+@login_required(login_url="/login")
+def mostrar_filtro_calculo(request):
+    get = request.GET
+    nombre = get["nombre"]
+    formula = get["formula"]
+    entero = get["entero"]
+    if entero == "Si":
+        entero = True
+    else:
+        entero = False
+    nuevo_calculo = Calculo(nombre=nombre, formula=formula, entero=entero)
+    nuevo_calculo.save()
+    productos = Filtro_producto.objects.all()
+    productos_calculo = nuevo_calculo.producto_calculo.all()
+    myFilter = Filtro_productoFilter(get, queryset=productos)
+    payload = {
+        "Calculo": nuevo_calculo,
+        "myFilter": myFilter,
+        "productos_calculo": productos_calculo,
+    }
+    return render(request, "calculos/elegir_productos", payload)
+
+
+@allowed_users(allowed_roles=["Admin", "Planificador"])
+@login_required(login_url="/login")
+def guardar_datos_filtro(request):
+    get = request.GET
+    calculo = Calculo.objects.get(nombre=get["nombre"])
+    productos_calculo_anterior = calculo.producto_calculo.all()
+    for i in get.getlist("productos"):
+        booleano_repeticion = True if productos_calculo_anterior.filter(producto_calculo__nombre=i).exists() else False
+    for i in get.getlist("productos"):
+        if not booleano_repeticion:
+            producto = Producto.objects.get(nombre=i)
+            calculo.producto_calculo.add(producto)
+            calculo.save()
+    productos_proyecto = calculo.producto_calculo.all()
+    productos = Filtro_producto.objects.all()
+    for i in productos_proyecto:
+        if productos.filter(nombre_producto=i):
+            s = productos.filter(nombre_producto=i)[0]
+            s.utilizado = calculo.nombre
+            s.save()
+    myFilter = Filtro_productoFilter(get, queryset=productos)
+    payload = {"Calculo": calculo,
+               "myFilter": myFilter,
+               "productos_calculo": productos_proyecto}
+    return render(request, "calculos/elegir_productos", payload)
