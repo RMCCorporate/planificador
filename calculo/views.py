@@ -104,10 +104,9 @@ def mostrar_filtro_calculo(request):
         "myFilter": myFilter,
         "productos_calculo": productos_calculo,
     }
-    return render(request, "calculos/elegir_productos", payload)
+    return render(request, "calculos/elegir_productos.html", payload)
 
 
-@allowed_users(allowed_roles=["Admin", "Planificador"])
 @login_required(login_url="/login")
 def guardar_datos_filtro(request):
     get = request.GET
@@ -131,4 +130,7 @@ def guardar_datos_filtro(request):
     payload = {"Calculo": calculo,
                "myFilter": myFilter,
                "productos_calculo": productos_proyecto}
-    return render(request, "calculos/elegir_productos", payload)
+    return render(request, "calculos/elegir_productos.html", payload)
+
+def lista_productos(request):
+    return redirect("/calculos")
