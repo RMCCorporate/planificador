@@ -1,0 +1,51 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO CONTROL RIESGO {% endblock%}
+{% block content %}
+
+<head>
+	<title>ELEGIR RESTRICCIONES</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="guardar_control_riesgo" method="POST">{% csrf_token %}
+  <div class="title">ELEGIR RESTRICCIONES</div>
+  <br>
+  <input type="hidden" name="nombre_control" value="{{Control_riesgo.nombre}}">
+  <form action="" method="GET">
+    <div class="table-container">
+        <br>
+        <div class="title_container">
+          <div class="informacion_container">
+            <h4>RESTRICCIONES</h4>
+          </div>
+        </div>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>NOMBRE ATRIBUTO</th>
+                    <th>OPERADOR</th>
+                    <th>CANTIDAD</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for atributo in lista_obj_atributos %}
+                <tr>
+                    <td data-label="NOMBRE">{{atributo.nombre}}<input type="hidden" name="nombre_atributo" value={{atributo.nombre}}></td>
+                    <td data-label="OPERADOR"><input type="text" name="operador" required></td>
+                    <td data-label="CANTIDAD"><input type="text" name="cantidad" required></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div>
+    <br>
+      <button class="button" type="submit">GUARDAR</button>
+  </form>
+  </div>
+ 
+{% endblock%}

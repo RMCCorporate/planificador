@@ -3,8 +3,10 @@ from django.shortcuts import render, redirect
 from planificador.models import (
     Atributo,
     Calculo,
+    ControlRiesgo,
     Precio,
     Producto,
+    Restricciones,
 )
 from planificador.filters import (
     Filtro_productoFilter,
@@ -45,6 +47,10 @@ def lista_abreviaciones(formula):
             for x in i:
                 if x.isalpha():
                     lista.append(x)
+    else:
+        for i in formula:
+            if i.isalpha():
+                lista.append(i)
     return list(dict.fromkeys(lista))
 
 
@@ -134,3 +140,53 @@ def guardar_datos_filtro(request):
 
 def lista_productos(request):
     return redirect("/calculos")
+
+@login_required(login_url="/login")
+def crear_control_riesgo(request):
+    if request.method == "GET":
+        calculos = Calculo.objects.all()
+        payload = {
+            "calculos":calculos
+        }
+        return render(request, "calculos/crear_control_riesgo.html", payload)
+    else:
+        nombre = request.POST["nombre"]
+        calculos = request.POST.getlist("calculos")
+        categoria = request.POST["categoria"]
+        nuevo_control_riesgo = ControlRiesgo(nombre=nombre, categoria=categoria)
+        nuevo_control_riesgo.save()
+        lista_atributos = []
+        for i in calculos:
+            calculo = Calculo.objects.get(nombre=i)
+            nuevo_control_riesgo.calculos.add(calculo)
+            a = lista_abreviaciones(calculo.formula)
+            for x in a:
+                lista_atributos.append(x)
+        nuevo_control_riesgo.save()
+        lista_final = list(dict.fromkeys(lista_atributos))
+        lista_obj_atributos = []
+        for y in lista_final:
+            nuevo_atributo = Atributo.objects.get(abreviacion=y)
+            lista_obj_atributos.append(nuevo_atributo)
+        payload = {"Control_riesgo": nuevo_control_riesgo,
+                    "lista_obj_atributos": lista_obj_atributos}
+        return render(request, "calculos/control_riesgo_restricciones.html", payload)
+
+
+
+@login_required(login_url="/login")
+def guardar_control_riesgo(request):
+    nombre_control = request.POST["nombre_control"]
+    control_riesgo = ControlRiesgo.objects.get(nombre=nombre_control)
+    atributos = request.POST.getlist("nombre_atributo")
+    operador = request.POST.getlist("operador")
+    cantidad = request.POST.getlist("cantidad")
+    for n, x in enumerate(atributos):
+        nombre_restriccion = nombre_control + " - " + x
+        atributo = Atributo.objects.get(nombre=x)
+        nueva_restriccion = Restricciones(nombre=nombre_restriccion, atributo=atributo, operador=operador[n], cantidad=cantidad[n])
+        nueva_restriccion.save()
+        control_riesgo.restricciones.add(nueva_restriccion)
+        control_riesgo.save()
+    return redirect("/calculos")
+

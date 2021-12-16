@@ -1,0 +1,43 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVO CONTROL RIESGO {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR CONTROL RIESGO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="" method="POST">{% csrf_token %}
+  <div class="title">CREAR CONTROL RIESGO</div>
+  <br>
+  <form action="agregar_nuevo" method="GET">
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+            <input type="text" name="nombre" required>
+        </div>
+        <div class="input-box">
+            {% for i in calculos %}
+            <input type="checkbox" name="calculos" value="{{i.nombre}}" required> {{i.nombre}}
+                {% endfor %}
+          </div>
+          <div class="input-box">
+            <span class="details">CATEGORÍA</label>
+                <select class="custom-select" id="categoria" name="categoria" required>
+                    <option value="Detección">DETECCIÓN</option>
+                    <option value="Extinción">EXTINCIÓN</option>
+                    <option value="Riesgo">RIESGO</option>
+                </select>
+          </div>
+      </div>
+    <br>
+      <button class="button" type="submit">ELEGIR RESTRICCIONES</button>
+  </form>
+  </div>
+ 
+{% endblock%}
