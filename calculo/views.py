@@ -55,6 +55,34 @@ def lista_abreviaciones(formula):
                 lista.append(i)
     return list(dict.fromkeys(lista))
 
+def operador(valor1, operador, valor2):
+    if operador == ">":
+        if valor1 > valor2:
+            return True
+        else:
+            return False
+    elif operador == ">=":
+        if valor1 >= valor2:
+            return True
+        else:
+            return False
+    elif operador == "<=":
+        if valor1 <= valor2:
+            return True
+        else:
+            return False
+    elif operador == "<":
+        if valor1 < valor2:
+            return True
+        else:
+            return False
+    elif operador == "=":
+        if valor1 == valor2:
+            return True
+        else:
+            return False
+    else:
+        return False 
 
 @login_required(login_url="/login")
 def calculos(request):
@@ -248,6 +276,7 @@ def crear_instalacion_proyecto(request):
                 for n in lista_abreviaciones(x.formula):
                     aux_atributos.append(Atributo.objects.get(abreviacion=n))
                 aux.append(aux_atributos)
+                aux.append(i)
                 lista_atributos.append(aux)
         payload = {
             "instalacion":nueva_instalacion_proyecto,
@@ -265,6 +294,27 @@ def eleccion_control(request):
     if request.method == "POST":
         instalacion = request.POST["instalacion"]
         valores = request.POST.getlist("valores")
-        atributo = request.POST.getlist("atributo")
-        print(valores)
-        print(atributo)
+        atributos = request.POST.getlist("atributo")
+        calculos = request.POST.getlist("calculo")
+        controlriesgo = request.POST.getlist("controlriesgo")
+        controlriesgo_sin_repetir = list(dict.fromkeys(controlriesgo))
+        diccionario_restricciones = {}
+        for x in controlriesgo_sin_repetir:
+            diccionario_restricciones[x] = []
+        for n, i in enumerate(valores):
+            atributo = Atributo.objects.get(nombre=atributos[n])
+            calculo = Calculo.objects.get(nombre=calculos[n])
+            restriccion = Restricciones.objects.get(atributo=atributo, calculo=calculo)
+            control_riesgo = controlriesgo[n]
+            diccionario_restricciones[control_riesgo].append([operador(restriccion.cantidad, restriccion.operador, int(i)), atributo, int(i), calculo[n]])
+        lista_final = []
+        for i in diccionario_restricciones.keys():
+            if False not in diccionario_restricciones[i][0]:
+                lista_final.append([i, diccionario_restricciones[i]])
+        print(diccionario_restricciones)
+        print(lista_final)
+        payload = {
+            "instalacion":instalacion,
+            "lista_final":lista_final
+        }
+        return render(request, "calculos/eleccion_control_riesgo.html", payload)
