@@ -1,0 +1,54 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVA INSTALACIÓN-PROYECTO {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR INSTALACIÓN-PROYECTO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="eleccion_control" method="POST">{% csrf_token %}
+  <div class="title">CREAR INSTALACIÓN-PROYECTO</div>
+  <br>
+    <input type="hidden" name="instalacion" value="{{instalacion.nombre}}">
+        <div class="informacion_container">
+            <h4>ATRIBUTOS INSTALACION</h4>
+          </div>
+          {% for fila in lista_atributos %}
+          <div class="informacion_container">
+            <h4>{{fila.0.nombre}}</h4>
+          </div>
+          <table class="table">
+            <thead>
+                <tr>
+                  <th>NOMBRE ATRIBUTO </th>
+                  <th>ABREVIACIÓN </th>
+                  <th>UNIDAD</th>
+                  <th>VALOR</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for x in fila.1 %}
+                <tr>
+                    <td data-label="NOMBRE ATRIBUTO">{{x.nombre}}</td>
+                    <td data-label="ABREVIACIÓN"> {{x.abreviacion}}</td>
+                    <td data-label="UNIDAD"> {{x.unidad}}</td>
+                    <td data-label="VALOR"><input type="text" name="valores" required> <input type="hidden" name="atributo" value="x.nombre"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        {% endfor %}
+
+    <br>
+      <button class="button" type="submit">ELEGIR CONTROL DE RIESGO</button>
+  </form>
+  </div>
+ 
+{% endblock%}

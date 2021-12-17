@@ -1,0 +1,41 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVA INSTALACIÓN-PROYECTO {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR INSTALACIÓN-PROYECTO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="" method="POST">{% csrf_token %}
+  <div class="title">CREAR INSTALACIÓN-PROYECTO</div>
+  <br>
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+            <input type="text" name="nombre" required>
+        </div>
+        <div class="input-box">
+            <span class="details">CÓDIGO</label>
+              <input type="text" name="codigo" required>
+          </div>
+          <div class="input-box">
+            <span class="details">¿INSTALACIÓN?</label>
+                <select class="custom-select" id="instalacion" name="instalacion" required>
+                    {% for i in instalaciones %}
+                    <option value="{{i.nombre}}">{{i.nombre}}</option>
+                    {% endfor %}
+                </select>
+          </div>
+      </div>
+    <br>
+      <button class="button" type="submit">ELEGIR PRODUCTOS</button>
+  </form>
+  </div>
+ 
+{% endblock%}

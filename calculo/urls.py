@@ -11,4 +11,7 @@ urlpatterns = [
      path("calculos/crear_control_riesgo", views.crear_control_riesgo, name="crear_control_riesgo"),
      path("calculos/guardar_control_riesgo", views.guardar_control_riesgo, name="guardar_contro_riesgo"),
      path("calculos/crear_instalacion", views.crear_instalacion, name="crear_instalacion"),
+     path("calculos/crear_instalacion_proyecto", views.crear_instalacion_proyecto, name="crear_instalacion_proyecto"),
+     path("calculos/eleccion_control", views.eleccion_control, name="eleccion_control"),
 ]
+

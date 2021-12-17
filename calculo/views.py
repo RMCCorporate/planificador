@@ -8,6 +8,7 @@ from planificador.models import (
     Precio,
     Producto,
     Restricciones,
+    InstalacionProyecto
 )
 from planificador.filters import (
     Filtro_productoFilter,
@@ -227,3 +228,43 @@ def crear_instalacion(request):
             "Riesgo":riesgo
         }
         return render(request, "calculos/crear_instalacion.html", payload)
+
+def crear_instalacion_proyecto(request):
+    if request.method == "POST":
+        nombre = request.POST["nombre"]
+        codigo = request.POST["codigo"]
+        instalacion = request.POST["instalacion"]
+        fecha_actual = datetime.now()
+        instalacion_proyecto = Instalaciones.objects.get(nombre=instalacion)
+        nueva_instalacion_proyecto = InstalacionProyecto(nombre=nombre, codigo=codigo, fecha_creacion=fecha_actual, instalacion=instalacion_proyecto)
+        nueva_instalacion_proyecto.save()
+        control_riesgos = instalacion_proyecto.control_riesgo.all()
+        lista_atributos = []
+        for i in control_riesgos:
+            for x in i.calculos.all():
+                aux = []
+                aux.append(x)
+                aux_atributos = [] 
+                for n in lista_abreviaciones(x.formula):
+                    aux_atributos.append(Atributo.objects.get(abreviacion=n))
+                aux.append(aux_atributos)
+                lista_atributos.append(aux)
+        payload = {
+            "instalacion":nueva_instalacion_proyecto,
+            "lista_atributos":lista_atributos
+        }
+        return render(request, "calculos/llenar_atributos.html", payload)
+    else:
+        instalaciones = Instalaciones.objects.all()
+        payload = {
+            "instalaciones":instalaciones,
+        }
+        return render(request, "calculos/crear_instalacion_proyecto.html", payload)
+
+def eleccion_control(request):
+    if request.method == "POST":
+        instalacion = request.POST["instalacion"]
+        valores = request.POST.getlist("valores")
+        atributo = request.POST.getlist("atributo")
+        print(valores)
+        print(atributo)
