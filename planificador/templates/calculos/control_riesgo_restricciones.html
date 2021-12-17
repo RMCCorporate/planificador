@@ -24,6 +24,9 @@
             <h4>RESTRICCIONES</h4>
           </div>
         </div>
+        <br>
+        {% for total in lista_obj_atributos %}
+        <h4>{{total.0.nombre}}</h4>
           <table class="table">
             <thead>
                 <tr>
@@ -33,15 +36,26 @@
                 </tr>
             </thead>
             <tbody>
-              {% for atributo in lista_obj_atributos %}
+              {% for atributo in total.1 %}
                 <tr>
-                    <td data-label="NOMBRE">{{atributo.nombre}}<input type="hidden" name="nombre_atributo" value={{atributo.nombre}}></td>
-                    <td data-label="OPERADOR"><input type="text" name="operador" required></td>
+                    <td data-label="NOMBRE">{{atributo.nombre}}<input type="hidden" name="nombre_atributo" value="{{atributo.nombre}}**{{total.0.nombre}}"></td>
+                    <td data-label="OPERADOR">
+                      <select class="custom-select" id="operador" name="operador" required>
+                        <option value="=">=</option>
+                        <option value=">">></option>
+                        <option value=">=">>=</option>
+                        <option value="<"><=</option>
+                        <option value="<="><=</option>
+                    </select>
+                    </td>
                     <td data-label="CANTIDAD"><input type="text" name="cantidad" required></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+        <br>
+        <br>
+        {% endfor %}
 </div>
     <br>
       <button class="button" type="submit">GUARDAR</button>

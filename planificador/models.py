@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     PermissionsMixin,
 )
 from django.conf import settings
+from django.db.models.deletion import CASCADE
 
 
 class UserManager(BaseUserManager):
@@ -521,6 +522,9 @@ class Restricciones(models.Model):
     atributo = models.ForeignKey(
         Atributo, on_delete=models.CASCADE, related_name="atributo", null=True
     )
+    calculo = models.ForeignKey(
+        Calculo, on_delete=models.CASCADE, related_name="calculo", null=True
+    )
     operador =  models.CharField(max_length=128, null=True)
     cantidad = models.FloatField(null=True)
 
@@ -536,15 +540,15 @@ class ControlRiesgo(models.Model):
 
 class Instalaciones(models.Model):
     nombre = models.CharField(max_length=128, primary_key=True)
-    atributos = models.ManyToManyField(
-        Atributo, related_name="atributos"
-    )
     control_riesgo = models.ManyToManyField(
         ControlRiesgo, related_name="controlriesgo"
     )
 
 class InstalacionProyecto(models.Model):
     nombre = models.CharField(max_length=128, primary_key=True)
+    instalacion = models.ForeignKey(
+        Instalaciones, on_delete=models.CASCADE, related_name="instalaciones", null=True
+    )
     proyecto = models.ForeignKey(
         Proyecto, on_delete=models.CASCADE, related_name="proyecto", null=True
     )
