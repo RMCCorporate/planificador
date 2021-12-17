@@ -4,6 +4,7 @@ from planificador.models import (
     Atributo,
     Calculo,
     ControlRiesgo,
+    Instalaciones,
     Precio,
     Producto,
     Restricciones,
@@ -201,3 +202,28 @@ def guardar_control_riesgo(request):
         control_riesgo.save()
     return redirect("/calculos")
 
+def crear_instalacion(request):
+    if request.method == "POST":
+        nombre = request.POST["nombre"]
+        instalacion = Instalaciones(nombre=nombre)
+        instalacion.save()
+        control_riesgos = request.POST.getlist("control_riesgo")
+        for i in control_riesgos:
+            nuevo_control_riesgo = ControlRiesgo.objects.get(nombre=i)
+            print(nuevo_control_riesgo)
+            instalacion.control_riesgo.add(nuevo_control_riesgo)
+            for x in instalacion.control_riesgo.all():
+                print(x)
+            instalacion.save()
+        return redirect("/calculos")
+    else:
+        control_riesgos = ControlRiesgo.objects.all()
+        deteccion = control_riesgos.filter(categoria="Detección")
+        extincion = control_riesgos.filter(categoria="Extinción")
+        riesgo = control_riesgos.filter(categoria="Riesgo")
+        payload = {
+            "Deteccion":deteccion,
+            "Extinción":extincion,
+            "Riesgo":riesgo
+        }
+        return render(request, "calculos/crear_instalacion.html", payload)

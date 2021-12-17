@@ -1,0 +1,66 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVA INSTALACIÓN {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR INSTALACIÓN</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="" method="post">{% csrf_token %}
+  <div class="title">CREAR INSTALACIÓN</div>
+  <br>
+    <div class="user-details">
+        <div class="input-box">
+          <span class="details">NOMBRE</label>
+            <input type="text" name="nombre" required>
+        </div>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>NOMBRE</th>
+                    <th>TIPO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    DETECCIÓN
+                 </tr>
+              {% for producto in Deteccion %}
+                <tr>
+                    <td data-label="NOMBRE"><input type="checkbox" name="control_riesgo" value="{{producto.nombre}}">{{producto.nombre}}</td>
+                    <td data-label="CATEGORÍA"> {{producto.categoria}}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+               EXTINCIÓN
+            </tr>
+            {% for producto in Extinción %}
+            <tr>
+                <td data-label="NOMBRE"><input type="checkbox" name="control_riesgo" value="{{producto.nombre}}">{{producto.nombre}}</td>
+                <td data-label="CATEGORÍA"> {{producto.categoria}}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                RIESGO
+             </tr>
+            {% for producto in Riesgo %}
+            <tr>
+                <td data-label="NOMBRE"><input type="checkbox" name="control_riesgo" value="{{producto.nombre}}">{{producto.nombre}}</td>
+                <td data-label="CATEGORÍA"> {{producto.categoria}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+      </div>
+    <br>
+      <button class="button" type="submit">ELEGIR PRODUCTOS</button>
+  </form>
+  </div>
+ 
+{% endblock%}
