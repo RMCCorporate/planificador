@@ -28,27 +28,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    DETECCIÓN
-                 </tr>
+        
               {% for producto in Deteccion %}
                 <tr>
                     <td data-label="NOMBRE"><input type="checkbox" name="control_riesgo" value="{{producto.nombre}}">{{producto.nombre}}</td>
                     <td data-label="CATEGORÍA"> {{producto.categoria}}</td>
                 </tr>
             {% endfor %}
-            <tr>
-               EXTINCIÓN
-            </tr>
+         
             {% for producto in Extinción %}
             <tr>
                 <td data-label="NOMBRE"><input type="checkbox" name="control_riesgo" value="{{producto.nombre}}">{{producto.nombre}}</td>
                 <td data-label="CATEGORÍA"> {{producto.categoria}}</td>
             </tr>
             {% endfor %}
-            <tr>
-                RIESGO
-             </tr>
+            
             {% for producto in Riesgo %}
             <tr>
                 <td data-label="NOMBRE"><input type="checkbox" name="control_riesgo" value="{{producto.nombre}}">{{producto.nombre}}</td>
