@@ -270,17 +270,12 @@ def crear_instalacion_proyecto(request):
         lista_atributos = []
         for i in control_riesgos:
             for x in i.calculos.all():
-                aux = []
-                aux.append(x)
-                aux_atributos = [] 
                 for n in lista_abreviaciones(x.formula):
-                    aux_atributos.append(Atributo.objects.get(abreviacion=n))
-                aux.append(aux_atributos)
-                aux.append(i)
-                lista_atributos.append(aux)
+                    lista_atributos.append(Atributo.objects.get(abreviacion=n))
+        sin_repetir = list(dict.fromkeys(lista_atributos))
         payload = {
             "instalacion":nueva_instalacion_proyecto,
-            "lista_atributos":lista_atributos
+            "lista_atributos":sin_repetir,
         }
         return render(request, "calculos/llenar_atributos.html", payload)
     else:

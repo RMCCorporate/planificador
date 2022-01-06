@@ -19,10 +19,6 @@
         <div class="informacion_container">
             <h4>ATRIBUTOS INSTALACION</h4>
           </div>
-          {% for fila in lista_atributos %}
-          <div class="informacion_container">
-            <h4>{{fila.2.nombre}} - {{fila.0.nombre}}</h4>
-          </div>
           <table class="table">
             <thead>
                 <tr>
@@ -33,19 +29,17 @@
                 </tr>
             </thead>
             <tbody>
-              {% for x in fila.1 %}
+              {% for x in lista_atributos %}
                 <tr>
                     <td data-label="NOMBRE ATRIBUTO">{{x.nombre}}</td>
                     <td data-label="ABREVIACIÓN"> {{x.abreviacion}}</td>
                     <td data-label="UNIDAD"> {{x.unidad}}</td>
-                    <td data-label="VALOR"><input type="text" name="valores" required> <input type="hidden" name="atributo" value="{{x.nombre}}"> <input type="hidden" name="calculo" value="{{fila.0.nombre}}"> <input type="hidden" name="controlriesgo" value="{{fila.2.nombre}}"></td>
+                    <td data-label="VALOR"><input type="text" name="valores" required> <input type="hidden" name="atributo" value="{{x.nombre}}"></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         <br>
-        {% endfor %}
-
     <br>
       <button class="button" type="submit">ELEGIR CONTROL DE RIESGO</button>
   </form>
