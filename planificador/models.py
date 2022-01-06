@@ -552,6 +552,9 @@ class InstalacionProyecto(models.Model):
     proyecto = models.ForeignKey(
         Proyecto, on_delete=models.CASCADE, related_name="proyecto", null=True
     )
+    controles_riesgo = models.ManyToManyField(
+        ControlRiesgo, related_name="control_riesgos"
+    )
     codigo = models.CharField(max_length=128, null=True)
     productos_asociados = models.ManyToManyField(
         Producto_proyecto_cantidades, related_name="productos_proyecto"

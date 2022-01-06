@@ -29,6 +29,7 @@ from email.mime.base import MIMEBase
 from email import encoders
 from django.contrib.auth import get_user_model
 import math
+import re
 
 
 def calculo_parentesis(formula, lista):
@@ -85,13 +86,21 @@ def operador(valor1, operador, valor2):
     else:
         return False 
 
+
+def hacer_calculo(formula, diccionario):
+    print(diccionario.keys())
+    formula_reemplazada = formula
+    for i in formula:
+        print(i)
+        if i in diccionario.keys():
+            formula_reemplazada = formula_reemplazada.replace(i, str(diccionario[i]))
+    print(formula_reemplazada)
+    print(eval(formula_reemplazada))
+        
+
+
 @login_required(login_url="/login")
 def calculos(request):
-    formula = "2*H+H+W*(int(L/S)+1)+D"
-    parentesis = formula[formula.find("(")+1:formula.rfind(")")]
-    formulas = calculo_parentesis(formula, [])
-    lista_string = [formula]
-    lista_atributos = lista_abreviaciones(formula)
     return render(request, "calculos/calculos.html")
 
 @login_required(login_url="/login")
@@ -294,20 +303,59 @@ def eleccion_control(request):
         diccionario_atributos = {}
         for n, i in enumerate(atributos):
             diccionario_atributos[i] = float(valores[n])
-        print(diccionario_atributos)
         lista_control_riesgos = []
-        instancia_instalacion = InstalacionProyecto.objects.get(nombre=instalacion_proyecto).instalacion
+        instalacion = InstalacionProyecto.objects.get(nombre=instalacion_proyecto)
+        instancia_instalacion = instalacion.instalacion
         control_riesgos = instancia_instalacion.control_riesgo.all()
         for i in control_riesgos:
             booleano = True
-            print(i)
             for x in i.restricciones.all():
                 if not operador(diccionario_atributos[x.atributo.nombre],x.operador, x.cantidad):
                     booleano = False
             if booleano:
                 lista_control_riesgos.append(i)
-        print(lista_control_riesgos)
         payload = {
-            "instalacion":"",
+            "instalacion":instalacion,
+            "lista_control_riesgos":lista_control_riesgos,
+            "valores":valores,
+            "atributos":atributos,
         }
         return render(request, "calculos/eleccion_control_riesgo.html", payload)
+
+def recibir_controles(request):
+    if request.method == "POST":
+        instalacion = request.POST["instalacion"]
+        atributos = request.POST.getlist("atributos")
+        valores = request.POST.getlist("valores")
+        print(atributos)
+        diccionario_atributos = {}
+        for n, x in enumerate(atributos):
+            attr = Atributo.objects.get(nombre=x).abreviacion
+            diccionario_atributos[attr] = float(valores[n])
+        control_riesgo = request.POST.getlist("control_riesgo")
+        instancia_instalacion = InstalacionProyecto.objects.get(nombre=instalacion)
+        for i in control_riesgo:
+            instancia_control_riesgo = ControlRiesgo.objects.get(nombre=i)
+            instancia_instalacion.controles_riesgo.add(instancia_control_riesgo)
+            instancia_instalacion.save()
+        #VER CÁLCULOS DE CONTROLES DE RIESGOS-PRODUCTOS, VALOR Y UNIDAD
+        lista_control_riesgos = []
+        formula = "2*H+Y+M*(int(X/S)+1)+D"
+        parentesis = formula[formula.find("(")+1:formula.rfind(")")]
+        print(parentesis)
+        formulas = calculo_parentesis(formula, [])
+        formulas.reverse()
+        auxiliar = []
+        for i in formulas:
+            
+            auxiliar = [i]
+        print(formulas)
+        lista_string = [formula]
+        lista_atributos = lista_abreviaciones(formula)
+        print(lista_atributos)
+        for x in instancia_instalacion.controles_riesgo.all():
+            lista_control_riesgos.append(x)
+            for n in x.calculos.all():
+                hacer_calculo(n.formula, diccionario_atributos)
+
+

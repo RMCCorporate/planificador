@@ -13,5 +13,6 @@ urlpatterns = [
      path("calculos/crear_instalacion", views.crear_instalacion, name="crear_instalacion"),
      path("calculos/crear_instalacion_proyecto", views.crear_instalacion_proyecto, name="crear_instalacion_proyecto"),
      path("calculos/eleccion_control", views.eleccion_control, name="eleccion_control"),
+     path("calculos/recibir_controles", views.recibir_controles, name="recibir_controles"),
 ]
 
