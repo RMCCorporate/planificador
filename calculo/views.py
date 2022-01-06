@@ -56,6 +56,7 @@ def lista_abreviaciones(formula):
     return list(dict.fromkeys(lista))
 
 def operador(valor1, operador, valor2):
+    #VALOR 2 RESTRICCION, VALOR 1 INPUT
     if operador == ">":
         if valor1 > valor2:
             return True
@@ -287,29 +288,26 @@ def crear_instalacion_proyecto(request):
 
 def eleccion_control(request):
     if request.method == "POST":
-        instalacion = request.POST["instalacion"]
+        instalacion_proyecto = request.POST["instalacion"]
         valores = request.POST.getlist("valores")
         atributos = request.POST.getlist("atributo")
-        calculos = request.POST.getlist("calculo")
-        controlriesgo = request.POST.getlist("controlriesgo")
-        controlriesgo_sin_repetir = list(dict.fromkeys(controlriesgo))
-        diccionario_restricciones = {}
-        for x in controlriesgo_sin_repetir:
-            diccionario_restricciones[x] = []
-        for n, i in enumerate(valores):
-            atributo = Atributo.objects.get(nombre=atributos[n])
-            calculo = Calculo.objects.get(nombre=calculos[n])
-            restriccion = Restricciones.objects.get(atributo=atributo, calculo=calculo)
-            control_riesgo = controlriesgo[n]
-            diccionario_restricciones[control_riesgo].append([operador(restriccion.cantidad, restriccion.operador, int(i)), atributo, int(i), calculo[n]])
-        lista_final = []
-        for i in diccionario_restricciones.keys():
-            if False not in diccionario_restricciones[i][0]:
-                lista_final.append([i, diccionario_restricciones[i]])
-        print(diccionario_restricciones)
-        print(lista_final)
+        diccionario_atributos = {}
+        for n, i in enumerate(atributos):
+            diccionario_atributos[i] = float(valores[n])
+        print(diccionario_atributos)
+        lista_control_riesgos = []
+        instancia_instalacion = InstalacionProyecto.objects.get(nombre=instalacion_proyecto).instalacion
+        control_riesgos = instancia_instalacion.control_riesgo.all()
+        for i in control_riesgos:
+            booleano = True
+            print(i)
+            for x in i.restricciones.all():
+                if not operador(diccionario_atributos[x.atributo.nombre],x.operador, x.cantidad):
+                    booleano = False
+            if booleano:
+                lista_control_riesgos.append(i)
+        print(lista_control_riesgos)
         payload = {
-            "instalacion":instalacion,
-            "lista_final":lista_final
+            "instalacion":"",
         }
         return render(request, "calculos/eleccion_control_riesgo.html", payload)
