@@ -7,6 +7,7 @@ from planificador.models import (
     Instalaciones,
     Precio,
     Producto,
+    Producto_proyecto_cantidades,
     Restricciones,
     InstalacionProyecto
 )
@@ -359,5 +360,13 @@ def recibir_controles(request):
 def eleccion_productos_calculos(request):
     if request.method == "POST":
         instalacion = request.POST["instalacion"]
-    
-
+        valor_calculo = request.POST.getlist("valor_calculo")
+        productos = request.POST.getlist("producto")
+        instancia_instalacion = InstalacionProyecto.objects.get(nombre=instalacion)
+        for n, i in enumerate(productos):
+            instancia_producto = Producto.objects.get(id=i)
+            nuevo_producto_proyecto = Producto_proyecto_cantidades(id=uuid.uuid1(), producto=instancia_producto, cantidades=valor_calculo[n])
+            nuevo_producto_proyecto.save()
+            instancia_instalacion.productos_asociados.add(nuevo_producto_proyecto)
+            instancia_instalacion.save()
+        return redirect("/calculos")

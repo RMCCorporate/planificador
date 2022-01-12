@@ -22,6 +22,7 @@
                         <h1>{{i.0.nombre}}</h1>
                         {% for x in i.1 %}
                             <h2>{{x.0.nombre}} - {{x.1}}</h2>
+                            <input type="hidden" name="valor_calculo" value={{x.1}}>
                             <select class="custom-select" id="producto" name="producto" required>
                                 {% for n in x.2 %}
                                 <option value="{{n.id}}">{{n.nombre}}</option>
