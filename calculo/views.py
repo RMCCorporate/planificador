@@ -88,14 +88,11 @@ def operador(valor1, operador, valor2):
 
 
 def hacer_calculo(formula, diccionario):
-    print(diccionario.keys())
     formula_reemplazada = formula
     for i in formula:
-        print(i)
         if i in diccionario.keys():
             formula_reemplazada = formula_reemplazada.replace(i, str(diccionario[i]))
-    print(formula_reemplazada)
-    print(eval(formula_reemplazada))
+    return eval(formula_reemplazada)
         
 
 
@@ -327,7 +324,6 @@ def recibir_controles(request):
         instalacion = request.POST["instalacion"]
         atributos = request.POST.getlist("atributos")
         valores = request.POST.getlist("valores")
-        print(atributos)
         diccionario_atributos = {}
         for n, x in enumerate(atributos):
             attr = Atributo.objects.get(nombre=x).abreviacion
@@ -338,24 +334,30 @@ def recibir_controles(request):
             instancia_control_riesgo = ControlRiesgo.objects.get(nombre=i)
             instancia_instalacion.controles_riesgo.add(instancia_control_riesgo)
             instancia_instalacion.save()
-        #VER CÁLCULOS DE CONTROLES DE RIESGOS-PRODUCTOS, VALOR Y UNIDAD
         lista_control_riesgos = []
-        formula = "2*H+Y+M*(int(X/S)+1)+D"
-        parentesis = formula[formula.find("(")+1:formula.rfind(")")]
-        print(parentesis)
-        formulas = calculo_parentesis(formula, [])
-        formulas.reverse()
-        auxiliar = []
-        for i in formulas:
-            
-            auxiliar = [i]
-        print(formulas)
-        lista_string = [formula]
-        lista_atributos = lista_abreviaciones(formula)
-        print(lista_atributos)
         for x in instancia_instalacion.controles_riesgo.all():
-            lista_control_riesgos.append(x)
+            primera_lista = [x]
+            segunda_lista = []
             for n in x.calculos.all():
-                hacer_calculo(n.formula, diccionario_atributos)
+                auxiliar = []
+                auxiliar_productos = []
+                auxiliar.append(n)
+                auxiliar.append(hacer_calculo(n.formula, diccionario_atributos))
+                for k in n.producto_calculo.all():
+                    auxiliar_productos.append(k)
+                    auxiliar.append(auxiliar_productos)
+                segunda_lista.append(auxiliar)
+            primera_lista.append(segunda_lista)
+            lista_control_riesgos.append(primera_lista)
+        print(lista_control_riesgos)       
+        payload = {
+            "instalacion":instancia_instalacion,
+            "lista_control_riesgos":lista_control_riesgos
+        }
+        return render(request, "calculos/eleccion_productos_calculos.html", payload)
 
+def eleccion_productos_calculos(request):
+    if request.method == "POST":
+        instalacion = request.POST["instalacion"]
+    
 

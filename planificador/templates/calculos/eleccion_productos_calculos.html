@@ -1,0 +1,40 @@
+{% extends "base/base2.html" %}
+{% block title %} NUEVA INSTALACIÓN-PROYECTO {% endblock%}
+{% block content %}
+
+<head>
+	<title>CREAR INSTALACIÓN-PROYECTO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="eleccion_productos_calculos" method="POST">{% csrf_token %}
+  <div class="title">ELEGIR PRODUCTOS</div>
+  <br>
+    <div class="user-details">
+          <div class="input-box">
+            <span class="details">ELEGIR PRODUCTO EN CÁLCULOS</label>
+                    {% for i in lista_control_riesgos %}
+                        <h1>{{i.0.nombre}}</h1>
+                        {% for x in i.1 %}
+                            <h2>{{x.0.nombre}} - {{x.1}}</h2>
+                            <select class="custom-select" id="producto" name="producto" required>
+                                {% for n in x.2 %}
+                                <option value="{{n.id}}">{{n.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                        {% endfor %}
+                    {% endfor %}
+                <input type="hidden" name="instalacion" value={{instalacion.nombre}}>
+          </div>
+      </div>
+    <br>
+      <button class="button" type="submit">ELEGIR PRODUCTOS</button>
+  </form>
+  </div>
+ 
+{% endblock%}

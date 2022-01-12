@@ -14,5 +14,6 @@ urlpatterns = [
      path("calculos/crear_instalacion_proyecto", views.crear_instalacion_proyecto, name="crear_instalacion_proyecto"),
      path("calculos/eleccion_control", views.eleccion_control, name="eleccion_control"),
      path("calculos/recibir_controles", views.recibir_controles, name="recibir_controles"),
+     path("calculos/eleccion_productos_calculos", views.eleccion_productos_calculos, name="eleccion_productos_calculos"),
 ]
 
