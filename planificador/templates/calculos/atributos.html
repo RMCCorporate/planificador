@@ -1,7 +1,7 @@
 {% extends "base/base2.html" %}
 {% block content %} 
 <head>
-	<title>IMPORTACIONES</title>
+	<title>ATRIBUTOS</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,41 +19,22 @@
     <h1>CÁLCULOS</h1>
 </div>
 <div class="table-container">
-    <h3>CREAR</h3>
-        <a href="{% url 'crear_atributo' %}">
-        <button class="button_añadir">CREAR ATRIBUTO</button>
-        </a>
-        <a href="{% url 'crear_calculo' %}">
-            <button class="button_añadir">CREAR CÁLCULO</button>
-            </a>
-        <a href="{% url 'crear_control_riesgo' %}">
-            <button class="button_añadir">CREAR CONTROL RIESGO</button>
-        </a>
-        <a href="{% url 'crear_instalacion' %}">
-            <button class="button_añadir">CREAR INSTALACIÓN</button>
-        </a>
-    <a href="{% url 'crear_instalacion_proyecto' %}">
-        <button class="button_añadir">CREAR INSTALACIÓN-PROYECTO</button>
-        </a>
-    <br>
-    <br>
-    <h3>VISTAS</h3>
-    <a href="{% url 'mostrar_atributos' %}">
-        <button class="button_añadir">ATRIBUTOS</button>
-        </a>
-    <h3>CÁLCULOS</h3>
 <table class="table" id="example" class="display">
     <thead>
         <tr>
-            <th>CÓDIGO</th>
-            <th>ORIGEN</th>
-
+            <th>NOMBRE</th>
+            <th>ABREVIACIÓN</th>
+            <th>UNIDAD</th>
         </tr>
     </thead>
     <tbody>
+        {% for i in atributos %}
         <tr>
-           tabla
+           <th><a href="{% url 'atributo' i.nombre %}">{{i.nombre}}</th>
+           <th>{{i.abreviacion}}</th>
+           <th>{{i.unidad}}</th>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 <br>

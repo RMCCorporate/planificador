@@ -15,5 +15,17 @@ urlpatterns = [
      path("calculos/eleccion_control", views.eleccion_control, name="eleccion_control"),
      path("calculos/recibir_controles", views.recibir_controles, name="recibir_controles"),
      path("calculos/eleccion_productos_calculos", views.eleccion_productos_calculos, name="eleccion_productos_calculos"),
+     path("mostrar_atributos", views.mostrar_atributos, name="mostrar_atributos"),
+     path("atributo/<str:nombre>", views.atributo, name="atributo"),
+     path(
+        "mostrar_edicion_atributo/<str:nombre>",
+        views.mostrar_edicion_atributo,
+        name="mostrar_edicion_atributo",
+    ),
+    path(
+        "eliminar_atributo/<str:nombre>",
+        views.eliminar_atributo,
+        name="eliminar_atributo",
+    ),
 ]
 

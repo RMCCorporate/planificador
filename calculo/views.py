@@ -200,7 +200,6 @@ def crear_control_riesgo(request):
             aux.append(calculo)
             aux.append(a)
             lista_atributos.append(aux)
-        print(lista_atributos)
         nuevo_control_riesgo.save()
         lista_final_final = []
         for y in lista_atributos:
@@ -211,10 +210,6 @@ def crear_control_riesgo(request):
                 aux.append(nuevo_atributo)
             lista_obj_atributos.append(aux)
             lista_final_final.append(lista_obj_atributos)
-        print(" ")
-        print(lista_final_final)
-        for i in lista_final_final:
-            print(i)
         payload = {"Control_riesgo": nuevo_control_riesgo,
                     "lista_obj_atributos": lista_final_final}
         return render(request, "calculos/control_riesgo_restricciones.html", payload)
@@ -247,10 +242,7 @@ def crear_instalacion(request):
         control_riesgos = request.POST.getlist("control_riesgo")
         for i in control_riesgos:
             nuevo_control_riesgo = ControlRiesgo.objects.get(nombre=i)
-            print(nuevo_control_riesgo)
             instalacion.control_riesgo.add(nuevo_control_riesgo)
-            for x in instalacion.control_riesgo.all():
-                print(x)
             instalacion.save()
         return redirect("/calculos")
     else:
@@ -349,8 +341,7 @@ def recibir_controles(request):
                     auxiliar.append(auxiliar_productos)
                 segunda_lista.append(auxiliar)
             primera_lista.append(segunda_lista)
-            lista_control_riesgos.append(primera_lista)
-        print(lista_control_riesgos)       
+            lista_control_riesgos.append(primera_lista)   
         payload = {
             "instalacion":instancia_instalacion,
             "lista_control_riesgos":lista_control_riesgos
@@ -370,3 +361,42 @@ def eleccion_productos_calculos(request):
             instancia_instalacion.productos_asociados.add(nuevo_producto_proyecto)
             instancia_instalacion.save()
         return redirect("/calculos")
+
+@login_required(login_url="/login")
+def mostrar_atributos(request):
+    atributos = Atributo.objects.all()
+    payload = {
+        "atributos":atributos
+    }
+    return render(request, "calculos/atributos.html", payload)
+
+@login_required(login_url="/login")
+def atributo(request, nombre):
+    atributo = Atributo.objects.get(nombre=nombre)
+    payload = {
+        "atributo":atributo
+    }
+    return render(request, "calculos/atributo.html", payload)
+
+@login_required(login_url="/login")
+def mostrar_edicion_atributo(request, nombre):
+    atributo = Atributo.objects.get(nombre=nombre)
+    if request.method == "POST":
+        nueva_abreviacion = request.POST["abreviacion"]
+        nueva_unidad = request.POST["unidad"]
+        atributo.abreviacion = nueva_abreviacion
+        atributo.unidad = nueva_unidad
+        atributo.save()
+        return redirect("/mostrar_atributos")
+    else:
+        payload = {
+            "atributo":atributo
+        }
+        return render(request, "calculos/editar_atributo.html", payload)
+
+
+@login_required(login_url="/login")
+def eliminar_atributo(request, nombre):
+    atributo =Atributo.objects.get(nombre=nombre)
+    atributo.delete()
+    return redirect("/mostrar_atributos")

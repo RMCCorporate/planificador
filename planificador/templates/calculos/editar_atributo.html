@@ -1,0 +1,39 @@
+{% extends "base/base2.html" %}
+{% block title %} EDITAR ATRIBUTO {% endblock%}
+{% block content %}
+
+<head>
+	<title>EDITAR ATRIBUTO - {{atributo.nombre}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+
+	<link href="{% static 'planificador/css/editar_producto.css' %}" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="container">
+  <div class="title">EDITAR - {{atributo.nombre}}</div>
+  <br>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="user-details">
+        <div class="input-box">
+            <span class="details">ABREVIACIÓN</label>
+              <input type="text" name="abreviacion" value={{atributo.abreviacion}}>
+          </div>
+          <div class="input-box">
+            <span class="details">UNIDAD</label>
+              <input type="text" name="unidad" value={{atributo.unidad}}>
+          </div>
+            </div>
+    <br>
+      <button class="button" type="submit">ACTUALIZAR</button>
+  </form>
+  </div>
+
+    
+{% endblock%}
