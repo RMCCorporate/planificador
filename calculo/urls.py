@@ -27,5 +27,17 @@ urlpatterns = [
         views.eliminar_atributo,
         name="eliminar_atributo",
     ),
+    path("mostrar_calculos", views.mostrar_calculos, name="mostrar_calculos"),
+     path("mostrar_calculo/<str:nombre>", views.mostrar_calculo, name="mostrar_calculo"),
+     path(
+        "mostrar_edicion_calculo/<str:nombre>",
+        views.mostrar_edicion_calculo,
+        name="mostrar_edicion_calculo",
+    ),
+    path(
+        "eliminar_calculo/<str:nombre>",
+        views.eliminar_calculo,
+        name="eliminar_calculo",
+    ),
 ]
 

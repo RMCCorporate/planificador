@@ -400,3 +400,41 @@ def eliminar_atributo(request, nombre):
     atributo =Atributo.objects.get(nombre=nombre)
     atributo.delete()
     return redirect("/mostrar_atributos")
+
+@login_required(login_url="/login")
+def mostrar_calculos(request):
+    calculos = Calculo.objects.all()
+    payload = {
+        "calculos":calculos
+    }
+    return render(request, "calculos/mostrar_calculos.html", payload)
+
+@login_required(login_url="/login")
+def mostrar_calculo(request, nombre):
+    calculo = Calculo.objects.get(nombre=nombre)
+    productos = calculo.producto_calculo.all()
+    payload = {
+        "calculo":calculo,
+        "productos":productos
+    }
+    return render(request, "calculos/mostrar_calculo.html", payload)
+
+@login_required(login_url="/login")
+def mostrar_edicion_calculo(request, nombre):
+    calculo = Calculo.objects.get(nombre=nombre)
+    if request.method == "POST":
+        return redirect("/mostrar_calculos")
+    else:
+        productos = calculo.producto_calculo.all()
+        payload = {
+            "calculo":calculo,
+            "productos":productos
+        }
+        return render(request, "calculos/editar_calculo.html", payload)
+
+
+@login_required(login_url="/login")
+def eliminar_calculo(request, nombre):
+    calculo =Calculo.objects.get(nombre=nombre)
+    calculo.delete()
+    return redirect("/mostrar_calculos")

@@ -16,23 +16,23 @@
 </head>
 
 <div class="title">
-    <h1>ATRIBUTOS</h1>
+    <h1>CÁLCULOS</h1>
 </div>
 <div class="table-container">
 <table class="table" id="example" class="display">
     <thead>
         <tr>
             <th>NOMBRE</th>
-            <th>ABREVIACIÓN</th>
-            <th>UNIDAD</th>
+            <th>FÓRMULA</th>
+            <th>¿ENTERO?</th>
         </tr>
     </thead>
     <tbody>
-        {% for i in atributos %}
+        {% for i in calculos %}
         <tr>
-           <th><a href="{% url 'atributo' i.nombre %}">{{i.nombre}}</th>
-           <th>{{i.abreviacion}}</th>
-           <th>{{i.unidad}}</th>
+           <th><a href="{% url 'mostrar_calculo' i.nombre %}">{{i.nombre}}</th>
+           <th>{{i.formula}}</th>
+           <th>{{i.entero}}</th>
         </tr>
         {% endfor %}
     </tbody>
