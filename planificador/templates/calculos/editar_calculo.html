@@ -34,16 +34,14 @@
                         {% else %}
                         <option value="si">Sí</option>
                         <option value="no" checked>No</option>
-                        {% endfor %}
+                        {% endif %}
                     </select>
           </div>
           <div class="input-box">
-            <span class="details">ELIMINAR PRODUCTOS</label>
-                <select class="custom-select" id="instalacion" name="instalacion" required>
+                <span class="details">ELIMINAR PRODUCTOS</label>
                     {% for i in productos %}
-                    <option value="{{i.nombre}}">{{i.nombre}}</option>
+                    <input type="checkbox" value="{{i.id}}" name="producto">{{i.nombre}}</option>
                     {% endfor %}
-                </select>
           </div>
             </div>
     <br>

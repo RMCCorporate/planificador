@@ -423,6 +423,20 @@ def mostrar_calculo(request, nombre):
 def mostrar_edicion_calculo(request, nombre):
     calculo = Calculo.objects.get(nombre=nombre)
     if request.method == "POST":
+        formula = request.POST["formula"]
+        entero = request.POST["entero"]
+        productos = request.POST.getlist("producto")
+        if len(productos) != 0:
+            for i in productos:
+                producto = Producto.objects.get(id=i)
+                calculo.producto_calculo.remove(producto)
+        calculo.save()
+        calculo.formula = formula
+        if entero == "si":
+            calculo.entero = True
+        else:
+            calculo.entero = False
+        calculo.save()
         return redirect("/mostrar_calculos")
     else:
         productos = calculo.producto_calculo.all()
@@ -435,6 +449,6 @@ def mostrar_edicion_calculo(request, nombre):
 
 @login_required(login_url="/login")
 def eliminar_calculo(request, nombre):
-    calculo =Calculo.objects.get(nombre=nombre)
+    calculo = Calculo.objects.get(nombre=nombre)
     calculo.delete()
     return redirect("/mostrar_calculos")
