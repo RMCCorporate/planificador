@@ -1,0 +1,58 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{restriccion.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>RESTRICCIÓN</h1>
+</div>
+
+<div class="subtitle">
+  <h4>Restricción | {{restriccion.nombre}}</h4>
+</div>
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="title_container">
+    <h1>{{restriccion.nombre}}</h1>
+  </div>
+  <a href="{% url 'mostrar_edicion_restriccion' restriccion.nombre %}">
+    <button class="button_editar">EDITAR</button>
+  </a>
+  <a href="{% url 'eliminar_restriccion' restriccion.nombre %}" onclick="return confirm('¿Estás seguro que quieres eliminar la restricción?')">
+    <button class="button_eliminar">ELIMINAR</button>
+</a>
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>ATRIBUTO</th>
+            <th>CALCULO</th>
+            <th>OPERADOR</th>
+            <th>CANTIDAD</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+           <th>{{restriccion.nombre}}</th>
+           <th>{{restriccion.atributo}}</th>
+           <th><a href="{% url 'mostrar_calculo' restriccion.calculo.nombre %}">{{restriccion.calculo.nombre}}</th>
+           <th>{{restriccion.operador}}</th>
+           <th>{{restriccion.cantidad}}</th>
+        </tr>
+    </tbody>
+</table>
+</div> 
+</div>
+</div>
+{% endblock %}

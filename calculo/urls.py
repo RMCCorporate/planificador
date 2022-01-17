@@ -40,5 +40,16 @@ urlpatterns = [
         name="eliminar_calculo",
     ),
     path("mostrar_restricciones", views.mostrar_restricciones, name="mostrar_restricciones"),
+    path("restriccion/<str:nombre>", views.restriccion, name="restriccion"),
+    path(
+        "mostrar_edicion_restriccion/<str:nombre>",
+        views.mostrar_edicion_restriccion,
+        name="mostrar_edicion_restriccion",
+    ),
+    path(
+        "eliminar_restriccion/<str:nombre>",
+        views.eliminar_restriccion,
+        name="eliminar_restriccion",
+    ),
 ]
 

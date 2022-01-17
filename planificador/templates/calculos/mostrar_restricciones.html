@@ -32,9 +32,9 @@
     <tbody>
         {% for i in restricciones %}
         <tr>
-           <th>{{i.nombre}}</th>
+           <th><a href="{% url 'restriccion' i.nombre %}">{{i.nombre}}</th>
            <th>{{i.atributo}}</th>
-           <th>{{i.calculo}}</th>
+           <th><a href="{% url 'mostrar_calculo' i.calculo.nombre %}">{{i.calculo.nombre}}</th>
            <th>{{i.operador}}</th>
            <th>{{i.cantidad}}</th>
         </tr>

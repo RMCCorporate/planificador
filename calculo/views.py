@@ -462,11 +462,32 @@ def mostrar_restricciones(request):
     return render(request, "calculos/mostrar_restricciones.html", payload)
 
 @login_required(login_url="/login")
-def mostrar_restriccion(request, nombre):
-    calculo = Calculo.objects.get(nombre=nombre)
-    productos = calculo.producto_calculo.all()
+def restriccion(request, nombre):
+    restriccion = Restricciones.objects.get(nombre=nombre)
     payload = {
-        "calculo":calculo,
-        "productos":productos
+        "restriccion":restriccion,
     }
-    return render(request, "calculos/mostrar_calculo.html", payload)
+    return render(request, "calculos/restriccion.html", payload)
+
+@login_required(login_url="/login")
+def mostrar_edicion_restriccion(request, nombre):
+    restriccion = Restricciones.objects.get(nombre=nombre)
+    if request.method == "POST":
+        cantidad = request.POST["cantidad"]
+        operador = request.POST["operador"]
+        restriccion.cantidad = float(cantidad)
+        restriccion.operador = operador
+        restriccion.save()
+        return redirect("/mostrar_restricciones")
+    else:
+        payload = {
+            "restriccion":restriccion,
+        }
+        return render(request, "calculos/editar_restriccion.html", payload)
+
+
+@login_required(login_url="/login")
+def eliminar_restriccion(request, nombre):
+    restriccion = Restricciones.objects.get(nombre=nombre)
+    restriccion.delete()
+    return redirect("/mostrar_restricciones")
