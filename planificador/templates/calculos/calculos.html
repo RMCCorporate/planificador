@@ -1,7 +1,7 @@
 {% extends "base/base2.html" %}
 {% block content %} 
 <head>
-	<title>IMPORTACIONES</title>
+	<title>CÁLCULOS</title>
 	{% load static %}
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,7 +43,10 @@
         </a>
         <a href="{% url 'mostrar_calculos' %}">
             <button class="button_añadir">CALCULOS</button>
-            </a>
+        </a>
+        <a href="{% url 'mostrar_restricciones' %}">
+            <button class="button_añadir">RESTRICCIONES</button>
+        </a>
     <h3>CÁLCULOS</h3>
 <table class="table" id="example" class="display">
     <thead>

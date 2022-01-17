@@ -452,3 +452,21 @@ def eliminar_calculo(request, nombre):
     calculo = Calculo.objects.get(nombre=nombre)
     calculo.delete()
     return redirect("/mostrar_calculos")
+
+@login_required(login_url="/login")
+def mostrar_restricciones(request):
+    restricciones = Restricciones.objects.all()
+    payload = {
+        "restricciones":restricciones
+    }
+    return render(request, "calculos/mostrar_restricciones.html", payload)
+
+@login_required(login_url="/login")
+def mostrar_restriccion(request, nombre):
+    calculo = Calculo.objects.get(nombre=nombre)
+    productos = calculo.producto_calculo.all()
+    payload = {
+        "calculo":calculo,
+        "productos":productos
+    }
+    return render(request, "calculos/mostrar_calculo.html", payload)

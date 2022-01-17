@@ -39,5 +39,6 @@ urlpatterns = [
         views.eliminar_calculo,
         name="eliminar_calculo",
     ),
+    path("mostrar_restricciones", views.mostrar_restricciones, name="mostrar_restricciones"),
 ]
 
