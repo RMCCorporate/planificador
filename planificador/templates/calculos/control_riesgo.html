@@ -1,0 +1,91 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{control_riesgo.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>CONTROL RIESGO</h1>
+</div>
+
+<div class="subtitle">
+  <h4>Control Riesgo | {{control_riesgo.nombre}}</h4>
+</div>
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="title_container">
+    <h1>{{control_riesgo.nombre}}</h1>
+  </div>
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CATEGORÍA</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="NOMBRE"> {{control_riesgo.nombre}}</td>
+            <td data-label="CONTROL RIESGO"> {{control_riesgo.categoria}}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="informacion_container">
+  <h4>INFORMACIÓN CÁLCULOS</h4>
+</div>
+<table class="table">
+  <thead>
+      <tr>
+          <th>NOMBRE</th>
+          <th>FORMULA</th>
+          <th>ENTERO</th>
+          <th>VALOR</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for calculo in calculos %}
+      <tr>
+        <td data-label="NOMBRE"> {{calculo.nombre}}</td>
+        <td data-label="FORMULA"> {{calculo.formula}}</td>
+        <td data-label="ENTERO"> {{calculo.entero}}</td>
+        <td data-label="VALOR"> {{calculo.valor}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>ATRIBUTO</th>
+            <th>CALCULO</th>
+            <th>OPERADOR</th>
+            <th>CANTIDAD</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for restriccion in restricciones %}
+        <tr>
+          <td data-label="NOMBRE"> {{restriccion.nombre}}</td>
+          <td data-label="ATRIBUTO"> {{restriccion.atributo.nombre}}</td>
+          <td data-label="CALCULO"> {{restriccion.calculo.nombre}}</td>
+          <td data-label="OPERADOR"> {{restriccion.operador}}</td>
+          <td data-label="CANTIDAD"> {{restriccion.cantidad}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div> 
+</div>
+</div>
+{% endblock %}

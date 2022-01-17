@@ -51,5 +51,11 @@ urlpatterns = [
         views.eliminar_restriccion,
         name="eliminar_restriccion",
     ),
+    path(
+        "mostrar_controles_riesgo",
+        views.mostrar_controles_riesgo,
+        name="mostrar_controles_riesgo",
+    ),
+    path("control_riesgo/<str:nombre>", views.control_riesgo, name="control_riesgo"),
 ]
 

@@ -491,3 +491,24 @@ def eliminar_restriccion(request, nombre):
     restriccion = Restricciones.objects.get(nombre=nombre)
     restriccion.delete()
     return redirect("/mostrar_restricciones")
+
+
+@login_required(login_url="/login")
+def mostrar_controles_riesgo(request):
+    control_riesgo = ControlRiesgo.objects.all()
+    payload = {
+        "control_riesgo":control_riesgo
+    }
+    return render(request, "calculos/mostrar_controles_riesgo.html", payload)
+
+@login_required(login_url="/login")
+def control_riesgo(request, nombre):
+    control_riesgo = ControlRiesgo.objects.get(nombre=nombre)
+    calculos = control_riesgo.calculos.all()
+    restricciones = control_riesgo.restricciones.all()
+    payload = {
+        "control_riesgo":control_riesgo,
+        "calculos":calculos,
+        "restricciones":restricciones
+    }
+    return render(request, "calculos/control_riesgo.html", payload)
