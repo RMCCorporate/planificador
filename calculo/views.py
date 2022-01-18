@@ -607,3 +607,67 @@ def guardar_restricciones_control_riesgo(request, nombre):
         control_riesgo.restricciones.add(nueva_restriccion)
         control_riesgo.save()
     return redirect("/calculos")
+
+@login_required(login_url="/login")
+def mostrar_instalaciones(request):
+    instalaciones = Instalaciones.objects.all()
+    payload = {
+        "instalaciones":instalaciones
+    }
+    return render(request, "calculos/instalaciones.html", payload)
+
+@login_required(login_url="/login")
+def instalacion(request, nombre):
+    instalacion = Instalaciones.objects.get(nombre=nombre)
+    controles_riesgo = instalacion.control_riesgo.all()
+    payload = {
+        "control_riesgo":controles_riesgo,
+        "Instalacion":instalacion,
+    }
+    return render(request, "calculos/instalacion.html", payload)
+
+@login_required(login_url="/login")
+def agregar_control_riesgo_instalacion(request, nombre):
+    instalacion = Instalaciones.objects.get(nombre=nombre)
+    if request.method == "POST":
+        control_riesgo = request.POST.getlist("control_riesgo")
+        for i in control_riesgo:
+            control_agregar = ControlRiesgo.objects.get(nombre=i)
+            instalacion.control_riesgo.add(control_agregar)
+            instalacion.save()
+        return redirect("/mostrar_instalaciones")
+    else:
+        controles_riesgo = instalacion.control_riesgo.all()
+        lista = []
+        for i in ControlRiesgo.objects.all():
+            if i not in controles_riesgo:
+                lista.append(i)
+        payload = {
+            "control_riesgo":lista,
+            "instalacion":instalacion,
+        }
+        return render(request, "calculos/agregar_control_instalacion.html", payload)
+
+@login_required(login_url="/login")
+def eliminar_control_riesgo_instalacion(request, nombre):
+    instalacion = Instalaciones.objects.get(nombre=nombre)
+    if request.method == "POST":
+        control_riesgo = request.POST.getlist("control_riesgo")
+        for i in control_riesgo:
+            control_eliminar = ControlRiesgo.objects.get(nombre=i)
+            instalacion.control_riesgo.remove(control_eliminar)
+            instalacion.save()
+        return redirect("/mostrar_instalaciones")
+    else:
+        controles_riesgo = instalacion.control_riesgo.all()
+        payload = {
+            "control_riesgo":controles_riesgo,
+            "instalacion":instalacion,
+        }
+        return render(request, "calculos/eliminar_control_instalacion.html", payload)
+
+@login_required(login_url="/login")
+def eliminar_instalacion(request, nombre):
+    instalacion = Instalaciones.objects.get(nombre=nombre)
+    instalacion.delete()
+    return redirect("/mostrar_instalaciones")

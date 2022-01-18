@@ -1,0 +1,57 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{Instalacion.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>INSTALACIÓN</h1>
+</div>
+
+<div class="subtitle">
+  <h4>Instalación | {{Instalacion.nombre}}</h4>
+</div>
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="title_container">
+    <h1>{{Instalacion.nombre}}</h1>
+  </div>
+  <a href="{% url 'eliminar_control_riesgo_instalacion' Instalacion.nombre %}">
+    <button class="button_editar">ELIMINAR CONTROL RIESGO</button>
+  </a>
+  <a href="{% url 'agregar_control_riesgo_instalacion' Instalacion.nombre %}">
+    <button class="button_editar">AGREGAR CONTROL RIESGO</button>
+  </a>
+  <a href="{% url 'eliminar_instalacion' Instalacion.nombre %}" onclick="return confirm('¿Estás seguro que quieres eliminar la instalación?')">
+    <button class="button_eliminar">ELIMINAR</button>
+</a>
+  <div class="informacion_container">
+    <h4>CONTROLES RIESGO</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CATEGORÍA</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in control_riesgo %}
+        <tr>
+            <td data-label="NOMBRE"> {{i.nombre}}</td>
+            <td data-label="CATEGORÍA"> {{i.formula}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div> 
+</div>
+</div>
+{% endblock %}

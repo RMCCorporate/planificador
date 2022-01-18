@@ -1,0 +1,31 @@
+{% extends "base/base2.html" %}
+{% block title %} AGREGAR CONTROL RIESGO {% endblock%}
+{% block content %}
+
+<head>
+	<title>ELIMINAR CONTROL RIESGO</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="{% static 'planificador/css/crear_orden_compra.css' %}" rel="stylesheet">
+</head>
+
+
+<div class="container">
+<form action="" method="POST">{% csrf_token %}
+  <div class="title">ELIMINAR CONTROL RIESGO</div>
+  <br>
+    <input type="hidden" name="nombre_control" value="{{Control_riesgo.nombre}}">
+    <div class="user-details">
+        <div class="input-box">
+            {% for i in control_riesgo %}
+            <input type="checkbox" name="control_riesgo" value="{{i.nombre}}"> {{i.nombre}}
+            {% endfor %}
+          </div>
+      </div>
+    <br>
+      <button class="button" type="submit">ELIMINAR</button>
+  </form>
+  </div>
+ 
+{% endblock%}

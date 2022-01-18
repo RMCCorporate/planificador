@@ -69,5 +69,26 @@ urlpatterns = [
     ),
     path("calculos/editar_calculo_control_riesgo/<str:nombre>", views.editar_calculo_control_riesgo, name="editar_calculo_control_riesgo"),
     path("calculos/editar_calculo_control_riesgo/guardar_restricciones_control_riesgo/<str:nombre>", views.guardar_restricciones_control_riesgo, name="guardar_restricciones_control_riesgo"),
+    path(
+        "mostrar_instalaciones",
+        views.mostrar_instalaciones,
+        name="mostrar_instalaciones",
+    ),
+    path("instalacion/<str:nombre>", views.instalacion, name="instalacion"),
+    path(
+        "eliminar_instalacion/<str:nombre>",
+        views.eliminar_instalacion,
+        name="eliminar_instalacion",
+    ),
+    path(
+        "agregar_control_riesgo_instalacion/<str:nombre>",
+        views.agregar_control_riesgo_instalacion,
+        name="agregar_control_riesgo_instalacion",
+    ),
+    path(
+        "eliminar_control_riesgo_instalacion/<str:nombre>",
+        views.eliminar_control_riesgo_instalacion,
+        name="eliminar_control_riesgo_instalacion",
+    ),
 ]
 
