@@ -29,6 +29,39 @@
                     <option value="Riesgo">RIESGO</option>
                 </select>
           </div>
+          <h3>¿ELIMINAR?</h3>
+          <div class="input-box">
+            {% for i in calculos %}
+            <input type="checkbox" name="calculos" value="{{i.nombre}}"> {{i.nombre}}
+            {% endfor %}
+          </div>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th>NOMBRE ATRIBUTO</th>
+                    <th>OPERADOR</th>
+                    <th>CANTIDAD</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for atributo in restricciones %}
+                <tr>
+                    <td data-label="NOMBRE">{{atributo.atributo.nombre}}<input type="hidden" name="nombre_atributo" value="{{atributo.nombre}}"></td>
+                    <td data-label="OPERADOR">
+                      <select class="custom-select" id="operador" name="operador" required>
+                        <option value={{atributo.operador}} checked>{{atributo.operador}}</option>
+                        <option value="=">=</option>
+                        <option value=">">></option>
+                        <option value=">=">>=</option>
+                        <option value="<"><</option>
+                        <option value="<="><=</option>
+                    </select>
+                    </td>
+                    <td data-label="CANTIDAD"><input type="text" name="cantidad" value={{atributo.cantidad}} required></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     <br>
       <button class="button" type="submit">ACTUALIZAR</button>
   </form>

@@ -518,12 +518,27 @@ def editar_control_riesgo(request, nombre):
     control_riesgo = ControlRiesgo.objects.get(nombre=nombre)
     if request.method == "POST":
         categoria = request.POST["categoria"]
+        calculos = request.POST.getlist("calculos")
+        restricciones = request.POST.getlist("nombre_atributo")
+        operador = request.POST.getlist("operador")
+        cantidad = request.POST.getlist("cantidad")
+        for i in calculos:
+            calculo = Calculo.objects.get(nombre=i)
+            control_riesgo.calculos.remove(calculo)
+            control_riesgo.save()
+        for n, i in enumerate(restricciones):
+            restriccion = Restricciones.objects.get(nombre=i)
+            restriccion.operador = operador[n]
+            restriccion.cantidad = cantidad[n]
+            restriccion.save()
         control_riesgo.categoria = categoria
         control_riesgo.save()
         return redirect("/mostrar_controles_riesgo")
     else:
         payload = {
             "control_riesgo":control_riesgo,
+            "calculos":control_riesgo.calculos.all(),
+            "restricciones":control_riesgo.restricciones.all()
         }
         return render(request, "calculos/editar_control_riesgo.html", payload)
 
@@ -536,7 +551,6 @@ def eliminar_control_riesgo(request, nombre):
 @login_required(login_url="/login")
 def editar_calculo_control_riesgo(request, nombre):
     if request.method == "GET":
-        print("1")
         control_riesgo = ControlRiesgo.objects.get(nombre=nombre)
         calculos = Calculo.objects.all()
         calculos_existentes = control_riesgo.calculos.all()
@@ -550,7 +564,6 @@ def editar_calculo_control_riesgo(request, nombre):
         }
         return render(request, "calculos/editar_calculos_control_riesgo.html", payload)
     else:
-        print("2")
         calculos = request.POST.getlist("calculos")
         control_riesgo = ControlRiesgo.objects.get(nombre=request.POST["nombre_control"])
         lista_atributos = []
@@ -579,7 +592,6 @@ def editar_calculo_control_riesgo(request, nombre):
 
 @login_required(login_url="/login")
 def guardar_restricciones_control_riesgo(request, nombre):
-    print("3")
     nombre_control = request.POST["nombre_control"]
     control_riesgo = ControlRiesgo.objects.get(nombre=nombre_control)
     atributos = request.POST.getlist("nombre_atributo")
