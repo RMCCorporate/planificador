@@ -512,3 +512,23 @@ def control_riesgo(request, nombre):
         "restricciones":restricciones
     }
     return render(request, "calculos/control_riesgo.html", payload)
+
+@login_required(login_url="/login")
+def editar_control_riesgo(request, nombre):
+    control_riesgo = ControlRiesgo.objects.get(nombre=nombre)
+    if request.method == "POST":
+        categoria = request.POST["categoria"]
+        control_riesgo.categoria = categoria
+        control_riesgo.save()
+        return redirect("/mostrar_controles_riesgo")
+    else:
+        payload = {
+            "control_riesgo":control_riesgo,
+        }
+        return render(request, "calculos/editar_control_riesgo.html", payload)
+
+@login_required(login_url="/login")
+def eliminar_control_riesgo(request, nombre):
+    control_riesgo = ControlRiesgo.objects.get(nombre=nombre)
+    control_riesgo.delete()
+    return redirect("/mostrar_controles_riesgo")

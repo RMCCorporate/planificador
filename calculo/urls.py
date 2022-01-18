@@ -57,5 +57,15 @@ urlpatterns = [
         name="mostrar_controles_riesgo",
     ),
     path("control_riesgo/<str:nombre>", views.control_riesgo, name="control_riesgo"),
+    path(
+        "editar_control_riesgo/<str:nombre>",
+        views.editar_control_riesgo,
+        name="editar_control_riesgo",
+    ),
+    path(
+        "eliminar_control_riesgo/<str:nombre>",
+        views.eliminar_control_riesgo,
+        name="eliminar_control_riesgo",
+    ),
 ]
 
