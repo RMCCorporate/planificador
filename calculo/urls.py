@@ -67,5 +67,7 @@ urlpatterns = [
         views.eliminar_control_riesgo,
         name="eliminar_control_riesgo",
     ),
+    path("calculos/editar_calculo_control_riesgo/<str:nombre>", views.editar_calculo_control_riesgo, name="editar_calculo_control_riesgo"),
+    path("calculos/editar_calculo_control_riesgo/guardar_restricciones_control_riesgo/<str:nombre>", views.guardar_restricciones_control_riesgo, name="guardar_restricciones_control_riesgo"),
 ]
 

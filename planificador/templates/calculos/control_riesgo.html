@@ -24,7 +24,10 @@
     <h1>{{control_riesgo.nombre}}</h1>
   </div>
   <a href="{% url 'editar_control_riesgo' control_riesgo.nombre %}">
-    <button class="button_editar">EDITAR CATEGORÍA</button>
+    <button class="button_editar">EDITAR</button>
+  </a>
+  <a href="{% url 'editar_calculo_control_riesgo' control_riesgo.nombre %}">
+    <button class="button_editar">AGREGAR CÁLCULOS Y RESTRICCIONES</button>
   </a>
   <a href="{% url 'eliminar_control_riesgo' control_riesgo.nombre %}" onclick="return confirm('¿Estás seguro que quieres eliminar el control riesgo?')">
     <button class="button_eliminar">ELIMINAR</button>
