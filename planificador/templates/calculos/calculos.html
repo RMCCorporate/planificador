@@ -57,15 +57,27 @@
 <table class="table" id="example" class="display">
     <thead>
         <tr>
+            <th>NOMBRE</th>
             <th>CÓDIGO</th>
-            <th>ORIGEN</th>
-
+            <th>INSTALACIÓN</th>
+            <th>PROYECTO</th>
+            <th>FECHA CREACIÓN</th>
         </tr>
     </thead>
     <tbody>
+        {% for i in instalaciones_proyecto %}
         <tr>
-           tabla
+            <th><a href="{% url 'mostrar_instalacion_proyecto' i.nombre %}">{{i.nombre}}</a></th>
+            <th>{{i.codigo}}</th>
+            <th>{{i.instalacion.nombre}}</th>
+            {% if not i.proyecto %}
+            <th>No tiene proyecto</th>
+            {% else %}
+            <th>{{i.proyecto.nombre}}</th>
+            {% endif %}
+            <th>{{i.fecha_creacion}}</th>
         </tr>
+        {% endfor %}
     </tbody>
 </table>
 <br>

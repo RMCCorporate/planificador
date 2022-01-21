@@ -1,0 +1,95 @@
+{% extends "base/base2.html" %}
+{% block content %} 
+<head>
+	<title>{{instalacion.nombre}}</title>
+	{% load static %}
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com"> 
+    <link href="{% static 'planificador/css/producto.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> 
+</head>
+
+<div class="title">
+  <h1>INSTALACION</h1>
+</div>
+
+<div class="subtitle">
+  <h4>Instalaciómn | {{instalacion.nombre}}</h4>
+</div>
+<div class="container">
+  <div class="data-container">
+<div class="table-container">
+  <div class="title_container">
+    <h1>{{instalacion.nombre}}</h1>
+  </div>
+  <a href="{% url 'eliminar_instalacion_proyecto' instalacion.nombre %}" onclick="return confirm('¿Estás seguro que quieres eliminar la instalación?')">
+    <button class="button_eliminar">ELIMINAR</button>
+</a>
+  <div class="informacion_container">
+    <h4>INFORMACIÓN GENERAL</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CÓDIGO</th>
+            <th>INSTALACIÓN</th>
+            <th>PROYECTO</th>
+            <th>FECHA CREACIÓN</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td data-label="NOMBRE"> {{instalacion.nombre}}</td>
+            <td data-label="CÓDIGO"> {{instalacion.codigo}}</td>
+            <td data-label="INSTALACIÓN"> {{instalacion.instalacion.nombre}}</td>
+            <td data-label="PROYECTO"> {{instalacion.proyecto.nombre}}</td>
+            <td data-label="FECHA CREACIÓN"> {{instalacion.fecha_creacion}}</td>
+        </tr>
+    </tbody>
+</table>
+<div class="informacion_container">
+    <h4>INFORMACIÓN CONTROLES RIESGO</h4>
+  </div>
+  <table class="table">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CATEGORÍA</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for control in controles_riesgo %}
+        <tr>
+          <td data-label="NOMBRE"> {{control.nombre}}</td>
+            <td data-label="CATEGORÍA"> {{control.categoria}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<div class="informacion_container">
+  <h4>INFORMACIÓN PRODUCTOS</h4>
+</div>
+<table class="table">
+  <thead>
+      <tr>
+          <th>NOMBRE</th>
+          <th>PRECIO</th>
+          <th>CANTIDAD</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for producto in productos %}
+      <tr>
+        <td data-label="NOMBRE"> {{producto.producto.nombre}}</td>
+          <td data-label="PRECIO"> {{producto.precio}}</td>
+          <td data-label="CANTIDAD"> {{producto.cantidades}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div> 
+</div>
+</div>
+{% endblock %}

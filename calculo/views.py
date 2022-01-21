@@ -87,7 +87,6 @@ def operador(valor1, operador, valor2):
     else:
         return False 
 
-
 def hacer_calculo(formula, diccionario):
     formula_reemplazada = formula
     for i in formula:
@@ -96,10 +95,31 @@ def hacer_calculo(formula, diccionario):
     return eval(formula_reemplazada)
         
 
-
 @login_required(login_url="/login")
 def calculos(request):
-    return render(request, "calculos/calculos.html")
+    instalaciones_proyecto = InstalacionProyecto.objects.all()
+    payload = {
+        "instalaciones_proyecto": instalaciones_proyecto,
+    }
+    return render(request, "calculos/calculos.html", payload)
+
+@login_required(login_url="/login")
+def mostrar_instalacion_proyecto(request, nombre):
+    instalaciones_proyecto = InstalacionProyecto.objects.get(nombre=nombre)
+    controles_riesgo = instalaciones_proyecto.controles_riesgo.all()
+    productos = instalaciones_proyecto.productos_asociados.all()
+    payload = {
+        "instalacion": instalaciones_proyecto,
+        "controles_riesgo":controles_riesgo,
+        "productos":productos
+    }
+    return render(request, "calculos/mostrar_instalacion_proyecto.html", payload)
+
+@login_required(login_url="/login")
+def eliminar_instalacion_proyecto(request, nombre):
+    instalacion_proyecto = InstalacionProyecto.objects.get(nombre=nombre)
+    instalacion_proyecto.delete()
+    return redirect("/calculos")
 
 @login_required(login_url="/login")
 def crear_atributo(request):

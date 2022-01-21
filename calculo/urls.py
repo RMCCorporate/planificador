@@ -29,6 +29,8 @@ urlpatterns = [
     ),
     path("mostrar_calculos", views.mostrar_calculos, name="mostrar_calculos"),
      path("mostrar_calculo/<str:nombre>", views.mostrar_calculo, name="mostrar_calculo"),
+     path("mostrar_instalacion_proyecto/<str:nombre>", views.mostrar_instalacion_proyecto, name="mostrar_instalacion_proyecto"),
+     path("eliminar_instalacion_proyecto/<str:nombre>", views.eliminar_instalacion_proyecto, name="eliminar_instalacion_proyecto"),
      path(
         "mostrar_edicion_calculo/<str:nombre>",
         views.mostrar_edicion_calculo,
