@@ -141,6 +141,31 @@ def nuevo_producto_planilla(request):
                                         "Producto creado sin kilos. No es un número"
                                     )
                                     datos_fallados.append(aux)
+                            #NUEVOS
+                            if row_data[11] != "None":
+                                nuevo_producto.superficie = row_data[11]
+                            if row_data[12] != "None":
+                                nuevo_producto.perimetro = row_data[12]
+                            if row_data[13] != "None":
+                                nuevo_producto.hh1 = row_data[13]
+                            if row_data[14] != "None":
+                                nuevo_producto.hh2 = row_data[14]
+                            if row_data[15] != "None":
+                                nuevo_producto.hh3 = row_data[15]
+                            if row_data[16] != "None":
+                                nuevo_producto.hh4 = row_data[16]
+                            if row_data[17] != "None":
+                                nuevo_producto.hh5 = row_data[17]
+                            if row_data[18] != "None":
+                                nuevo_producto.hh6 = row_data[18]
+                            if row_data[19] != "None":
+                                nuevo_producto.hh7 = row_data[19]
+                            if row_data[20] != "None":
+                                nuevo_producto.hh8 = row_data[20]
+                            if row_data[21] != "None":
+                                nuevo_producto.d1 = row_data[21]
+                            if row_data[22] != "None":
+                                nuevo_producto.d2 = row_data[22]
                             nuevo_producto.save()
                             # CREAMOS UN PRECIO (PARA POBLAR BBDD)
                             if (
@@ -176,16 +201,6 @@ def nuevo_producto_planilla(request):
                             )
                             nuevo_filtro_producto.save()
                             sub_clase.save()
-        if creado:
-            crear_notificacion(
-                "agregar_producto",
-                request.user.correo,
-                "creó producto(s) mediante planilla",
-                "Productos",
-                contador_creado,
-                " ",
-                " ",
-            )
         if len(datos_fallados) != 0:
             booleano_fallados = True
         return render(
@@ -283,16 +298,6 @@ def nuevo_producto_interno_planilla(request):
                             )
                             nuevo_filtro_producto.save()
                             sub_clase.save()
-        if creado:
-            crear_notificacion(
-                "agregar_producto",
-                request.user.correo,
-                "creó producto(s) mediante planilla",
-                "Productos",
-                contador_creado,
-                " ",
-                " ",
-            )
         if len(datos_fallados) != 0:
             booleano_fallados = True
         return render(
@@ -337,6 +342,33 @@ def recibir_datos_producto(request):
     else:
         nuevo_producto = Producto(id=correlativo.numero, nombre=get["nombre"])
         nuevo_producto.save()
+    if get["kilos"] and get["kilos"]!="None":
+        nuevo_producto.kilos = get["kilos"]
+    if get["superficie"] and get["superficie"]!="None":
+        nuevo_producto.superficie = get["superficie"]
+    if get["perimetro"] and get["perimetro"]!="None":
+        nuevo_producto.perimetro = get["perimetro"]
+    if get["hh1"] and get["hh1"]!="None":
+        nuevo_producto.hh1 = get["hh1"]
+    if get["hh2"] and get["hh2"]!="None":
+        nuevo_producto.hh2 = get["hh2"]
+    if get["hh3"] and get["hh3"]!="None":
+        nuevo_producto.hh3 = get["hh3"]
+    if get["hh4"] and get["hh4"]!="None":
+        nuevo_producto.hh4 = get["hh4"]
+    if get["hh5"] and get["hh5"]!="None":
+        nuevo_producto.hh5 = get["hh5"]
+    if get["hh6"] and get["hh6"]!="None":
+        nuevo_producto.hh6 = get["hh6"]
+    if get["hh7"] and get["hh7"]!="None":
+        nuevo_producto.hh7 = get["hh7"]
+    if get["hh8"] and get["hh8"]!="None":
+        nuevo_producto.hh8 = get["hh8"]
+    if get["d1"] and get["d1"]!="None":
+        nuevo_producto.d1 = get["d1"]
+    if get["d2"] and get["d2"]!="None":
+        nuevo_producto.d2 = get["d2"]
+    nuevo_producto.save()
     subclase = SubClase.objects.get(nombre=get["subclase"])
     subclase.productos.add(nuevo_producto)
     clase = subclase.clase_set.all()
@@ -347,15 +379,6 @@ def recibir_datos_producto(request):
         nombre_subclase=subclase.nombre,
     )
     nuevo_filtro_producto.save()
-    crear_notificacion(
-        "agregar_producto",
-        request.user.correo,
-        "creó producto",
-        "Productos",
-        1,
-        nuevo_producto.id,
-        nuevo_producto.nombre,
-    )
     return redirect("/productos/producto/{}".format(nuevo_producto.id))
 
 
@@ -452,16 +475,6 @@ def nuevo_proveedor_producto(request):
                                 contador_creado += 1
                     else:
                         datos_fallados.append(row_data[0], row_data[1], row_data[2], "Ya existe el mismo nombre en relación")
-        if creado:
-            crear_notificacion(
-                "agregar_proveedor_producto",
-                request.user.correo,
-                "creó nombre proveedor de producto(s) mediante planilla",
-                "Proveedor_producto",
-                contador_creado,
-                " ",
-                " ",
-            )
         if len(datos_fallados) != 0:
             booleano_fallados = True
         payload = {"Fallo": datos_fallados, "Booleano": booleano_fallados}
@@ -481,19 +494,34 @@ def mostrar_edicion_producto(request, id):
             nueva_imagen = ImagenProducto(id=uuid.uuid1(), imagen=imagen)
             nueva_imagen.save()
         producto.unidad = post["unidad"]
-        if post["kilos"]:
+        if post["kilos"] and post["kilos"]!="None":
             producto.kilos = post["kilos"]
+        if post["superficie"] and post["superficie"]!="None":
+            producto.superficie = post["superficie"]
+        if post["perimetro"] and post["perimetro"]!="None":
+            producto.perimetro = post["perimetro"]
+        if post["hh1"] and post["hh1"]!="None":
+            producto.hh1 = post["hh1"]
+        if post["hh2"] and post["hh2"]!="None":
+            producto.hh2 = post["hh2"]
+        if post["hh3"] and post["hh3"]!="None":
+            producto.hh3 = post["hh3"]
+        if post["hh4"] and post["hh4"]!="None":
+            producto.hh4 = post["hh4"]
+        if post["hh5"] and post["hh5"]!="None":
+            producto.hh5 = post["hh5"]
+        if post["hh6"] and post["hh6"]!="None":
+            producto.hh6 = post["hh6"]
+        if post["hh7"] and post["hh7"]!="None":
+            producto.hh7 = post["hh7"]
+        if post["hh8"] and post["hh8"]!="None":
+            producto.hh8 = post["hh8"]
+        if post["d1"] and post["d1"]!="None":
+            producto.d1 = post["d1"]
+        if post["d2"] and post["d2"]!="None":
+            producto.d2 = post["d2"]
         producto.imagen.add(nueva_imagen)
         producto.save()
-        crear_notificacion(
-            "editar_producto",
-            request.user.correo,
-            "editó información producto",
-            "Producto",
-            1,
-            producto.id,
-            producto.nombre,
-        )
         return redirect("/productos/producto/{}".format(producto.id))
     else:
         subclases = SubClase.objects.all()
@@ -507,15 +535,6 @@ def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
     filtro = Filtro_producto.objects.get(nombre_producto=producto.nombre)
     filtro.delete()
-    crear_notificacion(
-        "eliminar_producto",
-        request.user.correo,
-        "eliminó producto",
-        "Producto",
-        1,
-        producto.id,
-        producto.nombre,
-    )
     producto.delete()
     return redirect("/productos")
 

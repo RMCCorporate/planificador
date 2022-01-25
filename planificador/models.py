@@ -57,7 +57,19 @@ class Producto(models.Model):
     kilos = models.FloatField(null=True)
     imagen = models.ManyToManyField(ImagenProducto)
     proveedor_interno = models.CharField(max_length=128, null=True)
-
+    superficie = models.FloatField(null=True)
+    perimetro = models.FloatField(null=True)
+    hh1 = models.FloatField(null=True)
+    hh2 = models.FloatField(null=True)
+    hh3 = models.FloatField(null=True)
+    hh4 = models.FloatField(null=True)
+    hh5 = models.FloatField(null=True)
+    hh6 = models.FloatField(null=True)
+    hh7 = models.FloatField(null=True)
+    hh8 = models.FloatField(null=True)
+    d1 = models.FloatField(null=True)
+    d2 = models.FloatField(null=True)
+    
     def __str__(self):
         return self.nombre
 
