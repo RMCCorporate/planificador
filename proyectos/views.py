@@ -205,6 +205,25 @@ def proyecto(request, id):
     for i in proyecto.presupuesto_subclases.all():
         if i.utilidad:
             utilidad_subclase += i.valor * (1 + (i.utilidad / 100))
+    diccionario_hh1 = {"hh1":0, "hh2":0, "hh3":0, "hh4":0, "hh5":0, "hh6":0, "hh7":0, "hh8":0}
+    for x in productos_proyecto:
+        if x.proyecto.hh1:
+            diccionario_hh1["hh1"] += x.proyecto.hh1
+        if x.proyecto.hh2:
+            diccionario_hh1["hh2"] += x.proyecto.hh2
+        if x.proyecto.hh3:
+            diccionario_hh1["hh3"] += x.proyecto.hh3
+        if x.proyecto.hh4:
+            diccionario_hh1["hh4"] += x.proyecto.hh4
+        if x.proyecto.hh5:
+            diccionario_hh1["hh5"] += x.proyecto.hh5
+        if x.proyecto.hh6:
+            diccionario_hh1["hh6"] += x.proyecto.hh6
+        if x.proyecto.hh7:
+            diccionario_hh1["hh7"] += x.proyecto.hh7
+        if x.proyecto.hh8:
+            diccionario_hh1["hh7"] += x.proyecto.hh8
+        
     payload = {
         "Proyecto": proyecto,
         "Productos": tabla_productos,
@@ -213,6 +232,7 @@ def proyecto(request, id):
         "precio": precio_final,
         "rol": usuario,
         "utilidad_subclase": utilidad_subclase,
+        "hh1": diccionario_hh1
     }
     return render(request, "proyectos/proyecto.html", payload)
 

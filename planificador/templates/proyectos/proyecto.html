@@ -170,6 +170,28 @@
         </tr>
     </tbody>
 </table>
+<br>
+<div class="table-container">
+  <div class="informacion_container">
+    <h4>HORAS HOMBRE</h4>
+  </div>
+    <table class="table2">
+    <thead>
+        <tr>
+            <th>NOMBRE</th>
+            <th>CANTIDAD</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for key, value in hh1.items %}
+        <tr>
+            <td data-label="NOMBRE">{{key}}</td>
+            <td data-label="NOMBRE">{{value}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+
 </div>
 <br>
 <br>
