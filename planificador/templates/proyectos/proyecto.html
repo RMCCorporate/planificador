@@ -107,6 +107,9 @@
     <a href="{% url 'editar_producto_proyecto' Proyecto.id %}">
       <button class="button_eliminar">EDITAR/ELIMINAR</button>
   </a>
+  <a href="{% url 'agregar_calculo' Proyecto.id %}">
+    <button class="button_eliminar">AGREGAR INSTALACIÓN PROYECTO</button>
+</a>
   </div>
   {% else %}
   <br>

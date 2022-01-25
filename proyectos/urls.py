@@ -53,6 +53,11 @@ urlpatterns = [
         name="editar_presupuesto",
     ),
     path(
+        "agregar_calculo/<str:id>",
+        views.agregar_calculo,
+        name="agregar_calculo",
+    ),
+    path(
         "consolidar_proyecto/<str:id>",
         views.consolidar_proyecto,
         name="consolidar_proyecto",
