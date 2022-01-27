@@ -176,16 +176,6 @@ def nuevo_proveedor_planilla(request):
                         nuevo_proveedor.save()
                         contador_creado += 1
                         creado = True
-        if creado:
-            crear_notificacion(
-                "agregar_proveedor",
-                request.user.email,
-                "creó proveedor(es) mediante planilla",
-                "Proveedor",
-                contador_creado,
-                " ",
-                " ",
-            )
         if len(datos_fallados) != 0:
             booleano_fallados = True
         payload = {"Fallo": datos_fallados, "Booleano": booleano_fallados}
@@ -206,7 +196,7 @@ def agregar_proveedor(request):
 
 @login_required(login_url="/login")
 def recibir_datos_proveedor(request):
-    get = request.get
+    get = request.GET
     nombre_contacto = get["nombre_contacto"]
     nuevo_contacto = Contacto(correo=get["correo"], telefono=get["telefono"], nombre=nombre_contacto)
     nuevo_contacto.save()
@@ -233,15 +223,6 @@ def recibir_datos_proveedor(request):
         proveedor=nuevo_proveedor, calificacion=calidad, nota=0
     )
     calidad_proveedor.save()
-    crear_notificacion(
-        "agregar_proveedor",
-        request.user.email,
-        "creó proveedor",
-        "Proveedor",
-        1,
-        nuevo_proveedor.rut,
-        nuevo_proveedor.nombre,
-    )
     return redirect("/proveedores/proveedor/{}".format(str(get["rut"])))
 
 
@@ -313,15 +294,6 @@ def mostrar_edicion_proveedor(request, rut):
             calificaciones_calidad.nota + float(post["Calidad"])
         ) / 2
         calificaciones_calidad.save()
-        crear_notificacion(
-            "editar_proveedor",
-            request.user.email,
-            "editó proveedor",
-            "Proveedor",
-            1,
-            proveedor.rut,
-            proveedor.nombre,
-        )
         proveedor.save()
         if post.getlist("subclase") != []:
             for i in post.getlist("subclase"):
@@ -333,15 +305,6 @@ def mostrar_edicion_proveedor(request, rut):
         for i in eliminar:
             if i != "No":
                 contacto_eliminar = Contacto.objects.get(correo=i)
-                crear_notificacion(
-                    "eliminar_contacto",
-                    request.user.email,
-                    "eliminó contacto",
-                    "Proveedor",
-                    1,
-                    contacto_eliminar.correo,
-                    contacto_eliminar.nombre,
-                )
                 contacto_eliminar.delete()
         return redirect("/proveedores/proveedor/{}".format(proveedor.rut))
     else:
@@ -397,14 +360,5 @@ def eliminar_proveedor(request, rut):
     proveedor = Proveedor.objects.get(rut=rut)
     for i in proveedor.contactos_asociados.all():
         i.delete()
-    crear_notificacion(
-        "eliminar_proveedor",
-        request.user.email,
-        "eliminó proveedor",
-        "Proveedor",
-        1,
-        proveedor.rut,
-        proveedor.nombre,
-    )
     proveedor.delete()
     return redirect("/proveedores")
