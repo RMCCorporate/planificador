@@ -38,9 +38,13 @@
                     </select>
           </div>
           <div class="input-box">
+            <br>
                 <span class="details">ELIMINAR PRODUCTOS</label>
+                  <br>
                     {% for i in productos %}
-                    <input type="checkbox" value="{{i.id}}" name="producto">{{i.nombre}}</option>
+                    {{i.nombre}}
+                    <input type="checkbox" value="{{i.id}}" name="producto"></option>
+        
                     {% endfor %}
           </div>
             </div>

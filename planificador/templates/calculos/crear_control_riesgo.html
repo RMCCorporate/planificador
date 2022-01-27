@@ -22,8 +22,12 @@
             <input type="text" name="nombre" required>
         </div>
         <div class="input-box">
+          <span class="details">ELEGIR CÁLCULOS</label>
+            <br>
+            
             {% for i in calculos %}
-            <input type="checkbox" name="calculos" value="{{i.nombre}}"> {{i.nombre}}
+            {{i.nombre}}
+            <input type="checkbox" name="calculos" value="{{i.nombre}}">
                 {% endfor %}
           </div>
           <div class="input-box">

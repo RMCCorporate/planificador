@@ -29,10 +29,12 @@
                     <option value="Riesgo">RIESGO</option>
                 </select>
           </div>
-          <h3>¿ELIMINAR?</h3>
           <div class="input-box">
+            <span class="details">¿ELIMINAR?</label>
+              <br>
             {% for i in calculos %}
-            <input type="checkbox" name="calculos" value="{{i.nombre}}"> {{i.nombre}}
+            {{i.nombre}}
+            <input type="checkbox" name="calculos" value="{{i.nombre}}"> 
             {% endfor %}
           </div>
           <table class="table">
@@ -62,9 +64,14 @@
                 {% endfor %}
             </tbody>
         </table>
-    <br>
+    
+  </div>
+  <br>
+
       <button class="button" type="submit">ACTUALIZAR</button>
+       
   </form>
+
   </div>
 
     
