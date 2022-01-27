@@ -70,7 +70,6 @@ def productos(request):
         "myFilter": myFilter,
         "len": len(lista_productos),
     }
-    print("0" * 2)
     return render(request, "productos/productos.html", payload)
 
 
@@ -534,8 +533,8 @@ def mostrar_edicion_producto(request, id):
 def eliminar_producto(request, id):
     producto = Producto.objects.get(id=id)
     filtro = Filtro_producto.objects.get(nombre_producto=producto.nombre)
-    filtro.delete()
     producto.delete()
+    filtro.delete()
     return redirect("/productos")
 
 

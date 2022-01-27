@@ -18,7 +18,7 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
             {% for i in usuarios %}
-              <input type="checkbox" name="usuario" value="{{i.username}}">{{i.first_name}}{{i.last_name}}
+              <input type="checkbox" name="usuario" value="{{i.username}}">{{i.nombre}}{{i.apellido}}
            {% endfor %}
         </div>
       </div>

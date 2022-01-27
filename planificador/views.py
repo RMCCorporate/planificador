@@ -157,12 +157,12 @@ def crear_grupo(request):
         if not Group.objects.filter(name=str(nombre)).exists():
             nuevo_grupo = Group.objects.create(name=nombre)
             nuevo_grupo.save()
-            usuario = get_user_model().objects.get(username=usuario)
+            usuario = get_user_model().objects.get(correo=str(request.user.correo))
             usuario.groups.add(nuevo_grupo)
             usuario.save()
         else:
             grupo = Group.objects.get(name=nombre)
-            usuario = get_user_model().objects.get(username=usuario)
+            usuario = get_user_model().objects.get(correo=str(request.user.correo))
             usuario.groups.add(grupo)
             usuario.save()
         return redirect("/")

@@ -19,8 +19,8 @@
 	<div class="loginbox">
 			<h2>INGRESA</h2>
 			<form method="POST" action="">{% csrf_token %}
-				<p>NOMBRE USUARIO</p>
-				<input type="text" name="username" placeholder="Inicial + Apellido. Ej:pcorrea">
+				<p>CORREO</p>
+				<input type="text" name="username" placeholder="Correo. Ej: tcorrea@rmc.cl">
 				<p>CONTRASEÑA</p>
 				<input type="password" name="password" placeholder="***********" class="form-control" >
 				{% for message in messages %}

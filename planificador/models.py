@@ -67,8 +67,8 @@ class Producto(models.Model):
     hh6 = models.FloatField(null=True)
     hh7 = models.FloatField(null=True)
     hh8 = models.FloatField(null=True)
-    d1 = models.FloatField(null=True)
-    d2 = models.FloatField(null=True)
+    d1 = models.CharField(max_length=128, null=True)
+    d2 = models.CharField(max_length=128, null=True)
     
     def __str__(self):
         return self.nombre
