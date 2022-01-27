@@ -26,7 +26,7 @@ urlpatterns = [
     path(
         "importaciones/editar_fechas/<str:codigo>",
         views.editar_fechas,
-        name="editar_fechas",
+        name="editar_fechas_importacion",
     ),
     path(
         "importaciones/cotizacion_dhl/<str:codigo>",

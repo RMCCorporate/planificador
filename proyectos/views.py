@@ -639,30 +639,34 @@ def guardar_datos_filtro(request):
         usuario_modificacion = ""
     proyecto = Proyecto.objects.get(id=get["centro_costos"])
     productos_proyecto_anterior = proyecto.productos.all()
+    diccionario_productos = {}
     for i in get.getlist("productos"):
+        diccionario_productos[i] = False
         if len(productos_proyecto_anterior) != 0:
-            booleano_repeticion = True if productos_proyecto_anterior.filter(producto__nombre=i).exists() else False
-        else:
-            booleano_repeticion = False
-    for i in get.getlist("productos"):
-        if not booleano_repeticion:
-            producto = Producto.objects.get(nombre=i)
-            nuevo_producto_proyecto = Producto_proyecto(
-                id=uuid.uuid1(),
-                producto=proyecto,
-                proyecto=producto,
-                usuario_modificacion=usuario_modificacion,
-                estado_cotizacion="No",
-            )
-            nuevo_producto_proyecto.save()
-            if producto.proveedor_interno:
-                proveedor_int = Proveedor.objects.get(nombre=producto.proveedor_interno)
-                nuevo_producto_proyecto.proveedores.add(proveedor_int)
-                nuevo_producto_proyecto.save()
-            proyecto.save()
-            usuario = get_user_model().objects.get(correo=request.user.correo)
-            usuario.proyectos.add(proyecto)
-            usuario.save()
+            for x in productos_proyecto_anterior:
+                if x.nombre == i:
+                    diccionario_productos[i] = True
+    if len(diccionario_productos) != 0:
+        for i in diccionario_productos.keys():
+            if not diccionario_productos[i]:
+                producto = Producto.objects.get(nombre=i)
+                if not Producto_proyecto.objects.filter(producto=proyecto, proyecto=producto).exists():
+                    nuevo_producto_proyecto = Producto_proyecto(
+                        id=uuid.uuid1(),
+                        producto=proyecto,
+                        proyecto=producto,
+                        usuario_modificacion=usuario_modificacion,
+                        estado_cotizacion="No",
+                    )
+                    nuevo_producto_proyecto.save()
+                    if producto.proveedor_interno:
+                        proveedor_int = Proveedor.objects.get(nombre=producto.proveedor_interno)
+                        nuevo_producto_proyecto.proveedores.add(proveedor_int)
+                        nuevo_producto_proyecto.save()
+                    proyecto.save()
+                    usuario = get_user_model().objects.get(correo=request.user.correo)
+                    usuario.proyectos.add(proyecto)
+                    usuario.save()
     productos_proyecto = proyecto.productos.all()
     productos = Filtro_producto.objects.all()
     for i in productos_proyecto:
