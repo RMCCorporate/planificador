@@ -35,7 +35,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_URL = "/static/"
 ALLOWED_HOSTS = [
     "127.0.0.1",
-    "planificador.eba-bycjifwt.us-west-2.elasticbeanstalk.com",
+    "django-env.eba-9m2shrgp.us-west-2.elasticbeanstalk.com",
 ]
 
 
