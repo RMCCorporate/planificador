@@ -116,7 +116,7 @@ else:
             "NAME": "postgres",
             "USER": "postgres",
             "PASSWORD": "postgres",
-            "HOST": "127.0.0.1",
+            "HOST": '',
             "PORT": "5432",
         }
     }
